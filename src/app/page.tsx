@@ -1,8 +1,13 @@
+import { AboutSection } from "@/components/home/AboutSection";
+import { HeroSection } from "@/components/home/HeroSection";
+import { ServicesPreview } from "@/components/home/ServicesPreview";
+
 export default function Home() {
   return (
     <main>
-      <h1>Lab Platform</h1>
-      <p>Plataforma de serviços do laboratório.</p>
+      <HeroSection />
+      <AboutSection />
+      <ServicesPreview />
     </main>
   );
 }
