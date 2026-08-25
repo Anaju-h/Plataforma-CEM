@@ -1,37 +1,30 @@
 @import "tailwindcss";
 
 :root {
-  /* Brand */
   --color-brand: #0057b8;
   --color-brand-dark: #003a70;
   --color-brand-light: #eaf3fb;
 
-  /* Backgrounds */
   --color-background: #ffffff;
   --color-surface: #f6f8fa;
   --color-surface-strong: #edf1f4;
   --color-technical: #071a2b;
 
-  /* Text */
   --color-text-primary: #15191d;
   --color-text-secondary: #5b6570;
   --color-text-inverse: #ffffff;
 
-  /* Borders */
   --color-border: #d9e0e6;
   --color-border-strong: #b7c1ca;
 
-  /* States */
   --color-success: #137a4b;
   --color-warning: #a86700;
   --color-error: #b42318;
 
-  /* Radius */
   --radius-sm: 6px;
   --radius-md: 10px;
   --radius-lg: 16px;
 
-  /* Layout */
   --container-max: 1280px;
 }
 
@@ -41,14 +34,18 @@
 
 html {
   scroll-behavior: smooth;
+  overflow-x: hidden;
 }
 
 body {
   margin: 0;
+  min-width: 320px;
+  overflow-x: hidden;
   background: var(--color-background);
   color: var(--color-text-primary);
   font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 button,
@@ -65,4 +62,24 @@ a {
 
 button {
   border: 0;
+}
+
+img,
+svg {
+  display: block;
+}
+
+/* Carrosséis mobile */
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Evita seleção estranha em elementos decorativos */
+svg[aria-hidden="true"] {
+  pointer-events: none;
 }
