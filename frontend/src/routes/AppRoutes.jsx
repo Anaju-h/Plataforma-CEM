@@ -9,6 +9,14 @@ import {
 } from "../components/internal/ProtectedRoute";
 
 import {
+  CustomerLayout,
+} from "../layouts/CustomerLayout";
+
+import {
+  CustomerPortalLayout,
+} from "../layouts/CustomerPortalLayout";
+
+import {
   InternalLayout,
 } from "../layouts/InternalLayout";
 
@@ -35,6 +43,30 @@ import {
 import {
   ServicosPage,
 } from "../pages/ServicosPage";
+
+import {
+  CustomerAccessPage,
+} from "../pages/customer/CustomerAccessPage";
+
+import {
+  CustomerDashboardPage,
+} from "../pages/customer/CustomerDashboardPage";
+
+import {
+  CustomerDocumentsPage,
+} from "../pages/customer/CustomerDocumentsPage";
+
+import {
+  CustomerProjectsPage,
+} from "../pages/customer/CustomerProjectsPage";
+
+import {
+  CustomerQuotesPage,
+} from "../pages/customer/CustomerQuotesPage";
+
+import {
+  CustomerRequestsPage,
+} from "../pages/customer/CustomerRequestsPage";
 
 import {
   AdministrationPage,
@@ -95,6 +127,10 @@ import {
 export function AppRoutes() {
   return (
     <Routes>
+      {/* =========================
+          ÁREA PÚBLICA
+      ========================== */}
+
       <Route element={<PublicLayout />}>
         <Route
           path="/"
@@ -121,6 +157,52 @@ export function AppRoutes() {
           element={<ConfiguradorPage />}
         />
       </Route>
+
+      {/* =========================
+          ACESSO DO CLIENTE
+      ========================== */}
+
+      <Route element={<CustomerLayout />}>
+        <Route
+          path="/cliente"
+          element={<CustomerAccessPage />}
+        />
+      </Route>
+
+      {/* =========================
+          PORTAL DO CLIENTE
+      ========================== */}
+
+      <Route element={<CustomerPortalLayout />}>
+        <Route
+          path="/cliente/dashboard"
+          element={<CustomerDashboardPage />}
+        />
+
+        <Route
+          path="/cliente/solicitacoes"
+          element={<CustomerRequestsPage />}
+        />
+
+        <Route
+          path="/cliente/orcamentos"
+          element={<CustomerQuotesPage />}
+        />
+
+        <Route
+          path="/cliente/projetos"
+          element={<CustomerProjectsPage />}
+        />
+
+        <Route
+          path="/cliente/documentos"
+          element={<CustomerDocumentsPage />}
+        />
+      </Route>
+
+      {/* =========================
+          ÁREA INTERNA
+      ========================== */}
 
       <Route
         path="/portal/login"

@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+
 import { Container } from "./Container";
 
 const serviceLinks = [
@@ -20,9 +21,29 @@ const serviceLinks = [
   },
 ];
 
-const technologyLinks = [
+const equipmentLinks = [
   {
-    label: "Equipamentos",
+    label: "ZEISS PRISMO",
+    href: "/equipamentos",
+  },
+  {
+    label: "ZEISS O-INSPECT",
+    href: "/equipamentos",
+  },
+  {
+    label: "ZEISS DuraMax",
+    href: "/equipamentos",
+  },
+  {
+    label: "ZEISS ATOS Q",
+    href: "/equipamentos",
+  },
+  {
+    label: "ZEISS T-SCAN",
+    href: "/equipamentos",
+  },
+  {
+    label: "Bosello Max",
     href: "/equipamentos",
   },
 ];
@@ -36,214 +57,326 @@ const solutionLinks = [
     label: "Configurar minha solução",
     href: "/configurador",
   },
+  {
+    label: "Área do cliente",
+    href: "/cliente",
+  },
 ];
 
 export function Footer() {
   return (
-    <footer className="bg-[#04131d] text-white">
+    <footer
+      className="
+        relative
+        isolate
+        overflow-hidden
+        border-t border-[#9aafbc]/35
+        bg-[linear-gradient(105deg,#8199a8_0%,#9eb1bd_10%,#becdd5_23%,#dce6eb_37%,#f4f7f9_50%,#dce6eb_63%,#becdd5_77%,#9eb1bd_90%,#8199a8_100%)]
+      "
+    >
+      {/* CAMADAS DE PROFUNDIDADE */}
+      <div
+        aria-hidden="true"
+        className="
+          pointer-events-none
+          absolute inset-0
+          -z-10
+        "
+      >
+        {/* TOM NAVY ESQUERDO */}
+        <div
+          className="
+            absolute
+            inset-y-0 left-0
+            w-[30%]
+            bg-[radial-gradient(circle_at_0%_50%,rgba(7,31,45,0.18)_0%,rgba(18,54,78,0.10)_38%,transparent_75%)]
+          "
+        />
+
+        {/* TOM NAVY DIREITO */}
+        <div
+          className="
+            absolute
+            inset-y-0 right-0
+            w-[30%]
+            bg-[radial-gradient(circle_at_100%_50%,rgba(7,31,45,0.18)_0%,rgba(18,54,78,0.10)_38%,transparent_75%)]
+          "
+        />
+
+        {/* LUZ CENTRAL */}
+        <div
+          className="
+            absolute
+            left-1/2 top-[-150px]
+            h-[300px]
+            w-[48%]
+            -translate-x-1/2
+            rounded-full
+            bg-white/32
+            blur-[90px]
+          "
+        />
+
+        {/* REFLEXO SUPERIOR */}
+        <div
+          className="
+            absolute
+            left-[8%] right-[8%] top-0
+            h-px
+            bg-gradient-to-r
+            from-transparent
+            via-white/70
+            to-transparent
+          "
+        />
+
+        {/* REFLEXO SUAVE INTERNO */}
+        <div
+          className="
+            absolute inset-0
+            bg-[linear-gradient(180deg,rgba(255,255,255,0.12)_0%,transparent_32%,rgba(7,31,45,0.025)_100%)]
+          "
+        />
+      </div>
+
       <Container>
-        <div className="grid gap-10 py-12 md:grid-cols-2 lg:grid-cols-[2.1fr_0.85fr_0.65fr_0.85fr] lg:gap-10">
-          <div className="min-w-0 md:col-span-2 lg:col-span-1">
-            <div className="relative h-[150px] w-full max-w-[700px] sm:h-[190px] lg:h-[260px]">
-              <img
-                src="/brand/zeiss-senai.png"
-                alt="ZEISS Cooperação Tecnológica e SENAI"
+        <div className="py-8 lg:py-9">
+          <div
+            className="
+              grid
+              gap-8
+              md:grid-cols-2
+              lg:grid-cols-[1.15fr_0.9fr_1fr_0.85fr]
+              lg:items-start
+              lg:gap-10
+            "
+          >
+            {/* MARCAS */}
+            <div className="min-w-0">
+              <p
                 className="
-                  h-full w-full
-                  origin-left scale-[1.12]
-                  object-contain object-left
-                  sm:scale-[1.18]
+                  mb-3
+                  text-[10px]
+                  font-semibold
+                  uppercase
+                  tracking-[0.18em]
+                  text-[#536d7c]
                 "
-              />
+              >
+                Centro de Excelência em Metrologia
+              </p>
+
+              <div
+                className="
+                  flex
+                  w-[220px]
+                  flex-col
+                  items-center
+                  gap-1
+                "
+              >
+                {/* SENAI */}
+                <div
+                  className="
+                    flex
+                    h-[64px]
+                    w-full
+                    items-center
+                    justify-center
+                  "
+                >
+                  <img
+                    src="/brand/logo-senai.png"
+                    alt="SENAI"
+                    className="
+                      block
+                      max-h-[90px]
+                      w-[195px]
+                      object-contain
+                    "
+                  />
+                </div>
+
+                <div
+                  className="
+                    h-px
+                    w-[175px]
+                    bg-[#496778]/20
+                  "
+                />
+
+                {/* ZEISS */}
+                <div
+                  className="
+                    flex
+                    h-[72px]
+                    w-full
+                    items-center
+                    justify-center
+                  "
+                >
+                  <img
+                    src="/brand/logo-ZEISS.png"
+                    alt="ZEISS"
+                    className="
+                      block
+                      max-h-[120px]
+                      w-[250px]
+                      object-contain
+                    "
+                  />
+                </div>
+              </div>
             </div>
 
-            <p className="mt-1 max-w-xl text-sm leading-7 text-[#a9c4d8]">
-              Tecnologia, precisão e engenharia aplicadas aos desafios da
-              indústria.
+            {/* SERVIÇOS */}
+            <FooterColumn
+              title="Serviços"
+              links={serviceLinks}
+            />
+
+            {/* EQUIPAMENTOS */}
+            <FooterColumn
+              title="Equipamentos"
+              links={equipmentLinks}
+            />
+
+            {/* SOLUÇÕES */}
+            <FooterColumn
+              title="Soluções"
+              links={solutionLinks}
+            />
+          </div>
+
+          {/* LINHA FINAL */}
+          <div
+            className="
+              mt-7
+              flex
+              flex-col
+              gap-3
+              border-t
+              border-[#29495d]/18
+              pt-4
+              sm:flex-row
+              sm:items-center
+              sm:justify-between
+            "
+          >
+            <p
+              className="
+                text-[10px]
+                leading-4
+                text-[#304e61]
+              "
+            >
+              © 2026 Centro de Excelência em Metrologia SENAI ZEISS. Todos os direitos reservados.
             </p>
+
+            <div
+              className="
+                flex
+                flex-wrap
+                items-center
+                gap-x-4
+                gap-y-2
+                text-[10px]
+                font-medium
+                text-[#17384d]
+              "
+            >
+              <button
+                type="button"
+                className="
+                  transition-colors
+                  hover:text-[#071f2d]
+                "
+              >
+                Privacidade
+              </button>
+
+              <span
+                aria-hidden="true"
+                className="
+                  h-3
+                  w-px
+                  bg-[#29495d]/20
+                "
+              />
+
+              <button
+                type="button"
+                className="
+                  transition-colors
+                  hover:text-[#071f2d]
+                "
+              >
+                Termos de uso
+              </button>
+            </div>
           </div>
-
-          <FooterLinks title="Serviços" links={serviceLinks} />
-
-          <FooterLinks title="Tecnologia" links={technologyLinks} />
-
-          <FooterLinks title="Soluções" links={solutionLinks} />
-        </div>
-
-        <div className="border-t border-white/15 py-8">
-          <div className="grid gap-x-8 gap-y-8 sm:grid-cols-2 lg:grid-cols-4 lg:gap-0">
-            <ContactItem
-              title="Telefone"
-              icon={<PhoneIcon />}
-              className="lg:border-r lg:border-white/15 lg:pr-7"
-            >
-              (00) 00000-0000
-            </ContactItem>
-
-            <ContactItem
-              title="E-mail"
-              icon={<MailIcon />}
-              className="lg:border-r lg:border-white/15 lg:px-7"
-            >
-              contato@exemplo.com.br
-            </ContactItem>
-
-            <ContactItem
-              title="Endereço"
-              icon={<LocationIcon />}
-              className="lg:border-r lg:border-white/15 lg:px-7"
-            >
-              <>
-                Endereço do Centro
-                <br />
-                Goiânia - GO
-              </>
-            </ContactItem>
-
-            <ContactItem
-              title="Horário de atendimento"
-              icon={<ClockIcon />}
-              className="lg:pl-7"
-            >
-              <>
-                Segunda a sexta
-                <br />
-                Horário a definir
-              </>
-            </ContactItem>
-          </div>
-        </div>
-
-        <div className="flex flex-col gap-3 border-t border-white/15 py-6 text-[11px] text-[#829aa9] sm:flex-row sm:items-center sm:justify-between sm:text-xs">
-          <p>
-            © 2026 Centro de Excelência em Metrologia. Todos os direitos
-            reservados.
-          </p>
-
-          <p className="tracking-[0.14em]">
-            SENAI · ZEISS
-          </p>
         </div>
       </Container>
     </footer>
   );
 }
 
-function FooterLinks({ title, links }) {
+function FooterColumn({ title, links }) {
   return (
     <div>
-      <p className="text-xs font-medium uppercase tracking-[0.14em] text-[#65b8ee]">
+      <p
+        className="
+          text-[11px]
+          font-bold
+          uppercase
+          tracking-[0.15em]
+          text-[#12364e]
+        "
+      >
         {title}
       </p>
 
-      <div className="mt-5 flex flex-col gap-3">
+      <div
+        className="
+          mt-2
+          h-[2px]
+          w-6
+          rounded-full
+          bg-[#315b75]
+        "
+      />
+
+      <nav
+        className="
+          mt-4
+          flex
+          flex-col
+          gap-2.5
+        "
+      >
         {links.map((item) => (
           <Link
-            key={item.label}
+            key={`${title}-${item.label}`}
             to={item.href}
-            className="text-sm leading-6 text-white transition-colors duration-200 hover:text-[#65b8ee]"
+            className="
+              group
+              flex
+              w-fit
+              items-center
+              text-[13px]
+              font-medium
+              leading-5
+              text-[#203f52]
+              transition-all
+              duration-200
+              hover:translate-x-[2px]
+              hover:text-[#071f2d]
+            "
           >
             {item.label}
           </Link>
         ))}
-      </div>
+      </nav>
     </div>
-  );
-}
-
-function ContactItem({ title, icon, children, className = "" }) {
-  return (
-    <div className={className}>
-      <div className="flex items-start gap-4">
-        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-[#65b8ee]/60 text-[#65b8ee]">
-          {icon}
-        </div>
-
-        <div className="min-w-0">
-          <p className="text-xs font-medium uppercase tracking-[0.12em] text-[#65b8ee]">
-            {title}
-          </p>
-
-          <div className="mt-2 break-words text-sm leading-6 text-[#c2d0d9]">
-            {children}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function PhoneIcon() {
-  return (
-    <svg
-      width="19"
-      height="19"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.6"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.9.33 1.78.62 2.63a2 2 0 0 1-.45 2.11L8 9.73a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.85.29 1.73.5 2.63.62A2 2 0 0 1 22 16.92z" />
-    </svg>
-  );
-}
-
-function MailIcon() {
-  return (
-    <svg
-      width="19"
-      height="19"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.6"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <rect x="3" y="5" width="18" height="14" rx="2" />
-      <path d="m3 7 9 6 9-6" />
-    </svg>
-  );
-}
-
-function LocationIcon() {
-  return (
-    <svg
-      width="19"
-      height="19"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.6"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z" />
-      <circle cx="12" cy="10" r="2.5" />
-    </svg>
-  );
-}
-
-function ClockIcon() {
-  return (
-    <svg
-      width="19"
-      height="19"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.6"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <circle cx="12" cy="12" r="9" />
-      <path d="M12 7v5l3 2" />
-    </svg>
   );
 }
