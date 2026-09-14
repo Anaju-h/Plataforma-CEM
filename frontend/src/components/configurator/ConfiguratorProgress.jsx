@@ -1,220 +1,295 @@
-const steps = [
-  {
-    number: 1,
-    label: "Necessidade",
-    shortLabel: "Necessidade",
-  },
-  {
-    number: 2,
-    label: "Peça",
-    shortLabel: "Peça",
-  },
-  {
-    number: 3,
-    label: "Requisitos",
-    shortLabel: "Requisitos",
-  },
-  {
-    number: 4,
-    label: "Refinamento",
-    shortLabel: "Refinar",
-  },
-  {
-    number: 5,
-    label: "Solicitação",
-    shortLabel: "Solicitação",
-  },
-];
+import {
+  motion,
+} from "motion/react";
+
+/* ============================================================
+ * COMPONENTE PRINCIPAL
+ * ============================================================ */
 
 export function ConfiguratorProgress({
   currentStep,
   highestStep,
   onStepChange,
+  steps = [],
 }) {
+  const totalSteps =
+    steps.length;
+
+  const progress =
+    totalSteps > 1
+      ? ((currentStep - 1) /
+          (totalSteps - 1)) *
+        100
+      : 0;
+
   return (
     <div className="w-full">
-      <div className="lg:hidden">
-        <div className="flex items-end justify-between gap-4">
-          <div>
-            <p className="text-[9px] font-semibold uppercase tracking-[0.16em] text-[#708796]">
-              Etapa
-            </p>
+      {/* =====================================================
+          DESKTOP
+      ===================================================== */}
 
-            <p className="mt-1 text-sm font-semibold text-[#0b2340]">
-              {String(currentStep).padStart(2, "0")} / 05
-            </p>
+      <div className="hidden lg:block">
+        <div className="relative py-1">
+          {/* LINHA BASE */}
+
+          <div className="absolute left-[6.25%] right-[6.25%] top-[21px] h-px bg-[#afc5d0]/72" />
+
+          {/* LINHA PREENCHIDA */}
+
+          <div className="absolute left-[6.25%] right-[6.25%] top-[21px]">
+            <motion.div
+              initial={false}
+              animate={{
+                width: `${progress}%`,
+              }}
+              transition={{
+                duration: 0.45,
+                ease: [
+                  0.22,
+                  1,
+                  0.36,
+                  1,
+                ],
+              }}
+              className="h-px bg-[#4f8cac]"
+            />
           </div>
 
-          <p className="text-sm font-medium text-[#35566d]">
-            {steps[currentStep - 1].label}
-          </p>
-        </div>
+          {/* ETAPAS */}
 
-        <div className="mt-4 grid grid-cols-5 gap-1.5">
-          {steps.map(({ number, label }) => {
-            const active =
-              number === currentStep;
+          <div
+            className="relative grid w-full"
+            style={{
+              gridTemplateColumns: `repeat(${totalSteps}, minmax(0, 1fr))`,
+            }}
+          >
+            {steps.map(
+              (
+                step,
+                index,
+              ) => {
+                const stepNumber =
+                  index + 1;
 
-            const available =
-              number <= highestStep;
+                const completed =
+                  step.id <
+                  currentStep;
 
-            const completed =
-              number < currentStep;
+                const active =
+                  step.id ===
+                  currentStep;
 
-            return (
-              <button
-                key={number}
-                type="button"
-                disabled={!available}
-                onClick={() =>
-                  onStepChange(number)
-                }
-                aria-label={`Ir para a etapa ${label}`}
-                className={`
-                  relative
-                  h-2
-                  overflow-hidden
-                  rounded-full
-                  transition-all
-                  duration-300
+                const available =
+                  step.id <=
+                  highestStep;
 
-                  ${
-                    !available
-                      ? "cursor-not-allowed bg-[#ccd8df]"
-                      : active
-                        ? "cursor-pointer bg-[#1476b8]"
-                        : completed
-                          ? "cursor-pointer bg-[#7daecb] hover:bg-[#5d98bb]"
-                          : "cursor-pointer bg-[#9ebdce] hover:bg-[#7ca8c1]"
-                  }
-                `}
-              />
-            );
-          })}
-        </div>
-      </div>
-
-      <div className="hidden lg:flex">
-        {steps.map(
-          (
-            {
-              number,
-              label,
-              shortLabel,
-            },
-            index,
-          ) => {
-            const active =
-              number === currentStep;
-
-            const available =
-              number <= highestStep;
-
-            const completed =
-              number < currentStep;
-
-            return (
-              <div
-                key={number}
-                className="flex min-w-0 flex-1"
-              >
-                <div className="flex min-w-0 flex-1 flex-col">
-                  <div className="flex items-center">
+                return (
+                  <div
+                    key={
+                      step.id ??
+                      stepNumber
+                    }
+                    className="flex items-center justify-center"
+                  >
                     <button
                       type="button"
-                      disabled={!available}
-                      onClick={() =>
-                        onStepChange(number)
+                      disabled={
+                        !available
                       }
-                      aria-label={`Ir para a etapa ${label}`}
+                      onClick={() => {
+                        if (
+                          available
+                        ) {
+                          onStepChange?.(
+                            step.id ??
+                              stepNumber,
+                          );
+                        }
+                      }}
+                      aria-label={`Etapa ${stepNumber}`}
+                      title={
+                        step.label
+                      }
                       className={`
                         relative
-                        flex h-9 w-9
+                        z-10
+                        flex
+                        h-[38px]
+                        w-[38px]
                         shrink-0
                         items-center
                         justify-center
                         rounded-full
                         border
-                        text-[10px]
+                        text-[11px]
                         font-semibold
                         transition-all
                         duration-300
 
                         ${
                           active
-                            ? "border-[#1476b8] bg-[#1476b8] text-white shadow-[0_8px_22px_rgba(20,118,184,0.20)]"
+                            ? "scale-[1.04] border-[#12364e] bg-[#12364e] text-white shadow-[0_7px_18px_rgba(18,54,78,0.18)]"
                             : completed
-                              ? "cursor-pointer border-[#73a8ca] bg-[#dcebf4] text-[#266c98] hover:border-[#1476b8] hover:bg-[#d3e7f2]"
+                              ? "border-[#9abccc] bg-[#dceaf1] text-[#356b86]"
                               : available
-                                ? "cursor-pointer border-[#a8c4d5] bg-[#e7f0f5] text-[#527b94]"
-                                : "cursor-not-allowed border-[#ccd9e0] bg-[#f4f7f9] text-[#94a4ad]"
+                                ? "border-[#b8cbd5] bg-[#edf4f7] text-[#6c8794] hover:border-[#8eafbf] hover:bg-white"
+                                : "cursor-default border-[#cfdae0] bg-[#edf2f4] text-[#93a6af]"
                         }
                       `}
                     >
-                      {completed
-                        ? "✓"
-                        : String(number).padStart(
-                            2,
-                            "0",
-                          )}
-
-                      {active && (
-                        <span className="pointer-events-none absolute -inset-[5px] rounded-full border border-[#1476b8]/15" />
+                      {completed ? (
+                        <span className="text-[13px]">
+                          ✓
+                        </span>
+                      ) : (
+                        String(
+                          stepNumber,
+                        ).padStart(
+                          2,
+                          "0",
+                        )
                       )}
                     </button>
-
-                    {index <
-                      steps.length - 1 && (
-                      <div className="mx-2.5 h-px min-w-4 flex-1 overflow-hidden bg-[#d0dce3]">
-                        <div
-                          className={`
-                            h-full
-                            transition-all
-                            duration-500
-
-                            ${
-                              number <
-                              highestStep
-                                ? "w-full bg-[#72a9ca]"
-                                : "w-0"
-                            }
-                          `}
-                        />
-                      </div>
-                    )}
                   </div>
+                );
+              },
+            )}
+          </div>
+        </div>
+      </div>
 
-                  <button
-                    type="button"
-                    disabled={!available}
-                    onClick={() =>
-                      onStepChange(number)
+      {/* =====================================================
+          MOBILE / TABLET
+      ===================================================== */}
+
+      <div className="lg:hidden">
+        <div className="flex items-center justify-between gap-4">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-[#688594]">
+            Etapa{" "}
+            {String(
+              currentStep,
+            ).padStart(
+              2,
+              "0",
+            )}{" "}
+            de{" "}
+            {String(
+              totalSteps,
+            ).padStart(
+              2,
+              "0",
+            )}
+          </p>
+
+          <span className="text-[11px] font-semibold text-[#82959f]">
+            {Math.round(
+              progress,
+            )}
+            %
+          </span>
+        </div>
+
+        <div className="mt-3 h-[3px] overflow-hidden rounded-full bg-[#cbd9e0]/74">
+          <motion.div
+            initial={false}
+            animate={{
+              width: `${progress}%`,
+            }}
+            transition={{
+              duration: 0.45,
+              ease: [
+                0.22,
+                1,
+                0.36,
+                1,
+              ],
+            }}
+            className="h-full rounded-full bg-[#4f8cac]"
+          />
+        </div>
+
+        <div className="mt-3 flex items-center justify-between gap-1.5">
+          {steps.map(
+            (
+              step,
+              index,
+            ) => {
+              const stepNumber =
+                index + 1;
+
+              const completed =
+                step.id <
+                currentStep;
+
+              const active =
+                step.id ===
+                currentStep;
+
+              const available =
+                step.id <=
+                highestStep;
+
+              return (
+                <button
+                  key={
+                    step.id ??
+                    stepNumber
+                  }
+                  type="button"
+                  disabled={
+                    !available
+                  }
+                  onClick={() => {
+                    if (
+                      available
+                    ) {
+                      onStepChange?.(
+                        step.id ??
+                          stepNumber,
+                      );
                     }
-                    className={`
-                      mt-2
-                      w-fit
-                      max-w-full
-                      truncate
-                      text-[10px]
-                      font-medium
-                      transition-colors
+                  }}
+                  aria-label={`Etapa ${stepNumber}`}
+                  title={
+                    step.label
+                  }
+                  className={`
+                    flex
+                    h-8
+                    w-8
+                    shrink-0
+                    items-center
+                    justify-center
+                    rounded-full
+                    border
+                    text-[10px]
+                    font-semibold
+                    transition-all
 
-                      ${
-                        active
-                          ? "text-[#0b639e]"
+                    ${
+                      active
+                        ? "border-[#12364e] bg-[#12364e] text-white"
+                        : completed
+                          ? "border-[#9bb9c8] bg-[#dceaf1] text-[#456f85]"
                           : available
-                            ? "cursor-pointer text-[#647f8f] hover:text-[#1476b8]"
-                            : "cursor-not-allowed text-[#94a3ac]"
-                      }
-                    `}
-                  >
-                    {shortLabel}
-                  </button>
-                </div>
-              </div>
-            );
-          },
-        )}
+                            ? "border-white/78 bg-white/42 text-[#738b97]"
+                            : "border-[#d3dee3] bg-[#edf2f4] text-[#9bacb4]"
+                    }
+                  `}
+                >
+                  {completed
+                    ? "✓"
+                    : String(
+                        stepNumber,
+                      ).padStart(
+                        2,
+                        "0",
+                      )}
+                </button>
+              );
+            },
+          )}
+        </div>
       </div>
     </div>
   );

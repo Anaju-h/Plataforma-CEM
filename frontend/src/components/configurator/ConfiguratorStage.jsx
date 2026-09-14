@@ -1,6 +1,7 @@
 import {
   AnimatePresence,
   motion,
+  useReducedMotion,
 } from "motion/react";
 
 import {
@@ -13,28 +14,49 @@ import {
   getMachineProfile,
 } from "./data/machineProfiles";
 
-import {
-  getService,
-} from "./data/serviceCatalog";
+/* ============================================================
+ * MÁQUINAS
+ * ============================================================ */
+
+const ALL_MACHINE_IDS = [
+  "prismo",
+  "duramax",
+  "o-inspect",
+  "atos-q",
+  "t-scan",
+  "bosello-max",
+];
+
+/* ============================================================
+ * PRINCIPAL
+ * ============================================================ */
 
 export function ConfiguratorStage({
   state,
   recommendation,
 }) {
-  if (state.currentStep === 1) {
+  const step =
+    state.currentStep;
+
+  if (
+    step ===
+    1
+  ) {
     return (
       <ExplorationStage
-        machines={
-          recommendation.activeMachines
+        recommendation={
+          recommendation
         }
       />
     );
   }
 
-  if (state.currentStep === 5) {
+  if (
+    step ===
+    8
+  ) {
     return (
       <SolutionStage
-        state={state}
         recommendation={
           recommendation
         }
@@ -44,7 +66,9 @@ export function ConfiguratorStage({
 
   return (
     <EvaluationStage
-      step={state.currentStep}
+      step={
+        step
+      }
       recommendation={
         recommendation
       }
@@ -52,182 +76,265 @@ export function ConfiguratorStage({
   );
 }
 
+/* ============================================================
+ * EXPLORAÇÃO
+ * ============================================================ */
+
 function ExplorationStage({
-  machines,
+  recommendation,
 }) {
+  const reduceMotion =
+    useReducedMotion();
+
+  const machines =
+    useMemo(
+      () =>
+        normalizeMachineList(
+          recommendation.activeMachines,
+        ),
+      [
+        recommendation.activeMachines,
+      ],
+    );
+
+  const displayMachines =
+    machines.length >
+    0
+      ? machines
+      : ALL_MACHINE_IDS;
+
   const [
     activeIndex,
     setActiveIndex,
   ] = useState(0);
 
   const machineKey =
-    machines.join("|");
+    displayMachines.join(
+      "|",
+    );
 
   useEffect(() => {
-    setActiveIndex(0);
-  }, [machineKey]);
+    setActiveIndex(
+      0,
+    );
+  }, [
+    machineKey,
+  ]);
 
   useEffect(() => {
-    if (machines.length <= 1) {
+    if (
+      reduceMotion ||
+      displayMachines.length <=
+        1
+    ) {
       return undefined;
     }
 
     const timer =
-      window.setInterval(() => {
-        setActiveIndex(
-          (current) =>
-            (current + 1) %
-            machines.length,
-        );
-      }, 4500);
+      window.setInterval(
+        () => {
+          setActiveIndex(
+            (
+              current,
+            ) =>
+              (current +
+                1) %
+              displayMachines.length,
+          );
+        },
+        5400,
+      );
 
-    return () => {
-      window.clearInterval(timer);
-    };
+    return () =>
+      window.clearInterval(
+        timer,
+      );
   }, [
+    reduceMotion,
     machineKey,
-    machines.length,
+    displayMachines.length,
   ]);
-
-  if (machines.length === 0) {
-    return (
-      <StageShell>
-        <StageEyebrow>
-          Exploração
-        </StageEyebrow>
-
-        <h3 className="mt-3 max-w-lg text-2xl font-semibold tracking-[-0.035em] text-[#0b2340] sm:text-3xl">
-          Vamos descobrir a solução juntos.
-        </h3>
-
-        <p className="mt-3 max-w-md text-sm leading-6 text-[#68808e]">
-          Selecione uma necessidade para começar a explorar as tecnologias
-          relacionadas ao projeto.
-        </p>
-
-        <EmptyTechnicalGraphic />
-      </StageShell>
-    );
-  }
 
   const safeIndex =
     activeIndex >= 0 &&
-    activeIndex < machines.length
+    activeIndex <
+      displayMachines.length
       ? activeIndex
       : 0;
 
-  const activeMachineId =
-    machines[safeIndex];
+  const machineId =
+    displayMachines[
+      safeIndex
+    ];
 
-  const activeMachine =
-    activeMachineId
+  const machine =
+    machineId
       ? getMachineProfile(
-          activeMachineId,
+          machineId,
         )
       : null;
 
-  if (!activeMachine) {
-    return (
-      <StageShell>
-        <StageEyebrow>
-          Exploração
-        </StageEyebrow>
-
-        <h3 className="mt-3 text-2xl font-semibold tracking-[-0.035em] text-[#0b2340]">
-          Atualizando tecnologias...
-        </h3>
-
-        <p className="mt-3 text-sm leading-6 text-[#68808e]">
-          Estamos reorganizando as possibilidades de acordo com sua seleção.
-        </p>
-
-        <EmptyTechnicalGraphic />
-      </StageShell>
-    );
-  }
-
   function previous() {
     setActiveIndex(
-      (current) => {
-        const currentSafe =
-          current >= 0 &&
-          current < machines.length
-            ? current
-            : 0;
-
-        return currentSafe === 0
-          ? machines.length - 1
-          : currentSafe - 1;
-      },
+      (
+        current,
+      ) =>
+        current <=
+        0
+          ? displayMachines.length -
+            1
+          : current -
+            1,
     );
   }
 
   function next() {
     setActiveIndex(
-      (current) => {
-        const currentSafe =
-          current >= 0 &&
-          current < machines.length
-            ? current
-            : 0;
+      (
+        current,
+      ) =>
+        (current +
+          1) %
+        displayMachines.length,
+    );
+  }
 
-        return (
-          (currentSafe + 1) %
-          machines.length
-        );
-      },
+  if (!machine) {
+    return (
+      <StageShell>
+        <StageHeader
+          eyebrow="Explorando agora"
+          counter="-- / --"
+        />
+
+        <StageTitle>
+          Conhecendo as possibilidades.
+        </StageTitle>
+
+        <StageDescription>
+          Selecione sua necessidade para começarmos a relacionar as tecnologias
+          disponíveis no Centro.
+        </StageDescription>
+
+        <PremiumViewport>
+          <PremiumMachineBackground />
+
+          <EmptyTechnicalGraphic />
+        </PremiumViewport>
+      </StageShell>
     );
   }
 
   return (
     <StageShell>
-      <StageEyebrow>
-        Tecnologias relacionadas
-      </StageEyebrow>
+      <StageHeader
+        eyebrow="Explorando agora"
+        counter={`${String(
+          safeIndex + 1,
+        ).padStart(
+          2,
+          "0",
+        )} / ${String(
+          displayMachines.length,
+        ).padStart(
+          2,
+          "0",
+        )}`}
+      />
 
-      <div className="mt-3 flex items-start justify-between gap-5">
-        <div>
-          <h3 className="text-2xl font-semibold tracking-[-0.035em] text-[#0b2340] sm:text-3xl">
-            Explore as possibilidades.
-          </h3>
+      <AnimatePresence
+        mode="wait"
+      >
+        <motion.div
+          key={`title-${machine.id}`}
+          initial={
+            reduceMotion
+              ? false
+              : {
+                  opacity: 0,
+                  x: 12,
+                }
+          }
+          animate={{
+            opacity: 1,
+            x: 0,
+          }}
+          exit={{
+            opacity: 0,
+            x: -10,
+          }}
+          transition={{
+            duration:
+              0.38,
+            ease: [
+              0.22,
+              1,
+              0.36,
+              1,
+            ],
+          }}
+        >
+          <StageTitle>
+            {
+              machine.name
+            }
+          </StageTitle>
 
-          <p className="mt-2 max-w-lg text-xs leading-5 text-[#6e8492] sm:text-sm sm:leading-6">
-            Nenhuma tecnologia foi priorizada. As próximas respostas irão
-            determinar quais opções fazem mais sentido para a aplicação.
-          </p>
-        </div>
+          <StageCategory>
+            {
+              machine.category
+            }
+          </StageCategory>
 
-        <span className="hidden shrink-0 rounded-full border border-[#bacfdb] bg-[#e4eff5] px-3 py-1.5 text-[9px] font-semibold uppercase tracking-[0.1em] text-[#4d7891] sm:block">
-          Candidatas
-        </span>
-      </div>
+          <StageDescription>
+            Nesta etapa as tecnologias ainda são possibilidades. Continue
+            respondendo para que o configurador comece a comparar aderência
+            técnica.
+          </StageDescription>
+        </motion.div>
+      </AnimatePresence>
 
-      <div className="relative mt-6 min-h-[400px] overflow-hidden rounded-[24px] border border-[#cbd9e1] bg-[#dce7ed] sm:min-h-[470px]">
-        <StageBackground />
+      <PremiumViewport>
+        <PremiumMachineBackground />
 
-        <AnimatePresence mode="wait">
+        <AnimatePresence
+          mode="wait"
+          initial={false}
+        >
           <motion.div
-            key={activeMachine.id}
-            initial={{
-              opacity: 0,
-              y: 18,
-              scale: 0.96,
-              filter: "blur(7px)",
-            }}
+            key={
+              machine.id
+            }
+            initial={
+              reduceMotion
+                ? false
+                : {
+                    opacity: 0,
+                    x: 38,
+                    scale:
+                      0.965,
+                    filter:
+                      "blur(5px)",
+                  }
+            }
             animate={{
               opacity: 1,
-              y: 0,
+              x: 0,
               scale: 1,
-              filter: "blur(0px)",
+              filter:
+                "blur(0px)",
             }}
             exit={{
               opacity: 0,
-              y: -12,
-              scale: 0.97,
-              filter: "blur(6px)",
+              x: -30,
+              scale:
+                0.98,
+              filter:
+                "blur(4px)",
             }}
             transition={{
-              duration: 0.55,
+              duration:
+                0.58,
               ease: [
                 0.22,
                 1,
@@ -235,138 +342,112 @@ function ExplorationStage({
                 1,
               ],
             }}
-            className="relative z-10 flex min-h-[400px] flex-col items-center justify-center px-5 pb-24 pt-10 sm:min-h-[470px]"
+            className="absolute inset-0 z-20 flex items-center justify-center px-6 pb-[72px] pt-8"
           >
-            <div className="relative flex h-[230px] w-full max-w-[480px] items-center justify-center sm:h-[290px]">
-              <TechnicalRings />
-
-              <img
-                src={
-                  activeMachine.image
-                }
-                alt={
-                  activeMachine.name
-                }
-                className="relative z-10 max-h-[220px] max-w-[88%] object-contain drop-shadow-[0_25px_30px_rgba(31,67,91,0.15)] sm:max-h-[280px]"
-              />
-            </div>
-
-            <p className="mt-5 text-[9px] font-semibold uppercase tracking-[0.16em] text-[#56809a]">
-              {
-                activeMachine.category
+            <MachineDisplay
+              machine={
+                machine
               }
-            </p>
-
-            <h4 className="mt-2 text-center text-xl font-semibold text-[#143a52] sm:text-2xl">
-              {activeMachine.name}
-            </h4>
-
-            <p className="mt-2 max-w-md text-center text-xs leading-5 text-[#687f8d]">
-              {
-                activeMachine.description
+              reduceMotion={
+                reduceMotion
               }
-            </p>
+              large
+            />
           </motion.div>
         </AnimatePresence>
 
-        <div className="absolute inset-x-4 bottom-4 z-20 flex items-center justify-between gap-4 sm:inset-x-6 sm:bottom-5">
-          <button
-            type="button"
-            onClick={previous}
-            aria-label="Tecnologia anterior"
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-[#b6cad5] bg-[#eef4f7]/90 text-[#416c84] backdrop-blur transition hover:border-[#78a7c2] hover:bg-white"
-          >
-            ←
-          </button>
+        <MachineSpotlightLabel
+          label={
+            machine.category
+          }
+        />
 
-          <div className="flex items-center gap-1.5">
-            {machines.map(
-              (
-                machine,
-                index,
-              ) => (
-                <button
-                  key={machine}
-                  type="button"
-                  aria-label={`Ver tecnologia ${index + 1}`}
-                  onClick={() =>
-                    setActiveIndex(
-                      index,
-                    )
-                  }
-                  className={`
-                    h-2
-                    rounded-full
-                    transition-all
-                    duration-300
+        <CarouselControls
+          machines={
+            displayMachines
+          }
+          activeIndex={
+            safeIndex
+          }
+          onPrevious={
+            previous
+          }
+          onNext={
+            next
+          }
+          onSelect={
+            setActiveIndex
+          }
+        />
+      </PremiumViewport>
 
-                    ${
-                      index ===
-                      safeIndex
-                        ? "w-7 bg-[#1476b8]"
-                        : "w-2 bg-[#9db6c4] hover:bg-[#779bae]"
-                    }
-                  `}
-                />
-              ),
-            )}
-          </div>
-
-          <button
-            type="button"
-            onClick={next}
-            aria-label="Próxima tecnologia"
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-[#b6cad5] bg-[#eef4f7]/90 text-[#416c84] backdrop-blur transition hover:border-[#78a7c2] hover:bg-white"
-          >
-            →
-          </button>
-        </div>
-      </div>
-
-      <div className="mt-4 flex items-center justify-between gap-4 rounded-[16px] border border-[#cad9e1] bg-[#e8f1f5] px-4 py-3">
-        <div>
-          <p className="text-[9px] font-semibold uppercase tracking-[0.12em] text-[#6c8695]">
-            Explorando
-          </p>
-
-          <p className="mt-1 text-xs font-semibold text-[#31566d]">
-            {activeMachine.name}
-          </p>
-        </div>
-
-        <span className="shrink-0 text-[10px] font-medium text-[#698494]">
-          {safeIndex + 1} /{" "}
-          {machines.length}
-        </span>
-      </div>
+      <OrientationPanel
+        label="Orientação em construção"
+        title="Explorando tecnologias"
+        text="As respostas das próximas etapas irão reduzir as possibilidades e aumentar a definição técnica da orientação."
+      />
     </StageShell>
   );
 }
+
+/* ============================================================
+ * AVALIAÇÃO
+ * ============================================================ */
 
 function EvaluationStage({
   step,
   recommendation,
 }) {
+  const reduceMotion =
+    useReducedMotion();
+
   const matches =
-    recommendation.machineMatches;
+    useMemo(
+      () =>
+        collectMachineMatches(
+          recommendation,
+        ),
+      [
+        recommendation,
+      ],
+    );
 
   const [
     selectedId,
     setSelectedId,
   ] = useState(
-    matches[0]?.machineId ??
-      null,
+    null,
   );
 
+  const matchKey =
+    matches
+      .map(
+        (
+          match,
+        ) =>
+          match.machineId,
+      )
+      .join(
+        "|",
+      );
+
   useEffect(() => {
-    if (matches.length === 0) {
-      setSelectedId(null);
+    if (
+      matches.length ===
+      0
+    ) {
+      setSelectedId(
+        null,
+      );
+
       return;
     }
 
     const exists =
       matches.some(
-        (match) =>
+        (
+          match,
+        ) =>
           match.machineId ===
           selectedId,
       );
@@ -377,49 +458,64 @@ function EvaluationStage({
       );
     }
   }, [
-    matches,
+    matchKey,
     selectedId,
+    matches,
   ]);
 
   const selectedMatch =
     matches.find(
-      (match) =>
+      (
+        match,
+      ) =>
         match.machineId ===
         selectedId,
     ) ??
     matches[0];
 
-  const stageTitle =
-    step === 2
-      ? "O projeto começa a tomar forma."
-      : step === 3
-        ? "As tecnologias estão sendo avaliadas."
-        : "Estamos refinando sua configuração.";
-
-  const stageLabel =
-    step === 2
-      ? "Pré-seleção"
-      : step === 3
-        ? "Avaliação técnica"
-        : "Refinamento";
+  const stageCopy =
+    getStageCopy(
+      step,
+    );
 
   if (!selectedMatch) {
     return (
       <StageShell>
-        <StageEyebrow>
-          {stageLabel}
-        </StageEyebrow>
+        <StageHeader
+          eyebrow={
+            stageCopy.eyebrow
+          }
+          counter="Em análise"
+        />
 
-        <h3 className="mt-3 text-2xl font-semibold tracking-[-0.035em] text-[#0b2340]">
-          Precisamos de mais informações.
-        </h3>
+        <StageTitle>
+          {
+            stageCopy.title
+          }
+        </StageTitle>
 
-        <p className="mt-3 text-sm leading-6 text-[#68808e]">
-          Continue preenchendo o projeto para que as tecnologias relacionadas
-          possam ser avaliadas.
-        </p>
+        <StageDescription>
+          Continue preenchendo o projeto para que as tecnologias possam ser
+          comparadas com mais precisão.
+        </StageDescription>
 
-        <EmptyTechnicalGraphic />
+        <PremiumViewport
+          compact
+        >
+          <PremiumMachineBackground />
+
+          <EmptyTechnicalGraphic />
+        </PremiumViewport>
+
+        <DefinitionPanel
+          score={
+            recommendation.definitionScore ??
+            0
+          }
+          label={
+            stageCopy.progressLabel
+          }
+        />
       </StageShell>
     );
   }
@@ -430,239 +526,350 @@ function EvaluationStage({
     );
 
   if (!machine) {
+    return null;
+  }
+
+  return (
+    <StageShell>
+      <StageHeader
+        eyebrow={
+          stageCopy.eyebrow
+        }
+        counter={
+          getDefinitionLabel(
+            recommendation.definitionScore,
+          )
+        }
+      />
+
+      <AnimatePresence
+        mode="wait"
+      >
+        <motion.div
+          key={`evaluation-title-${step}-${machine.id}`}
+          initial={
+            reduceMotion
+              ? false
+              : {
+                  opacity: 0,
+                  y: 6,
+                }
+          }
+          animate={{
+            opacity: 1,
+            y: 0,
+          }}
+          exit={{
+            opacity: 0,
+          }}
+          transition={{
+            duration:
+              0.3,
+          }}
+        >
+          <StageTitle>
+            {
+              machine.name
+            }
+          </StageTitle>
+
+          <StageCategory>
+            {
+              machine.category
+            }
+          </StageCategory>
+
+          <StageDescription>
+            {
+              stageCopy.description
+            }
+          </StageDescription>
+        </motion.div>
+      </AnimatePresence>
+
+      <PremiumViewport
+        compact
+      >
+        <PremiumMachineBackground />
+
+        <AnimatePresence
+          mode="wait"
+          initial={false}
+        >
+          <motion.div
+            key={
+              machine.id
+            }
+            initial={
+              reduceMotion
+                ? false
+                : {
+                    opacity: 0,
+                    x: 32,
+                    scale:
+                      0.97,
+                  }
+            }
+            animate={{
+              opacity: 1,
+              x: 0,
+              scale: 1,
+            }}
+            exit={{
+              opacity: 0,
+              x: -24,
+              scale:
+                0.98,
+            }}
+            transition={{
+              duration:
+                0.5,
+              ease: [
+                0.22,
+                1,
+                0.36,
+                1,
+              ],
+            }}
+            className="absolute inset-0 z-20 flex items-center justify-center px-6 py-6"
+          >
+            <MachineDisplay
+              machine={
+                machine
+              }
+              reduceMotion={
+                reduceMotion
+              }
+            />
+          </motion.div>
+        </AnimatePresence>
+
+        <MatchBadge
+          level={
+            selectedMatch.level
+          }
+        />
+      </PremiumViewport>
+
+      <DefinitionPanel
+        score={
+          recommendation.definitionScore ??
+          0
+        }
+        label={
+          stageCopy.progressLabel
+        }
+      />
+
+      <ReasonPanel
+        match={
+          selectedMatch
+        }
+      />
+
+      {matches.length >
+        1 && (
+        <MachineAlternatives
+          matches={
+            matches
+          }
+          selectedId={
+            selectedMatch.machineId
+          }
+          onSelect={
+            setSelectedId
+          }
+        />
+      )}
+    </StageShell>
+  );
+}
+
+/* ============================================================
+ * SOLUÇÃO
+ * ============================================================ */
+
+function SolutionStage({
+  recommendation,
+}) {
+  const reduceMotion =
+    useReducedMotion();
+
+  const primaryMachines =
+    useMemo(
+      () =>
+        collectPrimaryMachines(
+          recommendation,
+        ),
+      [
+        recommendation,
+      ],
+    );
+
+  const primaryId =
+    primaryMachines[0] ??
+    null;
+
+  const machine =
+    primaryId
+      ? getMachineProfile(
+          primaryId,
+        )
+      : null;
+
+  if (!machine) {
     return (
       <StageShell>
-        <StageEyebrow>
-          {stageLabel}
-        </StageEyebrow>
+        <StageHeader
+          eyebrow="Orientação final"
+          counter="Validação técnica"
+        />
 
-        <h3 className="mt-3 text-2xl font-semibold tracking-[-0.035em] text-[#0b2340]">
-          Atualizando avaliação...
-        </h3>
+        <StageTitle>
+          Configuração preparada.
+        </StageTitle>
 
-        <p className="mt-3 text-sm leading-6 text-[#68808e]">
-          O conjunto de tecnologias está sendo reorganizado conforme suas
-          respostas.
-        </p>
-
-        <EmptyTechnicalGraphic />
+        <StageDescription>
+          A equipe técnica poderá complementar a orientação antes de definir a
+          estratégia final.
+        </StageDescription>
       </StageShell>
     );
   }
 
   return (
-    <StageShell>
-      <StageEyebrow>
-        {stageLabel}
-      </StageEyebrow>
+    <StageShell
+      final
+    >
+      <StageHeader
+        eyebrow="Tecnologia priorizada"
+        counter={
+          getDefinitionLabel(
+            recommendation.definitionScore,
+          )
+        }
+      />
 
       <div className="mt-3 flex items-start justify-between gap-4">
         <div>
-          <h3 className="text-2xl font-semibold tracking-[-0.035em] text-[#0b2340] sm:text-3xl">
-            {stageTitle}
+          <h3 className="text-[27px] font-semibold leading-[1.05] tracking-[-0.04em] text-[#071f2d] sm:text-[29px]">
+            {
+              machine.name
+            }
           </h3>
 
-          <p className="mt-2 max-w-lg text-xs leading-5 text-[#6e8492] sm:text-sm sm:leading-6">
-            {recommendation.summary}
-          </p>
+          <StageCategory>
+            {
+              machine.category
+            }
+          </StageCategory>
         </div>
 
-        <DefinitionPill
-          score={
-            recommendation.definitionScore
-          }
+        <span className="shrink-0 rounded-full border border-[#65b8ee]/45 bg-[#071f2d] px-3 py-1.5 text-[9px] font-semibold uppercase tracking-[0.1em] text-white shadow-[0_8px_20px_rgba(7,31,45,0.12)]">
+          Orientação inicial
+        </span>
+      </div>
+
+      <PremiumViewport
+        solution
+      >
+        <PremiumMachineBackground
+          strong
         />
-      </div>
 
-      <div className="mt-6 overflow-hidden rounded-[24px] border border-[#cbd9e1] bg-[#dce7ed]">
-        <div className="relative min-h-[330px] overflow-hidden px-5 py-7 sm:min-h-[390px] sm:px-7">
-          <StageBackground />
-
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={machine.id}
-              initial={{
-                opacity: 0,
-                y: 16,
-                scale: 0.96,
-              }}
-              animate={{
-                opacity: 1,
-                y: 0,
-                scale: 1,
-              }}
-              exit={{
-                opacity: 0,
-                y: -10,
-                scale: 0.97,
-              }}
-              transition={{
-                duration: 0.45,
-              }}
-              className="relative z-10 flex flex-col items-center"
-            >
-              <div className="relative flex h-[190px] w-full items-center justify-center sm:h-[240px]">
-                <TechnicalRings />
-
-                <img
-                  src={machine.image}
-                  alt={machine.name}
-                  className="relative z-10 max-h-[180px] max-w-[85%] object-contain drop-shadow-[0_22px_28px_rgba(31,67,91,0.16)] sm:max-h-[230px]"
-                />
-              </div>
-
-              <MatchBadge
-                match={
-                  selectedMatch
+        <motion.div
+          initial={
+            reduceMotion
+              ? false
+              : {
+                  opacity: 0,
+                  y: 16,
+                  scale:
+                    0.965,
                 }
-              />
+          }
+          animate={{
+            opacity: 1,
+            y: 0,
+            scale: 1,
+          }}
+          transition={{
+            duration:
+              0.65,
+            ease: [
+              0.22,
+              1,
+              0.36,
+              1,
+            ],
+          }}
+          className="absolute inset-0 z-20 flex items-center justify-center px-6 py-6"
+        >
+          <MachineDisplay
+            machine={
+              machine
+            }
+            reduceMotion={
+              reduceMotion
+            }
+            solution
+          />
+        </motion.div>
 
-              <h4 className="mt-3 text-xl font-semibold text-[#17394f]">
-                {machine.name}
-              </h4>
+        <MachineSpotlightLabel
+          label="Maior aderência ao cenário informado"
+          strong
+        />
+      </PremiumViewport>
 
-              <p className="mt-1 text-center text-[10px] uppercase tracking-[0.11em] text-[#688499]">
-                {machine.category}
-              </p>
-            </motion.div>
-          </AnimatePresence>
-        </div>
+      <DefinitionPanel
+        score={
+          recommendation.definitionScore ??
+          0
+        }
+        label="Definição da orientação"
+        final
+      />
 
-        <div className="border-t border-[#c9d7df] bg-[#edf3f6] p-4 sm:p-5">
-          <p className="text-[9px] font-semibold uppercase tracking-[0.14em] text-[#5f8094]">
-            Por que esta tecnologia está nessa posição?
+      {primaryMachines.length >
+        1 && (
+        <div className="mt-3 rounded-[16px] border border-[#b5ccd8]/70 bg-white/34 px-4 py-3">
+          <p className="text-[9px] font-semibold uppercase tracking-[0.12em] text-[#688595]">
+            Tecnologias complementares
           </p>
 
-          {selectedMatch.reasons.length >
-          0 ? (
-            <div className="mt-3 space-y-2">
-              {selectedMatch.reasons
-                .slice(0, 3)
-                .map((reason) => (
-                  <TechnicalPoint
-                    key={reason}
-                    symbol="+"
-                    text={reason}
-                  />
-                ))}
-            </div>
-          ) : (
-            <p className="mt-3 text-xs leading-5 text-[#758b97]">
-              Ainda não existem critérios suficientes para explicar uma
-              prioridade técnica.
-            </p>
-          )}
+          <div className="mt-2 flex flex-wrap gap-2">
+            {primaryMachines
+              .slice(
+                1,
+              )
+              .map(
+                (
+                  machineId,
+                ) => {
+                  const profile =
+                    getMachineProfile(
+                      machineId,
+                    );
 
-          {selectedMatch.warnings.length >
-            0 && (
-            <div className="mt-3 space-y-2">
-              {selectedMatch.warnings
-                .slice(0, 2)
-                .map((warning) => (
-                  <TechnicalPoint
-                    key={warning}
-                    symbol="△"
-                    text={warning}
-                    warning
-                  />
-                ))}
-            </div>
-          )}
-        </div>
-      </div>
+                  if (!profile) {
+                    return null;
+                  }
 
-      {matches.length > 1 && (
-        <div className="mt-4">
-          <p className="text-[9px] font-semibold uppercase tracking-[0.13em] text-[#6e8593]">
-            Tecnologias em avaliação
-          </p>
-
-          <div className="mt-2 grid gap-2 sm:grid-cols-2">
-            {matches.map(
-              (match) => {
-                const profile =
-                  getMachineProfile(
-                    match.machineId,
-                  );
-
-                if (!profile) {
-                  return null;
-                }
-
-                const selected =
-                  match.machineId ===
-                  selectedMatch.machineId;
-
-                return (
-                  <button
-                    key={
-                      match.machineId
-                    }
-                    type="button"
-                    onClick={() =>
-                      setSelectedId(
-                        match.machineId,
-                      )
-                    }
-                    className={`
-                      flex
-                      items-center
-                      justify-between
-                      gap-3
-                      rounded-[14px]
-                      border
-                      px-3
-                      py-3
-                      text-left
-                      transition-all
-
-                      ${
-                        selected
-                          ? "border-[#64a2c8] bg-[#e0eef6]"
-                          : "border-[#ccd9e0] bg-[#edf3f6] hover:border-[#a9c0cd]"
+                  return (
+                    <span
+                      key={
+                        machineId
                       }
-                    `}
-                  >
-                    <div className="min-w-0">
-                      <p className="truncate text-xs font-semibold text-[#31566d]">
-                        {profile.name}
-                      </p>
-
-                      <p className="mt-1 text-[9px] uppercase tracking-[0.08em] text-[#7a909c]">
-                        {matchLabel(
-                          match.level,
-                        )}
-                      </p>
-                    </div>
-
-                    <span className="text-[#5a839a]">
-                      →
+                      className="rounded-full border border-[#a9c5d3]/70 bg-[#e4eff4] px-3 py-1.5 text-[10px] font-semibold text-[#456f86]"
+                    >
+                      {
+                        profile.name
+                      }
                     </span>
-                  </button>
-                );
-              },
-            )}
-          </div>
-        </div>
-      )}
-
-      {recommendation.insights.length >
-        0 && (
-        <div className="mt-4 rounded-[18px] border border-[#c7d8e1] bg-[#e5eff5] p-4">
-          <p className="text-[9px] font-semibold uppercase tracking-[0.13em] text-[#5f8094]">
-            O que entendemos até agora
-          </p>
-
-          <div className="mt-3 space-y-2">
-            {recommendation.insights
-              .slice(0, 4)
-              .map((insight) => (
-                <TechnicalPoint
-                  key={insight}
-                  symbol="●"
-                  text={insight}
-                />
-              ))}
+                  );
+                },
+              )}
           </div>
         </div>
       )}
@@ -670,302 +877,930 @@ function EvaluationStage({
   );
 }
 
-function SolutionStage({
-  state,
-  recommendation,
+/* ============================================================
+ * VIEWPORT PREMIUM
+ * ============================================================ */
+
+function PremiumViewport({
+  children,
+  compact = false,
+  solution = false,
 }) {
-  const primaryMachines =
-    useMemo(
-      () =>
-        Array.from(
-          new Set(
-            recommendation.pieces.flatMap(
-              (piece) =>
-                piece.services
-                  .map(
-                    (service) =>
-                      service.primaryMachine,
-                  )
-                  .filter(Boolean),
-            ),
-          ),
-        ),
-      [recommendation],
-    );
+  let height =
+    "min-h-[435px] sm:min-h-[475px]";
+
+  if (
+    compact
+  ) {
+    height =
+      "min-h-[355px] sm:min-h-[390px]";
+  }
+
+  if (
+    solution
+  ) {
+    height =
+      "min-h-[440px] sm:min-h-[485px]";
+  }
 
   return (
-    <StageShell>
-      <StageEyebrow>
-        Configuração preliminar
-      </StageEyebrow>
+    <div
+      className={`
+        relative
+        mt-5
+        overflow-hidden
+        rounded-[22px]
+        border
+        border-[#87abc0]/45
+        bg-[#d9e7ee]
+        shadow-[inset_0_1px_0_rgba(255,255,255,0.75),0_18px_40px_rgba(31,68,92,0.06)]
 
-      <div className="mt-3 flex items-start justify-between gap-4">
-        <div>
-          <h3 className="text-2xl font-semibold tracking-[-0.035em] text-[#0b2340] sm:text-3xl">
-            Esta é a solução que construímos.
-          </h3>
-
-          <p className="mt-2 max-w-lg text-xs leading-5 text-[#6e8492] sm:text-sm sm:leading-6">
-            A configuração reúne as tecnologias com maior aderência às
-            informações fornecidas e será validada pela equipe técnica.
-          </p>
-        </div>
-
-        <DefinitionPill
-          score={
-            recommendation.definitionScore
-          }
-        />
-      </div>
-
-      <div className="relative mt-6 overflow-hidden rounded-[24px] border border-[#cbd9e1] bg-[#dce7ed] p-4 sm:p-6">
-        <StageBackground />
-
-        {primaryMachines.length >
-        0 ? (
-          <div
-            className={`
-              relative
-              z-10
-              grid
-              gap-4
-
-              ${
-                primaryMachines.length >
-                1
-                  ? "sm:grid-cols-2"
-                  : ""
-              }
-            `}
-          >
-            {primaryMachines.map(
-              (machineId) => {
-                const machine =
-                  getMachineProfile(
-                    machineId,
-                  );
-
-                if (!machine) {
-                  return null;
-                }
-
-                return (
-                  <motion.div
-                    key={machineId}
-                    initial={{
-                      opacity: 0,
-                      y: 10,
-                    }}
-                    animate={{
-                      opacity: 1,
-                      y: 0,
-                    }}
-                    className="flex min-h-[270px] flex-col items-center justify-center rounded-[20px] border border-[#c1d1da] bg-[#e7eff3]/75 p-4 backdrop-blur-sm"
-                  >
-                    <div className="relative flex h-[170px] w-full items-center justify-center">
-                      <TechnicalRings />
-
-                      <img
-                        src={
-                          machine.image
-                        }
-                        alt={
-                          machine.name
-                        }
-                        className="relative z-10 max-h-[160px] max-w-[90%] object-contain drop-shadow-[0_18px_25px_rgba(31,67,91,0.15)]"
-                      />
-                    </div>
-
-                    <h4 className="mt-3 text-center text-base font-semibold text-[#17394f]">
-                      {machine.name}
-                    </h4>
-
-                    <p className="mt-1 text-center text-[9px] uppercase tracking-[0.1em] text-[#6d8797]">
-                      {machine.category}
-                    </p>
-                  </motion.div>
-                );
-              },
-            )}
-          </div>
-        ) : (
-          <p className="relative z-10 py-16 text-center text-sm text-[#6b8290]">
-            A configuração precisa de mais informações antes de destacar uma
-            tecnologia principal.
-          </p>
-        )}
-      </div>
-
-      <div className="mt-5">
-        <p className="text-[9px] font-semibold uppercase tracking-[0.13em] text-[#6c8594]">
-          Estratégia preliminar
-        </p>
-
-        <div className="mt-3 space-y-3">
-          {recommendation.pieces.map(
-            (
-              piece,
-              index,
-            ) => {
-              const sourcePiece =
-                state.pieces.find(
-                  (item) =>
-                    item.id ===
-                    piece.pieceId,
-                );
-
-              return (
-                <div
-                  key={piece.pieceId}
-                  className="rounded-[18px] border border-[#ccd9e1] bg-[#edf3f6] p-4"
-                >
-                  <p className="text-[9px] font-semibold uppercase tracking-[0.12em] text-[#708796]">
-                    Peça{" "}
-                    {String(
-                      index + 1,
-                    ).padStart(
-                      2,
-                      "0",
-                    )}{" "}
-                    ·{" "}
-                    {sourcePiece?.name ||
-                      "Componente"}
-                  </p>
-
-                  <div className="mt-3 space-y-2">
-                    {piece.services.map(
-                      (service) => {
-                        const machine =
-                          service.primaryMachine
-                            ? getMachineProfile(
-                                service.primaryMachine,
-                              )
-                            : null;
-
-                        return (
-                          <div
-                            key={
-                              service.service
-                            }
-                            className="flex items-center gap-3"
-                          >
-                            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[#bfd1db] bg-white text-[11px] text-[#4d7992]">
-                              →
-                            </div>
-
-                            <div>
-                              <p className="text-[10px] font-semibold text-[#31566d]">
-                                {
-                                  getService(
-                                    service.service,
-                                  ).name
-                                }
-                              </p>
-
-                              <p className="mt-0.5 text-[10px] text-[#768b97]">
-                                {machine
-                                  ? machine.name
-                                  : "Avaliação técnica necessária"}
-                              </p>
-                            </div>
-                          </div>
-                        );
-                      },
-                    )}
-                  </div>
-                </div>
-              );
-            },
-          )}
-        </div>
-      </div>
-
-      <div className="mt-4 rounded-[18px] border border-[#bfd2dd] bg-[#e5eff5] p-4">
-        <p className="text-[9px] font-semibold uppercase tracking-[0.13em] text-[#5c7f94]">
-          Importante
-        </p>
-
-        <p className="mt-2 text-[11px] leading-5 text-[#6b8290]">
-          O resultado representa uma orientação inicial. A estratégia final de
-          medição, aquisição e processamento depende da validação da equipe
-          técnica e das condições reais da peça.
-        </p>
-      </div>
-    </StageShell>
+        ${height}
+      `}
+    >
+      {children}
+    </div>
   );
 }
+
+/* ============================================================
+ * FUNDO DA MÁQUINA
+ * ============================================================ */
+
+function PremiumMachineBackground({
+  strong = false,
+}) {
+  const reduceMotion =
+    useReducedMotion();
+
+  return (
+    <>
+      {/* PROFUNDIDADE */}
+
+      <div
+        className={`
+          pointer-events-none
+          absolute
+          inset-0
+
+          ${
+            strong
+              ? "bg-[radial-gradient(circle_at_50%_48%,rgba(255,255,255,0.98)_0%,rgba(224,239,247,0.86)_36%,rgba(134,181,208,0.42)_68%,rgba(38,91,125,0.18)_100%)]"
+              : "bg-[radial-gradient(circle_at_50%_48%,rgba(255,255,255,0.96)_0%,rgba(229,241,247,0.84)_38%,rgba(157,197,219,0.34)_70%,rgba(70,124,157,0.13)_100%)]"
+          }
+        `}
+      />
+
+      {/* BLUE GLOW */}
+
+      <motion.div
+        animate={
+          reduceMotion
+            ? undefined
+            : {
+                opacity: [
+                  0.24,
+                  0.42,
+                  0.24,
+                ],
+                scale: [
+                  0.96,
+                  1.05,
+                  0.96,
+                ],
+              }
+        }
+        transition={{
+          duration: 7,
+          repeat:
+            Infinity,
+          ease:
+            "easeInOut",
+        }}
+        className="pointer-events-none absolute left-1/2 top-[47%] h-[330px] w-[330px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#0057B8]/10 blur-[60px]"
+      />
+
+      {/* HALO CENTRAL */}
+
+      <motion.div
+        animate={
+          reduceMotion
+            ? undefined
+            : {
+                rotate:
+                  360,
+              }
+        }
+        transition={{
+          duration: 42,
+          repeat:
+            Infinity,
+          ease:
+            "linear",
+        }}
+        className="pointer-events-none absolute left-1/2 top-1/2 h-[310px] w-[310px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#0057B8]/16"
+      >
+        <span className="absolute left-1/2 top-[-4px] h-2 w-2 -translate-x-1/2 rounded-full bg-[#65B8EE] shadow-[0_0_16px_rgba(101,184,238,0.65)]" />
+
+        <span className="absolute bottom-[11%] right-[6%] h-1.5 w-1.5 rounded-full bg-[#0057B8]/60" />
+      </motion.div>
+
+      <motion.div
+        animate={
+          reduceMotion
+            ? undefined
+            : {
+                rotate:
+                  -360,
+              }
+        }
+        transition={{
+          duration: 58,
+          repeat:
+            Infinity,
+          ease:
+            "linear",
+        }}
+        className="pointer-events-none absolute left-1/2 top-1/2 h-[235px] w-[235px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-dashed border-[#12364E]/16"
+      />
+
+      {/* EIXOS */}
+
+      <div className="pointer-events-none absolute left-[13%] right-[13%] top-1/2 h-px bg-gradient-to-r from-transparent via-[#0057B8]/16 to-transparent" />
+
+      <div className="pointer-events-none absolute bottom-[12%] top-[12%] left-1/2 w-px bg-gradient-to-b from-transparent via-[#0057B8]/12 to-transparent" />
+
+      {/* CORNER ELEMENT */}
+
+      <div className="pointer-events-none absolute -right-[90px] -top-[90px] h-[220px] w-[220px] rounded-full border border-[#0057B8]/12" />
+
+      <div className="pointer-events-none absolute -bottom-[110px] -left-[110px] h-[250px] w-[250px] rounded-full border border-[#65B8EE]/15" />
+
+      {/* SHOWROOM LIGHT SWEEP */}
+
+      {!reduceMotion && (
+        <motion.div
+          aria-hidden="true"
+          initial={{
+            x: "-180%",
+          }}
+          animate={{
+            x: "300%",
+          }}
+          transition={{
+            duration: 2.4,
+            repeat:
+              Infinity,
+            repeatDelay: 6.5,
+            ease:
+              "easeInOut",
+          }}
+          className="pointer-events-none absolute -top-[40%] z-10 h-[180%] w-[18%] rotate-[18deg] bg-gradient-to-r from-transparent via-white/30 to-transparent blur-[8px]"
+        />
+      )}
+
+      {/* TOP LIGHT */}
+
+      <div className="pointer-events-none absolute left-[16%] right-[16%] top-0 h-px bg-gradient-to-r from-transparent via-white to-transparent" />
+    </>
+  );
+}
+
+/* ============================================================
+ * MÁQUINA
+ * ============================================================ */
+
+function MachineDisplay({
+  machine,
+  reduceMotion,
+  large = false,
+  solution = false,
+}) {
+  const imageSize =
+    solution
+      ? "max-h-[350px] sm:max-h-[390px] max-w-[94%]"
+      : large
+        ? "max-h-[300px] sm:max-h-[340px] max-w-[94%]"
+        : "max-h-[245px] sm:max-h-[285px] max-w-[91%]";
+
+  return (
+    <div className="relative flex h-full w-full items-center justify-center">
+      {/* SOMBRA */}
+
+      <motion.div
+        animate={
+          reduceMotion
+            ? undefined
+            : {
+                opacity: [
+                  0.18,
+                  0.3,
+                  0.18,
+                ],
+                scaleX: [
+                  0.92,
+                  1.07,
+                  0.92,
+                ],
+              }
+        }
+        transition={{
+          duration: 7,
+          repeat:
+            Infinity,
+          ease:
+            "easeInOut",
+        }}
+        className="absolute bottom-[10%] h-8 w-[46%] rounded-[100%] bg-[#12364E]/20 blur-[16px]"
+      />
+
+      {/* GLOW IMEDIATO */}
+
+      <div className="pointer-events-none absolute h-[62%] w-[62%] rounded-full bg-white/34 blur-[42px]" />
+
+      {/* EQUIPAMENTO */}
+
+      <motion.div
+        animate={
+          reduceMotion
+            ? undefined
+            : {
+                y: [
+                  0,
+                  -6,
+                  0,
+                ],
+              }
+        }
+        transition={{
+          duration:
+            solution
+              ? 7.8
+              : 7,
+          repeat:
+            Infinity,
+          ease:
+            "easeInOut",
+        }}
+        className="relative z-20 flex h-full w-full items-center justify-center"
+      >
+        <img
+          src={
+            machine.image
+          }
+          alt={
+            machine.name
+          }
+          draggable="false"
+          className={`
+            select-none
+            object-contain
+            drop-shadow-[0_32px_34px_rgba(23,63,87,0.24)]
+
+            ${imageSize}
+          `}
+        />
+      </motion.div>
+    </div>
+  );
+}
+
+/* ============================================================
+ * LABEL SOBRE O PALCO
+ * ============================================================ */
+
+function MachineSpotlightLabel({
+  label,
+  strong = false,
+}) {
+  return (
+    <div className="pointer-events-none absolute left-4 top-4 z-30">
+      <div
+        className={`
+          flex
+          items-center
+          gap-2
+          rounded-full
+          border
+          px-3
+          py-1.5
+          backdrop-blur-[16px]
+
+          ${
+            strong
+              ? "border-[#65B8EE]/40 bg-[#071F2D]/88 text-white"
+              : "border-white/58 bg-[#071F2D]/72 text-white"
+          }
+        `}
+      >
+        <span className="h-1.5 w-1.5 rounded-full bg-[#65B8EE] shadow-[0_0_10px_rgba(101,184,238,0.55)]" />
+
+        <p className="text-[9px] font-semibold uppercase tracking-[0.1em]">
+          {label}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+/* ============================================================
+ * SHELL
+ * ============================================================ */
 
 function StageShell({
   children,
+  final = false,
 }) {
   return (
-    <aside className="relative rounded-[26px] border border-[#c8d6df] bg-[#eef3f6] p-5 shadow-[0_24px_65px_rgba(34,67,90,0.08)] sm:p-6 lg:sticky lg:top-6">
-      {children}
+    <aside
+      className={`
+        relative
+        overflow-hidden
+        rounded-[24px]
+        border
+        border-white/72
+        bg-white/36
+        p-5
+        shadow-[0_26px_72px_rgba(31,68,92,0.09)]
+        backdrop-blur-[18px]
+        sm:p-6
+        lg:sticky
+        lg:top-[112px]
+
+        ${
+          final
+            ? "h-full"
+            : ""
+        }
+      `}
+    >
+      <div className="pointer-events-none absolute -right-24 -top-24 h-52 w-52 rounded-full bg-[#65B8EE]/7 blur-[55px]" />
+
+      <div className="pointer-events-none absolute left-[12%] right-[12%] top-0 h-px bg-gradient-to-r from-transparent via-white to-transparent" />
+
+      <div className="relative z-10">
+        {children}
+      </div>
     </aside>
   );
 }
 
-function StageEyebrow({
+/* ============================================================
+ * CABEÇALHO
+ * ============================================================ */
+
+function StageHeader({
+  eyebrow,
+  counter,
+}) {
+  const reduceMotion =
+    useReducedMotion();
+
+  return (
+    <div className="flex items-center justify-between gap-4">
+      <div className="flex items-center gap-3">
+        <motion.span
+          animate={
+            reduceMotion
+              ? undefined
+              : {
+                  scale: [
+                    1,
+                    1.18,
+                    1,
+                  ],
+                  boxShadow: [
+                    "0 0 0 0 rgba(101,184,238,0.12)",
+                    "0 0 0 6px rgba(101,184,238,0.05)",
+                    "0 0 0 0 rgba(101,184,238,0.12)",
+                  ],
+                }
+          }
+          transition={{
+            duration: 3.5,
+            repeat:
+              Infinity,
+            ease:
+              "easeInOut",
+          }}
+          className="h-2 w-2 rounded-full bg-[#0057B8]"
+        />
+
+        <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[#4c7892]">
+          {eyebrow}
+        </p>
+      </div>
+
+      <span className="rounded-full border border-[#b3cad6]/62 bg-white/42 px-3 py-1.5 text-[9px] font-semibold uppercase tracking-[0.09em] text-[#688390] backdrop-blur-[12px]">
+        {counter}
+      </span>
+    </div>
+  );
+}
+
+function StageTitle({
   children,
 }) {
   return (
-    <div className="flex items-center gap-3">
-      <span className="h-2 w-2 rounded-full bg-[#1684c5] shadow-[0_0_0_5px_rgba(22,132,197,0.09)]" />
-
-      <p className="text-[9px] font-semibold uppercase tracking-[0.16em] text-[#58809a]">
-        {children}
-      </p>
-    </div>
+    <h3 className="mt-4 text-[27px] font-semibold leading-[1.07] tracking-[-0.04em] text-[#071F2D] sm:text-[29px]">
+      {children}
+    </h3>
   );
 }
 
-function DefinitionPill({
-  score,
+function StageCategory({
+  children,
 }) {
   return (
-    <div className="hidden shrink-0 text-right sm:block">
-      <p className="text-[9px] font-semibold uppercase tracking-[0.12em] text-[#728a98]">
-        Definição
+    <p className="mt-1.5 text-[10px] font-semibold uppercase tracking-[0.13em] text-[#527f98]">
+      {children}
+    </p>
+  );
+}
+
+function StageDescription({
+  children,
+}) {
+  return (
+    <p className="mt-2.5 max-w-[560px] text-[12px] leading-6 text-[#69818e]">
+      {children}
+    </p>
+  );
+}
+
+/* ============================================================
+ * CARROSSEL
+ * ============================================================ */
+
+function CarouselControls({
+  machines,
+  activeIndex,
+  onPrevious,
+  onNext,
+  onSelect,
+}) {
+  return (
+    <div className="absolute inset-x-4 bottom-4 z-30 flex items-center justify-between gap-4 sm:inset-x-5">
+      <button
+        type="button"
+        onClick={
+          onPrevious
+        }
+        className="flex h-9 w-9 items-center justify-center rounded-full border border-white/55 bg-[#071F2D]/78 text-[14px] text-white shadow-[0_8px_18px_rgba(7,31,45,0.14)] backdrop-blur-[14px] transition-all duration-300 hover:-translate-x-0.5 hover:bg-[#12364E]"
+        aria-label="Tecnologia anterior"
+      >
+        ←
+      </button>
+
+      <div className="flex items-center gap-1.5 rounded-full border border-white/45 bg-[#071F2D]/68 px-3 py-2 shadow-[0_8px_18px_rgba(7,31,45,0.10)] backdrop-blur-[14px]">
+        {machines.map(
+          (
+            machineId,
+            index,
+          ) => (
+            <button
+              key={
+                machineId
+              }
+              type="button"
+              onClick={() =>
+                onSelect(
+                  index,
+                )
+              }
+              className={`
+                h-[6px]
+                rounded-full
+                transition-all
+                duration-500
+
+                ${
+                  index ===
+                  activeIndex
+                    ? "w-7 bg-[#65B8EE]"
+                    : "w-[6px] bg-white/34 hover:bg-white/70"
+                }
+              `}
+              aria-label={`Ver tecnologia ${index + 1}`}
+            />
+          ),
+        )}
+      </div>
+
+      <button
+        type="button"
+        onClick={
+          onNext
+        }
+        className="flex h-9 w-9 items-center justify-center rounded-full border border-white/55 bg-[#071F2D]/78 text-[14px] text-white shadow-[0_8px_18px_rgba(7,31,45,0.14)] backdrop-blur-[14px] transition-all duration-300 hover:translate-x-0.5 hover:bg-[#12364E]"
+        aria-label="Próxima tecnologia"
+      >
+        →
+      </button>
+    </div>
+  );
+}
+
+/* ============================================================
+ * DEFINIÇÃO
+ * ============================================================ */
+
+function DefinitionPanel({
+  score,
+  label,
+  final = false,
+}) {
+  const safeScore =
+    Math.min(
+      100,
+      Math.max(
+        0,
+        Number(
+          score,
+        ) ||
+          0,
+      ),
+    );
+
+  return (
+    <div
+      className={`
+        mt-3
+        overflow-hidden
+        rounded-[16px]
+        border
+        px-4
+        py-3.5
+
+        ${
+          final
+            ? "border-[#12364E]/20 bg-[#12364E]"
+            : "border-white/72 bg-white/34"
+        }
+      `}
+    >
+      <div className="flex items-center justify-between gap-5">
+        <div>
+          <p
+            className={`
+              text-[9px]
+              font-semibold
+              uppercase
+              tracking-[0.12em]
+
+              ${
+                final
+                  ? "text-[#8ccbf2]"
+                  : "text-[#6f8795]"
+              }
+            `}
+          >
+            {label}
+          </p>
+
+          <p
+            className={`
+              mt-1
+              text-[11px]
+              font-semibold
+
+              ${
+                final
+                  ? "text-white/82"
+                  : "text-[#315c72]"
+              }
+            `}
+          >
+            {
+              getDefinitionDescription(
+                safeScore,
+              )
+            }
+          </p>
+        </div>
+
+        <motion.span
+          key={
+            safeScore
+          }
+          initial={{
+            opacity: 0,
+            y: 3,
+          }}
+          animate={{
+            opacity: 1,
+            y: 0,
+          }}
+          className={`
+            text-[20px]
+            font-semibold
+            tracking-[-0.04em]
+
+            ${
+              final
+                ? "text-white"
+                : "text-[#0057B8]"
+            }
+          `}
+        >
+          {Math.round(
+            safeScore,
+          )}
+          %
+        </motion.span>
+      </div>
+
+      <div
+        className={`
+          mt-3
+          h-[4px]
+          overflow-hidden
+          rounded-full
+
+          ${
+            final
+              ? "bg-white/15"
+              : "bg-[#bbccd5]/62"
+          }
+        `}
+      >
+        <motion.div
+          initial={false}
+          animate={{
+            width: `${safeScore}%`,
+          }}
+          transition={{
+            duration:
+              0.65,
+            ease: [
+              0.22,
+              1,
+              0.36,
+              1,
+            ],
+          }}
+          className={`
+            h-full
+            rounded-full
+
+            ${
+              final
+                ? "bg-[#65B8EE]"
+                : "bg-[#0057B8]"
+            }
+          `}
+        />
+      </div>
+    </div>
+  );
+}
+
+/* ============================================================
+ * ORIENTAÇÃO
+ * ============================================================ */
+
+function OrientationPanel({
+  label,
+  title,
+  text,
+}) {
+  return (
+    <div className="mt-3 rounded-[16px] border border-[#adc6d3]/60 bg-white/35 px-4 py-3.5 backdrop-blur-[14px]">
+      <div className="flex items-center gap-2">
+        <span className="h-1.5 w-1.5 rounded-full bg-[#0057B8]" />
+
+        <p className="text-[9px] font-semibold uppercase tracking-[0.12em] text-[#688798]">
+          {label}
+        </p>
+      </div>
+
+      <p className="mt-2 text-[12px] font-semibold text-[#214d65]">
+        {title}
       </p>
 
-      <p className="mt-1 text-xl font-semibold text-[#1476b8]">
-        {score}%
+      <p className="mt-1.5 text-[11px] leading-5 text-[#748995]">
+        {text}
       </p>
     </div>
   );
 }
+
+/* ============================================================
+ * BADGE
+ * ============================================================ */
 
 function MatchBadge({
-  match,
+  level,
 }) {
   return (
-    <span className="rounded-full border border-[#aac7d7] bg-[#e7f1f6] px-3 py-1.5 text-[9px] font-semibold uppercase tracking-[0.1em] text-[#3d708e]">
-      {matchLabel(
-        match.level,
-      )}
-    </span>
+    <div className="absolute bottom-5 left-1/2 z-30 -translate-x-1/2">
+      <span className="inline-flex whitespace-nowrap rounded-full border border-[#65B8EE]/40 bg-[#071F2D]/84 px-3 py-1.5 text-[9px] font-semibold uppercase tracking-[0.1em] text-white shadow-[0_8px_20px_rgba(7,31,45,0.14)] backdrop-blur-[14px]">
+        {
+          getMatchLabel(
+            level,
+          )
+        }
+      </span>
+    </div>
   );
 }
 
-function matchLabel(level) {
-  return {
-    candidate:
-      "Tecnologia candidata",
-    high:
-      "Alta aderência",
-    good:
-      "Boa aderência",
-    possible:
-      "Possível aplicação",
-    low:
-      "Baixa prioridade",
-    review:
-      "Avaliação necessária",
-  }[level];
+/* ============================================================
+ * MOTIVOS
+ * ============================================================ */
+
+function ReasonPanel({
+  match,
+}) {
+  const reasons =
+    Array.isArray(
+      match?.reasons,
+    )
+      ? match.reasons.slice(
+          0,
+          2,
+        )
+      : [];
+
+  const warnings =
+    Array.isArray(
+      match?.warnings,
+    )
+      ? match.warnings.slice(
+          0,
+          1,
+        )
+      : [];
+
+  if (
+    reasons.length ===
+      0 &&
+    warnings.length ===
+      0
+  ) {
+    return null;
+  }
+
+  return (
+    <div className="mt-3 rounded-[16px] border border-[#b8ccd7]/60 bg-white/30 px-4 py-3.5">
+      <p className="text-[9px] font-semibold uppercase tracking-[0.12em] text-[#688697]">
+        Leitura técnica
+      </p>
+
+      <div className="mt-2.5 space-y-2">
+        {reasons.map(
+          (
+            reason,
+          ) => (
+            <TechnicalPoint
+              key={
+                reason
+              }
+              text={
+                reason
+              }
+            />
+          ),
+        )}
+
+        {warnings.map(
+          (
+            warning,
+          ) => (
+            <TechnicalPoint
+              key={
+                warning
+              }
+              text={
+                warning
+              }
+              warning
+            />
+          ),
+        )}
+      </div>
+    </div>
+  );
 }
 
+/* ============================================================
+ * ALTERNATIVAS
+ * ============================================================ */
+
+function MachineAlternatives({
+  matches,
+  selectedId,
+  onSelect,
+}) {
+  return (
+    <div className="mt-3">
+      <p className="text-[9px] font-semibold uppercase tracking-[0.12em] text-[#718997]">
+        Tecnologias em avaliação
+      </p>
+
+      <div className="mt-2 flex gap-2 overflow-x-auto pb-1">
+        {matches
+          .slice(
+            0,
+            4,
+          )
+          .map(
+            (
+              match,
+            ) => {
+              const machine =
+                getMachineProfile(
+                  match.machineId,
+                );
+
+              if (!machine) {
+                return null;
+              }
+
+              const selected =
+                match.machineId ===
+                selectedId;
+
+              return (
+                <button
+                  key={
+                    match.machineId
+                  }
+                  type="button"
+                  onClick={() =>
+                    onSelect(
+                      match.machineId,
+                    )
+                  }
+                  className={`
+                    min-w-[140px]
+                    rounded-[13px]
+                    border
+                    px-3
+                    py-2.5
+                    text-left
+                    transition-all
+                    duration-300
+
+                    ${
+                      selected
+                        ? "border-[#0057B8]/25 bg-[#12364E] shadow-[0_8px_18px_rgba(18,54,78,0.10)]"
+                        : "border-white/70 bg-white/28 hover:border-[#aac5d2] hover:bg-white/50"
+                    }
+                  `}
+                >
+                  <p
+                    className={`
+                      truncate
+                      text-[10px]
+                      font-semibold
+
+                      ${
+                        selected
+                          ? "text-white"
+                          : "text-[#315a70]"
+                      }
+                    `}
+                  >
+                    {
+                      machine.name
+                    }
+                  </p>
+
+                  <p
+                    className={`
+                      mt-1
+                      text-[9px]
+                      uppercase
+                      tracking-[0.07em]
+
+                      ${
+                        selected
+                          ? "text-[#8ccbf2]"
+                          : "text-[#80939d]"
+                      }
+                    `}
+                  >
+                    {
+                      getMatchLabel(
+                        match.level,
+                      )
+                    }
+                  </p>
+                </button>
+              );
+            },
+          )}
+      </div>
+    </div>
+  );
+}
+
+/* ============================================================
+ * PONTO TÉCNICO
+ * ============================================================ */
+
 function TechnicalPoint({
-  symbol,
   text,
   warning = false,
 }) {
@@ -973,90 +1808,439 @@ function TechnicalPoint({
     <div className="flex items-start gap-2.5">
       <span
         className={`
-          mt-[1px]
-          flex
-          h-5
-          w-5
+          mt-[6px]
+          h-1.5
+          w-1.5
           shrink-0
-          items-center
-          justify-center
           rounded-full
-          text-[9px]
-          font-semibold
 
           ${
             warning
-              ? "bg-[#f1ebe1] text-[#8a7047]"
-              : "bg-[#dcecf5] text-[#397392]"
+              ? "bg-[#d39a4a]"
+              : "bg-[#0057B8]"
           }
         `}
-      >
-        {symbol}
-      </span>
+      />
 
-      <p className="text-[11px] leading-5 text-[#647d8b]">
+      <p className="text-[11px] leading-5 text-[#6d8390]">
         {text}
       </p>
     </div>
   );
 }
 
-function TechnicalRings() {
-  return (
-    <>
-      <motion.div
-        aria-hidden="true"
-        animate={{
-          rotate: 360,
-        }}
-        transition={{
-          duration: 28,
-          repeat: Infinity,
-          ease: "linear",
-        }}
-        className="pointer-events-none absolute h-[180px] w-[180px] rounded-full border border-[#5d94b5]/20 sm:h-[230px] sm:w-[230px]"
-      >
-        <span className="absolute -right-1 top-1/2 h-2 w-2 rounded-full bg-[#6da4c4]/70" />
-      </motion.div>
-
-      <motion.div
-        aria-hidden="true"
-        animate={{
-          rotate: -360,
-        }}
-        transition={{
-          duration: 38,
-          repeat: Infinity,
-          ease: "linear",
-        }}
-        className="pointer-events-none absolute h-[130px] w-[130px] rounded-full border border-dashed border-[#7ba5bd]/20 sm:h-[170px] sm:w-[170px]"
-      />
-    </>
-  );
-}
-
-function StageBackground() {
-  return (
-    <>
-      <div className="pointer-events-none absolute -right-24 -top-24 h-[250px] w-[250px] rounded-full border border-[#5e8eaa]/10" />
-
-      <div className="pointer-events-none absolute -bottom-20 -left-24 h-[230px] w-[230px] rounded-full border border-[#5e8eaa]/10" />
-
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,rgba(255,255,255,0.68),transparent_55%)]" />
-    </>
-  );
-}
+/* ============================================================
+ * VAZIO
+ * ============================================================ */
 
 function EmptyTechnicalGraphic() {
-  return (
-    <div className="relative mx-auto mt-10 flex h-[260px] max-w-[460px] items-center justify-center">
-      <TechnicalRings />
+  const reduceMotion =
+    useReducedMotion();
 
-      <div className="relative z-10 flex h-24 w-24 items-center justify-center rounded-full border border-[#aac2d0] bg-[#e2ecf1]">
-        <span className="text-3xl font-light text-[#6c95ad]">
-          +
-        </span>
-      </div>
-    </div>
+  return (
+    <motion.div
+      animate={
+        reduceMotion
+          ? undefined
+          : {
+              y: [
+                0,
+                -4,
+                0,
+              ],
+            }
+      }
+      transition={{
+        duration: 6,
+        repeat:
+          Infinity,
+        ease:
+          "easeInOut",
+      }}
+      className="relative z-20 flex h-20 w-20 items-center justify-center rounded-full border border-[#65B8EE]/40 bg-[#071F2D]/78 text-[27px] font-light text-white shadow-[0_12px_30px_rgba(7,31,45,0.14)] backdrop-blur-[14px]"
+    >
+      +
+    </motion.div>
   );
+}
+
+/* ============================================================
+ * COPY POR ETAPA
+ * ============================================================ */
+
+function getStageCopy(
+  step,
+) {
+  if (
+    step <=
+    2
+  ) {
+    return {
+      eyebrow:
+        "Mapeando aplicação",
+
+      title:
+        "A solução começa a tomar forma.",
+
+      description:
+        "As características iniciais da peça já começam a reduzir o conjunto de possibilidades.",
+
+      progressLabel:
+        "Definição inicial",
+    };
+  }
+
+  if (
+    step ===
+    3
+  ) {
+    return {
+      eyebrow:
+        "Entendendo a peça",
+
+      title:
+        "O contexto físico começa a pesar na análise.",
+
+      description:
+        "Porte e condição de atendimento ajudam a separar tecnologias com aplicações diferentes.",
+
+      progressLabel:
+        "Definição da aplicação",
+    };
+  }
+
+  if (
+    step ===
+    4
+  ) {
+    return {
+      eyebrow:
+        "Analisando requisitos",
+
+      title:
+        "Agora comparamos objetivos técnicos.",
+
+      description:
+        "As necessidades informadas começam a destacar tecnologias com maior aderência ao projeto.",
+
+      progressLabel:
+        "Definição técnica",
+    };
+  }
+
+  if (
+    step ===
+    5
+  ) {
+    return {
+      eyebrow:
+        "Avaliando critérios",
+
+      title:
+        "Os critérios decisivos refinam a seleção.",
+
+      description:
+        "Precisão, detalhe, região de interesse e geometria passam a ter maior peso na orientação.",
+
+      progressLabel:
+        "Aderência técnica",
+    };
+  }
+
+  if (
+    step ===
+    6
+  ) {
+    return {
+      eyebrow:
+        "Validando condições",
+
+      title:
+        "As condições reais refinam a estratégia.",
+
+      description:
+        "Superfície, acesso, documentação e demais condições complementam a avaliação.",
+
+      progressLabel:
+        "Definição da estratégia",
+    };
+  }
+
+  return {
+    eyebrow:
+      "Refinando solução",
+
+    title:
+      "Estamos fechando a orientação inicial.",
+
+    description:
+      "Os últimos pontos ajudam a consolidar a tecnologia com maior aderência ao cenário informado.",
+
+    progressLabel:
+      "Definição da orientação",
+  };
+}
+
+/* ============================================================
+ * LABELS
+ * ============================================================ */
+
+function getDefinitionLabel(
+  score,
+) {
+  const value =
+    Number(
+      score,
+    ) ||
+    0;
+
+  if (
+    value >=
+    85
+  ) {
+    return "Muito definida";
+  }
+
+  if (
+    value >=
+    65
+  ) {
+    return "Bem definida";
+  }
+
+  if (
+    value >=
+    40
+  ) {
+    return "Em definição";
+  }
+
+  return "Exploratória";
+}
+
+function getDefinitionDescription(
+  score,
+) {
+  if (
+    score >=
+    85
+  ) {
+    return "Cenário técnico consistente.";
+  }
+
+  if (
+    score >=
+    65
+  ) {
+    return "Bons critérios para comparação.";
+  }
+
+  if (
+    score >=
+    40
+  ) {
+    return "Critérios importantes já identificados.";
+  }
+
+  return "Construindo contexto técnico.";
+}
+
+function getMatchLabel(
+  level,
+) {
+  const labels = {
+    candidate:
+      "Candidata",
+
+    high:
+      "Alta aderência",
+
+    good:
+      "Boa aderência",
+
+    possible:
+      "Possível",
+
+    low:
+      "Baixa prioridade",
+
+    review:
+      "Requer avaliação",
+  };
+
+  return (
+    labels[
+      level
+    ] ??
+    "Em análise"
+  );
+}
+
+/* ============================================================
+ * NORMALIZAÇÃO
+ * ============================================================ */
+
+function normalizeMachineId(
+  value,
+) {
+  if (
+    typeof value ===
+    "string"
+  ) {
+    return value;
+  }
+
+  if (
+    value &&
+    typeof value ===
+      "object"
+  ) {
+    return (
+      value.machineId ??
+      value.id ??
+      null
+    );
+  }
+
+  return null;
+}
+
+function normalizeMachineList(
+  list,
+) {
+  if (
+    !Array.isArray(
+      list,
+    )
+  ) {
+    return [];
+  }
+
+  return Array.from(
+    new Set(
+      list
+        .map(
+          normalizeMachineId,
+        )
+        .filter(
+          Boolean,
+        ),
+    ),
+  );
+}
+
+function collectMachineMatches(
+  recommendation,
+) {
+  if (
+    Array.isArray(
+      recommendation.machineMatches,
+    ) &&
+    recommendation.machineMatches.length >
+      0
+  ) {
+    return recommendation.machineMatches;
+  }
+
+  const collected =
+    [];
+
+  for (
+    const piece of recommendation.pieces ??
+    []
+  ) {
+    for (
+      const service of piece.services ??
+      []
+    ) {
+      for (
+        const match of service.matches ??
+        []
+      ) {
+        const existing =
+          collected.find(
+            (
+              item,
+            ) =>
+              item.machineId ===
+              match.machineId,
+          );
+
+        if (!existing) {
+          collected.push(
+            match,
+          );
+
+          continue;
+        }
+
+        if (
+          Number(
+            match.score,
+          ) >
+          Number(
+            existing.score,
+          )
+        ) {
+          const index =
+            collected.indexOf(
+              existing,
+            );
+
+          collected[
+            index
+          ] =
+            match;
+        }
+      }
+    }
+  }
+
+  return collected.sort(
+    (
+      a,
+      b,
+    ) =>
+      Number(
+        b.score,
+      ) -
+      Number(
+        a.score,
+      ),
+  );
+}
+
+function collectPrimaryMachines(
+  recommendation,
+) {
+  const machines =
+    [];
+
+  for (
+    const piece of recommendation.pieces ??
+    []
+  ) {
+    for (
+      const service of piece.services ??
+      []
+    ) {
+      const machineId =
+        normalizeMachineId(
+          service.primaryMachine,
+        );
+
+      if (
+        machineId &&
+        !machines.includes(
+          machineId,
+        )
+      ) {
+        machines.push(
+          machineId,
+        );
+      }
+    }
+  }
+
+  return machines;
 }

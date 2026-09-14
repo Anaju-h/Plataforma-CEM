@@ -5,6 +5,7 @@ import { Container } from "./Container";
 
 const navigation = [
   { label: "Início", href: "/" },
+  { label: "Sobre", href: "/sobre" },
   { label: "Serviços", href: "/servicos" },
   { label: "Equipamentos", href: "/equipamentos" },
   { label: "Soluções", href: "/#solucoes" },

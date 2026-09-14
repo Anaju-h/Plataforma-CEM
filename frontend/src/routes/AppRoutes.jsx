@@ -9,6 +9,10 @@ import {
 } from "../components/internal/ProtectedRoute";
 
 import {
+  ScrollToTop,
+} from "../components/layout/ScrollToTop";
+
+import {
   CustomerLayout,
 } from "../layouts/CustomerLayout";
 
@@ -45,8 +49,16 @@ import {
 } from "../pages/ServicosPage";
 
 import {
+  SobrePage,
+} from "../pages/SobrePage";
+
+import {
   CustomerAccessPage,
 } from "../pages/customer/CustomerAccessPage";
+
+import {
+  CustomerAccountPage,
+} from "../pages/customer/CustomerAccountPage";
 
 import {
   CustomerDashboardPage,
@@ -55,6 +67,10 @@ import {
 import {
   CustomerDocumentsPage,
 } from "../pages/customer/CustomerDocumentsPage";
+
+import {
+  CustomerNewRequestPage,
+} from "../pages/customer/CustomerNewRequestPage";
 
 import {
   CustomerProjectsPage,
@@ -126,167 +142,186 @@ import {
 
 export function AppRoutes() {
   return (
-    <Routes>
-      {/* =========================
-          ÁREA PÚBLICA
-      ========================== */}
+    <>
+      <ScrollToTop />
 
-      <Route element={<PublicLayout />}>
-        <Route
-          path="/"
-          element={<HomePage />}
-        />
+      <Routes>
+        {/* =========================
+            ÁREA PÚBLICA
+        ========================== */}
 
-        <Route
-          path="/equipamentos"
-          element={<EquipamentosPage />}
-        />
-
-        <Route
-          path="/servicos"
-          element={<ServicosPage />}
-        />
-
-        <Route
-          path="/orcamento"
-          element={<OrcamentoPage />}
-        />
-
-        <Route
-          path="/configurador"
-          element={<ConfiguradorPage />}
-        />
-      </Route>
-
-      {/* =========================
-          ACESSO DO CLIENTE
-      ========================== */}
-
-      <Route element={<CustomerLayout />}>
-        <Route
-          path="/cliente"
-          element={<CustomerAccessPage />}
-        />
-      </Route>
-
-      {/* =========================
-          PORTAL DO CLIENTE
-      ========================== */}
-
-      <Route element={<CustomerPortalLayout />}>
-        <Route
-          path="/cliente/dashboard"
-          element={<CustomerDashboardPage />}
-        />
-
-        <Route
-          path="/cliente/solicitacoes"
-          element={<CustomerRequestsPage />}
-        />
-
-        <Route
-          path="/cliente/orcamentos"
-          element={<CustomerQuotesPage />}
-        />
-
-        <Route
-          path="/cliente/projetos"
-          element={<CustomerProjectsPage />}
-        />
-
-        <Route
-          path="/cliente/documentos"
-          element={<CustomerDocumentsPage />}
-        />
-      </Route>
-
-      {/* =========================
-          ÁREA INTERNA
-      ========================== */}
-
-      <Route
-        path="/portal/login"
-        element={<LoginPage />}
-      />
-
-      <Route element={<ProtectedRoute />}>
-        <Route element={<InternalLayout />}>
+        <Route element={<PublicLayout />}>
           <Route
-            path="/portal"
-            element={<DashboardPage />}
+            path="/"
+            element={<HomePage />}
           />
 
           <Route
-            path="/portal/dashboard"
-            element={
-              <Navigate
-                to="/portal"
-                replace
-              />
-            }
+            path="/sobre"
+            element={<SobrePage />}
           />
 
           <Route
-            path="/portal/meu-trabalho"
-            element={<MyWorkPage />}
+            path="/equipamentos"
+            element={<EquipamentosPage />}
           />
 
           <Route
-            path="/portal/solicitacoes"
-            element={<RequestsPage />}
+            path="/servicos"
+            element={<ServicosPage />}
           />
 
           <Route
-            path="/portal/solicitacoes/:requestId"
-            element={<RequestDetailPage />}
+            path="/orcamento"
+            element={<OrcamentoPage />}
           />
 
           <Route
-            path="/portal/orcamentos"
-            element={<QuotesPage />}
-          />
-
-          <Route
-            path="/portal/orcamentos/:quoteId"
-            element={<QuoteDetailPage />}
-          />
-
-          <Route
-            path="/portal/projetos"
-            element={<ProjectsPage />}
-          />
-
-          <Route
-            path="/portal/projetos/:projectId"
-            element={<ProjectDetailPage />}
-          />
-
-          <Route
-            path="/portal/conhecimento"
-            element={<KnowledgePage />}
-          />
-
-          <Route
-            path="/portal/conhecimento/:knowledgeId"
-            element={<KnowledgeDetailPage />}
-          />
-
-          <Route
-            path="/portal/equipamentos-custos"
-            element={<EquipmentCostsPage />}
-          />
-
-          <Route
-            path="/portal/equipe"
-            element={<TeamPage />}
-          />
-
-          <Route
-            path="/portal/administracao"
-            element={<AdministrationPage />}
+            path="/configurador"
+            element={<ConfiguradorPage />}
           />
         </Route>
-      </Route>
-    </Routes>
+
+        {/* =========================
+            ACESSO DO CLIENTE
+        ========================== */}
+
+        <Route element={<CustomerLayout />}>
+          <Route
+            path="/cliente"
+            element={<CustomerAccessPage />}
+          />
+        </Route>
+
+        {/* =========================
+            PORTAL DO CLIENTE
+        ========================== */}
+
+        <Route element={<CustomerPortalLayout />}>
+          <Route
+            path="/cliente/dashboard"
+            element={<CustomerDashboardPage />}
+          />
+
+          <Route
+            path="/cliente/nova-solicitacao"
+            element={<CustomerNewRequestPage />}
+          />
+
+          <Route
+            path="/cliente/solicitacoes"
+            element={<CustomerRequestsPage />}
+          />
+
+          <Route
+            path="/cliente/orcamentos"
+            element={<CustomerQuotesPage />}
+          />
+
+          <Route
+            path="/cliente/projetos"
+            element={<CustomerProjectsPage />}
+          />
+
+          <Route
+            path="/cliente/documentos"
+            element={<CustomerDocumentsPage />}
+          />
+
+          <Route
+            path="/cliente/conta"
+            element={<CustomerAccountPage />}
+          />
+        </Route>
+
+        {/* =========================
+            ÁREA INTERNA
+        ========================== */}
+
+        <Route
+          path="/portal/login"
+          element={<LoginPage />}
+        />
+
+        <Route element={<ProtectedRoute />}>
+          <Route element={<InternalLayout />}>
+            <Route
+              path="/portal"
+              element={<DashboardPage />}
+            />
+
+            <Route
+              path="/portal/dashboard"
+              element={
+                <Navigate
+                  to="/portal"
+                  replace
+                />
+              }
+            />
+
+            <Route
+              path="/portal/meu-trabalho"
+              element={<MyWorkPage />}
+            />
+
+            <Route
+              path="/portal/solicitacoes"
+              element={<RequestsPage />}
+            />
+
+            <Route
+              path="/portal/solicitacoes/:requestId"
+              element={<RequestDetailPage />}
+            />
+
+            <Route
+              path="/portal/orcamentos"
+              element={<QuotesPage />}
+            />
+
+            <Route
+              path="/portal/orcamentos/:quoteId"
+              element={<QuoteDetailPage />}
+            />
+
+            <Route
+              path="/portal/projetos"
+              element={<ProjectsPage />}
+            />
+
+            <Route
+              path="/portal/projetos/:projectId"
+              element={<ProjectDetailPage />}
+            />
+
+            <Route
+              path="/portal/conhecimento"
+              element={<KnowledgePage />}
+            />
+
+            <Route
+              path="/portal/conhecimento/:knowledgeId"
+              element={<KnowledgeDetailPage />}
+            />
+
+            <Route
+              path="/portal/equipamentos-custos"
+              element={<EquipmentCostsPage />}
+            />
+
+            <Route
+              path="/portal/equipe"
+              element={<TeamPage />}
+            />
+
+            <Route
+              path="/portal/administracao"
+              element={<AdministrationPage />}
+            />
+          </Route>
+        </Route>
+      </Routes>
+    </>
   );
 }

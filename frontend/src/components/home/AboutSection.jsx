@@ -80,7 +80,6 @@ export function AboutSection() {
               xl:gap-16
             "
           >
-            {/* IMAGEM */}
             <motion.div
               initial={{
                 opacity: 0,
@@ -138,7 +137,7 @@ export function AboutSection() {
                     y: imageParallaxY,
                     scale: imageScale,
                   }}
-                  src="/images/home/Centro.jpeg"
+                  src="/images/home/centro-foto.jpeg"
                   alt="Centro de Excelência em Metrologia SENAI ZEISS"
                   className="
                     absolute
@@ -248,7 +247,6 @@ export function AboutSection() {
               </div>
             </motion.div>
 
-            {/* CONTEÚDO */}
             <motion.div
               style={{
                 y: contentY,
@@ -401,7 +399,7 @@ export function AboutSection() {
                 "
               >
                 <Link
-                  to="/institucional"
+                  to="/sobre"
                   className="
                     group
                     inline-flex

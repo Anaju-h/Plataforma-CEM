@@ -11,6 +11,10 @@ import {
   buildRefinementQuestions,
 } from "../engine/refinementEngine";
 
+/* ============================================================
+ * COMPONENTE PRINCIPAL
+ * ============================================================ */
+
 export function RefinementStep({
   state,
   definitionScore,
@@ -54,7 +58,9 @@ export function RefinementStep({
           (piece) =>
             piece.id ===
             pieceId
-              ? updater(piece)
+              ? updater(
+                  piece,
+                )
               : piece,
         ),
     });
@@ -62,100 +68,76 @@ export function RefinementStep({
 
   return (
     <div>
-      <div className="flex items-center gap-3">
-        <span className="rounded-full bg-[#dbeaf3] px-3 py-1 text-[10px] font-semibold tracking-[0.16em] text-[#1476b8]">
-          04 / 05
-        </span>
+      {/* =====================================================
+          INTRODUÇÃO
+      ===================================================== */}
 
-        <span className="text-[10px] font-medium uppercase tracking-[0.14em] text-[#78909e]">
+      <div>
+        <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[#6d8795]">
           Refinamento
-        </span>
+        </p>
+
+        <h2 className="mt-3 max-w-[650px] text-[30px] font-semibold leading-[1.08] tracking-[-0.04em] text-[#071f2d] sm:text-[33px]">
+          Vamos confirmar os últimos pontos.
+        </h2>
+
+        <p className="mt-3 max-w-[680px] text-[13px] leading-6 text-[#6f8592]">
+          O configurador já possui uma visão inicial da aplicação.
+          Agora aparecem somente informações que ainda podem melhorar
+          a orientação técnica.
+        </p>
       </div>
 
-      <h2 className="mt-4 text-3xl font-semibold tracking-[-0.035em] text-[#0b2340] sm:text-[2rem]">
-        Vamos confirmar os últimos pontos.
-      </h2>
+      {/* =====================================================
+          NÍVEL DE DEFINIÇÃO
+      ===================================================== */}
 
-      <p className="mt-2 max-w-xl text-sm leading-6 text-[#667d8b] sm:text-base">
-        Já temos uma visão inicial do projeto. Agora aparecem somente
-        informações que ainda podem melhorar a orientação técnica.
-      </p>
+      <DefinitionCard
+        definitionScore={
+          definitionScore
+        }
+      />
 
-      <section className="mt-6 rounded-[20px] border border-[#c6d8e2] bg-[#e5eff5] p-5">
-        <div className="flex items-end justify-between gap-4">
-          <div>
-            <p className="text-[9px] font-semibold uppercase tracking-[0.14em] text-[#62859a]">
-              Definição do projeto
-            </p>
-
-            <p className="mt-1.5 text-lg font-semibold text-[#17394f]">
-              {getDefinitionLabel(
-                definitionScore,
-              )}
-            </p>
-          </div>
-
-          <span className="text-sm font-semibold text-[#1476b8]">
-            {definitionScore}%
-          </span>
-        </div>
-
-        <div className="mt-4 h-2 overflow-hidden rounded-full bg-[#ccdce4]">
-          <div
-            className="h-full rounded-full bg-[#1684c5] transition-all duration-500"
-            style={{
-              width: `${Math.max(
-                3,
-                definitionScore,
-              )}%`,
-            }}
-          />
-        </div>
-
-        <p className="mt-3 text-[11px] leading-5 text-[#6c8391]">
-          Esse indicador representa quanto já conhecemos sobre a aplicação.
-          Ele não representa uma certeza metrológica ou aprovação técnica.
-        </p>
-      </section>
+      {/* =====================================================
+          SEM PERGUNTAS
+      ===================================================== */}
 
       {questions.length ===
       0 ? (
-        <section className="mt-5 rounded-[20px] border border-[#bcd5c7] bg-[#eaf3ed] p-5">
-          <div className="flex items-start gap-3">
-            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[#a9c9b6] bg-white/70 text-sm text-[#427258]">
-              ✓
-            </span>
-
-            <div>
-              <p className="text-sm font-semibold text-[#315d46]">
-                Sua configuração já possui boa definição.
-              </p>
-
-              <p className="mt-2 text-xs leading-5 text-[#668274]">
-                Não identificamos outra pergunta essencial antes da
-                solicitação. A equipe técnica continuará responsável pela
-                validação final.
-              </p>
-            </div>
-          </div>
-        </section>
+        <CompleteState />
       ) : (
         <>
-          <div className="mt-5 flex items-center justify-between gap-4">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.13em] text-[#648092]">
-              {questions.length}{" "}
-              {questions.length ===
-              1
-                ? "ponto pode melhorar"
-                : "pontos podem melhorar"}{" "}
-              a configuração
-            </p>
+          {/* =================================================
+              CABEÇALHO DAS PERGUNTAS
+          ================================================= */}
 
-            <span className="shrink-0 text-[10px] font-medium text-[#738996]">
-              {safeIndex + 1} /{" "}
-              {questions.length}
+          <div className="mt-5 flex items-end justify-between gap-4">
+            <div>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-[#718a98]">
+                Pontos de refinamento
+              </p>
+
+              <p className="mt-1.5 text-[12px] leading-5 text-[#8799a2]">
+                {questions.length ===
+                1
+                  ? "Há 1 informação que ainda pode melhorar a orientação."
+                  : `Há ${questions.length} informações que ainda podem melhorar a orientação.`}
+              </p>
+            </div>
+
+            <span className="shrink-0 rounded-full border border-white/76 bg-white/36 px-3 py-1.5 text-[11px] font-semibold text-[#688494]">
+              {safeIndex +
+                1}{" "}
+              /{" "}
+              {
+                questions.length
+              }
             </span>
           </div>
+
+          {/* =================================================
+              PERGUNTA ATUAL
+          ================================================= */}
 
           {activeQuestion && (
             <div className="mt-3">
@@ -163,7 +145,9 @@ export function RefinementStep({
                 question={
                   activeQuestion
                 }
-                state={state}
+                state={
+                  state
+                }
                 updatePiece={
                   updatePiece
                 }
@@ -171,122 +155,142 @@ export function RefinementStep({
             </div>
           )}
 
-          {questions.length > 1 && (
-            <div className="mt-4 flex items-center justify-between gap-3">
-              <button
-                type="button"
-                disabled={
-                  safeIndex === 0
-                }
-                onClick={() =>
-                  setActiveIndex(
-                    (current) =>
-                      Math.max(
-                        0,
-                        current - 1,
-                      ),
-                  )
-                }
-                className="
-                  rounded-xl
-                  border
-                  border-[#cad8e0]
-                  bg-[#f8fbfc]
-                  px-3
-                  py-3
-                  text-[9px]
-                  font-semibold
-                  uppercase
-                  tracking-[0.07em]
-                  text-[#607887]
-                  transition
-                  hover:border-[#9eb8c7]
-                  disabled:cursor-not-allowed
-                  disabled:opacity-30
-                  sm:px-4
-                  sm:text-[10px]
-                "
-              >
-                ← Anterior
-              </button>
+          {/* =================================================
+              NAVEGAÇÃO
+          ================================================= */}
 
-              <div className="flex items-center gap-1.5">
-                {questions.map(
+          {questions.length >
+            1 && (
+            <QuestionNavigation
+              questions={
+                questions
+              }
+              safeIndex={
+                safeIndex
+              }
+              onPrevious={() =>
+                setActiveIndex(
                   (
-                    question,
-                    index,
-                  ) => (
-                    <button
-                      key={`${question.pieceId}-${question.id}`}
-                      type="button"
-                      aria-label={`Ir para refinamento ${index + 1}`}
-                      onClick={() =>
-                        setActiveIndex(
-                          index,
-                        )
-                      }
-                      className={`
-                        h-2
-                        rounded-full
-                        transition-all
-                        duration-300
-
-                        ${
-                          index ===
-                          safeIndex
-                            ? "w-7 bg-[#1476b8]"
-                            : "w-2 bg-[#b6cbd7] hover:bg-[#8faebe]"
-                        }
-                      `}
-                    />
-                  ),
-                )}
-              </div>
-
-              <button
-                type="button"
-                disabled={
-                  safeIndex ===
-                  questions.length - 1
-                }
-                onClick={() =>
-                  setActiveIndex(
-                    (current) =>
-                      Math.min(
-                        questions.length - 1,
-                        current + 1,
-                      ),
-                  )
-                }
-                className="
-                  rounded-xl
-                  border
-                  border-[#9cbdd1]
-                  bg-[#dfeef6]
-                  px-3
-                  py-3
-                  text-[9px]
-                  font-semibold
-                  uppercase
-                  tracking-[0.07em]
-                  text-[#286d98]
-                  transition
-                  hover:border-[#70a7c7]
-                  disabled:cursor-not-allowed
-                  disabled:opacity-30
-                  sm:px-4
-                  sm:text-[10px]
-                "
-              >
-                Próximo →
-              </button>
-            </div>
+                    current,
+                  ) =>
+                    Math.max(
+                      0,
+                      current -
+                        1,
+                    ),
+                )
+              }
+              onNext={() =>
+                setActiveIndex(
+                  (
+                    current,
+                  ) =>
+                    Math.min(
+                      questions.length -
+                        1,
+                      current +
+                        1,
+                    ),
+                )
+              }
+              onSelect={
+                setActiveIndex
+              }
+            />
           )}
         </>
       )}
     </div>
   );
 }
+
+/* ============================================================
+ * CARD DE DEFINIÇÃO
+ * ============================================================ */
+
+function DefinitionCard({
+  definitionScore,
+}) {
+  return (
+    <section className="mt-5 rounded-[17px] border border-[#b9d0dc]/68 bg-[#e8f2f6]/54 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] backdrop-blur-[14px]">
+      <div className="flex items-end justify-between gap-4">
+        <div>
+          <p className="text-[10px] font-semibold uppercase tracking-[0.11em] text-[#698796]">
+            Definição atual do projeto
+          </p>
+
+          <p className="mt-1.5 text-[18px] font-semibold tracking-[-0.02em] text-[#31566d]">
+            {getDefinitionLabel(
+              definitionScore,
+            )}
+          </p>
+        </div>
+
+        <div className="text-right">
+          <span className="text-[22px] font-semibold tracking-[-0.035em] text-[#356f9f]">
+            {
+              definitionScore
+            }
+          </span>
+
+          <span className="ml-0.5 text-[12px] font-semibold text-[#7690a0]">
+            %
+          </span>
+        </div>
+      </div>
+
+      <div className="mt-3.5 h-[7px] overflow-hidden rounded-full bg-[#cadbe3]/84">
+        <div
+          className="h-full rounded-full bg-[#65b8ee] transition-all duration-500"
+          style={{
+            width: `${Math.max(
+              3,
+              definitionScore,
+            )}%`,
+          }}
+        />
+      </div>
+
+      <p className="mt-3 max-w-[590px] text-[11px] leading-5 text-[#7d919c]">
+        Este indicador mostra quanto já conhecemos sobre a aplicação.
+        Ele não representa aprovação metrológica nem uma definição final
+        de equipamento.
+      </p>
+    </section>
+  );
+}
+
+/* ============================================================
+ * CONFIGURAÇÃO JÁ BEM DEFINIDA
+ * ============================================================ */
+
+function CompleteState() {
+  return (
+    <section className="mt-5 rounded-[17px] border border-[#b9d0c1]/74 bg-[#edf5f0]/66 p-4.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)]">
+      <div className="flex items-start gap-3.5">
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[#aac9b6] bg-white/64 text-[13px] font-semibold text-[#4c7960]">
+          ✓
+        </span>
+
+        <div>
+          <p className="text-[14px] font-semibold text-[#365f49]">
+            Sua configuração já possui boa definição.
+          </p>
+
+          <p className="mt-1.5 max-w-[610px] text-[11px] leading-5 text-[#6f897b]">
+            Não identificamos outra pergunta essencial neste momento.
+            A equipe técnica continuará responsável pela validação final
+            da solução.
+          </p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ============================================================
+ * CARD DA PERGUNTA ATUAL
+ * ============================================================ */
 
 function RefinementQuestionCard({
   question,
@@ -304,50 +308,74 @@ function RefinementQuestionCard({
     return null;
   }
 
-  return (
-    <section className="rounded-[20px] border border-[#cbd9e1] bg-[#f2f7f9] p-5 sm:p-6">
-      <div className="flex flex-wrap items-center gap-2">
-        <span className="rounded-full border border-[#b6cdda] bg-[#e2eef5] px-3 py-1 text-[9px] font-semibold uppercase tracking-[0.11em] text-[#47758f]">
-          {
-            getService(
-              question.service,
-            ).name
-          }
-        </span>
+  const service =
+    getService(
+      question.service,
+    );
 
-        <span className="rounded-full border border-[#d0dce3] bg-white px-3 py-1 text-[9px] font-medium text-[#718794]">
-          {piece.name.trim() ||
+  return (
+    <section className="rounded-[18px] border border-white/78 bg-white/32 p-4.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.92)] backdrop-blur-[14px]">
+      {/* =====================================================
+          IDENTIFICAÇÃO
+      ===================================================== */}
+
+      <div className="flex flex-wrap items-center gap-2">
+        {service && (
+          <span className="rounded-full border border-[#aac7d6]/72 bg-[#e4eff4]/76 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.08em] text-[#537a90]">
+            {service.name}
+          </span>
+        )}
+
+        <span className="rounded-full border border-white/78 bg-white/48 px-3 py-1.5 text-[10px] font-medium text-[#78909d]">
+          {piece.name?.trim() ||
             "Componente"}
         </span>
       </div>
 
-      <h3 className="mt-4 text-lg font-semibold leading-7 text-[#17394f]">
-        {question.title}
-      </h3>
+      {/* =====================================================
+          PERGUNTA
+      ===================================================== */}
 
-      <p className="mt-2 text-xs leading-5 text-[#708692]">
-        {question.explanation}
-      </p>
+      <div className="mt-4">
+        <h3 className="max-w-[620px] text-[17px] font-semibold leading-6 tracking-[-0.015em] text-[#31566d]">
+          {question.title}
+        </h3>
 
-      {question.id ===
-        "dimensional-tolerance" && (
-        <div className="mt-5">
+        <p className="mt-1.5 max-w-[640px] text-[12px] leading-5 text-[#7b909b]">
+          {
+            question.explanation
+          }
+        </p>
+      </div>
+
+      {/* =====================================================
+          CONTEÚDO DINÂMICO
+      ===================================================== */}
+
+      <div className="mt-4">
+        {question.id ===
+          "dimensional-tolerance" && (
           <ToleranceRefinement
-            piece={piece}
+            piece={
+              piece
+            }
             onChange={(
               knowledge,
               tolerance,
             ) =>
               updatePiece(
                 piece.id,
-                (current) => ({
+                (
+                  current,
+                ) => ({
                   ...current,
 
                   requirements: {
                     ...current.requirements,
 
                     dimensional: {
-                      ...current.requirements
+                      ...current
+                        .requirements
                         .dimensional,
 
                       toleranceKnowledge:
@@ -361,29 +389,33 @@ function RefinementQuestionCard({
               )
             }
           />
-        </div>
-      )}
+        )}
 
-      {question.id ===
-        "dimensional-contact" && (
-        <div className="mt-5">
+        {question.id ===
+          "dimensional-contact" && (
           <ContactRefinement
             value={
-              piece.requirements
+              piece
+                .requirements
                 .dimensional
                 .nonContactNeeded
             }
-            onChange={(answer) =>
+            onChange={(
+              answer,
+            ) =>
               updatePiece(
                 piece.id,
-                (current) => ({
+                (
+                  current,
+                ) => ({
                   ...current,
 
                   requirements: {
                     ...current.requirements,
 
                     dimensional: {
-                      ...current.requirements
+                      ...current
+                        .requirements
                         .dimensional,
 
                       nonContactNeeded:
@@ -394,29 +426,33 @@ function RefinementQuestionCard({
               )
             }
           />
-        </div>
-      )}
+        )}
 
-      {question.id ===
-        "scanning-detail" && (
-        <div className="mt-5">
+        {question.id ===
+          "scanning-detail" && (
           <ScanningDetailRefinement
             value={
-              piece.requirements
+              piece
+                .requirements
                 .scanning
                 .detailLevel
             }
-            onChange={(detailLevel) =>
+            onChange={(
+              detailLevel,
+            ) =>
               updatePiece(
                 piece.id,
-                (current) => ({
+                (
+                  current,
+                ) => ({
                   ...current,
 
                   requirements: {
                     ...current.requirements,
 
                     scanning: {
-                      ...current.requirements
+                      ...current
+                        .requirements
                         .scanning,
 
                       detailLevel,
@@ -426,49 +462,55 @@ function RefinementQuestionCard({
               )
             }
           />
-        </div>
-      )}
+        )}
 
-      {question.id ===
-        "scanning-location" && (
-        <div className="mt-5">
+        {question.id ===
+          "scanning-location" && (
           <LocationRefinement
             value={
               piece.location
             }
-            onChange={(location) =>
+            onChange={(
+              location,
+            ) =>
               updatePiece(
                 piece.id,
-                (current) => ({
+                (
+                  current,
+                ) => ({
                   ...current,
                   location,
                 }),
               )
             }
           />
-        </div>
-      )}
+        )}
 
-      {question.id ===
-        "reverse-geometry-scope" && (
-        <div className="mt-5">
+        {question.id ===
+          "reverse-geometry-scope" && (
           <GeometryScopeRefinement
             value={
-              piece.requirements
+              piece
+                .requirements
                 .reverseEngineering
                 .geometryScope
             }
-            onChange={(geometryScope) =>
+            onChange={(
+              geometryScope,
+            ) =>
               updatePiece(
                 piece.id,
-                (current) => ({
+                (
+                  current,
+                ) => ({
                   ...current,
 
                   requirements: {
                     ...current.requirements,
 
                     reverseEngineering: {
-                      ...current.requirements
+                      ...current
+                        .requirements
                         .reverseEngineering,
 
                       geometryScope,
@@ -478,28 +520,32 @@ function RefinementQuestionCard({
               )
             }
           />
-        </div>
-      )}
+        )}
 
-      {question.id ===
-        "ct-region" && (
-        <div className="mt-5">
+        {question.id ===
+          "ct-region" && (
           <CtRegionRefinement
             value={
-              piece.requirements
+              piece
+                .requirements
                 .ct.region
             }
-            onChange={(region) =>
+            onChange={(
+              region,
+            ) =>
               updatePiece(
                 piece.id,
-                (current) => ({
+                (
+                  current,
+                ) => ({
                   ...current,
 
                   requirements: {
                     ...current.requirements,
 
                     ct: {
-                      ...current.requirements
+                      ...current
+                        .requirements
                         .ct,
 
                       region,
@@ -509,21 +555,26 @@ function RefinementQuestionCard({
               )
             }
           />
-        </div>
-      )}
+        )}
+      </div>
     </section>
   );
 }
+
+/* ============================================================
+ * TOLERÂNCIA
+ * ============================================================ */
 
 function ToleranceRefinement({
   piece,
   onChange,
 }) {
   const requirements =
-    piece.requirements.dimensional;
+    piece.requirements
+      .dimensional;
 
   return (
-    <div className="space-y-2">
+    <div className="grid gap-2.5 sm:grid-cols-2">
       <Choice
         selected={
           requirements.toleranceKnowledge ===
@@ -536,34 +587,8 @@ function ToleranceRefinement({
           )
         }
       >
-        Sei o valor
+        Sei o valor da tolerância
       </Choice>
-
-      {requirements.toleranceKnowledge ===
-        "exact" && (
-        <div className="relative max-w-[220px]">
-          <input
-            type="number"
-            min="0"
-            step="0.001"
-            value={
-              requirements.criticalToleranceMm
-            }
-            onChange={(event) =>
-              onChange(
-                "exact",
-                event.target.value,
-              )
-            }
-            placeholder="0,010"
-            className="h-12 w-full rounded-xl border border-[#c9d7df] bg-white px-4 pr-12 text-sm text-[#17394f] outline-none transition focus:border-[#61a1ca]"
-          />
-
-          <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-xs text-[#8396a2]">
-            mm
-          </span>
-        </div>
-      )}
 
       <Choice
         selected={
@@ -609,64 +634,99 @@ function ToleranceRefinement({
       >
         Ainda não sei
       </Choice>
+
+      {requirements.toleranceKnowledge ===
+        "exact" && (
+        <div className="sm:col-span-2">
+          <div className="rounded-[13px] border border-[#bdd3df]/68 bg-[#e8f2f6]/54 p-3.5">
+            <label className="block max-w-[240px]">
+              <span className="mb-1.5 block text-[10px] font-semibold uppercase tracking-[0.08em] text-[#6c8797]">
+                Menor tolerância
+              </span>
+
+              <div className="relative">
+                <input
+                  type="number"
+                  min="0"
+                  step="0.001"
+                  value={
+                    requirements.criticalToleranceMm
+                  }
+                  onChange={(
+                    event,
+                  ) =>
+                    onChange(
+                      "exact",
+                      event
+                        .target
+                        .value,
+                    )
+                  }
+                  placeholder="0,010"
+                  className="h-11 w-full rounded-[11px] border border-white/82 bg-white/50 px-3 pr-11 text-[13px] font-semibold text-[#31566d] outline-none transition-all placeholder:font-normal placeholder:text-[#a2afb6] focus:border-[#92b6c8] focus:bg-white/76 focus:ring-2 focus:ring-[#65b8ee]/10"
+                />
+
+                <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-semibold text-[#8296a1]">
+                  mm
+                </span>
+              </div>
+            </label>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
+
+/* ============================================================
+ * CONTATO
+ * ============================================================ */
 
 function ContactRefinement({
   value,
   onChange,
 }) {
+  const options = [
+    {
+      value: "yes",
+      label:
+        "Existem regiões que não devem ser tocadas",
+    },
+    {
+      value: "no",
+      label:
+        "A medição pode ser realizada por contato",
+    },
+    {
+      value: "maybe",
+      label:
+        "Depende da característica",
+    },
+    {
+      value: "unknown",
+      label:
+        "Não sei",
+    },
+  ];
+
   return (
-    <div className="grid gap-2 sm:grid-cols-2">
-      <Choice
-        selected={
-          value === "yes"
-        }
-        onClick={() =>
-          onChange("yes")
-        }
-      >
-        Existem regiões que não devem ser tocadas
-      </Choice>
-
-      <Choice
-        selected={
-          value === "no"
-        }
-        onClick={() =>
-          onChange("no")
-        }
-      >
-        A medição pode ser realizada por contato
-      </Choice>
-
-      <Choice
-        selected={
-          value === "maybe"
-        }
-        onClick={() =>
-          onChange("maybe")
-        }
-      >
-        Depende da característica
-      </Choice>
-
-      <Choice
-        selected={
-          value === "unknown"
-        }
-        onClick={() =>
-          onChange(
-            "unknown",
-          )
-        }
-      >
-        Não sei
-      </Choice>
-    </div>
+    <ChoiceGrid
+      options={
+        options
+      }
+      value={
+        value
+      }
+      onChange={
+        onChange
+      }
+    />
   );
 }
+
+/* ============================================================
+ * DETALHE DE DIGITALIZAÇÃO
+ * ============================================================ */
 
 function ScanningDetailRefinement({
   value,
@@ -675,7 +735,8 @@ function ScanningDetailRefinement({
   const options = [
     {
       value: "general",
-      label: "Forma geral",
+      label:
+        "Forma geral",
     },
     {
       value:
@@ -697,33 +758,29 @@ function ScanningDetailRefinement({
     },
     {
       value: "unknown",
-      label: "Não sei",
+      label:
+        "Não sei",
     },
   ];
 
   return (
-    <div className="grid gap-2 sm:grid-cols-2">
-      {options.map(
-        (option) => (
-          <Choice
-            key={option.value}
-            selected={
-              value ===
-              option.value
-            }
-            onClick={() =>
-              onChange(
-                option.value,
-              )
-            }
-          >
-            {option.label}
-          </Choice>
-        ),
-      )}
-    </div>
+    <ChoiceGrid
+      options={
+        options
+      }
+      value={
+        value
+      }
+      onChange={
+        onChange
+      }
+    />
   );
 }
+
+/* ============================================================
+ * LOCALIZAÇÃO
+ * ============================================================ */
 
 function LocationRefinement({
   value,
@@ -756,33 +813,29 @@ function LocationRefinement({
     },
     {
       value: "unknown",
-      label: "Não sei",
+      label:
+        "Não sei",
     },
   ];
 
   return (
-    <div className="grid gap-2 sm:grid-cols-2">
-      {options.map(
-        (option) => (
-          <Choice
-            key={option.value}
-            selected={
-              value ===
-              option.value
-            }
-            onClick={() =>
-              onChange(
-                option.value,
-              )
-            }
-          >
-            {option.label}
-          </Choice>
-        ),
-      )}
-    </div>
+    <ChoiceGrid
+      options={
+        options
+      }
+      value={
+        value
+      }
+      onChange={
+        onChange
+      }
+    />
   );
 }
+
+/* ============================================================
+ * ESCOPO DA ENGENHARIA REVERSA
+ * ============================================================ */
 
 function GeometryScopeRefinement({
   value,
@@ -806,33 +859,29 @@ function GeometryScopeRefinement({
     },
     {
       value: "unknown",
-      label: "Não sei",
+      label:
+        "Não sei",
     },
   ];
 
   return (
-    <div className="grid gap-2 sm:grid-cols-2">
-      {options.map(
-        (option) => (
-          <Choice
-            key={option.value}
-            selected={
-              value ===
-              option.value
-            }
-            onClick={() =>
-              onChange(
-                option.value,
-              )
-            }
-          >
-            {option.label}
-          </Choice>
-        ),
-      )}
-    </div>
+    <ChoiceGrid
+      options={
+        options
+      }
+      value={
+        value
+      }
+      onChange={
+        onChange
+      }
+    />
   );
 }
+
+/* ============================================================
+ * REGIÃO DA TOMOGRAFIA
+ * ============================================================ */
 
 function CtRegionRefinement({
   value,
@@ -859,16 +908,45 @@ function CtRegionRefinement({
     },
     {
       value: "unknown",
-      label: "Não sei",
+      label:
+        "Não sei",
     },
   ];
 
   return (
-    <div className="grid gap-2 sm:grid-cols-2">
+    <ChoiceGrid
+      options={
+        options
+      }
+      value={
+        value
+      }
+      onChange={
+        onChange
+      }
+    />
+  );
+}
+
+/* ============================================================
+ * GRID DE ESCOLHAS
+ * ============================================================ */
+
+function ChoiceGrid({
+  options,
+  value,
+  onChange,
+}) {
+  return (
+    <div className="grid gap-2.5 sm:grid-cols-2">
       {options.map(
-        (option) => (
+        (
+          option,
+        ) => (
           <Choice
-            key={option.value}
+            key={
+              option.value
+            }
             selected={
               value ===
               option.value
@@ -879,13 +957,19 @@ function CtRegionRefinement({
               )
             }
           >
-            {option.label}
+            {
+              option.label
+            }
           </Choice>
         ),
       )}
     </div>
   );
 }
+
+/* ============================================================
+ * ESCOLHA
+ * ============================================================ */
 
 function Choice({
   selected,
@@ -895,46 +979,188 @@ function Choice({
   return (
     <button
       type="button"
-      onClick={onClick}
+      onClick={
+        onClick
+      }
       className={`
+        group
+        relative
+        flex
+        min-h-[50px]
         w-full
-        rounded-xl
+        items-center
+        justify-between
+        gap-3
+        overflow-hidden
+        rounded-[12px]
         border
-        px-4
-        py-3.5
+        px-3.5
+        py-3
         text-left
-        text-xs
-        font-medium
+        text-[12px]
+        font-semibold
+        leading-5
         transition-all
+        duration-300
 
         ${
           selected
-            ? "border-[#61a1ca] bg-[#dcecf5] text-[#0b639e]"
-            : "border-[#ccd9e1] bg-white text-[#5c7585] hover:border-[#a9c0cd]"
+            ? "border-[#87b2c9]/84 bg-[#e1eef4]/86 text-[#315f79]"
+            : "border-white/78 bg-white/40 text-[#657f8e] hover:-translate-y-[1px] hover:border-[#b7ced9] hover:bg-white/64"
         }
       `}
     >
-      {selected
-        ? "✓ "
-        : ""}
+      <div
+        aria-hidden="true"
+        className={`
+          absolute
+          bottom-0
+          left-0
+          top-0
+          w-[3px]
+          transition-opacity
 
-      {children}
+          ${
+            selected
+              ? "bg-[#65b8ee] opacity-100"
+              : "opacity-0"
+          }
+        `}
+      />
+
+      <span>
+        {children}
+      </span>
+
+      <span
+        className={`
+          flex
+          h-6
+          w-6
+          shrink-0
+          items-center
+          justify-center
+          rounded-full
+          border
+          text-[10px]
+          transition-all
+
+          ${
+            selected
+              ? "border-[#12364e] bg-[#12364e] text-white"
+              : "border-[#cad9e0] bg-white/48 text-transparent"
+          }
+        `}
+      >
+        ✓
+      </span>
     </button>
   );
 }
 
+/* ============================================================
+ * NAVEGAÇÃO ENTRE PERGUNTAS
+ * ============================================================ */
+
+function QuestionNavigation({
+  questions,
+  safeIndex,
+  onPrevious,
+  onNext,
+  onSelect,
+}) {
+  return (
+    <div className="mt-4 flex items-center justify-between gap-3 rounded-[15px] border border-white/72 bg-white/24 px-3 py-2.5">
+      <button
+        type="button"
+        disabled={
+          safeIndex ===
+          0
+        }
+        onClick={
+          onPrevious
+        }
+        className="rounded-[10px] border border-white/80 bg-white/40 px-3.5 py-2 text-[11px] font-semibold text-[#708995] transition-all hover:border-[#b1c8d3] hover:bg-white/66 disabled:cursor-not-allowed disabled:opacity-30"
+      >
+        ← Anterior
+      </button>
+
+      <div className="flex items-center gap-1.5">
+        {questions.map(
+          (
+            question,
+            index,
+          ) => (
+            <button
+              key={`${question.pieceId}-${question.id}`}
+              type="button"
+              aria-label={`Ir para refinamento ${index + 1}`}
+              onClick={() =>
+                onSelect(
+                  index,
+                )
+              }
+              className={`
+                h-[7px]
+                rounded-full
+                transition-all
+                duration-300
+
+                ${
+                  index ===
+                  safeIndex
+                    ? "w-7 bg-[#65b8ee]"
+                    : "w-[7px] bg-[#b8cbd5] hover:bg-[#8cabb9]"
+                }
+              `}
+            />
+          ),
+        )}
+      </div>
+
+      <button
+        type="button"
+        disabled={
+          safeIndex ===
+          questions.length -
+            1
+        }
+        onClick={
+          onNext
+        }
+        className="rounded-[10px] border border-[#a9c6d5]/76 bg-[#e1eef4]/74 px-3.5 py-2 text-[11px] font-semibold text-[#52778c] transition-all hover:border-[#88b3c8] hover:bg-[#d7e9f1] disabled:cursor-not-allowed disabled:opacity-30"
+      >
+        Próximo →
+      </button>
+    </div>
+  );
+}
+
+/* ============================================================
+ * DEFINIÇÃO
+ * ============================================================ */
+
 function getDefinitionLabel(
   score,
 ) {
-  if (score >= 85) {
+  if (
+    score >=
+    85
+  ) {
     return "Muito boa";
   }
 
-  if (score >= 65) {
+  if (
+    score >=
+    65
+  ) {
     return "Boa";
   }
 
-  if (score >= 40) {
+  if (
+    score >=
+    40
+  ) {
     return "Parcial";
   }
 

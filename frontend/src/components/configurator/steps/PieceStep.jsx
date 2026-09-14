@@ -1,175 +1,149 @@
 import {
-  motion,
-} from "motion/react";
-
-import {
   getService,
   serviceOrder,
 } from "../data/serviceCatalog";
 
-const pieceTypeOptions = [
+/* ============================================================
+ * OPÇÕES
+ * ============================================================ */
+
+const typeOptions = [
   {
     value: "component",
-    label:
-      "Peça individual",
+    title: "Componente",
     description:
-      "Um único componente.",
+      "Peça individual ou componente mecânico.",
   },
-
   {
     value: "assembly",
-    label:
-      "Conjunto montado",
+    title: "Conjunto",
     description:
-      "Duas ou mais peças analisadas juntas.",
+      "Duas ou mais peças montadas ou relacionadas.",
   },
-
   {
     value: "structure",
-    label:
-      "Estrutura ou máquina",
+    title: "Estrutura",
     description:
-      "Estrutura maior ou componente instalado.",
+      "Estrutura, dispositivo ou componente de maior porte.",
   },
-
   {
     value: "other",
-    label: "Outro",
+    title: "Outro",
     description:
-      "Outro tipo de componente.",
+      "A peça não se enquadra nas categorias anteriores.",
   },
-
   {
     value: "unknown",
-    label:
-      "Não sei classificar",
+    title: "Não sei",
     description:
-      "A equipe poderá avaliar depois.",
+      "A equipe poderá ajudar na classificação.",
   },
 ];
 
 const materialOptions = [
   {
     value: "steel",
-    label: "Aço",
+    title: "Aço",
   },
   {
     value: "aluminum",
-    label: "Alumínio",
+    title: "Alumínio",
   },
   {
     value: "other-metal",
-    label:
-      "Outro metal",
+    title: "Outro metal",
   },
   {
     value: "polymer",
-    label:
-      "Polímero / plástico",
+    title: "Polímero",
   },
   {
     value: "composite",
-    label: "Compósito",
+    title: "Compósito",
   },
   {
     value: "ceramic",
-    label: "Cerâmica",
+    title: "Cerâmica",
   },
   {
     value: "other",
-    label: "Outro",
+    title: "Outro",
   },
   {
     value: "unknown",
-    label: "Não sei",
+    title: "Não sei",
   },
 ];
 
 const sizeOptions = [
   {
     value: "hand",
-    label:
-      "Cabe na mão",
+    title: "Cabe na mão",
     description:
-      "Componente de pequeno porte.",
+      "Peça pequena e de fácil manipulação.",
   },
-
   {
     value: "table",
-    label:
-      "Cabe sobre uma mesa",
+    title: "Cabe sobre uma mesa",
     description:
-      "Peça pequena ou média e relativamente fácil de movimentar.",
+      "Peça de porte pequeno ou médio.",
   },
-
   {
     value: "large",
-    label:
-      "Grande / difícil de movimentar",
+    title: "Peça grande",
     description:
-      "Pode exigir apoio, equipamento ou mais pessoas para movimentação.",
+      "Exige maior espaço ou cuidado para movimentação.",
   },
-
   {
     value: "structure",
-    label:
-      "Estrutura ou máquina de grande porte",
+    title: "Estrutura / grande porte",
     description:
-      "Componente grande, estrutura ou equipamento instalado.",
+      "Movimentação difícil ou inviável em condições comuns.",
   },
-
   {
     value: "unknown",
-    label:
-      "Não sei estimar",
+    title: "Não sei",
     description:
-      "Você pode continuar sem informar medidas.",
+      "O porte ainda precisa ser avaliado.",
   },
 ];
 
 const locationOptions = [
   {
     value: "laboratory",
-    label:
-      "Pode ser levada ao Centro",
+    title: "Pode ir ao laboratório",
     description:
-      "A peça pode ser transportada para o laboratório.",
+      "A peça pode ser transportada até o Centro.",
   },
-
   {
-    value:
-      "customer-site",
-    label:
-      "Precisa ser analisada no local",
+    value: "customer-site",
+    title: "Precisa ser analisada no local",
     description:
-      "A análise precisa ocorrer onde a peça está.",
+      "A análise precisa ocorrer nas instalações do cliente.",
   },
-
   {
     value: "installed",
-    label:
-      "Está instalada em uma máquina ou estrutura",
+    title: "Está instalada",
     description:
-      "A peça não pode ser tratada como um componente livre.",
+      "A peça está montada ou integrada a uma estrutura.",
   },
-
   {
-    value:
-      "needs-guidance",
-    label:
-      "Preciso de orientação",
+    value: "needs-guidance",
+    title: "Preciso de orientação",
     description:
-      "Ainda não sabe qual logística será possível.",
+      "Ainda não sei qual condição de atendimento é mais adequada.",
   },
-
   {
     value: "unknown",
-    label:
-      "Ainda não sei",
+    title: "Não sei",
     description:
-      "Podemos continuar e validar isso posteriormente.",
+      "A condição ainda precisa ser avaliada.",
   },
 ];
+
+/* ============================================================
+ * COMPONENTE PRINCIPAL
+ * ============================================================ */
 
 export function PieceStep({
   pieces,
@@ -179,12 +153,12 @@ export function PieceStep({
   onAddPiece,
   onDuplicatePiece,
   onRemovePiece,
+  section = "identity",
 }) {
   const activePiece =
     pieces.find(
       (piece) =>
-        piece.id ===
-        activePieceId,
+        piece.id === activePieceId,
     ) ??
     pieces[0];
 
@@ -192,330 +166,198 @@ export function PieceStep({
     return null;
   }
 
-  function updatePiece(
-    nextPiece,
+  function patchActivePiece(
+    patch,
   ) {
     onPiecesChange(
       pieces.map(
         (piece) =>
-          piece.id ===
-          nextPiece.id
-            ? nextPiece
+          piece.id === activePiece.id
+            ? {
+                ...piece,
+                ...patch,
+              }
             : piece,
       ),
     );
   }
 
-  function patchPiece(
-    patch,
+  if (
+    section ===
+    "condition"
   ) {
-    updatePiece({
-      ...activePiece,
-      ...patch,
-    });
+    return (
+      <ConditionSection
+        pieces={
+          pieces
+        }
+        activePiece={
+          activePiece
+        }
+        activePieceId={
+          activePieceId
+        }
+        onActivePieceChange={
+          onActivePieceChange
+        }
+        onPatch={
+          patchActivePiece
+        }
+      />
+    );
   }
 
+  return (
+    <IdentitySection
+      pieces={
+        pieces
+      }
+      activePiece={
+        activePiece
+      }
+      activePieceId={
+        activePieceId
+      }
+      onActivePieceChange={
+        onActivePieceChange
+      }
+      onPatch={
+        patchActivePiece
+      }
+      onAddPiece={
+        onAddPiece
+      }
+      onDuplicatePiece={
+        onDuplicatePiece
+      }
+      onRemovePiece={
+        onRemovePiece
+      }
+    />
+  );
+}
+
+/* ============================================================
+ * ETAPA 02 — IDENTIDADE
+ * ============================================================ */
+
+function IdentitySection({
+  pieces,
+  activePiece,
+  activePieceId,
+  onActivePieceChange,
+  onPatch,
+  onAddPiece,
+  onDuplicatePiece,
+  onRemovePiece,
+}) {
   function toggleService(
-    service,
+    serviceId,
   ) {
     const selected =
       activePiece.services.includes(
-        service,
+        serviceId,
       );
 
     const nextServices =
       selected
         ? activePiece.services.filter(
             (item) =>
-              item !==
-              service,
+              item !== serviceId,
           )
         : [
             ...activePiece.services,
-            service,
+            serviceId,
           ];
 
-    patchPiece({
+    onPatch({
       services:
         nextServices,
     });
   }
 
-  const hasExactDimensions =
-    Boolean(
-      activePiece.dimensions.length ||
-        activePiece.dimensions.width ||
-        activePiece.dimensions.height,
-    );
-
   return (
     <div>
-      <div className="flex items-center gap-3">
-        <span className="rounded-full bg-[#dbeaf3] px-3 py-1 text-[10px] font-semibold tracking-[0.16em] text-[#1476b8]">
-          02 / 05
-        </span>
-
-        <span className="text-[10px] font-medium uppercase tracking-[0.14em] text-[#78909e]">
-          Peça
-        </span>
-      </div>
-
-      <h2 className="mt-4 text-3xl font-semibold tracking-[-0.035em] text-[#0b2340] sm:text-[2rem]">
-        O que será analisado?
-      </h2>
-
-      <p className="mt-2 max-w-xl text-sm leading-6 text-[#667d8b] sm:text-base">
-        Vamos entender as características gerais de cada componente.
-        Perguntas técnicas específicas serão feitas na próxima etapa.
-      </p>
+      <PieceNavigation
+        pieces={
+          pieces
+        }
+        activePieceId={
+          activePieceId
+        }
+        onActivePieceChange={
+          onActivePieceChange
+        }
+        onAddPiece={
+          onAddPiece
+        }
+      />
 
       <div className="mt-6">
-        <div className="flex items-center justify-between gap-4">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.13em] text-[#637f90]">
-            Componentes do projeto
-          </p>
+        <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[#6d8795]">
+          Identificação da peça
+        </p>
 
-          <button
-            type="button"
-            onClick={onAddPiece}
-            className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[#1476b8] transition hover:text-[#0a5d91]"
-          >
-            + Adicionar peça
-          </button>
-        </div>
+        <h2 className="mt-3 max-w-[640px] text-[30px] font-semibold leading-[1.08] tracking-[-0.04em] text-[#071f2d] sm:text-[33px]">
+          Conte um pouco sobre o que será analisado.
+        </h2>
 
-        <div className="mt-3 flex gap-2 overflow-x-auto pb-2">
-          {pieces.map(
-            (
-              piece,
-              index,
-            ) => {
-              const active =
-                piece.id ===
-                activePiece.id;
-
-              return (
-                <button
-                  key={piece.id}
-                  type="button"
-                  onClick={() =>
-                    onActivePieceChange(
-                      piece.id,
-                    )
-                  }
-                  className={`
-                    min-w-[145px]
-                    shrink-0
-                    rounded-[14px]
-                    border
-                    px-4 py-3
-                    text-left
-                    transition-all
-
-                    ${
-                      active
-                        ? "border-[#61a1ca] bg-[#e0eef6] shadow-[0_8px_20px_rgba(53,111,159,0.07)]"
-                        : "border-[#d0dce3] bg-[#edf3f6] hover:border-[#b0c5d1]"
-                    }
-                  `}
-                >
-                  <p className="text-[9px] font-semibold uppercase tracking-[0.12em] text-[#718897]">
-                    Peça{" "}
-                    {String(
-                      index + 1,
-                    ).padStart(
-                      2,
-                      "0",
-                    )}
-                  </p>
-
-                  <p className="mt-1 truncate text-xs font-semibold text-[#17394f]">
-                    {piece.name.trim() ||
-                      "Sem nome"}
-                  </p>
-
-                  <p className="mt-1 text-[10px] text-[#788d99]">
-                    {piece.services.length}{" "}
-                    {piece.services.length ===
-                    1
-                      ? "serviço"
-                      : "serviços"}
-                  </p>
-                </button>
-              );
-            },
-          )}
-
-          <button
-            type="button"
-            onClick={onAddPiece}
-            className="flex min-w-[120px] shrink-0 items-center justify-center rounded-[14px] border border-dashed border-[#9fbac9] bg-[#eaf1f5] px-4 py-3 text-xs font-semibold text-[#4b7892] transition hover:border-[#6fa5c4] hover:bg-[#e2edf3]"
-          >
-            + Nova peça
-          </button>
-        </div>
+        <p className="mt-3 max-w-[680px] text-[13px] leading-6 text-[#6f8592]">
+          Nesta etapa precisamos apenas das informações gerais da peça.
+          Dimensões e condições de atendimento entram em seguida.
+        </p>
       </div>
 
-      <motion.div
-        key={activePiece.id}
-        initial={{
-          opacity: 0,
-          y: 8,
-        }}
-        animate={{
-          opacity: 1,
-          y: 0,
-        }}
-        className="mt-5 rounded-[22px] border border-[#cad8e0] bg-[#edf3f6] p-4 sm:p-6"
-      >
-        <div className="flex flex-wrap items-start justify-between gap-3">
-          <div>
-            <p className="text-[9px] font-semibold uppercase tracking-[0.14em] text-[#66869a]">
-              Componente ativo
-            </p>
-
-            <p className="mt-1 text-lg font-semibold text-[#0b2340]">
-              {activePiece.name.trim() ||
-                "Nova peça"}
-            </p>
-          </div>
-
-          <div className="flex gap-2">
-            <button
-              type="button"
-              onClick={() =>
-                onDuplicatePiece(
-                  activePiece.id,
-                )
-              }
-              className="rounded-lg border border-[#c6d5de] bg-white px-3 py-2 text-[9px] font-semibold uppercase tracking-[0.08em] text-[#587386] transition hover:border-[#9fb9c8]"
-            >
-              Duplicar
-            </button>
-
-            {pieces.length > 1 && (
-              <button
-                type="button"
-                onClick={() =>
-                  onRemovePiece(
-                    activePiece.id,
-                  )
-                }
-                className="rounded-lg border border-[#d8caca] bg-white px-3 py-2 text-[9px] font-semibold uppercase tracking-[0.08em] text-[#8d6666] transition hover:border-[#c9aaaa]"
-              >
-                Remover
-              </button>
-            )}
-          </div>
-        </div>
-
-        <FieldSection
+      <div className="mt-5 space-y-4">
+        <QuestionBlock
+          number="01"
           title="Como podemos identificar esta peça?"
-          description="O nome é opcional, mas ajuda quando o projeto possui vários componentes."
+          help="O nome é opcional, mas ajuda a organizar projetos com mais de uma peça."
         >
           <input
             type="text"
-            value={activePiece.name}
-            onChange={(event) =>
-              patchPiece({
+            value={
+              activePiece.name ??
+              ""
+            }
+            onChange={(
+              event,
+            ) =>
+              onPatch({
                 name:
                   event.target.value,
               })
             }
-            placeholder="Ex.: Flange, carcaça, coletor..."
-            className="h-[50px] w-full rounded-xl border border-[#cad8e0] bg-[#f9fbfc] px-4 text-sm text-[#17394f] outline-none transition focus:border-[#61a1ca] focus:bg-white"
+            placeholder="Ex.: Carcaça, suporte, conjunto..."
+            className="h-11 w-full rounded-[12px] border border-white/80 bg-white/44 px-3.5 text-[13px] font-medium text-[#31566d] outline-none transition-all placeholder:text-[#a0afb7] focus:border-[#93b8ca] focus:bg-white/70 focus:ring-2 focus:ring-[#65b8ee]/10"
           />
-        </FieldSection>
+        </QuestionBlock>
 
-        <FieldSection
-          title="O que precisa ser feito nesta peça?"
-          description="Uma mesma peça pode passar por vários serviços."
+        <QuestionBlock
+          number="02"
+          title="Que tipo de item será analisado?"
         >
-          <div className="grid gap-2 sm:grid-cols-2">
-            {serviceOrder.map(
-              (service) => {
-                const selected =
-                  activePiece.services.includes(
-                    service,
-                  );
-
-                const item =
-                  getService(
-                    service,
-                  );
-
-                return (
-                  <button
-                    key={service}
-                    type="button"
-                    onClick={() =>
-                      toggleService(
-                        service,
-                      )
-                    }
-                    className={`
-                      rounded-xl
-                      border
-                      px-4 py-3.5
-                      text-left
-                      transition-all
-
-                      ${
-                        selected
-                          ? "border-[#63a3cb] bg-[#dcecf5]"
-                          : "border-[#ccd9e1] bg-[#f9fbfc] hover:border-[#aac0cd]"
-                      }
-                    `}
-                  >
-                    <p
-                      className={`
-                        text-xs
-                        font-semibold
-
-                        ${
-                          selected
-                            ? "text-[#0b639e]"
-                            : "text-[#506b7b]"
-                        }
-                      `}
-                    >
-                      {selected
-                        ? "✓ "
-                        : ""}
-
-                      {item.name}
-                    </p>
-
-                    <p className="mt-1 text-[10px] leading-4 text-[#7a8e99]">
-                      {
-                        item.userFacingTitle
-                      }
-                    </p>
-                  </button>
-                );
-              },
-            )}
-          </div>
-        </FieldSection>
-
-        <FieldSection title="Que tipo de item será analisado?">
-          <div className="grid gap-2 sm:grid-cols-2">
-            {pieceTypeOptions.map(
-              (option) => (
+          <div className="grid gap-2.5 sm:grid-cols-2">
+            {typeOptions.map(
+              (
+                option,
+              ) => (
                 <ChoiceCard
-                  key={option.value}
+                  key={
+                    option.value
+                  }
                   selected={
                     activePiece.type ===
                     option.value
                   }
                   title={
-                    option.label
+                    option.title
                   }
                   description={
                     option.description
                   }
                   onClick={() =>
-                    patchPiece({
+                    onPatch({
                       type:
                         option.value,
                     })
@@ -524,211 +366,369 @@ export function PieceStep({
               ),
             )}
           </div>
-        </FieldSection>
+        </QuestionBlock>
 
-        <FieldSection
-          title="Qual é o material predominante?"
-          description="Não tem problema se você não souber exatamente."
-        >
-          <div className="flex flex-wrap gap-2">
-            {materialOptions.map(
-              (option) => (
-                <button
-                  key={option.value}
-                  type="button"
-                  onClick={() =>
-                    patchPiece({
-                      material:
-                        option.value,
-                    })
-                  }
-                  className={`
-                    rounded-full
-                    border
-                    px-4 py-2.5
-                    text-xs
-                    font-medium
-                    transition-all
-
-                    ${
+        <div className="grid gap-4 sm:grid-cols-[1fr_180px]">
+          <QuestionBlock
+            number="03"
+            title="Qual é o material?"
+          >
+            <div className="grid grid-cols-2 gap-2">
+              {materialOptions.map(
+                (
+                  option,
+                ) => (
+                  <CompactChoice
+                    key={
+                      option.value
+                    }
+                    selected={
                       activePiece.material ===
                       option.value
-                        ? "border-[#61a1ca] bg-[#dcecf5] text-[#0b639e]"
-                        : "border-[#ccd9e1] bg-[#f9fbfc] text-[#607684] hover:border-[#acc2ce]"
                     }
-                  `}
-                >
-                  {option.label}
-                </button>
-              ),
+                    label={
+                      option.title
+                    }
+                    onClick={() =>
+                      onPatch({
+                        material:
+                          option.value,
+                      })
+                    }
+                  />
+                ),
+              )}
+            </div>
+          </QuestionBlock>
+
+          <QuestionBlock
+            number="04"
+            title="Quantidade"
+            help="Peças deste tipo."
+          >
+            <input
+              type="number"
+              min="1"
+              step="1"
+              value={
+                activePiece.quantity ??
+                ""
+              }
+              onChange={(
+                event,
+              ) =>
+                onPatch({
+                  quantity:
+                    event.target.value,
+                })
+              }
+              placeholder="1"
+              className="h-11 w-full rounded-[12px] border border-white/80 bg-white/44 px-3 text-[13px] font-semibold text-[#31566d] outline-none transition-all placeholder:text-[#a0afb7] focus:border-[#93b8ca] focus:bg-white/70 focus:ring-2 focus:ring-[#65b8ee]/10"
+            />
+          </QuestionBlock>
+        </div>
+
+        <QuestionBlock
+          number="05"
+          title="Quais frentes se aplicam a esta peça?"
+          help="Os serviços escolhidos anteriormente já aparecem selecionados. Ajuste apenas se esta peça tiver uma necessidade diferente."
+        >
+          <div className="grid gap-2.5 sm:grid-cols-2">
+            {serviceOrder.map(
+              (
+                serviceId,
+              ) => {
+                const service =
+                  getService(
+                    serviceId,
+                  );
+
+                if (!service) {
+                  return null;
+                }
+
+                return (
+                  <ServiceChoice
+                    key={
+                      serviceId
+                    }
+                    service={
+                      service
+                    }
+                    selected={
+                      activePiece.services.includes(
+                        serviceId,
+                      )
+                    }
+                    onClick={() =>
+                      toggleService(
+                        serviceId,
+                      )
+                    }
+                  />
+                );
+              },
             )}
           </div>
-        </FieldSection>
+        </QuestionBlock>
+      </div>
 
-        <FieldSection
-          title="Qual é o tamanho aproximado?"
-          description="Você pode informar as medidas ou escolher uma referência simples."
+      <PieceActions
+        pieces={
+          pieces
+        }
+        activePiece={
+          activePiece
+        }
+        onDuplicatePiece={
+          onDuplicatePiece
+        }
+        onRemovePiece={
+          onRemovePiece
+        }
+        onAddPiece={
+          onAddPiece
+        }
+      />
+    </div>
+  );
+}
+
+/* ============================================================
+ * ETAPA 03 — CONDIÇÃO
+ * ============================================================ */
+
+function ConditionSection({
+  pieces,
+  activePiece,
+  activePieceId,
+  onActivePieceChange,
+  onPatch,
+}) {
+  const dimensions =
+    activePiece.dimensions ?? {
+      length: "",
+      width: "",
+      height: "",
+    };
+
+  const hasExactDimensions =
+    Boolean(
+      dimensions.length ||
+        dimensions.width ||
+        dimensions.height,
+    );
+
+  function updateDimension(
+    key,
+    nextValue,
+  ) {
+    onPatch({
+      dimensions: {
+        ...dimensions,
+
+        [key]:
+          nextValue,
+      },
+
+      sizeCategory:
+        nextValue ||
+        Object.entries(
+          dimensions,
+        ).some(
+          ([
+            dimensionKey,
+            value,
+          ]) =>
+            dimensionKey !==
+              key &&
+            Boolean(
+              value,
+            ),
+        )
+          ? ""
+          : activePiece.sizeCategory,
+    });
+  }
+
+  function chooseSize(
+    size,
+  ) {
+    onPatch({
+      sizeCategory:
+        size,
+
+      dimensions: {
+        length: "",
+        width: "",
+        height: "",
+      },
+    });
+  }
+
+  return (
+    <div>
+      {pieces.length >
+        1 && (
+        <PieceNavigation
+          pieces={
+            pieces
+          }
+          activePieceId={
+            activePieceId
+          }
+          onActivePieceChange={
+            onActivePieceChange
+          }
+          compact
+        />
+      )}
+
+      <div className={pieces.length > 1 ? "mt-6" : ""}>
+        <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[#6d8795]">
+          Condição da peça
+        </p>
+
+        <h2 className="mt-3 max-w-[640px] text-[30px] font-semibold leading-[1.08] tracking-[-0.04em] text-[#071f2d] sm:text-[33px]">
+          Agora precisamos entender porte e mobilidade.
+        </h2>
+
+        <p className="mt-3 max-w-[680px] text-[13px] leading-6 text-[#6f8592]">
+          Você pode informar as dimensões aproximadas ou simplesmente
+          selecionar uma referência de tamanho.
+        </p>
+      </div>
+
+      <div className="mt-5 space-y-4">
+        <QuestionBlock
+          number="01"
+          title="Você conhece as dimensões aproximadas?"
+          help="Use milímetros. Não precisa ser uma medida metrológica exata."
+          important
         >
-          <div className="grid gap-3 sm:grid-cols-3">
-            <DimensionField
+          <div className="grid grid-cols-3 gap-2.5">
+            <DimensionInput
               label="Comprimento"
               value={
-                activePiece.dimensions.length
+                dimensions.length
               }
-              onChange={(value) =>
-                patchPiece({
-                  dimensions: {
-                    ...activePiece.dimensions,
-                    length:
-                      value,
-                  },
-
-                  sizeCategory:
-                    value
-                      ? null
-                      : activePiece.sizeCategory,
-                })
+              onChange={(
+                nextValue,
+              ) =>
+                updateDimension(
+                  "length",
+                  nextValue,
+                )
               }
             />
 
-            <DimensionField
+            <DimensionInput
               label="Largura"
               value={
-                activePiece.dimensions.width
+                dimensions.width
               }
-              onChange={(value) =>
-                patchPiece({
-                  dimensions: {
-                    ...activePiece.dimensions,
-                    width:
-                      value,
-                  },
-
-                  sizeCategory:
-                    value
-                      ? null
-                      : activePiece.sizeCategory,
-                })
+              onChange={(
+                nextValue,
+              ) =>
+                updateDimension(
+                  "width",
+                  nextValue,
+                )
               }
             />
 
-            <DimensionField
+            <DimensionInput
               label="Altura"
               value={
-                activePiece.dimensions.height
+                dimensions.height
               }
-              onChange={(value) =>
-                patchPiece({
-                  dimensions: {
-                    ...activePiece.dimensions,
-                    height:
-                      value,
-                  },
-
-                  sizeCategory:
-                    value
-                      ? null
-                      : activePiece.sizeCategory,
-                })
+              onChange={(
+                nextValue,
+              ) =>
+                updateDimension(
+                  "height",
+                  nextValue,
+                )
               }
             />
           </div>
+        </QuestionBlock>
 
-          <div className="my-5 flex items-center gap-3">
-            <div className="h-px flex-1 bg-[#d1dce2]" />
+        <div className="flex items-center gap-3 px-1">
+          <div className="h-px flex-1 bg-[#cad9e0]/72" />
 
-            <span className="text-[9px] font-semibold uppercase tracking-[0.12em] text-[#8a9aa4]">
-              ou estime
-            </span>
+          <span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[#8b9ca5]">
+            ou
+          </span>
 
-            <div className="h-px flex-1 bg-[#d1dce2]" />
-          </div>
+          <div className="h-px flex-1 bg-[#cad9e0]/72" />
+        </div>
 
-          <div className="grid gap-2 sm:grid-cols-2">
+        <QuestionBlock
+          number="02"
+          title="Selecione uma referência de tamanho"
+          help={
+            hasExactDimensions
+              ? "Ao selecionar uma referência, as dimensões informadas acima serão substituídas."
+              : "Use esta opção caso não conheça as dimensões."
+          }
+        >
+          <div className="grid gap-2.5 sm:grid-cols-2">
             {sizeOptions.map(
-              (option) => (
+              (
+                option,
+              ) => (
                 <ChoiceCard
-                  key={option.value}
+                  key={
+                    option.value
+                  }
                   selected={
                     activePiece.sizeCategory ===
                     option.value
                   }
-                  disabled={
-                    hasExactDimensions
-                  }
                   title={
-                    option.label
+                    option.title
                   }
                   description={
                     option.description
                   }
                   onClick={() =>
-                    patchPiece({
-                      sizeCategory:
-                        option.value,
-
-                      dimensions: {
-                        length: "",
-                        width: "",
-                        height: "",
-                      },
-                    })
+                    chooseSize(
+                      option.value,
+                    )
                   }
                 />
               ),
             )}
           </div>
+        </QuestionBlock>
 
-          {hasExactDimensions && (
-            <p className="mt-3 text-[11px] leading-5 text-[#678194]">
-              Como você começou a informar medidas, utilizaremos os valores
-              inseridos em vez da classificação aproximada.
-            </p>
-          )}
-        </FieldSection>
-
-        <FieldSection
-          title="Quantas unidades deste mesmo componente fazem parte do projeto?"
-          description="Se for outra peça com características diferentes, use “Adicionar peça”."
+        <QuestionBlock
+          number="03"
+          title="Onde a peça pode ser analisada?"
+          help="A mobilidade é importante para diferenciar tecnologias de laboratório e soluções portáteis."
         >
-          <input
-            type="number"
-            min="1"
-            step="1"
-            value={
-              activePiece.quantity
-            }
-            onChange={(event) =>
-              patchPiece({
-                quantity:
-                  event.target.value,
-              })
-            }
-            className="h-[50px] w-full max-w-[180px] rounded-xl border border-[#cad8e0] bg-[#f9fbfc] px-4 text-sm text-[#17394f] outline-none transition focus:border-[#61a1ca] focus:bg-white"
-          />
-        </FieldSection>
-
-        <FieldSection
-          title="Onde essa peça pode ser analisada?"
-          description="Essa informação é especialmente importante para tecnologias que dependem de mobilidade."
-        >
-          <div className="grid gap-2 sm:grid-cols-2">
+          <div className="grid gap-2.5 sm:grid-cols-2">
             {locationOptions.map(
-              (option) => (
+              (
+                option,
+              ) => (
                 <ChoiceCard
-                  key={option.value}
+                  key={
+                    option.value
+                  }
                   selected={
                     activePiece.location ===
                     option.value
                   }
                   title={
-                    option.label
+                    option.title
                   }
                   description={
                     option.description
                   }
                   onClick={() =>
-                    patchPiece({
+                    onPatch({
                       location:
                         option.value,
                     })
@@ -737,44 +737,228 @@ export function PieceStep({
               ),
             )}
           </div>
-        </FieldSection>
-      </motion.div>
-
-      {pieces.length > 1 && (
-        <div className="mt-5 rounded-[18px] border border-[#bfd2dd] bg-[#e5eff5] p-4">
-          <p className="text-xs font-semibold text-[#315f7b]">
-            Projeto com múltiplos componentes
-          </p>
-
-          <p className="mt-1.5 text-xs leading-5 text-[#66808f]">
-            Cada peça será avaliada individualmente. Isso permite que uma
-            mesma solicitação combine componentes, serviços e tecnologias
-            diferentes.
-          </p>
-        </div>
-      )}
+        </QuestionBlock>
+      </div>
     </div>
   );
 }
 
-function FieldSection({
-  title,
-  description,
-  children,
+/* ============================================================
+ * NAVEGAÇÃO ENTRE PEÇAS
+ * ============================================================ */
+
+function PieceNavigation({
+  pieces,
+  activePieceId,
+  onActivePieceChange,
+  onAddPiece,
+  compact = false,
+}) {
+  if (
+    pieces.length ===
+      1 &&
+    compact
+  ) {
+    return null;
+  }
+
+  return (
+    <div className="rounded-[16px] border border-white/74 bg-white/28 p-2.5 backdrop-blur-[14px]">
+      <div className="flex items-center gap-2 overflow-x-auto">
+        {pieces.map(
+          (
+            piece,
+            index,
+          ) => {
+            const active =
+              piece.id ===
+              activePieceId;
+
+            return (
+              <button
+                key={
+                  piece.id
+                }
+                type="button"
+                onClick={() =>
+                  onActivePieceChange(
+                    piece.id,
+                  )
+                }
+                className={`
+                  min-w-[130px]
+                  rounded-[11px]
+                  border
+                  px-3.5
+                  py-2.5
+                  text-left
+                  transition-all
+
+                  ${
+                    active
+                      ? "border-[#93b7c9] bg-[#e1eef4]/82"
+                      : "border-transparent bg-white/20 hover:border-[#c2d4dd] hover:bg-white/48"
+                  }
+                `}
+              >
+                <p className="text-[10px] font-semibold uppercase tracking-[0.08em] text-[#81949e]">
+                  Peça{" "}
+                  {String(
+                    index + 1,
+                  ).padStart(
+                    2,
+                    "0",
+                  )}
+                </p>
+
+                <p className="mt-1 truncate text-[12px] font-semibold text-[#31566d]">
+                  {piece.name ||
+                    "Sem nome"}
+                </p>
+              </button>
+            );
+          },
+        )}
+
+        {onAddPiece && (
+          <button
+            type="button"
+            onClick={
+              onAddPiece
+            }
+            className="flex h-[46px] min-w-[46px] items-center justify-center rounded-[11px] border border-dashed border-[#b6ccd7] bg-white/24 text-[18px] font-light text-[#668797] transition-all hover:border-[#86afc3] hover:bg-white/58 hover:text-[#356f9f]"
+            aria-label="Adicionar peça"
+            title="Adicionar peça"
+          >
+            +
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* ============================================================
+ * AÇÕES
+ * ============================================================ */
+
+function PieceActions({
+  pieces,
+  activePiece,
+  onDuplicatePiece,
+  onRemovePiece,
+  onAddPiece,
 }) {
   return (
-    <section className="mt-7 border-t border-[#d2dde3] pt-6 first:border-t-0">
-      <p className="text-sm font-semibold text-[#17394f]">
-        {title}
+    <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-[16px] border border-white/70 bg-white/24 px-4 py-3">
+      <p className="max-w-[430px] text-[11px] leading-5 text-[#8799a2]">
+        Configure cada tipo de peça separadamente quando o projeto envolver
+        itens diferentes.
       </p>
 
-      {description && (
-        <p className="mt-1 text-xs leading-5 text-[#768a96]">
-          {description}
-        </p>
-      )}
+      <div className="flex flex-wrap gap-2">
+        <SmallAction
+          onClick={() =>
+            onDuplicatePiece(
+              activePiece.id,
+            )
+          }
+        >
+          Duplicar
+        </SmallAction>
 
-      <div className="mt-4">
+        {pieces.length >
+          1 && (
+          <SmallAction
+            onClick={() =>
+              onRemovePiece(
+                activePiece.id,
+              )
+            }
+            danger
+          >
+            Remover
+          </SmallAction>
+        )}
+
+        <SmallAction
+          onClick={
+            onAddPiece
+          }
+          primary
+        >
+          + Nova peça
+        </SmallAction>
+      </div>
+    </div>
+  );
+}
+
+/* ============================================================
+ * COMPONENTES VISUAIS
+ * ============================================================ */
+
+function QuestionBlock({
+  number,
+  title,
+  help,
+  children,
+  important = false,
+}) {
+  return (
+    <section
+      className={`
+        rounded-[17px]
+        border
+        p-4.5
+        shadow-[inset_0_1px_0_rgba(255,255,255,0.92)]
+        backdrop-blur-[14px]
+
+        ${
+          important
+            ? "border-[#b7d0dc]/72 bg-[#e9f3f7]/54"
+            : "border-white/76 bg-white/30"
+        }
+      `}
+    >
+      <div className="flex items-start gap-3">
+        <span
+          className={`
+            flex
+            h-7
+            w-7
+            shrink-0
+            items-center
+            justify-center
+            rounded-full
+            border
+            text-[10px]
+            font-semibold
+
+            ${
+              important
+                ? "border-[#9fc1d2]/76 bg-[#dcebf2]/72 text-[#4d7890]"
+                : "border-[#cad9e1]/78 bg-white/44 text-[#688697]"
+            }
+          `}
+        >
+          {number}
+        </span>
+
+        <div>
+          <p className="text-[14px] font-semibold leading-5 text-[#31566d]">
+            {title}
+          </p>
+
+          {help && (
+            <p className="mt-1 text-[11px] leading-5 text-[#82949e]">
+              {help}
+            </p>
+          )}
+        </div>
+      </div>
+
+      <div className="mt-3.5">
         {children}
       </div>
     </section>
@@ -786,85 +970,265 @@ function ChoiceCard({
   title,
   description,
   onClick,
-  disabled = false,
 }) {
   return (
     <button
       type="button"
-      disabled={disabled}
-      onClick={onClick}
+      onClick={
+        onClick
+      }
       className={`
-        rounded-xl
+        group
+        relative
+        w-full
+        overflow-hidden
+        rounded-[13px]
         border
-        px-4 py-3.5
+        px-4
+        py-3
         text-left
         transition-all
+        duration-300
 
         ${
-          disabled
-            ? "cursor-not-allowed border-[#d5dfe4] bg-[#e8eef1] opacity-45"
-            : selected
-              ? "border-[#61a1ca] bg-[#dcecf5]"
-              : "border-[#ccd9e1] bg-[#f9fbfc] hover:border-[#a9c0cc] hover:bg-white"
+          selected
+            ? "border-[#83b2cd]/82 bg-[#e3f0f5]/86"
+            : "border-white/74 bg-white/38 hover:-translate-y-[1px] hover:border-[#bfd3de] hover:bg-white/62"
         }
       `}
     >
-      <p
+      <div
+        aria-hidden="true"
         className={`
-          text-xs
-          font-semibold
+          absolute
+          bottom-0
+          left-0
+          top-0
+          w-[3px]
+          transition-opacity
 
           ${
             selected
-              ? "text-[#0b639e]"
-              : "text-[#526e7f]"
+              ? "bg-[#65b8ee] opacity-100"
+              : "opacity-0"
           }
         `}
-      >
-        {selected
-          ? "✓ "
-          : ""}
-        {title}
-      </p>
+      />
 
-      {description && (
-        <p className="mt-1 text-[10px] leading-4 text-[#7a8e99]">
-          {description}
-        </p>
-      )}
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <p className="text-[13px] font-semibold leading-5 text-[#31566d]">
+            {title}
+          </p>
+
+          {description && (
+            <p className="mt-1 text-[11px] leading-5 text-[#7c909b]">
+              {description}
+            </p>
+          )}
+        </div>
+
+        <span
+          className={`
+            mt-0.5
+            flex
+            h-6
+            w-6
+            shrink-0
+            items-center
+            justify-center
+            rounded-full
+            border
+            text-[10px]
+            font-semibold
+
+            ${
+              selected
+                ? "border-[#12364e] bg-[#12364e] text-white"
+                : "border-[#cddce3] bg-white/54 text-transparent"
+            }
+          `}
+        >
+          ✓
+        </span>
+      </div>
     </button>
   );
 }
 
-function DimensionField({
+function CompactChoice({
+  selected,
+  label,
+  onClick,
+}) {
+  return (
+    <button
+      type="button"
+      onClick={
+        onClick
+      }
+      className={`
+        min-h-[40px]
+        rounded-[10px]
+        border
+        px-2.5
+        py-2
+        text-[11px]
+        font-semibold
+        transition-all
+
+        ${
+          selected
+            ? "border-[#12364e] bg-[#12364e] text-white"
+            : "border-white/78 bg-white/42 text-[#667f8d] hover:border-[#aac4d0] hover:bg-white/66 hover:text-[#356f9f]"
+        }
+      `}
+    >
+      {label}
+    </button>
+  );
+}
+
+function ServiceChoice({
+  service,
+  selected,
+  onClick,
+}) {
+  return (
+    <button
+      type="button"
+      onClick={
+        onClick
+      }
+      className={`
+        flex
+        min-h-[66px]
+        items-center
+        justify-between
+        gap-3
+        rounded-[13px]
+        border
+        px-3.5
+        py-3
+        text-left
+        transition-all
+
+        ${
+          selected
+            ? "border-[#8eb6ca] bg-[#e1eef4]/82"
+            : "border-white/76 bg-white/36 hover:border-[#b8ced9] hover:bg-white/58"
+        }
+      `}
+    >
+      <div>
+        <p className="text-[13px] font-semibold text-[#31566d]">
+          {service.shortName ??
+            service.name}
+        </p>
+
+        {service.description && (
+          <p className="mt-1 line-clamp-2 text-[10px] leading-4 text-[#84969f]">
+            {service.description}
+          </p>
+        )}
+      </div>
+
+      <span
+        className={`
+          flex
+          h-6
+          w-6
+          shrink-0
+          items-center
+          justify-center
+          rounded-full
+          border
+          text-[10px]
+          font-semibold
+
+          ${
+            selected
+              ? "border-[#12364e] bg-[#12364e] text-white"
+              : "border-[#cad9e0] bg-white/48 text-transparent"
+          }
+        `}
+      >
+        ✓
+      </span>
+    </button>
+  );
+}
+
+function DimensionInput({
   label,
   value,
   onChange,
 }) {
   return (
     <label>
-      <span className="text-[11px] font-medium text-[#637b8a]">
+      <span className="mb-1.5 block text-[10px] font-semibold uppercase tracking-[0.07em] text-[#81949e]">
         {label}
       </span>
 
-      <div className="relative mt-2">
+      <div className="relative">
         <input
           type="number"
           min="0"
           step="0.1"
-          value={value}
-          onChange={(event) =>
+          value={
+            value ??
+            ""
+          }
+          onChange={(
+            event,
+          ) =>
             onChange(
               event.target.value,
             )
           }
-          className="h-[50px] w-full rounded-xl border border-[#cad8e0] bg-[#f9fbfc] px-4 pr-12 text-sm text-[#17394f] outline-none transition focus:border-[#61a1ca] focus:bg-white"
+          placeholder="0"
+          className="h-11 w-full rounded-[11px] border border-white/80 bg-white/44 px-3 pr-10 text-[12px] font-semibold text-[#31566d] outline-none transition-all placeholder:text-[#a0afb7] focus:border-[#93b8ca] focus:bg-white/70 focus:ring-2 focus:ring-[#65b8ee]/10"
         />
 
-        <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-[10px] text-[#8a9ba5]">
+        <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-semibold text-[#8a9ba4]">
           mm
         </span>
       </div>
     </label>
+  );
+}
+
+function SmallAction({
+  children,
+  onClick,
+  primary = false,
+  danger = false,
+}) {
+  return (
+    <button
+      type="button"
+      onClick={
+        onClick
+      }
+      className={`
+        rounded-[10px]
+        border
+        px-3.5
+        py-2
+        text-[10px]
+        font-semibold
+        transition-all
+
+        ${
+          primary
+            ? "border-[#9ab9c8] bg-[#dcebf2]/72 text-[#477087] hover:border-[#79a5bb] hover:bg-[#d2e5ee]"
+            : danger
+              ? "border-[#dec5c5]/76 bg-white/34 text-[#9a6868] hover:border-[#d5aaaa] hover:bg-[#f7eeee]/66"
+              : "border-white/80 bg-white/36 text-[#718792] hover:border-[#b6cbd5] hover:bg-white/64"
+        }
+      `}
+    >
+      {children}
+    </button>
   );
 }

@@ -1,3 +1,4 @@
+import { motion } from "motion/react";
 import { Link } from "react-router-dom";
 
 import { Container } from "../components/layout/Container";
@@ -5,489 +6,620 @@ import {
   ArrowRightIcon,
   ArrowUpRightIcon,
 } from "../components/ui/ArrowIcons";
+import { ScrollReveal } from "../components/ui/ScrollReveal";
 
-const quickLinks = [
+const services = [
   {
     number: "01",
-    label: "Inspeção dimensional",
-    description: "Medição, tolerâncias e conformidade.",
-    href: "#inspecao-dimensional",
+    title: "Medição dimensional",
+    eyebrow: "Precisão dimensional",
+    description:
+      "Medição e avaliação de características dimensionais e geométricas de peças e componentes.",
+    href: "#medicao-dimensional",
   },
   {
     number: "02",
-    label: "Digitalização 3D",
-    description: "Captura digital de geometrias.",
+    title: "Digitalização 3D",
+    eyebrow: "Captura digital",
+    description:
+      "Aquisição da geometria de peças e superfícies para análise, comparação e documentação digital.",
     href: "#digitalizacao-3d",
   },
   {
     number: "03",
-    label: "Engenharia reversa",
-    description: "Da peça física ao modelo CAD.",
+    title: "Engenharia reversa",
+    eyebrow: "Reconstrução digital",
+    description:
+      "Transformação de informações da peça física em dados aplicáveis ao desenvolvimento CAD.",
     href: "#engenharia-reversa",
   },
   {
     number: "04",
-    label: "Análise interna",
-    description: "Investigação de estruturas internas.",
-    href: "#analise-interna",
+    title: "Inspeção interna",
+    eyebrow: "Além da superfície",
+    description:
+      "Investigação de estruturas e características internas por meio de tecnologias de inspeção.",
+    href: "#inspecao-interna",
+  },
+];
+
+const dimensionalApplications = [
+  "Verificação dimensional",
+  "Geometrias e tolerâncias",
+  "Comparação com especificações",
+  "Controle de qualidade",
+];
+
+const dimensionalTechnologies = [
+  "ZEISS PRISMO",
+  "ZEISS DuraMax",
+  "ZEISS O-INSPECT",
+];
+
+const scanningApplications = [
+  "Comparação peça × CAD",
+  "Documentação de geometria",
+  "Superfícies complexas",
+  "Geração de dados 3D",
+];
+
+const reverseApplications = [
+  "Reconstrução de componentes",
+  "Ausência de desenho técnico",
+  "Desenvolvimento de modelos CAD",
+  "Documentação digital",
+];
+
+const internalApplications = [
+  "Estruturas internas",
+  "Características não acessíveis",
+  "Cavidades",
+  "Montagens",
+  "Análise interna de componentes",
+];
+
+const integratedSolutions = [
+  {
+    number: "01",
+    from: "Digitalização 3D",
+    to: "Engenharia reversa",
+    description:
+      "A geometria capturada pode servir como base para reconstrução e desenvolvimento digital.",
+  },
+  {
+    number: "02",
+    from: "Engenharia reversa",
+    to: "Medição dimensional",
+    description:
+      "Dados reconstruídos podem apoiar novas análises e verificações dimensionais.",
+  },
+  {
+    number: "03",
+    from: "Inspeção interna",
+    to: "Análise dimensional",
+    description:
+      "Informações internas e externas podem ser combinadas de acordo com a necessidade do projeto.",
   },
 ];
 
 export function ServicosPage() {
   return (
-    <main>
-      {/* HERO */}
-      <section className="relative overflow-hidden bg-white py-14 sm:py-18 lg:py-20">
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute -right-32 -top-60 h-[520px] w-[520px] rounded-full border border-[#356f9f]/[0.035]"
-        />
+    <main className="overflow-hidden bg-white">
+      <div className="relative bg-[linear-gradient(180deg,#ffffff_0%,#f9fbfc_10%,#f1f7f9_29%,#e8f2f6_54%,#e3eff4_73%,#edf5f8_88%,#f8fbfc_96%,#ffffff_100%)]">
+        <ServicesHero />
+        <ServicesOverview />
+      </div>
 
-        <Container>
-          <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-end lg:gap-16">
-            <div>
-              <div className="flex items-center gap-4">
-                <p className="text-sm font-medium uppercase tracking-[0.09em] text-[#356f9f]">
-                  Serviços
-                </p>
+      <div className="relative bg-[linear-gradient(180deg,#ffffff_0%,#f8fbfc_8%,#edf5f8_27%,#dfeef3_51%,#d5e8ef_67%,#e6f1f5_84%,#f8fbfc_96%,#ffffff_100%)]">
+        <DimensionalSection />
+        <ScanningSection />
+      </div>
 
-                <div className="h-px w-10 bg-[#6fa7d1]" />
-              </div>
+      <ReverseEngineeringSection />
 
-              <h1 className="mt-5 max-w-3xl text-[2.75rem] font-semibold leading-[1.04] tracking-[-0.045em] text-[#0b2340] sm:text-6xl">
-                Tecnologia aplicada a cada etapa do seu desafio.
-              </h1>
-            </div>
+      <div className="relative bg-[linear-gradient(180deg,#ffffff_0%,#f7fafb_10%,#edf4f7_32%,#e1edf2_57%,#d9e9ef_72%,#edf5f8_90%,#ffffff_100%)]">
+        <InternalInspectionSection />
+        <IntegratedSection />
+      </div>
 
-            <div className="lg:pb-1">
-              <p className="max-w-xl text-base leading-7 text-[var(--color-text-secondary)] sm:text-lg sm:leading-8">
-                Da medição dimensional à digitalização e análise interna,
-                diferentes tecnologias podem ser combinadas de acordo com as
-                necessidades de cada projeto.
-              </p>
-            </div>
-          </div>
-
-          <div className="mt-10 grid gap-3 sm:grid-cols-2 lg:mt-12 lg:grid-cols-4">
-            {quickLinks.map((item) => (
-              <a
-                key={item.number}
-                href={item.href}
-                className="
-                  group relative overflow-hidden
-                  rounded-[22px]
-                  border border-[#d6e4ec]
-                  bg-[#f0f6f9]
-                  px-6 py-6
-                  transition-all duration-300
-                  hover:-translate-y-1
-                  hover:border-[#91bcd8]
-                  hover:bg-[#e8f2f7]
-                  hover:shadow-[0_14px_32px_rgba(8,28,44,0.07)]
-                "
-              >
-                <div
-                  aria-hidden="true"
-                  className="absolute right-0 top-0 h-20 w-20 translate-x-8 -translate-y-8 rounded-full border border-[#5fa9df]/15 transition-transform duration-500 group-hover:scale-125"
-                />
-
-                <div className="relative z-10 flex items-start justify-between gap-5">
-                  <div>
-                    <span className="text-xs font-medium tracking-[0.14em] text-[#356f9f]">
-                      {item.number}
-                    </span>
-
-                    <h2 className="mt-4 text-[1.05rem] font-semibold leading-tight tracking-[-0.02em] text-[#0b2340]">
-                      {item.label}
-                    </h2>
-
-                    <p className="mt-2 text-xs leading-5 text-[#667887]">
-                      {item.description}
-                    </p>
-                  </div>
-
-                  <ArrowUpRightIcon className="mt-0.5 h-4 w-4 shrink-0 text-[#5d7f96] transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-[#0057b8]" />
-                </div>
-
-                <div className="absolute bottom-0 left-0 h-[2px] w-10 bg-[#69aedd] transition-all duration-500 group-hover:w-full" />
-              </a>
-            ))}
-          </div>
-        </Container>
-      </section>
-
-      {/* 01 INSPEÇÃO DIMENSIONAL */}
-      <section
-        id="inspecao-dimensional"
-        className="scroll-mt-24 bg-[var(--color-surface)] py-14 sm:py-18 lg:py-20"
-      >
-        <Container>
-          <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:gap-16">
-            <div>
-              <ServiceTitle
-                number="01"
-                eyebrow="Precisão dimensional"
-                title="Inspeção dimensional"
-                intro="Medição e avaliação de características dimensionais e geométricas de peças e componentes para verificar sua conformidade com desenhos, especificações e requisitos técnicos."
-              />
-
-              <div className="mt-8 grid gap-5 sm:grid-cols-2">
-                <CompactInfo
-                  title="Aplicações"
-                  items={[
-                    "Verificação dimensional",
-                    "Geometrias e tolerâncias",
-                    "Comparação com especificações",
-                    "Controle de qualidade",
-                  ]}
-                />
-
-                <CompactInfo
-                  title="Tecnologias"
-                  items={[
-                    "ZEISS PRISMO",
-                    "ZEISS DuraMax",
-                    "ZEISS O-INSPECT",
-                  ]}
-                />
-              </div>
-
-              <ServiceAction />
-            </div>
-
-            <ServiceVideo
-              src="/videos/services/inspection-dimensional.mp4"
-              label="Inspeção dimensional"
-              caption="Medição por coordenadas"
-            />
-          </div>
-        </Container>
-      </section>
-
-      {/* 02 DIGITALIZAÇÃO 3D */}
-      <section
-        id="digitalizacao-3d"
-        className="scroll-mt-24 bg-white py-14 sm:py-18 lg:py-20"
-      >
-        <Container>
-          <div className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:gap-16">
-            <div className="order-2 lg:order-1">
-              <ServiceVideo
-                src="/videos/services/digitalizacao-3d.mp4"
-                label="Digitalização 3D"
-                caption="Captura da geometria da peça"
-              />
-            </div>
-
-            <div className="order-1 lg:order-2">
-              <ServiceTitle
-                number="02"
-                eyebrow="Captura digital"
-                title="Digitalização 3D"
-                intro="Captura da geometria de peças e componentes para criação de representações digitais tridimensionais com alto nível de detalhe."
-              />
-
-              <div className="mt-8">
-                <p className="text-xs font-medium uppercase tracking-[0.11em] text-[#356f9f]">
-                  Fluxo
-                </p>
-
-                <div className="mt-4 grid grid-cols-3 gap-2">
-                  <ProcessMini number="01" label="Peça física" />
-                  <ProcessMini number="02" label="Captura 3D" />
-                  <ProcessMini number="03" label="Modelo digital" />
-                </div>
-              </div>
-
-              <div className="mt-6">
-                <CompactInfo
-                  title="Aplicações"
-                  items={[
-                    "Comparação peça × CAD",
-                    "Documentação de geometria",
-                    "Superfícies complexas",
-                    "Geração de dados 3D",
-                  ]}
-                />
-              </div>
-
-              <ServiceAction />
-            </div>
-          </div>
-        </Container>
-      </section>
-
-      {/* 03 ENGENHARIA REVERSA */}
-      <section
-        id="engenharia-reversa"
-        className="scroll-mt-24 bg-[#081c2c] py-14 text-white sm:py-18 lg:py-20"
-      >
-        <Container>
-          <div className="grid gap-10 lg:grid-cols-[0.86fr_1.14fr] lg:items-center lg:gap-16">
-            <div>
-              <p className="text-sm font-medium tracking-[0.12em] text-[#76b7e8]">
-                03
-              </p>
-
-              <p className="mt-5 text-xs font-medium uppercase tracking-[0.11em] text-[#76b7e8]">
-                Reconstrução digital
-              </p>
-
-              <h2 className="mt-3 text-[2.5rem] font-semibold leading-[1.06] tracking-[-0.04em] text-white sm:text-5xl">
-                Engenharia reversa
-              </h2>
-
-              <p className="mt-6 max-w-xl text-base leading-7 text-[#b8c4cf] sm:text-lg sm:leading-8">
-                Transformação das informações obtidas de uma peça física em
-                dados digitais utilizáveis para reconstrução, documentação ou
-                desenvolvimento de modelos CAD.
-              </p>
-
-              <div className="mt-8">
-                <CompactInfoDark
-                  title="Aplicações"
-                  items={[
-                    "Reconstrução de peças",
-                    "Ausência de desenho técnico",
-                    "Desenvolvimento CAD",
-                    "Documentação de componentes",
-                  ]}
-                />
-              </div>
-
-              <Link
-                to="/orcamento"
-                className="group mt-8 inline-flex items-center gap-3 text-sm font-medium text-[#76b7e8] transition-colors hover:text-white"
-              >
-                Solicitar orçamento
-
-                <ArrowRightIcon className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-              </Link>
-            </div>
-
-            <div className="rounded-[28px] border border-white/10 bg-white/[0.035] p-6 sm:p-8">
-              <div className="flex items-center justify-between">
-                <p className="text-xs font-medium uppercase tracking-[0.12em] text-[#76b7e8]">
-                  Processo digital
-                </p>
-
-                <span className="text-[10px] uppercase tracking-[0.13em] text-white/35">
-                  Reverse engineering
-                </span>
-              </div>
-
-              <div className="mt-8 grid gap-3 sm:grid-cols-5">
-                <DarkProcessStep number="01" label="Peça" />
-                <DarkProcessStep number="02" label="Digitalização" />
-                <DarkProcessStep number="03" label="Malha" />
-                <DarkProcessStep number="04" label="Superfícies" />
-                <DarkProcessStep number="05" label="CAD" />
-              </div>
-
-              <div className="mt-6 flex min-h-[180px] items-center justify-center rounded-[20px] border border-dashed border-white/10 bg-[#061724]">
-                <div className="text-center">
-                  <div className="mx-auto h-px w-12 bg-[#76b7e8]/60" />
-
-                  <p className="mt-4 text-xs uppercase tracking-[0.12em] text-white/35">
-                    Área preparada para exemplo visual
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </Container>
-      </section>
-
-      {/* 04 ANÁLISE INTERNA */}
-      <section
-        id="analise-interna"
-        className="scroll-mt-24 bg-white py-14 sm:py-18 lg:py-20"
-      >
-        <Container>
-          <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:gap-16">
-            <div>
-              <ServiceTitle
-                number="04"
-                eyebrow="Inspeção não destrutiva"
-                title="Análise interna"
-                intro="Investigação de estruturas e características internas que não podem ser avaliadas somente pela superfície da peça."
-              />
-
-              <div className="mt-8 grid gap-5 sm:grid-cols-2">
-                <CompactInfo
-                  title="Aplicações"
-                  items={[
-                    "Estruturas internas",
-                    "Defeitos internos",
-                    "Cavidades",
-                    "Montagens",
-                    "Características não acessíveis",
-                  ]}
-                />
-
-                <CompactInfo
-                  title="Tecnologia"
-                  items={["ZEISS BOSELLO MAX", "Inspeção por raios X"]}
-                />
-              </div>
-
-              <ServiceAction />
-            </div>
-
-            <div className="relative min-h-[390px] overflow-hidden rounded-[28px] border border-[#dbe6ed] bg-[#eef4f7]">
-              <div
-                aria-hidden="true"
-                className="absolute -right-24 -top-24 h-[330px] w-[330px] rounded-full border border-[#356f9f]/10"
-              />
-
-              <div
-                aria-hidden="true"
-                className="absolute -right-10 -top-10 h-[220px] w-[220px] rounded-full border border-[#356f9f]/10"
-              />
-
-              <div className="absolute inset-0 flex items-center justify-center p-8">
-                <div className="max-w-xs text-center">
-                  <div className="mx-auto h-px w-14 bg-[#5fa9df]" />
-
-                  <p className="mt-5 text-xs font-medium uppercase tracking-[0.12em] text-[#356f9f]">
-                    Internal inspection
-                  </p>
-
-                  <p className="mt-4 text-xl font-semibold leading-snug tracking-[-0.02em] text-[#0b2340]">
-                    Visualização de estruturas além da superfície.
-                  </p>
-
-                  <p className="mt-4 text-sm leading-6 text-[#667887]">
-                    Espaço reservado para imagem ou vídeo de inspeção interna.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </Container>
-      </section>
-
-      {/* SOLUÇÃO INTEGRADA */}
-      <section className="bg-[var(--color-surface)] py-14 sm:py-18 lg:py-20">
-        <Container>
-          <div className="grid gap-10 lg:grid-cols-[0.82fr_1.18fr] lg:items-center lg:gap-16">
-            <div>
-              <div className="flex items-center gap-4">
-                <p className="text-sm font-medium uppercase tracking-[0.09em] text-[#356f9f]">
-                  Solução integrada
-                </p>
-
-                <div className="h-px w-10 bg-[#6fa7d1]" />
-              </div>
-
-              <h2 className="mt-4 max-w-xl text-[2.35rem] font-semibold leading-[1.08] tracking-[-0.035em] text-[#0b2340] sm:text-5xl">
-                Um projeto pode envolver diferentes tecnologias.
-              </h2>
-
-              <p className="mt-6 max-w-xl text-base leading-7 text-[var(--color-text-secondary)] sm:text-lg sm:leading-8">
-                As tecnologias podem ser combinadas de acordo com o objetivo,
-                as características da peça e as informações necessárias para
-                cada projeto.
-              </p>
-            </div>
-
-            <div className="grid gap-3">
-              <ConnectionRow
-                from="Digitalização 3D"
-                to="Engenharia reversa"
-              />
-
-              <ConnectionRow
-                from="Engenharia reversa"
-                to="Inspeção dimensional"
-              />
-
-              <ConnectionRow
-                from="Análise interna"
-                to="Inspeção dimensional"
-              />
-            </div>
-          </div>
-        </Container>
-      </section>
-
-      {/* CTA FINAL */}
-      <section className="relative overflow-hidden bg-white py-14 sm:py-18 lg:py-20">
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute -bottom-48 -right-40 h-[470px] w-[470px] rounded-full border border-[#356f9f]/[0.05]"
-        />
-
-        <Container>
-          <div className="relative z-10">
-            <div className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:items-end">
-              <div>
-                <div className="flex items-center gap-4">
-                  <p className="text-sm font-medium uppercase tracking-[0.09em] text-[#356f9f]">
-                    Próximo passo
-                  </p>
-
-                  <div className="h-px w-10 bg-[#6fa7d1]" />
-                </div>
-
-                <h2 className="mt-4 max-w-xl text-[2.35rem] font-semibold leading-[1.08] tracking-[-0.035em] text-[#0b2340] sm:text-5xl">
-                  Como deseja continuar?
-                </h2>
-
-                <p className="mt-5 max-w-lg text-base leading-7 text-[#667887]">
-                  Escolha o caminho mais adequado ao estágio atual do seu
-                  projeto.
-                </p>
-              </div>
-
-              <div className="grid gap-4 sm:grid-cols-2">
-                <FinalCard
-                  number="01"
-                  label="Já sei o que preciso"
-                  title="Solicitar orçamento"
-                  href="/orcamento"
-                />
-
-                <FinalCard
-                  number="02"
-                  label="Preciso de orientação"
-                  title="Configurar minha solução"
-                  href="/configurador"
-                />
-              </div>
-            </div>
-          </div>
-        </Container>
-      </section>
+      <GuidanceSection />
     </main>
   );
 }
 
-function ServiceTitle({ number, eyebrow, title, intro }) {
+function ServicesHero() {
+  return (
+    <section className="relative overflow-hidden pb-5 pt-7 sm:pb-6 sm:pt-9 lg:pb-7 lg:pt-10">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -left-[10%] top-[12%] h-[360px] w-[360px] rounded-full bg-[#65b8ee]/[0.08] blur-[110px]"
+      />
+
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -right-[8%] top-[5%] h-[420px] w-[420px] rounded-full bg-[#12364e]/[0.06] blur-[125px]"
+      />
+
+      <Container>
+        <div className="relative z-10 grid min-h-[455px] gap-8 lg:grid-cols-[0.88fr_1.12fr] lg:items-center lg:gap-12">
+          <ScrollReveal
+            direction="right"
+            distance={34}
+            className="relative z-10"
+          >
+            <div className="flex items-center gap-4">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#356f9f]">
+                Centro de Excelência
+              </p>
+
+              <div className="h-px w-10 bg-[#65b8ee]" />
+            </div>
+
+            <h1 className="mt-5 max-w-[680px] text-[2.65rem] font-semibold leading-[0.98] tracking-[-0.052em] text-[#071f2d] sm:text-[3.55rem] lg:text-[4.15rem]">
+              Serviços para
+              <br />
+              transformar desafios
+              <br />
+              <span className="text-[#356f9f]">
+                em informação técnica.
+              </span>
+            </h1>
+
+            <p className="mt-6 max-w-[585px] text-[14px] leading-7 text-[#607583] sm:text-[15px]">
+              Soluções em metrologia, digitalização e inspeção para
+              apoiar diferentes etapas de desenvolvimento, análise e
+              controle de peças e componentes.
+            </p>
+          </ScrollReveal>
+
+          <ScrollReveal
+            direction="left"
+            distance={38}
+            className="relative min-h-[390px] sm:min-h-[430px] lg:min-h-[470px]"
+          >
+            <div className="group absolute inset-[4%] overflow-hidden rounded-[30px] border border-white/60 bg-[#071f2d] shadow-[0_26px_65px_rgba(7,31,45,0.14)]">
+              <video
+                autoPlay
+                muted
+                loop
+                playsInline
+                preload="metadata"
+                className="h-full w-full object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-[1.025]"
+              >
+                <source
+                  src="/videos/services/coletor.mp4"
+                  type="video/mp4"
+                />
+              </video>
+
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(7,31,45,0.04)_0%,rgba(7,31,45,0.10)_46%,rgba(7,31,45,0.86)_100%)]"
+              />
+
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute left-[7%] right-[7%] top-0 h-px bg-gradient-to-r from-transparent via-white/65 to-transparent"
+              />
+
+              <div className="absolute left-6 top-6 rounded-full border border-white/25 bg-white/12 px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.13em] text-white backdrop-blur-[18px]">
+                Metrologia aplicada
+              </div>
+
+              <div className="absolute right-6 top-6 text-[10px] font-semibold uppercase tracking-[0.13em] text-white/60">
+                SENAI · ZEISS
+              </div>
+
+              <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-7">
+                <div className="mb-3 h-px w-11 bg-[#65b8ee]" />
+
+                <p className="text-[10px] font-semibold uppercase tracking-[0.13em] text-[#9dd1ef]">
+                  Do físico ao digital
+                </p>
+
+                <h3 className="mt-2 max-w-[440px] text-[20px] font-semibold leading-tight tracking-[-0.03em] text-white sm:text-[23px]">
+                  Tecnologia aplicada a desafios reais.
+                </h3>
+
+                <p className="mt-3 text-[11px] text-white/55">
+                  Centro de Excelência
+                </p>
+
+                <div className="mt-5 grid grid-cols-3 gap-2">
+                  <HeroVideoMetric
+                    number="01"
+                    label="Medir"
+                  />
+
+                  <HeroVideoMetric
+                    number="02"
+                    label="Digitalizar"
+                  />
+
+                  <HeroVideoMetric
+                    number="03"
+                    label="Analisar"
+                  />
+                </div>
+              </div>
+            </div>
+          </ScrollReveal>
+        </div>
+      </Container>
+    </section>
+  );
+}
+
+function HeroVideoMetric({
+  number,
+  label,
+}) {
+  return (
+    <div className="rounded-[13px] border border-white/15 bg-white/[0.08] px-3 py-3 backdrop-blur-[14px]">
+      <span className="text-[8px] font-semibold tracking-[0.13em] text-white/45">
+        {number}
+      </span>
+
+      <p className="mt-1 text-[10px] font-semibold text-white/82">
+        {label}
+      </p>
+    </div>
+  );
+}
+function ServicesOverview() {
+  return (
+    <section
+      id="servicos"
+      className="scroll-mt-24 pb-8 pt-5 sm:pb-10 sm:pt-6 lg:pb-11 lg:pt-7"
+    >
+      <Container>
+        <ScrollReveal
+          direction="up"
+          distance={30}
+        >
+          <div className="flex items-center gap-4">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#356f9f]">
+              Serviços
+            </p>
+
+            <div className="h-px w-10 bg-[#65b8ee]" />
+          </div>
+
+          <h2 className="mt-4 max-w-[650px] text-[2.2rem] font-semibold leading-[1.04] tracking-[-0.045em] text-[#071f2d] sm:text-[2.8rem]">
+            Quatro caminhos.
+            <br />
+
+            <span className="text-[#356f9f]">
+              Diferentes possibilidades.
+            </span>
+          </h2>
+        </ScrollReveal>
+
+        <div className="mt-7 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          {services.map((service, index) => (
+            <ServiceOverviewCard
+              key={service.number}
+              service={service}
+              index={index}
+            />
+          ))}
+        </div>
+      </Container>
+    </section>
+  );
+}
+
+function ServiceOverviewCard({
+  service,
+  index,
+}) {
+  return (
+    <motion.a
+      href={service.href}
+      initial={{
+        opacity: 0,
+        y: 18,
+      }}
+      whileInView={{
+        opacity: 1,
+        y: 0,
+      }}
+      viewport={{
+        once: true,
+        amount: 0.25,
+      }}
+      transition={{
+        duration: 0.5,
+        delay: index * 0.07,
+        ease: [0.22, 1, 0.36, 1],
+      }}
+      whileHover={{
+        y: -4,
+      }}
+      className="group relative overflow-hidden rounded-[20px] border border-white/72 bg-white/48 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.92),0_10px_30px_rgba(7,31,45,0.035)] backdrop-blur-[18px] transition-colors duration-300 hover:bg-white/66"
+    >
+      <div
+        aria-hidden="true"
+        className="absolute -right-10 -top-10 h-24 w-24 rounded-full border border-[#356f9f]/[0.06] transition-transform duration-500 group-hover:scale-110"
+      />
+
+      <div className="relative z-10 flex items-start justify-between gap-4">
+        <span className="text-[10px] font-semibold tracking-[0.14em] text-[#5687ad]">
+          {service.number}
+        </span>
+
+        <ArrowUpRightIcon className="h-4 w-4 text-[#5687ad] transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+      </div>
+
+      <div className="relative z-10 mt-8">
+        <p className="text-[9px] font-semibold uppercase tracking-[0.12em] text-[#5687ad]">
+          {service.eyebrow}
+        </p>
+
+        <h3 className="mt-2 text-[17px] font-semibold tracking-[-0.025em] text-[#071f2d]">
+          {service.title}
+        </h3>
+
+        <p className="mt-3 text-[12px] leading-6 text-[#607583]">
+          {service.description}
+        </p>
+      </div>
+    </motion.a>
+  );
+}
+
+function DimensionalSection() {
+  return (
+    <section
+      id="medicao-dimensional"
+      className="scroll-mt-24 pb-8 pt-8 sm:pb-10 sm:pt-9 lg:pb-10 lg:pt-10"
+    >
+      <Container>
+        <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:gap-12">
+          <ScrollReveal
+            direction="right"
+            distance={32}
+          >
+            <ServiceHeading
+              number="01"
+              eyebrow="Precisão dimensional"
+              title="Medição dimensional"
+              description="Medição e avaliação de características dimensionais e geométricas de peças e componentes para verificar sua conformidade com desenhos, especificações e requisitos técnicos."
+            />
+
+            <div className="mt-6 grid gap-3 sm:grid-cols-2">
+              <InfoCard
+                title="Aplicações"
+                items={dimensionalApplications}
+              />
+
+              <InfoCard
+                title="Tecnologias"
+                items={dimensionalTechnologies}
+              />
+            </div>
+          </ScrollReveal>
+
+          <ScrollReveal
+            direction="left"
+            distance={36}
+          >
+            <ServiceMedia
+              src="/videos/services/inspection-dimensional.mp4"
+              eyebrow="Medição por coordenadas"
+              title="Precisão aplicada à geometria da peça."
+              number="01"
+            />
+          </ScrollReveal>
+        </div>
+      </Container>
+    </section>
+  );
+}
+
+function ScanningSection() {
+  return (
+    <section
+      id="digitalizacao-3d"
+      className="scroll-mt-24 pb-8 pt-5 sm:pb-9 sm:pt-6 lg:pb-10 lg:pt-6"
+    >
+      <Container>
+        <div className="grid gap-7 lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:gap-12">
+          <ScrollReveal
+            direction="right"
+            distance={36}
+            className="order-2 lg:order-1 lg:-mt-2"
+          >
+            <ServiceMedia
+              src="/videos/services/digitalizacao-3d.mp4"
+              eyebrow="Captura da geometria"
+              title="Da superfície física ao ambiente digital."
+              number="02"
+            />
+          </ScrollReveal>
+
+          <ScrollReveal
+            direction="left"
+            distance={32}
+            className="order-1 lg:order-2 lg:-mt-2"
+          >
+            <ServiceHeading
+              number="02"
+              eyebrow="Captura digital"
+              title="Digitalização 3D"
+              description="Captura da geometria de peças e componentes para criação de representações digitais que podem apoiar análises, comparações e outras etapas do projeto."
+              compact
+            />
+
+            <div className="mt-5">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.13em] text-[#5687ad]">
+                Fluxo
+              </p>
+
+              <div className="mt-3 grid grid-cols-3 gap-2">
+                <ProcessStep
+                  number="01"
+                  label="Peça física"
+                />
+
+                <ProcessStep
+                  number="02"
+                  label="Captura 3D"
+                />
+
+                <ProcessStep
+                  number="03"
+                  label="Modelo digital"
+                />
+              </div>
+            </div>
+
+            <div className="mt-4">
+              <CompactApplicationsCard
+                title="Aplicações"
+                items={scanningApplications}
+              />
+            </div>
+          </ScrollReveal>
+        </div>
+      </Container>
+    </section>
+  );
+}
+function ServiceHeading({
+  number,
+  eyebrow,
+  title,
+  description,
+  compact = false,
+}) {
   return (
     <div>
-      <p className="text-sm font-medium tracking-[0.12em] text-[#356f9f]">
-        {number}
-      </p>
+      <div className="flex items-center gap-4">
+        <span className="text-[11px] font-semibold tracking-[0.15em] text-[#356f9f]">
+          {number}
+        </span>
 
-      <p className="mt-5 text-xs font-medium uppercase tracking-[0.11em] text-[#5687ad]">
+        <div className="h-px w-10 bg-[#65b8ee]" />
+      </div>
+
+      <p className="mt-4 text-[10px] font-semibold uppercase tracking-[0.13em] text-[#5687ad]">
         {eyebrow}
       </p>
 
-      <h2 className="mt-3 text-[2.5rem] font-semibold leading-[1.06] tracking-[-0.04em] text-[#0b2340] sm:text-5xl">
+      <h2
+        className={`
+          mt-2
+          font-semibold
+          leading-[1.02]
+          tracking-[-0.045em]
+          text-[#071f2d]
+          ${
+            compact
+              ? "text-[2.3rem] sm:text-[2.9rem]"
+              : "text-[2.45rem] sm:text-[3.15rem]"
+          }
+        `}
+      >
         {title}
       </h2>
 
-      <p className="mt-6 max-w-xl text-base leading-7 text-[var(--color-text-secondary)] sm:text-lg sm:leading-8">
-        {intro}
+      <p className="mt-4 max-w-[580px] text-[14px] leading-7 text-[#607583] sm:text-[15px]">
+        {description}
       </p>
     </div>
   );
 }
 
-function ServiceVideo({ src, label, caption }) {
+function InfoCard({
+  title,
+  items,
+}) {
   return (
-    <div className="group relative overflow-hidden rounded-[28px] bg-[#081c2c] shadow-[0_20px_45px_rgba(8,28,44,0.08)]">
+    <div className="rounded-[18px] border border-white/72 bg-white/48 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.92),0_8px_24px_rgba(7,31,45,0.03)] backdrop-blur-[18px]">
+      <p className="text-[9px] font-semibold uppercase tracking-[0.13em] text-[#5687ad]">
+        {title}
+      </p>
+
+      <div className="mt-3 space-y-2.5">
+        {items.map((item) => (
+          <div
+            key={item}
+            className="flex items-start gap-2.5"
+          >
+            <span className="mt-[7px] h-1 w-1 shrink-0 rounded-full bg-[#65b8ee]" />
+
+            <p className="text-[11px] leading-5 text-[#526b79]">
+              {item}
+            </p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function CompactApplicationsCard({
+  title,
+  items,
+}) {
+  return (
+    <div className="rounded-[18px] border border-white/72 bg-white/48 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.92),0_8px_24px_rgba(7,31,45,0.03)] backdrop-blur-[18px]">
+      <p className="text-[9px] font-semibold uppercase tracking-[0.13em] text-[#5687ad]">
+        {title}
+      </p>
+
+      <div className="mt-3 grid gap-x-4 gap-y-2 sm:grid-cols-2">
+        {items.map((item) => (
+          <div
+            key={item}
+            className="flex items-start gap-2.5"
+          >
+            <span className="mt-[7px] h-1 w-1 shrink-0 rounded-full bg-[#65b8ee]" />
+
+            <p className="text-[11px] leading-5 text-[#526b79]">
+              {item}
+            </p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function ProcessStep({
+  number,
+  label,
+}) {
+  return (
+    <motion.div
+      whileHover={{
+        y: -2,
+      }}
+      transition={{
+        duration: 0.25,
+      }}
+      className="rounded-[15px] border border-white/72 bg-white/45 px-3 py-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] backdrop-blur-[16px]"
+    >
+      <span className="text-[8px] font-semibold tracking-[0.13em] text-[#5687ad]">
+        {number}
+      </span>
+
+      <p className="mt-1.5 text-[10px] font-semibold text-[#12364e]">
+        {label}
+      </p>
+    </motion.div>
+  );
+}
+
+function ServiceMedia({
+  src,
+  eyebrow,
+  title,
+  number,
+}) {
+  return (
+    <div className="group relative overflow-hidden rounded-[28px] border border-white/60 bg-[#071f2d] shadow-[0_22px_58px_rgba(7,31,45,0.12)]">
       <div className="relative aspect-[4/3] overflow-hidden sm:aspect-[16/10]">
         <video
           autoPlay
@@ -495,176 +627,596 @@ function ServiceVideo({ src, label, caption }) {
           loop
           playsInline
           preload="metadata"
-          aria-label={label}
-          className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.02]"
+          className="h-full w-full object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-[1.025]"
         >
-          <source src={src} type="video/mp4" />
+          <source
+            src={src}
+            type="video/mp4"
+          />
         </video>
 
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#061724]/80 via-transparent to-transparent" />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(7,31,45,0.01)_0%,rgba(7,31,45,0.06)_45%,rgba(7,31,45,0.82)_100%)]"
+        />
+
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute left-[7%] right-[7%] top-0 h-px bg-gradient-to-r from-transparent via-white/60 to-transparent"
+        />
 
         <div className="pointer-events-none absolute inset-x-0 bottom-0 p-6 sm:p-7">
-          <div className="mb-3 h-px w-12 bg-[#65b8ee]" />
+          <div className="flex items-end justify-between gap-6">
+            <div>
+              <div className="mb-3 h-px w-11 bg-[#65b8ee]" />
 
-          <p className="text-xs font-medium uppercase tracking-[0.11em] text-[#9ccdec]">
-            {label}
-          </p>
+              <p className="text-[10px] font-semibold uppercase tracking-[0.13em] text-[#9dd1ef]">
+                {eyebrow}
+              </p>
 
-          <p className="mt-2 text-lg font-semibold text-white">
-            {caption}
-          </p>
+              <p className="mt-2 max-w-[420px] text-[18px] font-semibold leading-snug tracking-[-0.02em] text-white">
+                {title}
+              </p>
+            </div>
+
+            <span className="text-[11px] font-semibold tracking-[0.14em] text-white/45">
+              {number}
+            </span>
+          </div>
         </div>
       </div>
     </div>
   );
 }
 
-function CompactInfo({ title, items }) {
+function ReverseEngineeringSection() {
   return (
-    <div className="rounded-[20px] border border-[#dfe6eb] bg-white p-5">
-      <p className="text-[11px] font-medium uppercase tracking-[0.1em] text-[#356f9f]">
-        {title}
-      </p>
-
-      <div className="mt-4 flex flex-col gap-2.5">
-        {items.map((item) => (
-          <div key={item} className="flex items-start gap-3">
-            <span className="mt-[9px] h-1 w-1 shrink-0 rounded-full bg-[#6fa7d1]" />
-
-            <p className="text-sm leading-6 text-[#536773]">
-              {item}
-            </p>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function CompactInfoDark({ title, items }) {
-  return (
-    <div className="rounded-[20px] border border-white/10 bg-white/[0.035] p-5">
-      <p className="text-[11px] font-medium uppercase tracking-[0.1em] text-[#76b7e8]">
-        {title}
-      </p>
-
-      <div className="mt-4 grid gap-2.5 sm:grid-cols-2">
-        {items.map((item) => (
-          <div key={item} className="flex items-start gap-3">
-            <span className="mt-[9px] h-1 w-1 shrink-0 rounded-full bg-[#76b7e8]" />
-
-            <p className="text-sm leading-6 text-[#b8c4cf]">
-              {item}
-            </p>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function ProcessMini({ number, label }) {
-  return (
-    <div className="rounded-[16px] border border-[#dce6ec] bg-[#f5f8fa] p-4">
-      <span className="text-[10px] font-medium tracking-[0.1em] text-[#356f9f]">
-        {number}
-      </span>
-
-      <p className="mt-3 text-xs font-semibold leading-5 text-[#0b2340]">
-        {label}
-      </p>
-    </div>
-  );
-}
-
-function DarkProcessStep({ number, label }) {
-  return (
-    <div className="rounded-[16px] border border-white/10 bg-white/[0.035] p-4">
-      <span className="text-[10px] font-medium tracking-[0.1em] text-[#76b7e8]">
-        {number}
-      </span>
-
-      <p className="mt-4 text-xs font-semibold leading-5 text-white">
-        {label}
-      </p>
-    </div>
-  );
-}
-
-function ServiceAction() {
-  return (
-    <Link
-      to="/orcamento"
-      className="group mt-8 inline-flex items-center gap-3 text-sm font-medium text-[#356f9f] transition-colors hover:text-[#0b2340]"
-    >
-      Solicitar orçamento
-
-      <ArrowRightIcon className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-    </Link>
-  );
-}
-
-function ConnectionRow({ from, to }) {
-  return (
-    <div className="group flex items-center gap-4 rounded-[20px] border border-[#dce5eb] bg-white px-5 py-5 transition-all duration-300 hover:border-[#9ebfd5] sm:px-6">
-      <p className="flex-1 text-sm font-semibold text-[#0b2340]">
-        {from}
-      </p>
-
-      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#eef5f9] text-[#356f9f]">
-        <ArrowRightIcon className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-0.5" />
-      </div>
-
-      <p className="flex-1 text-right text-sm font-semibold text-[#0b2340]">
-        {to}
-      </p>
-    </div>
-  );
-}
-
-function FinalCard({ number, label, title, href }) {
-  return (
-    <Link
-      to={href}
-      className="
-        group relative overflow-hidden
-        rounded-[24px]
-        border border-[#d9e5ec]
-        bg-[#f2f7fa]
-        p-6
-        transition-all duration-300
-        hover:-translate-y-1
-        hover:border-[#8dbddd]
-        hover:bg-[#ebf4f9]
-        hover:shadow-[0_14px_35px_rgba(8,28,44,0.07)]
-      "
+    <section
+      id="engenharia-reversa"
+      className="relative scroll-mt-24 overflow-hidden pb-8 pt-5 sm:pb-9 sm:pt-6 lg:pb-10 lg:pt-6"
     >
       <div
         aria-hidden="true"
-        className="absolute -right-12 -top-12 h-28 w-28 rounded-full border border-[#5fa9df]/15 transition-transform duration-500 group-hover:scale-125"
+        className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,#ffffff_0%,#f7fafb_9%,#eef5f8_19%,#dceaf0_33%,#c8dce5_45%,#a7c0cc_57%,#7f9faf_69%,#5d8193_78%,#3f677b_87%,#264e63_94%,#173e54_100%)]"
       />
 
-      <div className="relative z-10">
-        <div className="flex items-center justify-between">
-          <span className="text-[11px] font-medium tracking-[0.12em] text-[#356f9f]">
-            {number}
-          </span>
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -left-24 top-[22%] h-[300px] w-[300px] rounded-full bg-white/[0.16] blur-[110px]"
+      />
 
-          <ArrowUpRightIcon className="h-4 w-4 text-[#65869b] transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-[#0057b8]" />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -right-24 bottom-[10%] h-[320px] w-[320px] rounded-full bg-[#65b8ee]/[0.10] blur-[120px]"
+      />
+
+      <Container>
+        <div className="relative z-10 grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:gap-12">
+          <ScrollReveal
+            direction="right"
+            distance={34}
+          >
+            <div>
+              <div className="flex items-center gap-4">
+                <span className="text-[11px] font-semibold tracking-[0.15em] text-[#356f9f]">
+                  03
+                </span>
+
+                <div className="h-px w-10 bg-[#65b8ee]" />
+              </div>
+
+              <p className="mt-4 text-[10px] font-semibold uppercase tracking-[0.13em] text-[#5687ad]">
+                Reconstrução digital
+              </p>
+
+              <h2 className="mt-2 text-[2.45rem] font-semibold leading-[1.02] tracking-[-0.045em] text-[#071f2d] sm:text-[3.1rem]">
+                Engenharia reversa
+              </h2>
+
+              <p className="mt-4 max-w-[580px] text-[14px] leading-7 text-[#455f6f] sm:text-[15px]">
+                Transformação das informações obtidas de uma peça
+                física em dados digitais que podem apoiar reconstrução,
+                documentação e desenvolvimento de modelos CAD.
+              </p>
+            </div>
+
+            <div className="mt-6">
+              <ReverseInfoCard
+                title="Aplicações"
+                items={reverseApplications}
+              />
+            </div>
+
+            <div className="mt-6 grid grid-cols-2 gap-2.5 sm:grid-cols-5">
+              <ReverseProcessStep
+                number="01"
+                label="Peça"
+              />
+
+              <ReverseProcessStep
+                number="02"
+                label="Captura"
+              />
+
+              <ReverseProcessStep
+                number="03"
+                label="Malha"
+              />
+
+              <ReverseProcessStep
+                number="04"
+                label="Superfícies"
+              />
+
+              <ReverseProcessStep
+                number="05"
+                label="CAD"
+              />
+            </div>
+          </ScrollReveal>
+
+          <ScrollReveal
+            direction="left"
+            distance={38}
+          >
+            <div className="group relative overflow-hidden rounded-[30px] border border-white/35 bg-[#071f2d] shadow-[0_24px_62px_rgba(7,31,45,0.14)]">
+              <div className="relative aspect-[4/3] overflow-hidden sm:aspect-[16/10]">
+                <video
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  preload="metadata"
+                  className="h-full w-full object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-[1.025]"
+                >
+                  <source
+                    src="/videos/services/pistao.mp4"
+                    type="video/mp4"
+                  />
+                </video>
+
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(7,31,45,0.01)_0%,rgba(7,31,45,0.06)_45%,rgba(7,31,45,0.82)_100%)]"
+                />
+
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute left-[7%] right-[7%] top-0 h-px bg-gradient-to-r from-transparent via-white/60 to-transparent"
+                />
+
+                <div className="pointer-events-none absolute inset-x-0 bottom-0 p-6 sm:p-7">
+                  <div className="flex items-end justify-between gap-6">
+                    <div>
+                      <div className="mb-3 h-px w-11 bg-[#65b8ee]" />
+
+                      <p className="text-[10px] font-semibold uppercase tracking-[0.13em] text-[#9dd1ef]">
+                        Processo digital
+                      </p>
+
+                      <p className="mt-2 max-w-[420px] text-[18px] font-semibold leading-snug tracking-[-0.02em] text-white">
+                        Da peça física à reconstrução digital.
+                      </p>
+                    </div>
+
+                    <span className="text-[11px] font-semibold tracking-[0.14em] text-white/45">
+                      03
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ScrollReveal>
+        </div>
+      </Container>
+    </section>
+  );
+}
+
+function ReverseInfoCard({
+  title,
+  items,
+}) {
+  return (
+    <div className="rounded-[18px] border border-white/42 bg-white/26 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.72),0_10px_28px_rgba(7,31,45,0.035)] backdrop-blur-[20px]">
+      <p className="text-[9px] font-semibold uppercase tracking-[0.13em] text-[#356f9f]">
+        {title}
+      </p>
+
+      <div className="mt-3 grid gap-x-4 gap-y-2 sm:grid-cols-2">
+        {items.map((item) => (
+          <div
+            key={item}
+            className="flex items-start gap-2.5"
+          >
+            <span className="mt-[7px] h-1 w-1 shrink-0 rounded-full bg-[#65b8ee]" />
+
+            <p className="text-[11px] leading-5 text-[#314f60]">
+              {item}
+            </p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function ReverseProcessStep({
+  number,
+  label,
+}) {
+  return (
+    <motion.div
+      whileHover={{
+        y: -2,
+      }}
+      transition={{
+        duration: 0.25,
+      }}
+      className="rounded-[15px] border border-white/35 bg-white/20 px-3 py-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.58)] backdrop-blur-[18px]"
+    >
+      <span className="text-[8px] font-semibold tracking-[0.13em] text-[#356f9f]">
+        {number}
+      </span>
+
+      <p className="mt-1.5 text-[10px] font-semibold text-[#12364e]">
+        {label}
+      </p>
+    </motion.div>
+  );
+}
+function InternalInspectionSection() {
+  return (
+    <section
+      id="inspecao-interna"
+      className="scroll-mt-24 pb-9 pt-7 sm:pb-10 sm:pt-8 lg:pb-11 lg:pt-9"
+    >
+      <Container>
+        <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:gap-12">
+          <ScrollReveal
+            direction="right"
+            distance={32}
+          >
+            <ServiceHeading
+              number="04"
+              eyebrow="Além da superfície"
+              title="Inspeção interna"
+              description="Investigação de estruturas e características internas que não podem ser avaliadas somente pela superfície da peça."
+            />
+
+            <div className="mt-6 grid gap-3 sm:grid-cols-2">
+              <InfoCard
+                title="Aplicações"
+                items={internalApplications}
+              />
+
+              <InfoCard
+                title="Tecnologia"
+                items={[
+                  "ZEISS BOSELLO MAX",
+                  "Inspeção por raios X",
+                  "Análise interna não destrutiva",
+                ]}
+              />
+            </div>
+          </ScrollReveal>
+
+          <ScrollReveal
+            direction="left"
+            distance={36}
+          >
+            <InternalVisual />
+          </ScrollReveal>
+        </div>
+      </Container>
+    </section>
+  );
+}
+
+function InternalVisual() {
+  return (
+    <div className="relative overflow-hidden rounded-[28px] border border-white/65 bg-[#071f2d] shadow-[0_22px_58px_rgba(7,31,45,0.12)]">
+      <div className="relative aspect-[4/3] overflow-hidden sm:aspect-[16/10]">
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 bg-[radial-gradient(circle_at_68%_44%,rgba(101,184,238,0.18),transparent_24%),radial-gradient(circle_at_30%_78%,rgba(255,255,255,0.07),transparent_24%),linear-gradient(135deg,#071f2d_0%,#0b2d40_48%,#12364e_100%)]"
+        />
+
+        <motion.div
+          aria-hidden="true"
+          animate={{
+            rotate: 360,
+          }}
+          transition={{
+            duration: 32,
+            repeat: Infinity,
+            ease: "linear",
+          }}
+          className="absolute left-1/2 top-1/2 h-[68%] w-[68%] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/12"
+        >
+          <div className="absolute left-1/2 top-0 h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#9dd1ef]/50 bg-[#65b8ee]/20" />
+        </motion.div>
+
+        <motion.div
+          aria-hidden="true"
+          animate={{
+            rotate: -360,
+          }}
+          transition={{
+            duration: 24,
+            repeat: Infinity,
+            ease: "linear",
+          }}
+          className="absolute left-1/2 top-1/2 h-[48%] w-[48%] -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#65b8ee]/20"
+        >
+          <div className="absolute bottom-[10%] right-[8%] h-2 w-2 rounded-full bg-[#9dd1ef]/60" />
+        </motion.div>
+
+        <div
+          aria-hidden="true"
+          className="absolute left-1/2 top-1/2 h-[28%] w-[28%] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/18 bg-white/[0.035] shadow-[0_0_70px_rgba(101,184,238,0.10)] backdrop-blur-[8px]"
+        />
+
+        <div
+          aria-hidden="true"
+          className="absolute left-[12%] right-[12%] top-1/2 h-px bg-gradient-to-r from-transparent via-white/12 to-transparent"
+        />
+
+        <div
+          aria-hidden="true"
+          className="absolute bottom-[12%] top-[12%] left-1/2 w-px bg-gradient-to-b from-transparent via-white/[0.08] to-transparent"
+        />
+
+        <div className="absolute left-6 top-6 sm:left-7 sm:top-7">
+          <p className="text-[9px] font-semibold uppercase tracking-[0.14em] text-[#9dd1ef]">
+            Internal inspection
+          </p>
+
+          <h3 className="mt-2 text-[21px] font-semibold tracking-[-0.03em] text-white sm:text-[24px]">
+            Além da superfície.
+          </h3>
+
+          <p className="mt-3 max-w-[310px] text-[11px] leading-5 text-white/55">
+            Investigação de características internas e regiões não
+            acessíveis.
+          </p>
         </div>
 
-        <p className="mt-8 text-[10px] font-medium uppercase tracking-[0.1em] text-[#5687ad]">
-          {label}
-        </p>
+        <div className="absolute bottom-6 left-6 right-6 flex items-end justify-between gap-6 sm:bottom-7 sm:left-7 sm:right-7">
+          <div>
+            <p className="text-[8px] font-semibold uppercase tracking-[0.13em] text-white/35">
+              Tecnologia
+            </p>
 
-        <h3 className="mt-2 text-xl font-semibold tracking-[-0.025em] text-[#0b2340]">
-          {title}
-        </h3>
+            <p className="mt-1 text-[11px] font-semibold text-white/70">
+              ZEISS BOSELLO MAX
+            </p>
+          </div>
 
-        <div className="mt-6 h-px w-full bg-[#d7e4eb]">
-          <div className="h-px w-10 bg-[#69aedd] transition-all duration-500 group-hover:w-full" />
+          <span className="text-[11px] font-semibold tracking-[0.14em] text-white/35">
+            04
+          </span>
         </div>
       </div>
+    </div>
+  );
+}
+
+function IntegratedSection() {
+  return (
+    <section className="relative pb-10 pt-7 sm:pb-11 sm:pt-8 lg:pb-12 lg:pt-9">
+      <Container>
+        <div className="grid gap-8 lg:grid-cols-[0.84fr_1.16fr] lg:items-center lg:gap-14">
+          <ScrollReveal
+            direction="right"
+            distance={32}
+          >
+            <div className="flex items-center gap-4">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#356f9f]">
+                Solução integrada
+              </p>
+
+              <div className="h-px w-10 bg-[#65b8ee]" />
+            </div>
+
+            <h2 className="mt-4 max-w-[620px] text-[2.35rem] font-semibold leading-[1.03] tracking-[-0.045em] text-[#071f2d] sm:text-[3rem]">
+              Um desafio pode exigir
+              <br />
+
+              <span className="text-[#356f9f]">
+                mais de uma tecnologia.
+              </span>
+            </h2>
+
+            <p className="mt-5 max-w-[555px] text-[14px] leading-7 text-[#607583] sm:text-[15px]">
+              As tecnologias podem ser combinadas de acordo com o
+              objetivo, a geometria da peça e as informações necessárias
+              para cada projeto.
+            </p>
+          </ScrollReveal>
+
+          <div className="space-y-3">
+            {integratedSolutions.map((solution, index) => (
+              <IntegratedRow
+                key={solution.number}
+                solution={solution}
+                index={index}
+              />
+            ))}
+          </div>
+        </div>
+      </Container>
+    </section>
+  );
+}
+
+function IntegratedRow({
+  solution,
+  index,
+}) {
+  return (
+    <motion.div
+      initial={{
+        opacity: 0,
+        x: 22,
+      }}
+      whileInView={{
+        opacity: 1,
+        x: 0,
+      }}
+      viewport={{
+        once: true,
+        amount: 0.25,
+      }}
+      transition={{
+        duration: 0.55,
+        delay: index * 0.08,
+        ease: [0.22, 1, 0.36, 1],
+      }}
+      whileHover={{
+        x: 4,
+      }}
+      className="group relative overflow-hidden rounded-[19px] border border-white/72 bg-white/46 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.92),0_9px_26px_rgba(7,31,45,0.03)] backdrop-blur-[18px] sm:p-5"
+    >
+      <div
+        aria-hidden="true"
+        className="absolute -right-10 -top-10 h-24 w-24 rounded-full border border-[#356f9f]/[0.06] transition-transform duration-500 group-hover:scale-110"
+      />
+
+      <div className="relative z-10 flex gap-4">
+        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-white/70 bg-white/50 text-[9px] font-semibold tracking-[0.1em] text-[#356f9f] shadow-[inset_0_1px_0_rgba(255,255,255,0.9)]">
+          {solution.number}
+        </div>
+
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+            <span className="text-[12px] font-semibold text-[#12364e]">
+              {solution.from}
+            </span>
+
+            <ArrowRightIcon className="h-3.5 w-3.5 text-[#65b8ee]" />
+
+            <span className="text-[12px] font-semibold text-[#356f9f]">
+              {solution.to}
+            </span>
+          </div>
+
+          <p className="mt-2 text-[11px] leading-5 text-[#607583]">
+            {solution.description}
+          </p>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+function GuidanceSection() {
+  return (
+    <section className="relative overflow-hidden bg-[linear-gradient(180deg,#ffffff_0%,#f8fbfc_9%,#edf4f7_26%,#dcebf1_48%,#c7dde6_66%,#a7c4d0_79%,#789aa9_89%,#496f82_95%,#264e63_98%,#173e54_100%)] pb-[78px] pt-9 sm:pb-[88px] sm:pt-11 lg:pb-[96px] lg:pt-12">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -left-24 top-[12%] h-[320px] w-[320px] rounded-full bg-white/[0.16] blur-[115px]"
+      />
+
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -right-24 bottom-[8%] h-[330px] w-[330px] rounded-full bg-[#65b8ee]/[0.10] blur-[120px]"
+      />
+
+      <Container>
+        <ScrollReveal
+          direction="up"
+          distance={34}
+          className="relative z-10 grid gap-8 lg:grid-cols-[0.92fr_1.08fr] lg:items-center lg:gap-14"
+        >
+          <div>
+            <div className="flex items-center gap-4">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#356f9f]">
+                Próximo passo
+              </p>
+
+              <div className="h-px w-10 bg-[#65b8ee]" />
+            </div>
+
+            <h2 className="mt-4 max-w-[660px] text-[2.4rem] font-semibold leading-[1.03] tracking-[-0.045em] text-[#071f2d] sm:text-[3.05rem]">
+              Não sabe qual serviço
+              <br />
+
+              <span className="text-[#356f9f]">
+                é o mais adequado?
+              </span>
+            </h2>
+
+            <p className="mt-5 max-w-[560px] text-[14px] leading-7 text-[#566f7e] sm:text-[15px]">
+              Você pode enviar diretamente uma solicitação ou utilizar
+              o configurador para organizar as principais informações
+              da sua necessidade e direcionar melhor o atendimento.
+            </p>
+          </div>
+
+          <div className="relative overflow-hidden rounded-[28px] border border-white/62 bg-white/42 p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.92),0_18px_46px_rgba(7,31,45,0.07)] backdrop-blur-[24px] sm:p-7 lg:p-8">
+            <div
+              aria-hidden="true"
+              className="absolute -right-16 -top-16 h-36 w-36 rounded-full border border-[#356f9f]/10"
+            />
+
+            <div
+              aria-hidden="true"
+              className="absolute -right-5 -top-5 h-24 w-24 rounded-full border border-[#356f9f]/[0.07]"
+            />
+
+            <div
+              aria-hidden="true"
+              className="absolute left-[8%] right-[8%] top-0 h-px bg-gradient-to-r from-transparent via-white to-transparent"
+            />
+
+            <div className="relative z-10">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.13em] text-[#5687ad]">
+                Escolha o caminho
+              </p>
+
+              <h3 className="mt-3 text-[24px] font-semibold leading-tight tracking-[-0.035em] text-[#071f2d] sm:text-[26px]">
+                Como deseja continuar?
+              </h3>
+
+              <p className="mt-3 max-w-[480px] text-[12px] leading-6 text-[#607583]">
+                Escolha a opção que melhor representa o momento da sua
+                necessidade. As informações serão direcionadas para
+                análise do Centro.
+              </p>
+
+              <div className="mt-7 flex flex-col gap-3.5">
+                <GuidanceActionButton
+                  href="/orcamento"
+                  label="Solicitar orçamento"
+                />
+
+                <GuidanceActionButton
+                  href="/configurador"
+                  label="Configurar solução"
+                />
+              </div>
+            </div>
+          </div>
+        </ScrollReveal>
+      </Container>
+    </section>
+  );
+}
+
+function GuidanceActionButton({
+  href,
+  label,
+}) {
+  return (
+    <Link
+      to={href}
+      className="group flex h-16 w-full items-center justify-between rounded-[17px] border border-white/72 bg-white/48 px-5 text-[12px] font-semibold text-[#12364e] shadow-[inset_0_1px_0_rgba(255,255,255,0.92),0_8px_24px_rgba(7,31,45,0.04)] backdrop-blur-[18px] transition-all duration-300 hover:-translate-y-[2px] hover:bg-white/68 hover:shadow-[inset_0_1px_0_rgba(255,255,255,1),0_12px_30px_rgba(7,31,45,0.07)]"
+    >
+      <span>{label}</span>
+
+      <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#12364e]/[0.06] text-[#356f9f] transition-all duration-300 group-hover:bg-[#12364e] group-hover:text-white">
+        <ArrowUpRightIcon className="h-4 w-4 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+      </span>
     </Link>
   );
 }

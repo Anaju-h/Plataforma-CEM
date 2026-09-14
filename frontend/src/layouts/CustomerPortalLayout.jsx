@@ -1,128 +1,113 @@
-import { useEffect, useState } from "react";
-import { NavLink, Outlet } from "react-router-dom";
+import {
+  Outlet,
+} from "react-router-dom";
 
-import { CustomerSidebar } from "../components/customer/CustomerSidebar";
-import { CustomerTopbar } from "../components/customer/CustomerTopbar";
-import { getCurrentCustomer } from "../services/customer/customerService";
+import {
+  CustomerSidebar,
+} from "../components/customer/CustomerSidebar";
 
-const mobileNavigation = [
-  {
-    label: "Visão geral",
-    href: "/cliente/dashboard",
+import {
+  CustomerTopbar,
+} from "../components/customer/CustomerTopbar";
+
+/* ============================================================
+ * DADOS MOCK
+ * ============================================================ */
+
+const mockCustomer = {
+  company: {
+    name: "Empresa cliente",
+    city: "Goiânia",
+    state: "GO",
   },
-  {
-    label: "Solicitações",
-    href: "/cliente/solicitacoes",
+
+  user: {
+    name: "Cliente",
+    email: "cliente@empresa.com",
   },
-  {
-    label: "Orçamentos",
-    href: "/cliente/orcamentos",
-  },
-  {
-    label: "Projetos",
-    href: "/cliente/projetos",
-  },
-  {
-    label: "Documentos",
-    href: "/cliente/documentos",
-  },
-];
+};
+
+/* ============================================================
+ * LAYOUT
+ * ============================================================ */
 
 export function CustomerPortalLayout() {
-  const [customer, setCustomer] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [loadError, setLoadError] = useState(false);
+  const customer =
+    mockCustomer;
 
-  useEffect(() => {
-    let active = true;
-
-    async function loadCustomer() {
-      try {
-        const data = await getCurrentCustomer();
-
-        if (active) {
-          setCustomer(data);
-          setLoadError(false);
-        }
-      } catch {
-        if (active) {
-          setLoadError(true);
-        }
-      } finally {
-        if (active) {
-          setLoading(false);
-        }
-      }
-    }
-
-    loadCustomer();
-
-    return () => {
-      active = false;
-    };
-  }, []);
-
-  if (loading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-[#f4f7f9]">
-        <p className="text-[13px] text-[#68737d]">
-          Carregando área do cliente...
-        </p>
-      </div>
-    );
-  }
-
-  if (loadError || !customer) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-[#f4f7f9] px-5">
-        <div className="max-w-[420px] text-center">
-          <h1 className="text-[22px] font-semibold text-[#071f2d]">
-            Não foi possível carregar sua área
-          </h1>
-
-          <p className="mt-3 text-[13px] leading-6 text-[#68737d]">
-            Tente acessar novamente. Se o problema continuar, entre em contato
-            com o laboratório.
-          </p>
-        </div>
-      </div>
-    );
-  }
+  const outletContext = {
+    customer,
+  };
 
   return (
-    <div className="min-h-screen bg-[#f4f7f9]">
-      <CustomerTopbar customer={customer} />
+    <div className="min-h-screen bg-[#e5eef3] text-[#102a43]">
+      {/* =====================================================
+          FUNDO
+      ===================================================== */}
 
-      <div className="border-b border-[#dce5e9] bg-white lg:hidden">
-        <nav
-          className="flex gap-1 overflow-x-auto px-4 py-2"
-          aria-label="Navegação da área do cliente"
-        >
-          {mobileNavigation.map((item) => (
-            <NavLink
-              key={item.href}
-              to={item.href}
-              className={({ isActive }) => `
-                shrink-0 rounded-[8px] px-3 py-2
-                text-[12px] font-medium
-                ${
-                  isActive
-                    ? "bg-[#eaf3fb] text-[#0057b8]"
-                    : "text-[#65717a]"
-                }
-              `}
-            >
-              {item.label}
-            </NavLink>
-          ))}
-        </nav>
+      <div
+        aria-hidden="true"
+        className="pointer-events-none fixed inset-0 overflow-hidden"
+      >
+        <div className="absolute inset-0 bg-[#e5eef3]" />
+
+        <div className="absolute -left-[220px] top-[100px] h-[500px] w-[500px] rounded-full bg-[#65b8ee]/7 blur-[130px]" />
+
+        <div className="absolute right-[-240px] top-[22%] h-[650px] w-[650px] rounded-full bg-[#0057b8]/4 blur-[160px]" />
+
+        <div className="absolute bottom-[-220px] left-[38%] h-[500px] w-[620px] rounded-full bg-white/34 blur-[150px]" />
       </div>
 
-      <div className="flex min-h-[calc(100vh-78px)]">
-        <CustomerSidebar />
+      {/* =====================================================
+          DESKTOP
+      ===================================================== */}
 
-        <main className="min-w-0 flex-1">
-          <Outlet context={{ customer }} />
+      <div className="relative z-10 hidden min-h-screen lg:block">
+        <CustomerSidebar
+          customer={
+            customer
+          }
+        />
+
+        <div className="min-h-screen pl-[324px]">
+          <CustomerTopbar
+            customer={
+              customer
+            }
+          />
+
+          <main className="px-6 pb-10 pt-[106px] xl:px-8">
+            <div className="mx-auto w-full max-w-[1480px]">
+              <Outlet
+                context={
+                  outletContext
+                }
+              />
+            </div>
+          </main>
+        </div>
+      </div>
+
+      {/* =====================================================
+          MOBILE / TABLET
+      ===================================================== */}
+
+      <div className="relative z-10 min-h-screen lg:hidden">
+        <CustomerTopbar
+          mobile
+          customer={
+            customer
+          }
+        />
+
+        <main className="px-4 pb-8 pt-[92px] sm:px-6">
+          <div className="mx-auto w-full max-w-[1100px]">
+            <Outlet
+              context={
+                outletContext
+              }
+            />
+          </div>
         </main>
       </div>
     </div>

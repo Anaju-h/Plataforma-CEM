@@ -179,12 +179,15 @@ export function CustomerDashboardPage() {
         </div>
 
         <Link
-          to="/orcamento"
+          to="/cliente/nova-solicitacao"
           className="
             inline-flex h-[44px] items-center justify-center
             rounded-[9px] bg-[#0057b8]
             px-5 text-[12px] font-semibold text-white
-            transition-colors hover:bg-[#004a9d]
+            transition-all duration-200
+            hover:-translate-y-[1px]
+            hover:bg-[#004a9d]
+            hover:shadow-[0_8px_20px_rgba(0,87,184,0.16)]
           "
         >
           Nova solicitação

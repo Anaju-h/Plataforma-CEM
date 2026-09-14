@@ -12,12 +12,17 @@ import {
   getService,
 } from "../data/serviceCatalog";
 
+/* ============================================================
+ * COMPONENTE PRINCIPAL
+ * ============================================================ */
+
 export function RequestStep({
   state,
   recommendation,
   onStateChange,
   onSubmit,
   submitting = false,
+  expanded = false,
 }) {
   const inputRef =
     useRef(null);
@@ -104,50 +109,88 @@ export function RequestStep({
 
   return (
     <div>
-      <div className="flex items-center gap-3">
-        <span className="rounded-full bg-[#dbeaf3] px-3 py-1 text-[10px] font-semibold tracking-[0.16em] text-[#1476b8]">
-          05 / 05
-        </span>
+      {/* =====================================================
+          INTRODUÇÃO
+      ===================================================== */}
 
-        <span className="text-[10px] font-medium uppercase tracking-[0.14em] text-[#78909e]">
+      <div>
+        <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[#6d8795]">
           Solicitação
-        </span>
+        </p>
+
+        <h2 className="mt-3 max-w-[760px] text-[30px] font-semibold leading-[1.08] tracking-[-0.04em] text-[#071f2d] sm:text-[34px]">
+          Transforme a orientação em uma solicitação.
+        </h2>
+
+        <p className="mt-3 max-w-[760px] text-[13px] leading-6 text-[#6f8592]">
+          Revise o que entendemos do projeto, informe seus dados e envie
+          materiais que possam ajudar a equipe técnica na avaliação.
+        </p>
       </div>
 
-      <h2 className="mt-4 text-3xl font-semibold tracking-[-0.035em] text-[#0b2340] sm:text-[2rem]">
-        Envie seu projeto para análise.
-      </h2>
+      {/* =====================================================
+          RESUMO GERAL
+      ===================================================== */}
 
-      <p className="mt-2 max-w-xl text-sm leading-6 text-[#667d8b] sm:text-base">
-        A configuração foi construída com base nas informações fornecidas.
-        Agora complete seus dados e adicione qualquer material que possa ajudar
-        a equipe técnica.
-      </p>
-
-      <section className="mt-6 rounded-[20px] border border-[#c5d8e2] bg-[#e5eff5] p-5">
-        <div className="flex items-start justify-between gap-4">
+      <section className="mt-5 rounded-[18px] border border-[#b9d0dc]/70 bg-[#e7f1f5]/58 p-4.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] backdrop-blur-[14px]">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div>
-            <p className="text-[9px] font-semibold uppercase tracking-[0.14em] text-[#62859a]">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.11em] text-[#628294]">
               O que entendemos do projeto
             </p>
 
-            <p className="mt-2 text-sm font-medium leading-6 text-[#294e64]">
-              {recommendation.summary}
+            <p className="mt-2 max-w-[820px] text-[13px] font-medium leading-6 text-[#31566d]">
+              {
+                recommendation.summary
+              }
             </p>
           </div>
 
-          <div className="shrink-0 rounded-full border border-[#aac5d5] bg-white/70 px-3 py-1.5 text-[10px] font-semibold text-[#39718f]">
-            {recommendation.definitionScore}% definido
+          <div className="shrink-0 self-start rounded-full border border-[#a9c4d2]/76 bg-white/58 px-3.5 py-2">
+            <span className="text-[12px] font-semibold text-[#3f718c]">
+              {
+                recommendation.definitionScore
+              }
+              %
+            </span>
+
+            <span className="ml-1 text-[10px] font-semibold uppercase tracking-[0.08em] text-[#8196a1]">
+              definido
+            </span>
           </div>
         </div>
       </section>
 
-      <section className="mt-5">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.13em] text-[#657f90]">
-          Configuração preliminar
-        </p>
+      {/* =====================================================
+          CONFIGURAÇÃO TÉCNICA
+      ===================================================== */}
 
-        <div className="mt-3 space-y-3">
+      <section className="mt-5">
+        <div className="flex items-end justify-between gap-4">
+          <div>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.11em] text-[#6c8593]">
+              Configuração preliminar
+            </p>
+
+            <p className="mt-1.5 text-[12px] leading-5 text-[#84969f]">
+              Tecnologias com maior aderência às informações fornecidas.
+            </p>
+          </div>
+        </div>
+
+        <div
+          className={`
+            mt-3
+            grid
+            gap-3
+
+            ${
+              expanded
+                ? "xl:grid-cols-2"
+                : ""
+            }
+          `}
+        >
           {recommendation.pieces.map(
             (
               pieceRecommendation,
@@ -161,113 +204,64 @@ export function RequestStep({
                 );
 
               return (
-                <div
+                <ProjectPieceCard
                   key={
                     pieceRecommendation.pieceId
                   }
-                  className="rounded-[18px] border border-[#d0dce3] bg-[#edf3f6] p-4"
-                >
-                  <div className="flex items-center justify-between gap-4">
-                    <div>
-                      <p className="text-[9px] font-semibold uppercase tracking-[0.13em] text-[#708796]">
-                        Peça{" "}
-                        {String(
-                          index + 1,
-                        ).padStart(
-                          2,
-                          "0",
-                        )}
-                      </p>
-
-                      <p className="mt-1 text-sm font-semibold text-[#17394f]">
-                        {piece?.name ||
-                          "Componente"}
-                      </p>
-                    </div>
-
-                    <span className="text-[10px] font-medium text-[#718794]">
-                      {
-                        pieceRecommendation.definitionScore
-                      }
-                      % definido
-                    </span>
-                  </div>
-
-                  <div className="mt-4 space-y-2">
-                    {pieceRecommendation.services.map(
-                      (
-                        service,
-                      ) => {
-                        const machine =
-                          service.primaryMachine
-                            ? getMachineProfile(
-                                service.primaryMachine,
-                              )
-                            : null;
-
-                        return (
-                          <div
-                            key={
-                              service.service
-                            }
-                            className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-[#d2dde3] bg-white px-4 py-3"
-                          >
-                            <div>
-                              <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[#668397]">
-                                {
-                                  getService(
-                                    service.service,
-                                  ).name
-                                }
-                              </p>
-
-                              <p className="mt-1 text-xs font-semibold text-[#294e64]">
-                                {machine
-                                  ? machine.name
-                                  : "Tecnologia ainda em avaliação"}
-                              </p>
-                            </div>
-
-                            {service.matches[0] && (
-                              <MatchBadge
-                                level={
-                                  service.matches[0]
-                                    .level
-                                }
-                              />
-                            )}
-                          </div>
-                        );
-                      },
-                    )}
-                  </div>
-                </div>
+                  piece={
+                    piece
+                  }
+                  recommendation={
+                    pieceRecommendation
+                  }
+                  index={
+                    index
+                  }
+                />
               );
             },
           )}
         </div>
       </section>
 
-      <section className="mt-7 border-t border-[#d3dde3] pt-6">
+      {/* =====================================================
+          DADOS DE CONTATO
+      ===================================================== */}
+
+      <section className="mt-6 rounded-[18px] border border-white/76 bg-white/30 p-4.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] backdrop-blur-[14px]">
         <div>
-          <p className="text-sm font-semibold text-[#17394f]">
+          <p className="text-[15px] font-semibold text-[#31566d]">
             Seus dados
           </p>
 
-          <p className="mt-1 text-xs leading-5 text-[#758996]">
-            Essas informações serão utilizadas pela equipe para retornar sobre
-            a solicitação.
+          <p className="mt-1.5 text-[12px] leading-5 text-[#7d919c]">
+            A equipe utilizará essas informações para dar continuidade à
+            solicitação.
           </p>
         </div>
 
-        <div className="mt-4 grid gap-4 sm:grid-cols-2">
+        <div
+          className={`
+            mt-4
+            grid
+            gap-3
+
+            ${
+              expanded
+                ? "md:grid-cols-2 xl:grid-cols-4"
+                : "sm:grid-cols-2"
+            }
+          `}
+        >
           <InputField
             label="Nome"
             required
             value={
               state.customer.name
             }
-            onChange={(value) =>
+            onChange={(
+              value,
+            ) =>
               updateCustomer(
                 "name",
                 value,
@@ -282,7 +276,9 @@ export function RequestStep({
             value={
               state.customer.company
             }
-            onChange={(value) =>
+            onChange={(
+              value,
+            ) =>
               updateCustomer(
                 "company",
                 value,
@@ -298,7 +294,9 @@ export function RequestStep({
             value={
               state.customer.email
             }
-            onChange={(value) =>
+            onChange={(
+              value,
+            ) =>
               updateCustomer(
                 "email",
                 value,
@@ -313,7 +311,9 @@ export function RequestStep({
             value={
               state.customer.phone
             }
-            onChange={(value) =>
+            onChange={(
+              value,
+            ) =>
               updateCustomer(
                 "phone",
                 value,
@@ -322,13 +322,21 @@ export function RequestStep({
             placeholder="(00) 00000-0000"
           />
 
-          <div className="sm:col-span-2">
+          <div
+            className={
+              expanded
+                ? "md:col-span-2 xl:col-span-4"
+                : "sm:col-span-2"
+            }
+          >
             <InputField
               label="Setor / área"
               value={
                 state.customer.department
               }
-              onChange={(value) =>
+              onChange={(
+                value,
+              ) =>
                 updateCustomer(
                   "department",
                   value,
@@ -340,260 +348,452 @@ export function RequestStep({
         </div>
       </section>
 
-      <section className="mt-7 border-t border-[#d3dde3] pt-6">
-        <p className="text-sm font-semibold text-[#17394f]">
-          Existe algo mais que nossa equipe deveria saber?
-        </p>
+      {/* =====================================================
+          CONTEXTO + ARQUIVOS
+      ===================================================== */}
 
-        <p className="mt-1 text-xs leading-5 text-[#758996]">
-          Você pode incluir prazo, contexto, dificuldade, requisitos especiais,
-          dúvidas ou qualquer informação que não apareceu durante a
-          configuração.
-        </p>
+      <div
+        className={`
+          mt-5
+          grid
+          gap-4
 
-        <textarea
-          value={state.comments}
-          onChange={(event) =>
-            onStateChange({
-              ...state,
-
-              comments:
-                event.target.value,
-            })
+          ${
+            expanded
+              ? "lg:grid-cols-[minmax(0,1.05fr)_minmax(380px,0.95fr)]"
+              : ""
           }
-          placeholder="Conte detalhes adicionais sobre o projeto..."
-          rows={5}
-          className="mt-4 w-full resize-y rounded-[16px] border border-[#cad8e0] bg-[#f9fbfc] px-4 py-4 text-sm leading-6 text-[#17394f] outline-none transition placeholder:text-[#9aabb5] focus:border-[#61a1ca] focus:bg-white"
-        />
-      </section>
+        `}
+      >
+        {/* ===================================================
+            CONTEXTO
+        =================================================== */}
 
-      {recommendedFiles.length >
-        0 && (
-        <section className="mt-7 border-t border-[#d3dde3] pt-6">
-          <p className="text-sm font-semibold text-[#17394f]">
-            Arquivos que podem ajudar nesta análise
+        <section className="rounded-[18px] border border-white/76 bg-white/30 p-4.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] backdrop-blur-[14px]">
+          <p className="text-[15px] font-semibold text-[#31566d]">
+            Existe algo mais que a equipe deveria saber?
           </p>
 
-          <div className="mt-3 grid gap-2">
-            {recommendedFiles.map(
-              (item) => (
-                <div
-                  key={item.title}
-                  className="flex items-start gap-3 rounded-[14px] border border-[#c5d8e2] bg-[#e6f0f5] p-3.5"
-                >
-                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[#b6cedb] bg-white text-[#4f7d98]">
-                    +
-                  </span>
+          <p className="mt-1.5 text-[12px] leading-5 text-[#7d919c]">
+            Inclua prazo, contexto, dificuldades, requisitos especiais ou
+            qualquer informação importante que ainda não apareceu.
+          </p>
 
-                  <div>
-                    <p className="text-xs font-semibold text-[#315d76]">
-                      {item.title}
-                    </p>
-
-                    <p className="mt-1 text-[10px] leading-4 text-[#718894]">
-                      {item.description}
-                    </p>
-                  </div>
-                </div>
-              ),
-            )}
-          </div>
-        </section>
-      )}
-
-      <section className="mt-7 border-t border-[#d3dde3] pt-6">
-        <p className="text-sm font-semibold text-[#17394f]">
-          Arquivos do projeto
-        </p>
-
-        <p className="mt-1 text-xs leading-5 text-[#758996]">
-          Adicione fotos, desenhos, modelos CAD ou outros documentos que possam
-          ajudar na avaliação.
-        </p>
-
-        <input
-          ref={inputRef}
-          type="file"
-          multiple
-          className="hidden"
-          onChange={(event) => {
-            addFiles(
-              Array.from(
-                event.target.files ??
-                  [],
-              ),
-            );
-
-            event.target.value = "";
-          }}
-        />
-
-        <button
-          type="button"
-          onClick={() =>
-            inputRef.current?.click()
-          }
-          onDragEnter={(event) => {
-            event.preventDefault();
-            setDragging(true);
-          }}
-          onDragOver={(event) => {
-            event.preventDefault();
-            setDragging(true);
-          }}
-          onDragLeave={(event) => {
-            event.preventDefault();
-            setDragging(false);
-          }}
-          onDrop={(event) => {
-            event.preventDefault();
-
-            setDragging(false);
-
-            addFiles(
-              Array.from(
-                event.dataTransfer.files,
-              ),
-            );
-          }}
-          className={`
-            mt-4
-            flex min-h-[150px]
-            w-full
-            flex-col
-            items-center
-            justify-center
-            rounded-[18px]
-            border
-            border-dashed
-            px-6 py-8
-            text-center
-            transition-all
-
-            ${
-              dragging
-                ? "border-[#1476b8] bg-[#dfedf6]"
-                : "border-[#a9c2d0] bg-[#edf3f6] hover:border-[#70a7c8] hover:bg-[#e8f1f5]"
+          <textarea
+            value={
+              state.comments
             }
-          `}
-        >
-          <span className="flex h-11 w-11 items-center justify-center rounded-full border border-[#b9ceda] bg-white text-xl text-[#4c7c98]">
-            ↑
-          </span>
+            onChange={(
+              event,
+            ) =>
+              onStateChange({
+                ...state,
 
-          <p className="mt-3 text-xs font-semibold text-[#315d76]">
-            Arraste arquivos aqui
+                comments:
+                  event.target.value,
+              })
+            }
+            placeholder="Conte detalhes adicionais sobre o projeto..."
+            rows={
+              expanded
+                ? 7
+                : 5
+            }
+            className="mt-4 w-full resize-y rounded-[14px] border border-white/82 bg-white/46 px-4 py-3.5 text-[13px] leading-6 text-[#31566d] outline-none transition-all placeholder:text-[#9caeb7] focus:border-[#8eb5c8] focus:bg-white/74 focus:ring-2 focus:ring-[#65b8ee]/10"
+          />
+
+          {recommendedFiles.length >
+            0 && (
+            <RecommendedFiles
+              files={
+                recommendedFiles
+              }
+            />
+          )}
+        </section>
+
+        {/* ===================================================
+            UPLOAD
+        =================================================== */}
+
+        <section className="rounded-[18px] border border-white/76 bg-white/30 p-4.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] backdrop-blur-[14px]">
+          <p className="text-[15px] font-semibold text-[#31566d]">
+            Arquivos do projeto
           </p>
 
-          <p className="mt-1 text-[10px] leading-4 text-[#7b909c]">
-            ou clique para selecionar
+          <p className="mt-1.5 text-[12px] leading-5 text-[#7d919c]">
+            Fotos, desenhos, CADs e documentos podem ajudar na avaliação
+            técnica.
           </p>
-        </button>
 
-        {state.attachments.length >
-          0 && (
-          <div className="mt-3 space-y-2">
-            {state.attachments.map(
-              (
-                attachment,
-              ) => (
-                <div
-                  key={attachment.id}
-                  className="flex items-center justify-between gap-4 rounded-[14px] border border-[#d0dce3] bg-white px-4 py-3"
-                >
-                  <div className="min-w-0">
-                    <p className="truncate text-xs font-semibold text-[#3a5d71]">
-                      {
-                        attachment.file.name
-                      }
-                    </p>
+          <input
+            ref={
+              inputRef
+            }
+            type="file"
+            multiple
+            className="hidden"
+            onChange={(
+              event,
+            ) => {
+              addFiles(
+                Array.from(
+                  event.target.files ??
+                    [],
+                ),
+              );
 
-                    <p className="mt-1 text-[9px] uppercase tracking-[0.08em] text-[#8295a0]">
-                      {formatFileSize(
-                        attachment.file.size,
-                      )}
-                    </p>
-                  </div>
+              event.target.value =
+                "";
+            }}
+          />
 
-                  <button
-                    type="button"
-                    onClick={() =>
+          <button
+            type="button"
+            onClick={() =>
+              inputRef.current?.click()
+            }
+            onDragEnter={(
+              event,
+            ) => {
+              event.preventDefault();
+              setDragging(
+                true,
+              );
+            }}
+            onDragOver={(
+              event,
+            ) => {
+              event.preventDefault();
+              setDragging(
+                true,
+              );
+            }}
+            onDragLeave={(
+              event,
+            ) => {
+              event.preventDefault();
+              setDragging(
+                false,
+              );
+            }}
+            onDrop={(
+              event,
+            ) => {
+              event.preventDefault();
+
+              setDragging(
+                false,
+              );
+
+              addFiles(
+                Array.from(
+                  event.dataTransfer.files,
+                ),
+              );
+            }}
+            className={`
+              mt-4
+              flex
+              min-h-[165px]
+              w-full
+              flex-col
+              items-center
+              justify-center
+              rounded-[15px]
+              border
+              border-dashed
+              px-5
+              py-6
+              text-center
+              transition-all
+              duration-300
+
+              ${
+                dragging
+                  ? "border-[#65b8ee] bg-[#e1eff6]/82"
+                  : "border-[#a9c5d3]/82 bg-[#edf4f7]/54 hover:border-[#82afc4] hover:bg-[#e8f2f6]/76"
+              }
+            `}
+          >
+            <span className="flex h-11 w-11 items-center justify-center rounded-full border border-[#b6ced9] bg-white/74 text-[19px] font-light text-[#4d7890]">
+              ↑
+            </span>
+
+            <p className="mt-3 text-[13px] font-semibold text-[#456d82]">
+              Arraste arquivos aqui
+            </p>
+
+            <p className="mt-1 text-[11px] leading-5 text-[#82959f]">
+              ou clique para selecionar
+            </p>
+          </button>
+
+          {state.attachments.length >
+            0 && (
+            <div className="mt-3 space-y-2">
+              {state.attachments.map(
+                (
+                  attachment,
+                ) => (
+                  <AttachmentCard
+                    key={
+                      attachment.id
+                    }
+                    attachment={
+                      attachment
+                    }
+                    onRemove={() =>
                       removeFile(
                         attachment.id,
                       )
                     }
-                    className="shrink-0 text-[10px] font-semibold uppercase tracking-[0.08em] text-[#927171] transition hover:text-[#734f4f]"
-                  >
-                    Remover
-                  </button>
-                </div>
-              ),
+                  />
+                ),
+              )}
+            </div>
+          )}
+        </section>
+      </div>
+
+      {/* =====================================================
+          AVISO + ENVIO
+      ===================================================== */}
+
+      <section className="mt-5 overflow-hidden rounded-[18px] border border-[#b8d0dc]/72 bg-[#e5f0f5]/58 shadow-[inset_0_1px_0_rgba(255,255,255,0.88)]">
+        <div
+          className={`
+            flex
+            flex-col
+            gap-4
+            px-4.5
+            py-4
+
+            ${
+              expanded
+                ? "lg:flex-row lg:items-center lg:justify-between"
+                : ""
+            }
+          `}
+        >
+          <div className="max-w-[760px]">
+            <p className="text-[12px] font-semibold text-[#416b81]">
+              Orientação técnica preliminar
+            </p>
+
+            <p className="mt-1.5 text-[11px] leading-5 text-[#728a96]">
+              A configuração foi construída a partir das respostas fornecidas.
+              A definição final da estratégia, tecnologias e condições de
+              atendimento será validada pela equipe técnica do Centro.
+            </p>
+          </div>
+
+          <button
+            type="button"
+            disabled={
+              !canSubmit ||
+              submitting
+            }
+            onClick={
+              onSubmit
+            }
+            className={`
+              flex
+              h-[50px]
+              shrink-0
+              items-center
+              justify-center
+              gap-3
+              rounded-[12px]
+              bg-[#12364e]
+              px-6
+              text-[12px]
+              font-semibold
+              text-white
+              transition-all
+              duration-300
+              hover:-translate-y-[1px]
+              hover:bg-[#0d2d41]
+              hover:shadow-[0_12px_26px_rgba(18,54,78,0.16)]
+              disabled:cursor-not-allowed
+              disabled:bg-[#d5dfe4]
+              disabled:text-[#8d9ca4]
+              disabled:shadow-none
+
+              ${
+                expanded
+                  ? "w-full lg:w-auto lg:min-w-[250px]"
+                  : "w-full"
+              }
+            `}
+          >
+            {submitting
+              ? "Enviando..."
+              : "Enviar solicitação"}
+
+            {!submitting && (
+              <span className="text-[16px] font-light">
+                →
+              </span>
             )}
+          </button>
+        </div>
+
+        {!canSubmit && (
+          <div className="border-t border-white/58 px-4.5 py-2.5">
+            <p className="text-[11px] leading-5 text-[#82949e]">
+              Preencha nome, empresa, e-mail e telefone para liberar o envio.
+            </p>
           </div>
         )}
       </section>
-
-      <section className="mt-7 rounded-[18px] border border-[#c5d8e2] bg-[#e5eff5] p-4">
-        <p className="text-xs font-semibold text-[#315d76]">
-          Orientação preliminar
-        </p>
-
-        <p className="mt-1.5 text-[11px] leading-5 text-[#6b8290]">
-          A configuração apresentada foi construída com base nas respostas
-          fornecidas. A definição final da estratégia, tecnologias e condições
-          de atendimento será realizada pela equipe técnica do Centro.
-        </p>
-      </section>
-
-      <button
-        type="button"
-        disabled={
-          !canSubmit ||
-          submitting
-        }
-        onClick={onSubmit}
-        className="
-          mt-5
-          flex h-[54px]
-          w-full
-          items-center
-          justify-center
-          gap-4
-          rounded-[14px]
-          bg-[#096ab2]
-          px-5
-          text-[11px]
-          font-semibold
-          uppercase
-          tracking-[0.13em]
-          text-white
-          transition-all
-          duration-300
-          hover:bg-[#075b99]
-          hover:shadow-[0_12px_25px_rgba(9,106,178,0.20)]
-          disabled:cursor-not-allowed
-          disabled:bg-[#d5dfe5]
-          disabled:text-[#8e9da6]
-          disabled:shadow-none
-        "
-      >
-        {submitting
-          ? "Enviando..."
-          : "Enviar solicitação para análise"}
-
-        {!submitting && (
-          <span>→</span>
-        )}
-      </button>
-
-      {!canSubmit && (
-        <p className="mt-3 text-center text-[10px] text-[#7c909b]">
-          Preencha nome, empresa, e-mail e telefone para enviar a solicitação.
-        </p>
-      )}
     </div>
   );
 }
+
+/* ============================================================
+ * CARD DA PEÇA
+ * ============================================================ */
+
+function ProjectPieceCard({
+  piece,
+  recommendation,
+  index,
+}) {
+  return (
+    <div className="rounded-[17px] border border-white/76 bg-white/32 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] backdrop-blur-[14px]">
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[#78909d]">
+            Peça{" "}
+            {String(
+              index + 1,
+            ).padStart(
+              2,
+              "0",
+            )}
+          </p>
+
+          <p className="mt-1.5 text-[14px] font-semibold text-[#31566d]">
+            {piece?.name ||
+              "Componente"}
+          </p>
+        </div>
+
+        <span className="rounded-full border border-white/74 bg-white/44 px-2.5 py-1.5 text-[10px] font-semibold text-[#718895]">
+          {
+            recommendation.definitionScore
+          }
+          %
+        </span>
+      </div>
+
+      <div className="mt-3 space-y-2">
+        {recommendation.services.map(
+          (
+            service,
+          ) => {
+            const serviceData =
+              getService(
+                service.service,
+              );
+
+            const machine =
+              service.primaryMachine
+                ? getMachineProfile(
+                    service.primaryMachine,
+                  )
+                : null;
+
+            return (
+              <div
+                key={
+                  service.service
+                }
+                className="flex flex-wrap items-center justify-between gap-3 rounded-[12px] border border-[#ccdce3]/72 bg-white/52 px-3.5 py-3"
+              >
+                <div>
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.08em] text-[#668596]">
+                    {serviceData?.name ??
+                      service.service}
+                  </p>
+
+                  <p className="mt-1 text-[12px] font-semibold leading-5 text-[#31566d]">
+                    {machine
+                      ? machine.name
+                      : "Tecnologia ainda em avaliação"}
+                  </p>
+                </div>
+
+                {service.matches?.[0] && (
+                  <MatchBadge
+                    level={
+                      service.matches[0]
+                        .level
+                    }
+                  />
+                )}
+              </div>
+            );
+          },
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* ============================================================
+ * ARQUIVOS RECOMENDADOS
+ * ============================================================ */
+
+function RecommendedFiles({
+  files,
+}) {
+  return (
+    <div className="mt-4">
+      <p className="text-[11px] font-semibold uppercase tracking-[0.09em] text-[#728b98]">
+        Materiais que podem ajudar
+      </p>
+
+      <div className="mt-2 grid gap-2">
+        {files.map(
+          (
+            item,
+          ) => (
+            <div
+              key={
+                item.title
+              }
+              className="flex items-start gap-3 rounded-[12px] border border-[#c2d5df]/64 bg-[#e7f1f5]/52 px-3 py-2.5"
+            >
+              <span className="mt-[2px] flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-[#b5ceda] bg-white/68 text-[12px] font-semibold text-[#5b8297]">
+                +
+              </span>
+
+              <div>
+                <p className="text-[12px] font-semibold text-[#416b81]">
+                  {
+                    item.title
+                  }
+                </p>
+
+                <p className="mt-0.5 text-[11px] leading-5 text-[#7c919c]">
+                  {
+                    item.description
+                  }
+                </p>
+              </div>
+            </div>
+          ),
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* ============================================================
+ * INPUT
+ * ============================================================ */
 
 function InputField({
   label,
@@ -604,31 +804,80 @@ function InputField({
   type = "text",
 }) {
   return (
-    <label>
-      <span className="text-[11px] font-medium text-[#607988]">
+    <label className="block">
+      <span className="text-[11px] font-semibold text-[#607d8c]">
         {label}
 
         {required && (
-          <span className="ml-1 text-[#1476b8]">
+          <span className="ml-1 text-[#356f9f]">
             *
           </span>
         )}
       </span>
 
       <input
-        type={type}
-        value={value}
-        onChange={(event) =>
+        type={
+          type
+        }
+        value={
+          value
+        }
+        onChange={(
+          event,
+        ) =>
           onChange(
             event.target.value,
           )
         }
-        placeholder={placeholder}
-        className="mt-2 h-[50px] w-full rounded-xl border border-[#cad8e0] bg-[#f9fbfc] px-4 text-sm text-[#17394f] outline-none transition placeholder:text-[#9aabb5] focus:border-[#61a1ca] focus:bg-white"
+        placeholder={
+          placeholder
+        }
+        className="mt-2 h-[46px] w-full rounded-[11px] border border-white/82 bg-white/46 px-3.5 text-[13px] text-[#31566d] outline-none transition-all placeholder:text-[#9eafb7] focus:border-[#8eb5c8] focus:bg-white/74 focus:ring-2 focus:ring-[#65b8ee]/10"
       />
     </label>
   );
 }
+
+/* ============================================================
+ * ARQUIVO ANEXADO
+ * ============================================================ */
+
+function AttachmentCard({
+  attachment,
+  onRemove,
+}) {
+  return (
+    <div className="flex items-center justify-between gap-4 rounded-[12px] border border-[#ccdce3]/72 bg-white/56 px-3.5 py-3">
+      <div className="min-w-0">
+        <p className="truncate text-[12px] font-semibold text-[#456d82]">
+          {
+            attachment.file.name
+          }
+        </p>
+
+        <p className="mt-0.5 text-[10px] font-medium uppercase tracking-[0.07em] text-[#8799a2]">
+          {formatFileSize(
+            attachment.file.size,
+          )}
+        </p>
+      </div>
+
+      <button
+        type="button"
+        onClick={
+          onRemove
+        }
+        className="shrink-0 rounded-[8px] border border-transparent px-2.5 py-1.5 text-[10px] font-semibold text-[#936e6e] transition-all hover:border-[#dec5c5] hover:bg-[#f7eeee]/64 hover:text-[#7c5555]"
+      >
+        Remover
+      </button>
+    </div>
+  );
+}
+
+/* ============================================================
+ * BADGE DE ADERÊNCIA
+ * ============================================================ */
 
 function MatchBadge({
   level,
@@ -654,11 +903,16 @@ function MatchBadge({
   }[level];
 
   return (
-    <span className="rounded-full border border-[#b7ceda] bg-[#e5eff5] px-3 py-1.5 text-[9px] font-semibold uppercase tracking-[0.08em] text-[#47758f]">
-      {label}
+    <span className="rounded-full border border-[#b7ceda]/80 bg-[#e4eff4]/74 px-2.5 py-1.5 text-[10px] font-semibold text-[#52798e]">
+      {label ??
+        "Avaliar"}
     </span>
   );
 }
+
+/* ============================================================
+ * ARQUIVOS RECOMENDADOS
+ * ============================================================ */
 
 function buildRecommendedFiles(
   state,
@@ -725,12 +979,16 @@ function buildRecommendedFiles(
         "Fotos da peça",
 
       description:
-        "Imagens gerais e detalhes da peça podem ajudar a equipe a compreender a geometria e o objetivo da reconstrução.",
+        "Imagens gerais e detalhes podem ajudar a equipe a compreender a geometria e o objetivo da reconstrução.",
     });
   }
 
   return result;
 }
+
+/* ============================================================
+ * UTILITÁRIOS DE ANEXO
+ * ============================================================ */
 
 function createAttachmentId() {
   if (
@@ -762,17 +1020,29 @@ function inferAttachmentCategory(
   }
 
   if (
-    name.endsWith(".step") ||
-    name.endsWith(".stp") ||
-    name.endsWith(".iges") ||
-    name.endsWith(".igs") ||
-    name.endsWith(".stl")
+    name.endsWith(
+      ".step",
+    ) ||
+    name.endsWith(
+      ".stp",
+    ) ||
+    name.endsWith(
+      ".iges",
+    ) ||
+    name.endsWith(
+      ".igs",
+    ) ||
+    name.endsWith(
+      ".stl",
+    )
   ) {
     return "cad";
   }
 
   if (
-    name.endsWith(".pdf")
+    name.endsWith(
+      ".pdf",
+    )
   ) {
     return "document";
   }
@@ -783,7 +1053,10 @@ function inferAttachmentCategory(
 function formatFileSize(
   bytes,
 ) {
-  if (bytes < 1024) {
+  if (
+    bytes <
+    1024
+  ) {
     return `${bytes} B`;
   }
 
@@ -793,11 +1066,15 @@ function formatFileSize(
   ) {
     return `${(
       bytes / 1024
-    ).toFixed(1)} KB`;
+    ).toFixed(
+      1,
+    )} KB`;
   }
 
   return `${(
     bytes /
     (1024 * 1024)
-  ).toFixed(1)} MB`;
+  ).toFixed(
+    1,
+  )} MB`;
 }

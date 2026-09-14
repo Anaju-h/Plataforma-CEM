@@ -1,135 +1,154 @@
+import {
+  motion,
+} from "motion/react";
+
+/* ============================================================
+ * OPÇÕES
+ * ============================================================ */
+
 const goals = [
   {
     id: "cad-model",
-    title:
-      "Criar um modelo CAD",
+    title: "Gerar um modelo CAD",
     description:
-      "Preciso transformar a peça física em um modelo digital.",
+      "Quero transformar a geometria da peça física em um modelo digital utilizável.",
   },
   {
-    id:
-      "full-reconstruction",
-    title:
-      "Reconstruir toda a peça",
+    id: "full-reconstruction",
+    title: "Reconstrução completa",
     description:
-      "O objetivo é reconstruir digitalmente o componente completo.",
+      "Preciso reconstruir integralmente a geometria da peça para documentação, desenvolvimento ou fabricação.",
   },
   {
-    id:
-      "partial-reconstruction",
-    title:
-      "Reconstruir apenas uma região",
+    id: "partial-reconstruction",
+    title: "Reconstrução parcial",
     description:
-      "Somente uma parte ou característica precisa ser reconstruída.",
+      "Preciso reconstruir apenas determinadas regiões ou características da peça.",
   },
   {
-    id:
-      "editable-model",
-    title:
-      "Criar um modelo que possa ser modificado",
+    id: "editable-model",
+    title: "Criar um modelo editável",
     description:
-      "Quero usar o resultado como base para alterar ou desenvolver o projeto.",
+      "O resultado precisa permitir futuras alterações e desenvolvimento no CAD.",
   },
   {
-    id:
-      "manufacturing-file",
-    title:
-      "Obter arquivo para fabricação",
+    id: "manufacturing-file",
+    title: "Gerar arquivo para fabricação",
     description:
-      "O modelo será utilizado posteriormente em um processo de fabricação.",
+      "Preciso de uma representação digital que possa apoiar a reprodução da peça.",
   },
   {
-    id:
-      "update-existing-project",
-    title:
-      "Atualizar um projeto existente",
+    id: "update-existing-project",
+    title: "Atualizar um projeto existente",
     description:
-      "Já existe informação digital, mas ela precisa ser revisada ou atualizada.",
+      "Existe um projeto ou modelo anterior, mas ele precisa ser atualizado conforme a peça física.",
   },
   {
     id: "other",
-    title:
-      "Outro objetivo",
+    title: "Outro objetivo",
     description:
-      "Existe outra necessidade relacionada à reconstrução da peça.",
+      "Existe outra necessidade relacionada à reconstrução digital da peça.",
   },
   {
     id: "unknown",
-    title:
-      "Ainda não sei",
+    title: "Ainda não sei",
     description:
-      "Você sabe que precisa reconstruir a peça, mas ainda não definiu o formato do resultado.",
+      "Preciso reconstruir a peça, mas ainda não defini exatamente qual deve ser o resultado final.",
   },
 ];
 
-const modelOptions = [
+const existingModelOptions = [
   {
     value: "yes",
-    title:
-      "Sim, existe um modelo",
+    title: "Sim, existe um modelo",
     description:
-      "Há um CAD ou referência digital disponível.",
+      "Existe um CAD ou projeto digital que pode ser usado como referência.",
   },
   {
     value: "no",
-    title:
-      "Não existe",
+    title: "Não existe",
     description:
-      "A peça física é a principal referência disponível.",
+      "A peça física é atualmente a principal referência disponível.",
   },
   {
     value: "outdated",
-    title:
-      "Existe, mas está desatualizado",
+    title: "Existe, mas está desatualizado",
     description:
-      "O modelo atual não representa completamente a peça existente.",
+      "Há um modelo anterior, porém ele não representa completamente a peça atual.",
   },
   {
     value: "unknown",
     title: "Não sei",
     description:
-      "Não tenho certeza se existe uma referência digital utilizável.",
+      "Ainda preciso verificar se existe algum arquivo ou projeto anterior.",
   },
 ];
 
-const scopeOptions = [
+const geometryScopeOptions = [
   {
     value: "external",
-    title:
-      "Somente geometria externa",
+    title: "Somente geometria externa",
     description:
-      "A reconstrução depende principalmente das superfícies acessíveis externamente.",
+      "A reconstrução depende principalmente das superfícies visíveis externamente.",
   },
   {
     value: "internal",
-    title:
-      "Geometria interna",
+    title: "Geometrias internas",
     description:
-      "Existem características internas importantes para o modelo.",
+      "A reconstrução precisa considerar regiões internas ou não acessíveis externamente.",
   },
   {
     value: "both",
-    title:
-      "Geometria externa e interna",
+    title: "Geometrias externas e internas",
     description:
-      "O resultado precisa considerar os dois tipos de informação.",
+      "O resultado precisa representar tanto superfícies externas quanto características internas.",
   },
   {
     value: "unknown",
-    title:
-      "Não sei",
+    title: "Não sei",
     description:
-      "A equipe poderá ajudar a definir qual aquisição é necessária.",
+      "Ainda não consigo determinar quais regiões precisam ser reconstruídas.",
   },
 ];
+
+const modificationOptions = [
+  {
+    value: "yes",
+    title: "Sim",
+    description:
+      "O modelo precisa ser ajustado, corrigido ou modificado em relação à peça física.",
+  },
+  {
+    value: "no",
+    title: "Não",
+    description:
+      "O objetivo principal é reproduzir digitalmente a geometria existente.",
+  },
+  {
+    value: "unknown",
+    title: "Não sei",
+    description:
+      "A necessidade de alteração ainda será avaliada.",
+  },
+];
+
+/* ============================================================
+ * COMPONENTE PRINCIPAL
+ * ============================================================ */
 
 export function ReverseEngineeringRequirements({
   value,
   onChange,
+  section = "primary",
+  detailPage = null,
 }) {
-  function toggleGoal(goal) {
+  function toggleGoal(
+    goalId,
+  ) {
     const selected =
-      value.goals.includes(goal);
+      value.goals.includes(
+        goalId,
+      );
 
     onChange({
       ...value,
@@ -137,174 +156,364 @@ export function ReverseEngineeringRequirements({
       goals: selected
         ? value.goals.filter(
             (item) =>
-              item !== goal,
+              item !== goalId,
           )
         : [
             ...value.goals,
-            goal,
+            goalId,
           ],
     });
   }
 
+  /* ==========================================================
+   * ETAPA 05 — CRITÉRIO PRINCIPAL
+   * ========================================================== */
+
+  if (
+    section === "detail" &&
+    detailPage === "core"
+  ) {
+    return (
+      <ReverseEngineeringCoreSection
+        value={value}
+        onChange={onChange}
+      />
+    );
+  }
+
+  /* ==========================================================
+   * ETAPA 06 — CONDIÇÕES COMPLEMENTARES
+   * ========================================================== */
+
+  if (
+    section === "detail" &&
+    detailPage === "context"
+  ) {
+    return (
+      <ReverseEngineeringContextSection
+        value={value}
+        onChange={onChange}
+      />
+    );
+  }
+
+  /* ==========================================================
+   * ETAPA 04 — OBJETIVOS
+   * ========================================================== */
+
   return (
-    <div className="space-y-5">
+    <div>
       <IntroBox
         title="Engenharia reversa"
-        text="Aqui queremos entender qual resultado digital você precisa obter. A tecnologia de aquisição será definida conforme a geometria e as características do projeto."
+        text="Primeiro precisamos entender qual resultado você espera obter a partir da peça física. O escopo da geometria e as condições do modelo existente entram nas próximas etapas."
       />
 
-      <QuestionBlock
-        title="O que você precisa obter?"
-        help="Você pode selecionar mais de um resultado."
-      >
-        <div className="grid gap-2 sm:grid-cols-2">
-          {goals.map(
-            (goal) => (
-              <ChoiceCard
-                key={goal.id}
-                selected={
-                  value.goals.includes(
-                    goal.id,
-                  )
-                }
-                title={goal.title}
-                description={
-                  goal.description
-                }
-                onClick={() =>
-                  toggleGoal(
-                    goal.id,
-                  )
-                }
-              />
-            ),
-          )}
-        </div>
-      </QuestionBlock>
-
-      <QuestionBlock
-        title="Existe algum modelo CAD ou referência digital anterior?"
-      >
-        <div className="grid gap-2 sm:grid-cols-2">
-          {modelOptions.map(
-            (option) => (
-              <ChoiceCard
-                key={
-                  option.value
-                }
-                selected={
-                  value.existingModel ===
-                  option.value
-                }
-                title={
-                  option.title
-                }
-                description={
-                  option.description
-                }
-                onClick={() =>
-                  onChange({
-                    ...value,
-                    existingModel:
-                      option.value,
-                  })
-                }
-              />
-            ),
-          )}
-        </div>
-      </QuestionBlock>
-
-      <QuestionBlock
-        title="Que parte da geometria precisa ser reconstruída?"
-        help="Essa resposta ajuda a definir se a aquisição pode ser feita externamente ou se informações internas também serão necessárias."
-      >
-        <div className="grid gap-2 sm:grid-cols-2">
-          {scopeOptions.map(
-            (option) => (
-              <ChoiceCard
-                key={
-                  option.value
-                }
-                selected={
-                  value.geometryScope ===
-                  option.value
-                }
-                title={
-                  option.title
-                }
-                description={
-                  option.description
-                }
-                onClick={() =>
-                  onChange({
-                    ...value,
-                    geometryScope:
-                      option.value,
-                  })
-                }
-              />
-            ),
-          )}
-        </div>
-      </QuestionBlock>
-
-      <QuestionBlock
-        title="O modelo final precisa permitir alterações de projeto?"
-        help="Isso ajuda a entender se o resultado será apenas uma representação ou uma base para desenvolvimento."
-      >
-        <YesNoUnknownChoice
-          value={
-            value.needsModification
-          }
-          onChange={(answer) =>
-            onChange({
-              ...value,
-              needsModification:
-                answer,
-            })
-          }
-        />
-      </QuestionBlock>
+      <div className="mt-5">
+        <QuestionBlock
+          number="01"
+          title="O que você precisa obter com a engenharia reversa?"
+          help="Você pode selecionar mais de um objetivo."
+        >
+          <div className="grid gap-2.5 sm:grid-cols-2">
+            {goals.map(
+              (
+                goal,
+                index,
+              ) => (
+                <motion.div
+                  key={
+                    goal.id
+                  }
+                  initial={{
+                    opacity: 0,
+                    y: 6,
+                  }}
+                  animate={{
+                    opacity: 1,
+                    y: 0,
+                  }}
+                  transition={{
+                    delay:
+                      index *
+                      0.02,
+                  }}
+                >
+                  <ChoiceCard
+                    selected={
+                      value.goals.includes(
+                        goal.id,
+                      )
+                    }
+                    title={
+                      goal.title
+                    }
+                    description={
+                      goal.description
+                    }
+                    onClick={() =>
+                      toggleGoal(
+                        goal.id,
+                      )
+                    }
+                  />
+                </motion.div>
+              ),
+            )}
+          </div>
+        </QuestionBlock>
+      </div>
     </div>
   );
 }
+
+/* ============================================================
+ * ETAPA 05 — CRITÉRIO PRINCIPAL
+ * ============================================================ */
+
+function ReverseEngineeringCoreSection({
+  value,
+  onChange,
+}) {
+  return (
+    <div>
+      <IntroBox
+        title="Escopo da geometria"
+        text="O principal critério para esta análise é entender se a reconstrução depende de superfícies externas, geometrias internas ou da combinação das duas."
+      />
+
+      <div className="mt-5">
+        <QuestionBlock
+          number="01"
+          title="Quais regiões precisam ser reconstruídas?"
+          help="Essa informação influencia diretamente quais tecnologias podem participar da solução."
+          important
+        >
+          <div className="grid gap-2.5 sm:grid-cols-2">
+            {geometryScopeOptions.map(
+              (
+                option,
+              ) => (
+                <ChoiceCard
+                  key={
+                    option.value
+                  }
+                  selected={
+                    value.geometryScope ===
+                    option.value
+                  }
+                  title={
+                    option.title
+                  }
+                  description={
+                    option.description
+                  }
+                  onClick={() =>
+                    onChange({
+                      ...value,
+
+                      geometryScope:
+                        option.value,
+                    })
+                  }
+                />
+              ),
+            )}
+          </div>
+        </QuestionBlock>
+      </div>
+    </div>
+  );
+}
+
+/* ============================================================
+ * ETAPA 06 — CONDIÇÕES COMPLEMENTARES
+ * ============================================================ */
+
+function ReverseEngineeringContextSection({
+  value,
+  onChange,
+}) {
+  return (
+    <div>
+      <IntroBox
+        title="Condições da reconstrução"
+        text="Agora verificamos se já existe uma referência digital e se o modelo final deve reproduzir a peça ou receber alterações."
+      />
+
+      <div className="mt-5 space-y-4">
+        <QuestionBlock
+          number="01"
+          title="Já existe algum modelo ou projeto digital da peça?"
+          help="Um CAD existente pode ser útil mesmo quando está incompleto ou desatualizado."
+        >
+          <div className="grid gap-2.5 sm:grid-cols-2">
+            {existingModelOptions.map(
+              (
+                option,
+              ) => (
+                <ChoiceCard
+                  key={
+                    option.value
+                  }
+                  selected={
+                    value.existingModel ===
+                    option.value
+                  }
+                  title={
+                    option.title
+                  }
+                  description={
+                    option.description
+                  }
+                  onClick={() =>
+                    onChange({
+                      ...value,
+
+                      existingModel:
+                        option.value,
+                    })
+                  }
+                />
+              ),
+            )}
+          </div>
+        </QuestionBlock>
+
+        <QuestionBlock
+          number="02"
+          title="O modelo precisa receber alterações em relação à peça física?"
+          help="Por exemplo: corrigir uma geometria, remover defeitos, adaptar dimensões ou criar uma nova versão do componente."
+        >
+          <div className="grid gap-2.5 sm:grid-cols-3">
+            {modificationOptions.map(
+              (
+                option,
+              ) => (
+                <ChoiceCard
+                  key={
+                    option.value
+                  }
+                  selected={
+                    value.needsModification ===
+                    option.value
+                  }
+                  title={
+                    option.title
+                  }
+                  description={
+                    option.description
+                  }
+                  onClick={() =>
+                    onChange({
+                      ...value,
+
+                      needsModification:
+                        option.value,
+                    })
+                  }
+                />
+              ),
+            )}
+          </div>
+        </QuestionBlock>
+      </div>
+    </div>
+  );
+}
+
+/* ============================================================
+ * COMPONENTES VISUAIS
+ * ============================================================ */
 
 function IntroBox({
   title,
   text,
 }) {
   return (
-    <div className="rounded-[18px] border border-[#bfd4df] bg-[#e4eff5] p-4">
-      <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#47738f]">
-        {title}
-      </p>
+    <div className="relative overflow-hidden rounded-[16px] border border-[#bdd4df]/64 bg-[#e4f0f5]/50 px-4 py-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.88)]">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -right-12 -top-14 h-28 w-28 rounded-full bg-white/24 blur-[35px]"
+      />
 
-      <p className="mt-2 text-xs leading-5 text-[#647f8f]">
-        {text}
-      </p>
+      <div className="relative z-10 flex items-start gap-3">
+        <span className="mt-[7px] h-2 w-2 shrink-0 rounded-full bg-[#65b8ee]" />
+
+        <div>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[#5d8094]">
+            {title}
+          </p>
+
+          <p className="mt-2 text-[12px] leading-5 text-[#6f8592]">
+            {text}
+          </p>
+        </div>
+      </div>
     </div>
   );
 }
 
 function QuestionBlock({
+  number,
   title,
   help,
   children,
+  important = false,
 }) {
   return (
-    <section className="rounded-[18px] border border-[#d0dce3] bg-[#edf3f6] p-4 sm:p-5">
-      <p className="text-sm font-semibold text-[#17394f]">
-        {title}
-      </p>
+    <section
+      className={`
+        rounded-[17px]
+        border
+        p-4
+        shadow-[inset_0_1px_0_rgba(255,255,255,0.92)]
+        backdrop-blur-[14px]
 
-      {help && (
-        <p className="mt-1.5 text-xs leading-5 text-[#738996]">
-          {help}
-        </p>
-      )}
+        ${
+          important
+            ? "border-[#b7d0dc]/72 bg-[#e9f3f7]/54"
+            : "border-white/76 bg-white/30"
+        }
+      `}
+    >
+      <div className="flex items-start gap-3">
+        <span
+          className={`
+            flex
+            h-7
+            w-7
+            shrink-0
+            items-center
+            justify-center
+            rounded-full
+            border
+            text-[10px]
+            font-semibold
 
-      <div className="mt-4">
+            ${
+              important
+                ? "border-[#9fc1d2]/76 bg-[#dcebf2]/72 text-[#4d7890]"
+                : "border-[#cad9e1]/78 bg-white/44 text-[#688697]"
+            }
+          `}
+        >
+          {number}
+        </span>
+
+        <div>
+          <p className="text-[14px] font-semibold leading-5 text-[#31566d]">
+            {title}
+          </p>
+
+          {help && (
+            <p className="mt-1 text-[11px] leading-5 text-[#82949e]">
+              {help}
+            </p>
+          )}
+        </div>
+      </div>
+
+      <div className="mt-3.5">
         {children}
       </div>
     </section>
@@ -322,80 +531,80 @@ function ChoiceCard({
       type="button"
       onClick={onClick}
       className={`
-        rounded-xl
+        group
+        relative
+        w-full
+        overflow-hidden
+        rounded-[13px]
         border
-        px-4 py-3.5
+        px-4
+        py-3
         text-left
         transition-all
+        duration-300
 
         ${
           selected
-            ? "border-[#61a1ca] bg-[#dcecf5]"
-            : "border-[#ccd9e1] bg-white hover:border-[#a9c0cd]"
+            ? "border-[#83b2cd]/82 bg-[#e3f0f5]/86"
+            : "border-white/74 bg-white/38 hover:-translate-y-[1px] hover:border-[#bfd3de] hover:bg-white/62"
         }
       `}
     >
-      <p
+      <div
+        aria-hidden="true"
         className={`
-          text-xs font-semibold
+          absolute
+          bottom-0
+          left-0
+          top-0
+          w-[3px]
+          transition-opacity
 
           ${
             selected
-              ? "text-[#0b639e]"
-              : "text-[#526e7f]"
+              ? "bg-[#65b8ee] opacity-100"
+              : "opacity-0"
           }
         `}
-      >
-        {selected ? "✓ " : ""}
-        {title}
-      </p>
+      />
 
-      {description && (
-        <p className="mt-1 text-[10px] leading-4 text-[#7a8e99]">
-          {description}
-        </p>
-      )}
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <p className="text-[13px] font-semibold leading-5 text-[#31566d]">
+            {title}
+          </p>
+
+          {description && (
+            <p className="mt-1 text-[11px] leading-5 text-[#7c909b]">
+              {description}
+            </p>
+          )}
+        </div>
+
+        <span
+          className={`
+            mt-0.5
+            flex
+            h-6
+            w-6
+            shrink-0
+            items-center
+            justify-center
+            rounded-full
+            border
+            text-[10px]
+            font-semibold
+
+            ${
+              selected
+                ? "border-[#12364e] bg-[#12364e] text-white"
+                : "border-[#cddce3] bg-white/54 text-transparent"
+            }
+          `}
+        >
+          ✓
+        </span>
+      </div>
     </button>
-  );
-}
-
-function YesNoUnknownChoice({
-  value,
-  onChange,
-}) {
-  return (
-    <div className="grid grid-cols-3 gap-2">
-      <ChoiceCard
-        selected={
-          value === "yes"
-        }
-        title="Sim"
-        onClick={() =>
-          onChange("yes")
-        }
-      />
-
-      <ChoiceCard
-        selected={
-          value === "no"
-        }
-        title="Não"
-        onClick={() =>
-          onChange("no")
-        }
-      />
-
-      <ChoiceCard
-        selected={
-          value === "unknown"
-        }
-        title="Não sei"
-        onClick={() =>
-          onChange(
-            "unknown",
-          )
-        }
-      />
-    </div>
   );
 }

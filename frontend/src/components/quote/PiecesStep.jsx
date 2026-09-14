@@ -5,13 +5,14 @@ export function PiecesStep({
   onChange,
   onAdd,
   onDelete,
+  stepNumber = "02",
 }) {
   return (
     <div>
       <div className="border-b border-[#e0e7ec] pb-7">
         <div className="flex items-center gap-3">
           <span className="text-xs font-medium tracking-[0.12em] text-[#356f9f]">
-            02
+            {stepNumber}
           </span>
 
           <div className="h-px w-8 bg-[#6fa7d1]" />
