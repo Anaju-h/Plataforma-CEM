@@ -64,3 +64,19 @@ SOL → ORC → PRJ → Registro de Serviço → Gestão do Conhecimento
 - Não inventar histórico quando não existe.
 - Somente conhecimento formalizado pode influenciar recomendações.
 - Motor de recomendação não deve ser apresentado como IA de caixa-preta.
+
+## Precificação e conhecimento econômico
+
+- Custos internos dos equipamentos são conhecimento interno e nunca podem ser expostos ao cliente.
+- A planilha de custos é uma fonte de referência econômica, não uma tabela automática de preços.
+- Custos e preços são conceitos diferentes.
+- O sistema deve preservar histórico e vigência das referências econômicas.
+- A referência comercial padrão atual é R$ 150,00/h e deve ser configurável pela Administração.
+- Alterações na referência comercial não podem alterar retroativamente orçamentos existentes.
+- No orçamento, horas técnicas estimadas e horas cotadas são conceitos distintos.
+- O responsável pode alterar o valor/hora utilizado no orçamento.
+- Valores, horas, custos, desvios, justificativas, aceites e resultados reais devem alimentar o motor de conhecimento.
+- O motor de conhecimento fornece sugestões explicáveis, nunca regras obrigatórias.
+- O usuário sempre mantém a decisão final sobre horas, equipamentos e valores.
+- CONTURA pertence a outra unidade: pode existir na base de conhecimento e em históricos internos, mas não deve aparecer no catálogo público ou como equipamento local de Goiânia.
+- Dados internos de custo, margem e composição econômica nunca podem aparecer no Proposal Builder nem na área do cliente.
