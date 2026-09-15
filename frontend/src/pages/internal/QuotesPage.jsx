@@ -23,6 +23,12 @@ import {
   getRuntimeQuotes,
 } from "../../services/quoteService";
 
+const CLOSED_STATUSES = [
+  "Aceito",
+  "Recusado",
+  "Cancelado",
+];
+
 export function QuotesPage() {
   const navigate =
     useNavigate();
@@ -35,90 +41,241 @@ export function QuotesPage() {
   const [
     status,
     setStatus,
-  ] = useState("Todos");
+  ] = useState(
+    "Todos",
+  );
 
   const runtimeQuotes =
     getRuntimeQuotes();
 
   const filteredQuotes =
-    useMemo(() => {
-      const normalizedSearch =
-        search
-          .trim()
-          .toLowerCase();
+    useMemo(
+      () => {
+        const normalizedSearch =
+          search
+            .trim()
+            .toLowerCase();
 
-      return runtimeQuotes.filter(
-        (quote) => {
-          const matchesSearch =
-            !normalizedSearch ||
-            [
+        return runtimeQuotes.filter(
+          (
+            quote,
+          ) => {
+            const searchableValues = [
               quote.id,
               quote.requestId,
               quote.company,
               quote.contact,
               quote.service,
-            ].some((value) =>
-              value
-                .toLowerCase()
-                .includes(
-                  normalizedSearch,
-                ),
+              quote.responsible,
+            ];
+
+            const matchesSearch =
+              !normalizedSearch ||
+              searchableValues
+                .filter(
+                  Boolean,
+                )
+                .some(
+                  (value) =>
+                    String(
+                      value,
+                    )
+                      .toLowerCase()
+                      .includes(
+                        normalizedSearch,
+                      ),
+                );
+
+            const matchesStatus =
+              status ===
+                "Todos" ||
+              quote.status ===
+                status;
+
+            return (
+              matchesSearch &&
+              matchesStatus
             );
+          },
+        );
+      },
+      [
+        runtimeQuotes,
+        search,
+        status,
+      ],
+    );
 
-          const matchesStatus =
-            status === "Todos" ||
-            quote.status ===
-              status;
-
-          return (
-            matchesSearch &&
-            matchesStatus
+  const summary =
+    useMemo(
+      () => {
+        const active =
+          runtimeQuotes.filter(
+            (quote) =>
+              !CLOSED_STATUSES.includes(
+                quote.status,
+              ),
           );
-        },
-      );
-    }, [
-      runtimeQuotes,
-      search,
-      status,
-    ]);
+
+        return {
+          active:
+            active.length,
+
+          editing:
+            active.filter(
+              (quote) =>
+                [
+                  "Rascunho",
+                  "Em elaboração",
+                ].includes(
+                  quote.status,
+                ),
+            ).length,
+
+          review:
+            active.filter(
+              (quote) =>
+                quote.status ===
+                "Em revisão",
+            ).length,
+
+          customer:
+            active.filter(
+              (quote) =>
+                quote.status ===
+                "Enviado",
+            ).length,
+
+          accepted:
+            runtimeQuotes.filter(
+              (quote) =>
+                quote.status ===
+                "Aceito",
+            ).length,
+        };
+      },
+      [
+        runtimeQuotes,
+      ],
+    );
+
+  function handleOpenRequestQueue() {
+    navigate(
+      "/portal/solicitacoes",
+    );
+  }
 
   return (
-    <div className="mx-auto max-w-[1500px]">
+    <div className="mx-auto w-full max-w-[1500px]">
       <InternalPageHeader
         eyebrow="Operação"
         title="Orçamentos"
-        description="Acompanhe propostas em elaboração, enviadas e convertidas em serviços."
+        description="Elabore, revise e acompanhe propostas geradas a partir de solicitações tecnicamente aprovadas."
         action={
           <button
             type="button"
-            className="rounded-[12px] bg-[#096ab2] px-5 py-3 text-[10px] font-semibold uppercase tracking-[0.1em] text-white transition hover:bg-[#075b99]"
+            onClick={
+              handleOpenRequestQueue
+            }
+            className="
+              inline-flex
+              min-h-[44px]
+              cursor-pointer
+              items-center
+              justify-center
+              gap-2
+              rounded-[13px]
+              bg-[#12364e]
+              px-5
+              text-[12px]
+              font-semibold
+              text-white
+              shadow-[0_8px_20px_rgba(18,54,78,0.13)]
+              transition-all
+              duration-200
+              hover:-translate-y-[1px]
+              hover:bg-[#0d2d41]
+              hover:shadow-[0_12px_26px_rgba(18,54,78,0.18)]
+            "
           >
-            + Novo orçamento
+            Criar a partir de solicitação
           </button>
         }
       />
 
-      <div className="mt-7">
+      <div className="mt-7 grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
+        <SummaryCard
+          label="Em andamento"
+          value={
+            summary.active
+          }
+          description="Fluxo comercial ativo"
+        />
+
+        <SummaryCard
+          label="Elaboração"
+          value={
+            summary.editing
+          }
+          description="Definição da proposta"
+        />
+
+        <SummaryCard
+          label="Em revisão"
+          value={
+            summary.review
+          }
+          description="Aguardando validação"
+        />
+
+        <SummaryCard
+          label="Com cliente"
+          value={
+            summary.customer
+          }
+          description="Aguardando retorno"
+        />
+
+        <SummaryCard
+          label="Aceitos"
+          value={
+            summary.accepted
+          }
+          description="Podem virar projeto"
+        />
+      </div>
+
+      <div className="mt-5">
         <QuoteFilters
-          search={search}
+          search={
+            search
+          }
           onSearchChange={
             setSearch
           }
-          status={status}
+          status={
+            status
+          }
           onStatusChange={
             setStatus
           }
         />
       </div>
 
-      <div className="mt-5 overflow-hidden rounded-[22px] border border-[#d1dde4] bg-white shadow-[0_12px_35px_rgba(34,67,90,0.035)]">
-        <div className="flex items-center justify-between border-b border-[#e0e7ec] px-5 py-4 sm:px-6">
+      <section className="mt-5 overflow-hidden rounded-[22px] border border-[#cadce5] bg-white/72 shadow-[0_12px_34px_rgba(31,68,92,0.055)] backdrop-blur-[18px]">
+        <div className="flex flex-col gap-3 border-b border-[#dce7ec] px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
           <div>
-            <p className="text-sm font-semibold text-[#17394f]">
-              Orçamentos
-            </p>
+            <h2 className="text-[16px] font-semibold tracking-[-0.02em] text-[#17394f]">
+              Fluxo comercial
+            </h2>
 
-            <p className="mt-1 text-[11px] text-[#80919b]">
+            <p className="mt-1 text-[12px] leading-5 text-[#607987]">
+              Cada orçamento mantém vínculo com a solicitação que originou a proposta.
+            </p>
+          </div>
+
+          <div className="rounded-full border border-[#c7dbe5] bg-[#edf5f8] px-3 py-1.5">
+            <span className="text-[11px] font-semibold text-[#496f84]">
               {
                 filteredQuotes.length
               }{" "}
@@ -126,26 +283,48 @@ export function QuotesPage() {
               1
                 ? "resultado"
                 : "resultados"}
-            </p>
+            </span>
           </div>
         </div>
 
-        <div className="hidden grid-cols-[120px_120px_1.4fr_1fr_145px_120px_44px] gap-4 border-b border-[#e5ebef] bg-[#f7fafb] px-6 py-3 text-[9px] font-semibold uppercase tracking-[0.1em] text-[#708795] xl:grid">
-          <span>Orçamento</span>
-          <span>Solicitação</span>
-          <span>Cliente</span>
-          <span>Serviço</span>
-          <span>Status</span>
-          <span>Valor</span>
+        <div className="hidden grid-cols-[125px_125px_1.4fr_1fr_155px_125px_44px] gap-4 border-b border-[#e5ebef] bg-[#f4f8fa]/85 px-6 py-3 text-[10px] font-semibold uppercase tracking-[0.09em] text-[#66808e] xl:grid">
+          <span>
+            Orçamento
+          </span>
+
+          <span>
+            Solicitação
+          </span>
+
+          <span>
+            Cliente
+          </span>
+
+          <span>
+            Serviço
+          </span>
+
+          <span>
+            Status
+          </span>
+
+          <span>
+            Valor
+          </span>
+
           <span />
         </div>
 
-        <div className="divide-y divide-[#e6ecef]">
+        <div className="divide-y divide-[#e1eaee]">
           {filteredQuotes.map(
             (quote) => (
               <QuoteRow
-                key={quote.id}
-                quote={quote}
+                key={
+                  quote.id
+                }
+                quote={
+                  quote
+                }
                 onOpen={() =>
                   navigate(
                     `/portal/orcamentos/${quote.id}`,
@@ -158,17 +337,31 @@ export function QuotesPage() {
           {filteredQuotes.length ===
             0 && (
             <div className="px-6 py-16 text-center">
-              <p className="text-sm font-semibold text-[#536f80]">
-                Nenhum orçamento encontrado.
+              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-[14px] bg-[#edf5f8] text-[20px] text-[#5f879c]">
+                $
+              </div>
+
+              <h3 className="mt-4 text-[15px] font-semibold text-[#294c60]">
+                Nenhum orçamento encontrado
+              </h3>
+
+              <p className="mx-auto mt-2 max-w-[440px] text-[12px] leading-5 text-[#6c818d]">
+                Ajuste os filtros ou consulte as solicitações aptas para gerar uma nova proposta.
               </p>
 
-              <p className="mt-2 text-xs text-[#82939d]">
-                Ajuste a busca ou o filtro de status.
-              </p>
+              <button
+                type="button"
+                onClick={
+                  handleOpenRequestQueue
+                }
+                className="mt-5 cursor-pointer rounded-[11px] bg-[#12364e] px-4 py-2.5 text-[12px] font-semibold text-white transition hover:bg-[#0d2d41]"
+              >
+                Ver solicitações
+              </button>
             </div>
           )}
         </div>
-      </div>
+      </section>
     </div>
   );
 }
@@ -180,21 +373,48 @@ function QuoteRow({
   return (
     <button
       type="button"
-      onClick={onOpen}
-      className="grid w-full gap-4 px-5 py-5 text-left transition hover:bg-[#f7fafb] sm:px-6 xl:grid-cols-[120px_120px_1.4fr_1fr_145px_120px_44px] xl:items-center"
+      onClick={
+        onOpen
+      }
+      className="
+        grid
+        w-full
+        cursor-pointer
+        gap-4
+        px-5
+        py-5
+        text-left
+        transition
+        hover:bg-[#f3f8fa]
+        sm:px-6
+        xl:grid-cols-[125px_125px_1.4fr_1fr_155px_125px_44px]
+        xl:items-center
+      "
     >
       <div>
-        <p className="text-[10px] font-semibold tracking-[0.07em] text-[#356f9f]">
-          {quote.id}
-        </p>
+        <div className="flex flex-wrap items-center gap-2">
+          <p className="text-[12px] font-semibold tracking-[0.04em] text-[#356f9f]">
+            {
+              quote.id
+            }
+          </p>
 
-        <p className="mt-1 text-[9px] text-[#8999a3]">
-          {quote.createdAt}
+          <SourceBadge
+            source={
+              quote.source
+            }
+          />
+        </div>
+
+        <p className="mt-1 text-[10px] text-[#8999a3]">
+          {
+            quote.createdAt
+          }
         </p>
       </div>
 
       <div>
-        <p className="text-[10px] font-semibold text-[#607989]">
+        <p className="text-[12px] font-semibold text-[#607989]">
           {
             quote.requestId
           }
@@ -202,24 +422,28 @@ function QuoteRow({
       </div>
 
       <div className="min-w-0">
-        <p className="truncate text-sm font-semibold text-[#17394f]">
-          {quote.company}
+        <p className="truncate text-[14px] font-semibold text-[#17394f]">
+          {
+            quote.company
+          }
         </p>
 
         <p className="mt-1 truncate text-[11px] text-[#7c8f9a]">
-          {quote.contact}
+          {
+            quote.contact
+          }
         </p>
       </div>
 
       <div>
-        <p className="text-xs font-medium text-[#466478]">
-          {quote.service}
+        <p className="text-[12px] font-medium text-[#466478]">
+          {quote.service ||
+            "Não definido"}
         </p>
 
-        <p className="mt-1 text-[9px] text-[#8797a0]">
-          {
-            quote.responsible
-          }
+        <p className="mt-1 text-[10px] text-[#8797a0]">
+          {quote.responsible ||
+            "Não atribuído"}
         </p>
       </div>
 
@@ -230,7 +454,7 @@ function QuoteRow({
       />
 
       <div>
-        <p className="text-xs font-semibold text-[#31566d]">
+        <p className="text-[12px] font-semibold text-[#31566d]">
           {quote.proposedValue >
           0
             ? formatCurrency(
@@ -247,14 +471,79 @@ function QuoteRow({
   );
 }
 
+function SummaryCard({
+  label,
+  value,
+  description,
+}) {
+  return (
+    <div className="rounded-[18px] border border-[#cadce5] bg-white/62 px-5 py-4 shadow-[0_8px_24px_rgba(31,68,92,0.04)] backdrop-blur-[16px]">
+      <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#607f90]">
+        {label}
+      </p>
+
+      <div className="mt-3 flex items-end justify-between gap-3">
+        <p className="text-[28px] font-semibold tracking-[-0.04em] text-[#17394f]">
+          {value}
+        </p>
+
+        <span className="mb-1 h-2 w-2 rounded-full bg-[#65b8ee]" />
+      </div>
+
+      <p className="mt-1 text-[11px] leading-5 text-[#708591]">
+        {description}
+      </p>
+    </div>
+  );
+}
+
+function SourceBadge({
+  source,
+}) {
+  const isReal =
+    source ===
+    "real";
+
+  return (
+    <span
+      className={`
+        rounded-full
+        border
+        px-2
+        py-0.5
+        text-[8px]
+        font-semibold
+        uppercase
+        tracking-[0.08em]
+
+        ${
+          isReal
+            ? "border-[#bdd8c7] bg-[#edf7f1] text-[#4c7b5e]"
+            : "border-[#d7caa9] bg-[#f8f2e5] text-[#876e36]"
+        }
+      `}
+    >
+      {isReal
+        ? "Real"
+        : "Demo"}
+    </span>
+  );
+}
+
 function formatCurrency(
   value,
 ) {
   return new Intl.NumberFormat(
     "pt-BR",
     {
-      style: "currency",
-      currency: "BRL",
+      style:
+        "currency",
+
+      currency:
+        "BRL",
     },
-  ).format(value);
+  ).format(
+    value ||
+      0,
+  );
 }

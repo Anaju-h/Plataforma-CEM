@@ -97,6 +97,10 @@ import {
 } from "../pages/internal/EquipmentCostsPage";
 
 import {
+  InternalNewRequestPage,
+} from "../pages/internal/InternalNewRequestPage";
+
+import {
   KnowledgeDetailPage,
 } from "../pages/internal/KnowledgeDetailPage";
 
@@ -265,15 +269,28 @@ export function AppRoutes() {
               element={<MyWorkPage />}
             />
 
+            {/* =====================
+                SOLICITAÇÕES
+            ====================== */}
+
             <Route
               path="/portal/solicitacoes"
               element={<RequestsPage />}
             />
 
             <Route
+              path="/portal/solicitacoes/nova"
+              element={<InternalNewRequestPage />}
+            />
+
+            <Route
               path="/portal/solicitacoes/:requestId"
               element={<RequestDetailPage />}
             />
+
+            {/* =====================
+                ORÇAMENTOS
+            ====================== */}
 
             <Route
               path="/portal/orcamentos"
@@ -285,6 +302,10 @@ export function AppRoutes() {
               element={<QuoteDetailPage />}
             />
 
+            {/* =====================
+                PROJETOS
+            ====================== */}
+
             <Route
               path="/portal/projetos"
               element={<ProjectsPage />}
@@ -295,6 +316,10 @@ export function AppRoutes() {
               element={<ProjectDetailPage />}
             />
 
+            {/* =====================
+                CONHECIMENTO
+            ====================== */}
+
             <Route
               path="/portal/conhecimento"
               element={<KnowledgePage />}
@@ -304,6 +329,10 @@ export function AppRoutes() {
               path="/portal/conhecimento/:knowledgeId"
               element={<KnowledgeDetailPage />}
             />
+
+            {/* =====================
+                GESTÃO
+            ====================== */}
 
             <Route
               path="/portal/equipamentos-custos"

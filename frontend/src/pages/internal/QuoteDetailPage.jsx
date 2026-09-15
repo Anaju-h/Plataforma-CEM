@@ -25,6 +25,7 @@ import {
   acceptRuntimeQuote,
   approveQuoteInternally,
   cancelRuntimeQuote,
+  getQuoteKnowledgeSupport,
   getRuntimeQuoteById,
   markQuoteAsSent,
   recordQuoteEvent,
@@ -167,6 +168,14 @@ export function QuoteDetailPage() {
   );
 
   const [
+    estimateJustification,
+    setEstimateJustification,
+  ] = useState(
+    initialQuote?.estimateJustification ??
+      "",
+  );
+
+  const [
     commercialNotes,
     setCommercialNotes,
   ] = useState(
@@ -177,22 +186,37 @@ export function QuoteDetailPage() {
   const [
     feedback,
     setFeedback,
-  ] = useState("");
+  ] = useState(
+    null,
+  );
 
   const [
     showProposal,
     setShowProposal,
-  ] = useState(false);
+  ] = useState(
+    false,
+  );
 
   const [
     showProjectConfirmation,
     setShowProjectConfirmation,
-  ] = useState(false);
+  ] = useState(
+    false,
+  );
 
   const [
     confirmationAction,
     setConfirmationAction,
-  ] = useState(null);
+  ] = useState(
+    null,
+  );
+
+  const [
+    confirmationReason,
+    setConfirmationReason,
+  ] = useState(
+    "",
+  );
 
   const pricingContext =
     useMemo(
@@ -238,7 +262,9 @@ export function QuoteDetailPage() {
         ),
     });
 
-  if (!quote) {
+  if (
+    !quote
+  ) {
     return (
       <div className="mx-auto max-w-[1500px]">
         <button
@@ -262,6 +288,11 @@ export function QuoteDetailPage() {
     );
   }
 
+  const knowledgeSupport =
+    getQuoteKnowledgeSupport(
+      quote.id,
+    );
+
   const isEditable =
     editableStatuses.includes(
       quote.status,
@@ -270,7 +301,9 @@ export function QuoteDetailPage() {
   function saveQuote(
     showMessage = true,
   ) {
-    if (!isEditable) {
+    if (
+      !isEditable
+    ) {
       return quote;
     }
 
@@ -319,6 +352,9 @@ export function QuoteDetailPage() {
               validityDays,
             ),
 
+          estimateJustification:
+            estimateJustification.trim(),
+
           commercialNotes:
             commercialNotes.trim(),
         },
@@ -328,9 +364,12 @@ export function QuoteDetailPage() {
       updatedQuote,
     );
 
-    if (showMessage) {
+    if (
+      showMessage
+    ) {
       showFeedback(
         "Alterações salvas.",
+        "success",
       );
     }
 
@@ -339,7 +378,9 @@ export function QuoteDetailPage() {
 
   function handleSendToReview() {
     try {
-      saveQuote(false);
+      saveQuote(
+        false,
+      );
 
       const updatedQuote =
         sendQuoteToReview(
@@ -352,11 +393,15 @@ export function QuoteDetailPage() {
       );
 
       showFeedback(
-        "Orçamento enviado para revisão.",
+        "Orçamento enviado para revisão. A estimativa foi registrada no histórico.",
+        "success",
       );
-    } catch (error) {
+    } catch (
+      error
+    ) {
       showFeedback(
         error.message,
+        "error",
       );
     }
   }
@@ -375,10 +420,14 @@ export function QuoteDetailPage() {
 
       showFeedback(
         "Orçamento aprovado internamente.",
+        "success",
       );
-    } catch (error) {
+    } catch (
+      error
+    ) {
       showFeedback(
         error.message,
+        "error",
       );
     }
   }
@@ -397,10 +446,14 @@ export function QuoteDetailPage() {
 
       showFeedback(
         "Orçamento retornou para elaboração.",
+        "success",
       );
-    } catch (error) {
+    } catch (
+      error
+    ) {
       showFeedback(
         error.message,
+        "error",
       );
     }
   }
@@ -429,10 +482,14 @@ export function QuoteDetailPage() {
 
       showFeedback(
         "Proposta marcada como enviada ao cliente.",
+        "success",
       );
-    } catch (error) {
+    } catch (
+      error
+    ) {
       showFeedback(
         error.message,
+        "error",
       );
     }
   }
@@ -449,20 +506,18 @@ export function QuoteDetailPage() {
         updatedQuote,
       );
 
-      setConfirmationAction(
-        null,
-      );
+      closeConfirmation();
 
       showFeedback(
         "Aceite do cliente registrado.",
+        "success",
       );
-    } catch (error) {
-      setConfirmationAction(
-        null,
-      );
-
+    } catch (
+      error
+    ) {
       showFeedback(
         error.message,
+        "error",
       );
     }
   }
@@ -473,26 +528,25 @@ export function QuoteDetailPage() {
         rejectRuntimeQuote(
           quote.id,
           currentUser,
+          confirmationReason,
         );
 
       setQuote(
         updatedQuote,
       );
 
-      setConfirmationAction(
-        null,
-      );
+      closeConfirmation();
 
       showFeedback(
         "Recusa do cliente registrada.",
+        "success",
       );
-    } catch (error) {
-      setConfirmationAction(
-        null,
-      );
-
+    } catch (
+      error
+    ) {
       showFeedback(
         error.message,
+        "error",
       );
     }
   }
@@ -503,32 +557,55 @@ export function QuoteDetailPage() {
         cancelRuntimeQuote(
           quote.id,
           currentUser,
+          confirmationReason,
         );
 
       setQuote(
         updatedQuote,
       );
 
-      setConfirmationAction(
-        null,
-      );
+      closeConfirmation();
 
       showFeedback(
         "Orçamento cancelado.",
+        "success",
       );
-    } catch (error) {
-      setConfirmationAction(
-        null,
-      );
-
+    } catch (
+      error
+    ) {
       showFeedback(
         error.message,
+        "error",
       );
     }
   }
 
+  function openConfirmation(
+    action,
+  ) {
+    setConfirmationReason(
+      "",
+    );
+
+    setConfirmationAction(
+      action,
+    );
+  }
+
+  function closeConfirmation() {
+    setConfirmationAction(
+      null,
+    );
+
+    setConfirmationReason(
+      "",
+    );
+  }
+
   function handleProjectAction() {
-    if (linkedProject) {
+    if (
+      linkedProject
+    ) {
       navigate(
         `/portal/projetos/${linkedProject.id}`,
       );
@@ -589,29 +666,36 @@ export function QuoteDetailPage() {
       navigate(
         `/portal/projetos/${result.project.id}`,
       );
-    } catch (error) {
+    } catch (
+      error
+    ) {
       setShowProjectConfirmation(
         false,
       );
 
       showFeedback(
         error.message,
+        "error",
       );
     }
   }
 
   function showFeedback(
     message,
+    type = "success",
   ) {
-    setFeedback(
+    setFeedback({
       message,
-    );
+      type,
+    });
 
     window.setTimeout(
       () => {
-        setFeedback("");
+        setFeedback(
+          null,
+        );
       },
-      2600,
+      3200,
     );
   }
 
@@ -638,6 +722,12 @@ export function QuoteDetailPage() {
           description="Proposta comercial e técnica vinculada à solicitação."
           action={
             <div className="flex flex-wrap items-center gap-2">
+              <SourceBadge
+                source={
+                  quote.source
+                }
+              />
+
               <QuoteStatusBadge
                 status={
                   quote.status
@@ -650,7 +740,7 @@ export function QuoteDetailPage() {
                   onClick={() =>
                     saveQuote()
                   }
-                  className="rounded-[12px] bg-[#096ab2] px-5 py-3 text-[10px] font-semibold uppercase tracking-[0.1em] text-white transition hover:bg-[#075b99]"
+                  className="rounded-[12px] bg-[#12364e] px-5 py-3 text-[10px] font-semibold uppercase tracking-[0.1em] text-white transition hover:bg-[#0d2d41]"
                 >
                   Salvar orçamento
                 </button>
@@ -660,13 +750,21 @@ export function QuoteDetailPage() {
         />
 
         {feedback && (
-          <div className="mt-5 flex items-center gap-3 rounded-[14px] border border-[#bcd8c7] bg-[#ebf5ee] px-4 py-3">
-            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white text-[10px] font-semibold text-[#3d7453]">
-              ✓
-            </span>
+          <FeedbackMessage
+            feedback={
+              feedback
+            }
+          />
+        )}
 
-            <p className="text-xs font-semibold text-[#3d7453]">
-              {feedback}
+        {quote.source !==
+          "real" && (
+          <div className="mt-5 rounded-[14px] border border-[#ded1b3] bg-[#faf5e9] px-4 py-3">
+            <p className="text-[12px] leading-5 text-[#806b3d]">
+              <strong className="font-semibold">
+                Base de demonstração.
+              </strong>{" "}
+              Este orçamento pode ser usado para validar o fluxo da interface, mas não deve alimentar os indicadores nem o aprendizado da futura base real.
             </p>
           </div>
         )}
@@ -680,8 +778,8 @@ export function QuoteDetailPage() {
             quote.status,
           ) && (
             <div className="mt-5 rounded-[14px] border border-[#cadce6] bg-[#edf5f9] px-4 py-3">
-              <p className="text-xs leading-5 text-[#58788b]">
-                Os dados comerciais estão bloqueados nesta etapa. Para alterá-los, o orçamento deve retornar para elaboração.
+              <p className="text-[12px] leading-5 text-[#58788b]">
+                Os dados da estimativa e as condições comerciais estão bloqueados nesta etapa. Para alterá-los, o orçamento deve retornar para elaboração.
               </p>
             </div>
           )}
@@ -765,60 +863,73 @@ export function QuoteDetailPage() {
 
             <RequestDetailSection
               eyebrow="03"
-              title="Apoio à precificação"
-              description="Informações técnicas e comerciais utilizadas como apoio. A decisão final permanece sob responsabilidade de quem está elaborando o orçamento."
+              title="Assistente de orçamento"
+              description="Apoio técnico e comercial para a estimativa. O sistema apresenta referências e evidências; a decisão permanece sob responsabilidade do profissional."
             >
-              <label>
-                <span className={labelClasses}>
-                  Tecnologia de referência
-                </span>
+              <KnowledgeAssistantPanel
+                knowledge={
+                  knowledgeSupport
+                }
+                onOpenKnowledge={() =>
+                  navigate(
+                    "/portal/conhecimento",
+                  )
+                }
+              />
 
-                <select
-                  value={
-                    machineId
-                  }
-                  disabled={
-                    !isEditable
-                  }
-                  onChange={(event) =>
-                    setMachineId(
-                      event.target.value,
-                    )
-                  }
-                  className={`${getInputClasses(
-                    !isEditable,
-                  )} mt-2`}
-                >
-                  <option value="">
-                    Selecionar tecnologia
-                  </option>
+              <div className="mt-6">
+                <label>
+                  <span className={labelClasses}>
+                    Tecnologia de referência
+                  </span>
 
-                  {machines.map(
-                    (machine) => (
-                      <option
-                        key={
-                          machine.id
-                        }
-                        value={
-                          machine.id
-                        }
-                      >
-                        {
-                          machine.name
-                        }
-                      </option>
-                    ),
-                  )}
-                </select>
-              </label>
+                  <select
+                    value={
+                      machineId
+                    }
+                    disabled={
+                      !isEditable
+                    }
+                    onChange={(event) =>
+                      setMachineId(
+                        event.target.value,
+                      )
+                    }
+                    className={`${getInputClasses(
+                      !isEditable,
+                    )} mt-2`}
+                  >
+                    <option value="">
+                      Selecionar tecnologia
+                    </option>
+
+                    {machines.map(
+                      (machine) => (
+                        <option
+                          key={
+                            machine.id
+                          }
+                          value={
+                            machine.id
+                          }
+                        >
+                          {
+                            machine.name
+                          }
+                        </option>
+                      ),
+                    )}
+                  </select>
+                </label>
+              </div>
 
               <div className="mt-6 rounded-[18px] border border-[#c8dbe5] bg-[#edf6fa] p-5">
-                <p className="text-[9px] font-semibold uppercase tracking-[0.12em] text-[#5681a0]">
-                  Conhecimento disponível
+                <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[#5681a0]">
+                  Base técnica disponível
                 </p>
 
-                <p className="mt-1.5 text-xs leading-5 text-[#718795]">
-                  Estes valores são referências para apoiar a análise. Eles não representam preço obrigatório.
+                <p className="mt-1.5 text-[12px] leading-5 text-[#718795]">
+                  Estes valores vêm das referências internas de custo e precificação. Eles não são tratados como aprendizado histórico de serviços executados.
                 </p>
 
                 <div className="mt-5 grid gap-4 sm:grid-cols-2">
@@ -837,8 +948,8 @@ export function QuoteDetailPage() {
                     detail={
                       pricingContext
                         .technicalReference
-                        ? "Baseado no custo com administrativo da planilha interna."
-                        : "A base de custos será exibida quando houver uma tecnologia relacionada."
+                        ? "Referência calculada a partir da base interna de custos do equipamento."
+                        : "A referência será exibida quando uma tecnologia for selecionada."
                     }
                   />
 
@@ -847,7 +958,7 @@ export function QuoteDetailPage() {
                     value={`${formatCurrency(
                       commercialReference.hourlyRate,
                     )}/h`}
-                    detail="Referência atualmente praticada pelo laboratório. Pode ser alterada pela gestão."
+                    detail="Parâmetro comercial atualmente cadastrado. O responsável continua livre para definir a proposta."
                   />
                 </div>
 
@@ -855,10 +966,10 @@ export function QuoteDetailPage() {
                   .technicalReference && (
                   <div className="mt-4 border-t border-[#cfdee6] pt-4">
                     <p className="text-[9px] font-semibold uppercase tracking-[0.1em] text-[#7b909c]">
-                      Fonte do custo técnico
+                      Fonte da referência técnica
                     </p>
 
-                    <p className="mt-1 text-xs font-medium text-[#48697d]">
+                    <p className="mt-1 text-[12px] font-medium text-[#48697d]">
                       {
                         pricingContext
                           .technicalReference
@@ -871,8 +982,8 @@ export function QuoteDetailPage() {
               </div>
 
               <div className="mt-6">
-                <p className="text-[9px] font-semibold uppercase tracking-[0.13em] text-[#607989]">
-                  Definição do responsável
+                <p className="text-[10px] font-semibold uppercase tracking-[0.13em] text-[#607989]">
+                  Estimativa do responsável
                 </p>
 
                 <div className="mt-4 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
@@ -927,7 +1038,7 @@ export function QuoteDetailPage() {
                       Valor da proposta
                     </p>
 
-                    <p className="mt-2 text-xs leading-5 text-[#6b8290]">
+                    <p className="mt-2 text-[12px] leading-5 text-[#6b8290]">
                       {formatHours(
                         billableHours,
                       )}{" "}
@@ -982,7 +1093,7 @@ export function QuoteDetailPage() {
                         commercialTotal,
                       )
                     }
-                    description="Comparação informativa entre custo de referência e valor comercial."
+                    description="Comparação informativa entre custo técnico de referência e valor comercial."
                   />
                 </div>
               )}
@@ -1006,6 +1117,35 @@ export function QuoteDetailPage() {
                   )}
                 </div>
               )}
+
+              <label className="mt-6 block">
+                <span className={labelClasses}>
+                  Justificativa técnica da estimativa
+                </span>
+
+                <p className="mt-1 text-[11px] leading-5 text-[#7a8f9a]">
+                  Registre por que estas horas, tecnologia e condições foram escolhidas. Esta informação será importante para comparar o orçado com o realizado e alimentar o conhecimento futuro.
+                </p>
+
+                <textarea
+                  value={
+                    estimateJustification
+                  }
+                  disabled={
+                    !isEditable
+                  }
+                  onChange={(event) =>
+                    setEstimateJustification(
+                      event.target.value,
+                    )
+                  }
+                  rows={5}
+                  placeholder="Ex.: estimativa considera preparação, fixação, programação, medição e análise dos resultados..."
+                  className={`${getTextareaClasses(
+                    !isEditable,
+                  )} mt-3`}
+                />
+              </label>
             </RequestDetailSection>
 
             <RequestDetailSection
@@ -1090,7 +1230,7 @@ export function QuoteDetailPage() {
                           }
                         </p>
 
-                        <p className="mt-1 text-xs text-[#6d8677]">
+                        <p className="mt-1 text-[12px] text-[#6d8677]">
                           O orçamento já avançou para execução.
                         </p>
                       </div>
@@ -1100,7 +1240,7 @@ export function QuoteDetailPage() {
                         onClick={
                           handleProjectAction
                         }
-                        className="w-fit rounded-[11px] bg-[#397250] px-5 py-3 text-[9px] font-semibold uppercase tracking-[0.09em] text-white"
+                        className="w-fit rounded-[11px] bg-[#397250] px-5 py-3 text-[10px] font-semibold uppercase tracking-[0.09em] text-white"
                       >
                         Abrir projeto
                       </button>
@@ -1116,8 +1256,8 @@ export function QuoteDetailPage() {
                       O serviço pode avançar para execução.
                     </h3>
 
-                    <p className="mt-2 max-w-2xl text-xs leading-5 text-[#718795]">
-                      Ao criar o projeto, as principais informações comerciais e técnicas deste orçamento serão utilizadas para iniciar o acompanhamento operacional.
+                    <p className="mt-2 max-w-2xl text-[12px] leading-5 text-[#718795]">
+                      Ao criar o projeto, a estimativa comercial será preservada para permitir a futura comparação entre o que foi orçado e o que realmente foi executado.
                     </p>
 
                     <button
@@ -1125,7 +1265,7 @@ export function QuoteDetailPage() {
                       onClick={
                         handleProjectAction
                       }
-                      className="mt-5 rounded-[11px] bg-[#096ab2] px-5 py-3 text-[9px] font-semibold uppercase tracking-[0.09em] text-white transition hover:bg-[#075b99]"
+                      className="mt-5 rounded-[11px] bg-[#096ab2] px-5 py-3 text-[10px] font-semibold uppercase tracking-[0.09em] text-white transition hover:bg-[#075b99]"
                     >
                       Criar projeto
                     </button>
@@ -1142,9 +1282,10 @@ export function QuoteDetailPage() {
                   : "05"
               }
               title="Histórico comercial"
-              description="Registro das principais movimentações realizadas durante o orçamento."
+              description="Registro das principais movimentações e versões da estimativa."
             >
-              {quote.history?.length >
+              {quote.history
+                ?.length >
               0 ? (
                 <div>
                   {quote.history.map(
@@ -1250,12 +1391,12 @@ export function QuoteDetailPage() {
                     handleGenerateProposal
                   }
                   onAccept={() =>
-                    setConfirmationAction(
+                    openConfirmation(
                       "accept",
                     )
                   }
                   onReject={() =>
-                    setConfirmationAction(
+                    openConfirmation(
                       "reject",
                     )
                   }
@@ -1274,7 +1415,7 @@ export function QuoteDetailPage() {
                   <button
                     type="button"
                     onClick={() =>
-                      setConfirmationAction(
+                      openConfirmation(
                         "cancel",
                       )
                     }
@@ -1284,6 +1425,32 @@ export function QuoteDetailPage() {
                   </button>
                 )}
               </div>
+            </section>
+
+            <section className="rounded-[22px] border border-[#d1dde4] bg-white p-5">
+              <p className="text-[9px] font-semibold uppercase tracking-[0.14em] text-[#718895]">
+                Rastreabilidade da estimativa
+              </p>
+
+              <p className="mt-3 text-[22px] font-semibold tracking-[-0.03em] text-[#31566d]">
+                {
+                  quote.estimateVersions
+                    ?.length ??
+                  0
+                }
+              </p>
+
+              <p className="mt-1 text-[11px] leading-5 text-[#718795]">
+                {quote.estimateVersions
+                  ?.length ===
+                1
+                  ? "versão enviada para revisão"
+                  : "versões enviadas para revisão"}
+              </p>
+
+              <p className="mt-4 border-t border-[#e0e8ec] pt-4 text-[11px] leading-5 text-[#748995]">
+                Uma nova versão é registrada sempre que o orçamento sai da elaboração e segue para revisão.
+              </p>
             </section>
 
             {quote.status ===
@@ -1297,7 +1464,7 @@ export function QuoteDetailPage() {
                   Aguardando cliente
                 </p>
 
-                <p className="mt-2 text-xs leading-5 text-[#708795]">
+                <p className="mt-2 text-[12px] leading-5 text-[#708795]">
                   A proposta foi enviada. Registre o retorno do cliente quando ele ocorrer.
                 </p>
               </section>
@@ -1314,7 +1481,7 @@ export function QuoteDetailPage() {
                   Orçamento aceito
                 </p>
 
-                <p className="mt-2 text-xs leading-5 text-[#708778]">
+                <p className="mt-2 text-[12px] leading-5 text-[#708778]">
                   A etapa comercial foi concluída e o serviço pode seguir para execução.
                 </p>
 
@@ -1336,7 +1503,11 @@ export function QuoteDetailPage() {
               "Recusado" && (
               <StateCard
                 title="Proposta recusada"
-                description="O cliente recusou a proposta e o orçamento foi encerrado."
+                description={
+                  quote.rejection
+                    ?.reason ||
+                  "O cliente recusou a proposta e o orçamento foi encerrado."
+                }
               />
             )}
 
@@ -1344,7 +1515,11 @@ export function QuoteDetailPage() {
               "Cancelado" && (
               <StateCard
                 title="Orçamento cancelado"
-                description="Este orçamento foi encerrado antes da conclusão da negociação."
+                description={
+                  quote.cancellation
+                    ?.reason ||
+                  "Este orçamento foi encerrado antes da conclusão da negociação."
+                }
               />
             )}
 
@@ -1353,7 +1528,7 @@ export function QuoteDetailPage() {
                 Origem
               </p>
 
-              <p className="mt-3 text-xs leading-5 text-[#6d8390]">
+              <p className="mt-3 text-[12px] leading-5 text-[#6d8390]">
                 Este orçamento foi criado a partir da solicitação{" "}
                 <span className="font-semibold text-[#356f9f]">
                   {
@@ -1362,6 +1537,25 @@ export function QuoteDetailPage() {
                 </span>
                 .
               </p>
+
+              {quote.requestOrigin && (
+                <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-1">
+                  <ControlInfo
+                    label="Origem da solicitação"
+                    value={
+                      quote.requestOrigin
+                    }
+                  />
+
+                  <ControlInfo
+                    label="Canal"
+                    value={
+                      quote.requestChannel ||
+                      "Não informado"
+                    }
+                  />
+                </div>
+              )}
 
               <button
                 type="button"
@@ -1386,6 +1580,16 @@ export function QuoteDetailPage() {
                   label="Status"
                   value={
                     quote.status
+                  }
+                />
+
+                <ControlInfo
+                  label="Base"
+                  value={
+                    quote.source ===
+                    "real"
+                      ? "Real"
+                      : "Demonstração"
                   }
                 />
 
@@ -1479,10 +1683,8 @@ export function QuoteDetailPage() {
           title={`Registrar aceite de ${quote.id}?`}
           description="Depois do aceite, este orçamento poderá originar um projeto."
           confirmLabel="Confirmar aceite"
-          onCancel={() =>
-            setConfirmationAction(
-              null,
-            )
+          onCancel={
+            closeConfirmation
           }
           onConfirm={
             handleAccept
@@ -1495,13 +1697,19 @@ export function QuoteDetailPage() {
         <ConfirmationModal
           eyebrow="Retorno do cliente"
           title={`Registrar recusa de ${quote.id}?`}
-          description="O orçamento será encerrado como recusado e não poderá originar um projeto."
+          description="O orçamento será encerrado como recusado. O motivo ficará registrado no histórico comercial."
           confirmLabel="Confirmar recusa"
           danger
-          onCancel={() =>
-            setConfirmationAction(
-              null,
-            )
+          reasonLabel="Motivo da recusa"
+          reason={
+            confirmationReason
+          }
+          onReasonChange={
+            setConfirmationReason
+          }
+          reasonRequired
+          onCancel={
+            closeConfirmation
           }
           onConfirm={
             handleReject
@@ -1514,13 +1722,19 @@ export function QuoteDetailPage() {
         <ConfirmationModal
           eyebrow="Encerrar orçamento"
           title={`Cancelar ${quote.id}?`}
-          description="O orçamento será encerrado e sairá do fluxo comercial ativo."
+          description="O orçamento será encerrado e sairá do fluxo comercial ativo. Registre o motivo para manter a rastreabilidade."
           confirmLabel="Confirmar cancelamento"
           danger
-          onCancel={() =>
-            setConfirmationAction(
-              null,
-            )
+          reasonLabel="Motivo do cancelamento"
+          reason={
+            confirmationReason
+          }
+          onReasonChange={
+            setConfirmationReason
+          }
+          reasonRequired
+          onCancel={
+            closeConfirmation
           }
           onConfirm={
             handleCancel
@@ -1530,6 +1744,107 @@ export function QuoteDetailPage() {
     </>
   );
 }
+
+/* ============================================================
+ * ASSISTENTE DE ORÇAMENTO
+ * ============================================================ */
+
+function KnowledgeAssistantPanel({
+  knowledge,
+  onOpenKnowledge,
+}) {
+  if (
+    !knowledge
+  ) {
+    return null;
+  }
+
+  return (
+    <div className="overflow-hidden rounded-[19px] border border-[#b8d2e0] bg-[linear-gradient(135deg,#eef7fb_0%,#e4f0f6_100%)]">
+      <div className="border-b border-[#cadde7] p-5">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <div className="flex flex-wrap items-center gap-2">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.13em] text-[#397392]">
+                Motor de conhecimento e recomendação
+              </p>
+
+              <span className="rounded-full border border-[#c2d8e4] bg-white/70 px-2.5 py-1 text-[8px] font-semibold uppercase tracking-[0.08em] text-[#658090]">
+                Histórico ainda não conectado
+              </span>
+            </div>
+
+            <h3 className="mt-3 text-[18px] font-semibold tracking-[-0.025em] text-[#17394f]">
+              A recomendação deve ser explicável.
+            </h3>
+
+            <p className="mt-2 max-w-[680px] text-[12px] leading-5 text-[#617b89]">
+              {knowledge.message}
+            </p>
+          </div>
+
+          <button
+            type="button"
+            onClick={
+              onOpenKnowledge
+            }
+            className="w-fit shrink-0 rounded-[10px] border border-[#aac8d8] bg-white/70 px-3.5 py-2 text-[9px] font-semibold uppercase tracking-[0.08em] text-[#356f9f] transition hover:bg-white"
+          >
+            Gestão do conhecimento
+          </button>
+        </div>
+      </div>
+
+      <div className="grid gap-px bg-[#cbdde6] sm:grid-cols-3">
+        <KnowledgeStatusItem
+          label="Casos reais comparáveis"
+          value="0"
+          detail="Nenhum Registro de Serviço conectado"
+        />
+
+        <KnowledgeStatusItem
+          label="Confiança"
+          value={
+            knowledge.confidence
+          }
+          detail="Sem dados suficientes para classificar"
+        />
+
+        <KnowledgeStatusItem
+          label="Fator de correção"
+          value="—"
+          detail="Não calculado sem histórico validado"
+        />
+      </div>
+    </div>
+  );
+}
+
+function KnowledgeStatusItem({
+  label,
+  value,
+  detail,
+}) {
+  return (
+    <div className="bg-white/70 p-4">
+      <p className="text-[9px] font-semibold uppercase tracking-[0.09em] text-[#718895]">
+        {label}
+      </p>
+
+      <p className="mt-2 text-[17px] font-semibold text-[#31566d]">
+        {value}
+      </p>
+
+      <p className="mt-1 text-[10px] leading-4 text-[#81939e]">
+        {detail}
+      </p>
+    </div>
+  );
+}
+
+/* ============================================================
+ * WORKFLOW
+ * ============================================================ */
 
 function QuoteWorkflowActions({
   quote,
@@ -1722,18 +2037,105 @@ function ClosedMessage({
   );
 }
 
+/* ============================================================
+ * FEEDBACK
+ * ============================================================ */
+
+function FeedbackMessage({
+  feedback,
+}) {
+  const error =
+    feedback.type ===
+    "error";
+
+  return (
+    <div
+      className={`
+        mt-5
+        flex
+        items-center
+        gap-3
+        rounded-[14px]
+        border
+        px-4
+        py-3
+
+        ${
+          error
+            ? "border-[#e2c6bd] bg-[#faf0ed]"
+            : "border-[#bcd8c7] bg-[#ebf5ee]"
+        }
+      `}
+    >
+      <span
+        className={`
+          flex
+          h-6
+          w-6
+          shrink-0
+          items-center
+          justify-center
+          rounded-full
+          bg-white
+          text-[10px]
+          font-semibold
+
+          ${
+            error
+              ? "text-[#9a5947]"
+              : "text-[#3d7453]"
+          }
+        `}
+      >
+        {error
+          ? "!"
+          : "✓"}
+      </span>
+
+      <p
+        className={`
+          text-[12px]
+          font-semibold
+
+          ${
+            error
+              ? "text-[#8f5544]"
+              : "text-[#3d7453]"
+          }
+        `}
+      >
+        {
+          feedback.message
+        }
+      </p>
+    </div>
+  );
+}
+
+/* ============================================================
+ * CONFIRMAÇÃO
+ * ============================================================ */
+
 function ConfirmationModal({
   eyebrow,
   title,
   description,
   confirmLabel,
   danger = false,
+  reasonLabel = "",
+  reason = "",
+  onReasonChange = null,
+  reasonRequired = false,
   onCancel,
   onConfirm,
 }) {
+  const blocked =
+    reasonRequired &&
+    !reason.trim();
+
   return (
     <div className="fixed inset-0 z-[120] flex items-center justify-center bg-[#071a2b]/50 px-4 backdrop-blur-[3px]">
-      <div className="w-full max-w-[480px] rounded-[24px] border border-white/30 bg-white p-6 shadow-[0_35px_100px_rgba(7,26,43,0.25)] sm:p-7">
+      <div className="w-full max-w-[500px] rounded-[24px] border border-white/30 bg-white p-6 shadow-[0_35px_100px_rgba(7,26,43,0.25)] sm:p-7">
         <p
           className={`text-[9px] font-semibold uppercase tracking-[0.14em] ${
             danger
@@ -1752,6 +2154,30 @@ function ConfirmationModal({
           {description}
         </p>
 
+        {onReasonChange && (
+          <label className="mt-5 block">
+            <span className={labelClasses}>
+              {reasonLabel}
+            </span>
+
+            <textarea
+              rows={4}
+              value={
+                reason
+              }
+              onChange={(event) =>
+                onReasonChange(
+                  event.target.value,
+                )
+              }
+              placeholder="Registre o motivo..."
+              className={`${getTextareaClasses(
+                false,
+              )} mt-2`}
+            />
+          </label>
+        )}
+
         <div className="mt-6 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
           <button
             type="button"
@@ -1765,10 +2191,13 @@ function ConfirmationModal({
 
           <button
             type="button"
+            disabled={
+              blocked
+            }
             onClick={
               onConfirm
             }
-            className={`rounded-[11px] px-5 py-3 text-[10px] font-semibold uppercase tracking-[0.08em] text-white ${
+            className={`rounded-[11px] px-5 py-3 text-[10px] font-semibold uppercase tracking-[0.08em] text-white transition disabled:cursor-not-allowed disabled:opacity-45 ${
               danger
                 ? "bg-[#9a5947]"
                 : "bg-[#096ab2]"
@@ -1781,6 +2210,10 @@ function ConfirmationModal({
     </div>
   );
 }
+
+/* ============================================================
+ * PROJETO
+ * ============================================================ */
 
 function ProjectCreationModal({
   quote,
@@ -1822,7 +2255,7 @@ function ProjectCreationModal({
           </p>
 
           <p className="mt-1 text-[10px] leading-5 text-[#7c909b]">
-            O projeto será criado inicialmente com status “Planejamento”.
+            A estimativa deste orçamento deverá ser preservada para futura comparação com a execução real.
           </p>
         </div>
 
@@ -1851,6 +2284,10 @@ function ProjectCreationModal({
     </div>
   );
 }
+
+/* ============================================================
+ * PROPOSTA
+ * ============================================================ */
 
 function ProposalPreviewModal({
   quote,
@@ -2043,6 +2480,10 @@ function ProposalPreviewModal({
   );
 }
 
+/* ============================================================
+ * HISTÓRICO
+ * ============================================================ */
+
 function QuoteHistoryItem({
   item,
   last,
@@ -2090,6 +2531,43 @@ function QuoteHistoryItem({
         )}
       </div>
     </div>
+  );
+}
+
+/* ============================================================
+ * COMPONENTES MENORES
+ * ============================================================ */
+
+function SourceBadge({
+  source,
+}) {
+  const real =
+    source ===
+    "real";
+
+  return (
+    <span
+      className={`
+        rounded-full
+        border
+        px-2.5
+        py-1
+        text-[8px]
+        font-semibold
+        uppercase
+        tracking-[0.08em]
+
+        ${
+          real
+            ? "border-[#bdd8c7] bg-[#edf7f1] text-[#4c7b5e]"
+            : "border-[#d7caa9] bg-[#f8f2e5] text-[#876e36]"
+        }
+      `}
+    >
+      {real
+        ? "Base real"
+        : "Demonstração"}
+    </span>
   );
 }
 
@@ -2347,6 +2825,10 @@ function EmptyBlock({
   );
 }
 
+/* ============================================================
+ * FORMATADORES
+ * ============================================================ */
+
 function toNumber(
   value,
 ) {
@@ -2370,6 +2852,7 @@ function formatCurrency(
     {
       style:
         "currency",
+
       currency:
         "BRL",
     },
@@ -2445,11 +2928,13 @@ function getInputClasses(
     h-12
     w-full
     rounded-[12px]
-    border border-[#d3dfe6]
+    border
+    border-[#d3dfe6]
     px-4
     text-sm
     outline-none
     transition
+
     ${
       disabled
         ? "cursor-not-allowed bg-[#eef2f4] text-[#748995]"
@@ -2464,13 +2949,16 @@ function getTextareaClasses(
   return `
     w-full
     rounded-[13px]
-    border border-[#d3dfe6]
-    px-4 py-3
+    border
+    border-[#d3dfe6]
+    px-4
+    py-3
     text-sm
     leading-6
     outline-none
     transition
     placeholder:text-[#9aa8b1]
+
     ${
       disabled
         ? "cursor-not-allowed resize-none bg-[#eef2f4] text-[#748995]"

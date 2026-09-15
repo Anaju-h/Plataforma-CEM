@@ -16,6 +16,18 @@ import {
 } from "../../components/internal/ProjectStatusBadge";
 
 import {
+  getRuntimeRequests,
+} from "../../services/requestService";
+
+import {
+  getRuntimeQuotes,
+} from "../../services/quoteService";
+
+import {
+  getRuntimeProjects,
+} from "../../services/projectService";
+
+import {
   getCurrentUserWork,
 } from "../../services/workService";
 
@@ -26,10 +38,10 @@ export function MyWorkPage() {
   const navigate =
     useNavigate();
 
-  const work =
+  const data =
     useMemo(
       () =>
-        getCurrentUserWork(
+        buildWorkData(
           currentUser,
         ),
       [],
@@ -43,7 +55,7 @@ export function MyWorkPage() {
   );
 
   const visibleAttention =
-    work.attentionItems.filter(
+    data.work.attentionItems.filter(
       (item) => {
         if (
           attentionFilter ===
@@ -62,9 +74,9 @@ export function MyWorkPage() {
   return (
     <div className="mx-auto max-w-[1500px]">
       <InternalPageHeader
-        eyebrow="Visão pessoal"
+        eyebrow="Visão geral"
         title="Meu trabalho"
-        description="Uma visão concentrada do que está sob sua responsabilidade e do que precisa da sua atenção agora."
+        description="Acompanhe o fluxo do laboratório, suas responsabilidades e as situações que precisam de ação."
       />
 
       {/* =====================================================
@@ -73,41 +85,62 @@ export function MyWorkPage() {
 
       <div className="mt-7 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <MetricCard
-          label="Projetos ativos"
+          label="Solicitações abertas"
           value={
-            work.activeProjects
-              .length
+            data.openRequests.length
           }
-          description="Serviços atualmente sob sua responsabilidade."
-        />
-
-        <MetricCard
-          label="Precisam de atenção"
-          value={
-            work.attentionCount
+          description={
+            data.requestDetail
           }
-          description="Situações do fluxo que exigem alguma ação."
-          emphasis={
-            work.attentionCount >
-            0
+          onClick={() =>
+            navigate(
+              "/portal/solicitacoes",
+            )
           }
-        />
-
-        <MetricCard
-          label="Próximos prazos"
-          value={
-            work.upcomingDeadlineCount
-          }
-          description="Projetos com os próximos prazos registrados."
         />
 
         <MetricCard
           label="Orçamentos em andamento"
           value={
-            work.activeQuotes
-              .length
+            data.activeQuotes.length
           }
-          description="Propostas comerciais ainda em fluxo."
+          description={
+            data.quoteDetail
+          }
+          onClick={() =>
+            navigate(
+              "/portal/orcamentos",
+            )
+          }
+        />
+
+        <MetricCard
+          label="Projetos ativos"
+          value={
+            data.activeProjects.length
+          }
+          description={
+            data.projectDetail
+          }
+          onClick={() =>
+            navigate(
+              "/portal/projetos",
+            )
+          }
+        />
+
+        <MetricCard
+          label="Precisam de atenção"
+          value={
+            data.work.attentionCount
+          }
+          description={
+            data.attentionDetail
+          }
+          emphasis={
+            data.work.attentionCount >
+            0
+          }
         />
       </div>
 
@@ -115,30 +148,36 @@ export function MyWorkPage() {
           ATENÇÃO
       ===================================================== */}
 
-      <section className="mt-5 overflow-hidden rounded-[22px] border border-[#d1dde4] bg-white shadow-[0_10px_30px_rgba(34,67,90,0.025)]">
-        <div className="flex flex-col gap-4 border-b border-[#e2e9ed] px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+      <section className="mt-6 overflow-hidden rounded-[22px] border border-[#c8d8e1] bg-white shadow-[0_12px_34px_rgba(7,31,45,0.045)]">
+        <div className="flex flex-col gap-4 border-b border-[#dce6eb] px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-6">
           <div className="flex items-center gap-3">
-            <span className="flex h-8 w-8 items-center justify-center rounded-full border border-[#bdd4e0] bg-[#edf6fa] text-[11px] font-semibold text-[#397392]">
+            <span
+              className="
+                flex h-9 w-9
+                shrink-0 items-center justify-center
+                rounded-full
+                border border-[#b8d1de]
+                bg-[#eaf4f8]
+                text-[13px] font-semibold
+                text-[#296b90]
+              "
+            >
               !
             </span>
 
             <div>
-              <p className="text-sm font-semibold text-[#17394f]">
+              <p className="text-[16px] font-semibold text-[#17384d]">
                 Precisam da minha atenção
               </p>
 
-              <p className="mt-1 text-xs text-[#7e919c]">
-                O sistema reúne aqui somente situações que pedem uma ação.
+              <p className="mt-1 text-[12px] leading-5 text-[#5c7584]">
+                Situações que exigem uma decisão, revisão ou continuidade do fluxo.
               </p>
             </div>
           </div>
 
-          {/* =================================================
-              FILTRO
-          ================================================= */}
-
           <div className="flex items-center gap-2">
-            <span className="hidden text-[8px] font-semibold uppercase tracking-[0.09em] text-[#8999a3] sm:block">
+            <span className="hidden text-[10px] font-semibold uppercase tracking-[0.1em] text-[#607c8c] sm:block">
               Filtrar
             </span>
 
@@ -153,23 +192,21 @@ export function MyWorkPage() {
                   )
                 }
                 className="
-                  h-9
-                  min-w-[155px]
+                  h-10 min-w-[175px]
                   cursor-pointer
                   appearance-none
                   rounded-[10px]
-                  border border-[#d2dfe6]
+                  border border-[#c3d4dd]
                   bg-[#f8fafb]
                   pl-3 pr-9
-                  text-[9px]
-                  font-semibold
-                  uppercase
-                  tracking-[0.06em]
-                  text-[#536f80]
+                  text-[11px]
+                  font-semibold uppercase
+                  tracking-[0.05em]
+                  text-[#405f70]
                   outline-none
                   transition
-                  hover:border-[#acc5d2]
-                  focus:border-[#78a9c4]
+                  hover:border-[#91b2c3]
+                  focus:border-[#6599b5]
                   focus:bg-white
                 "
               >
@@ -190,21 +227,17 @@ export function MyWorkPage() {
                 </option>
               </select>
 
-              <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[9px] text-[#718895]">
+              <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[11px] text-[#567586]">
                 ▾
               </span>
             </div>
           </div>
         </div>
 
-        {/* ===================================================
-            RESUMO DO FILTRO
-        =================================================== */}
-
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#edf1f3] bg-[#fbfcfd] px-5 py-2.5 sm:px-6">
-          <p className="text-[9px] text-[#8a9aa3]">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#e7edf0] bg-[#f8fafb] px-5 py-3 sm:px-6">
+          <p className="text-[11px] text-[#607988]">
             Exibindo{" "}
-            <span className="font-semibold text-[#607989]">
+            <span className="font-semibold text-[#274b60]">
               {
                 visibleAttention.length
               }
@@ -224,7 +257,7 @@ export function MyWorkPage() {
                   "all",
                 )
               }
-              className="text-[8px] font-semibold uppercase tracking-[0.07em] text-[#5681a0] transition hover:text-[#096ab2]"
+              className="text-[10px] font-semibold uppercase tracking-[0.07em] text-[#356f9f] hover:text-[#0057b8]"
             >
               Limpar filtro
             </button>
@@ -233,7 +266,7 @@ export function MyWorkPage() {
 
         {visibleAttention.length >
         0 ? (
-          <div className="divide-y divide-[#e5ebef]">
+          <div className="divide-y divide-[#e2e9ed]">
             {visibleAttention.map(
               (item) => (
                 <AttentionRow
@@ -255,47 +288,73 @@ export function MyWorkPage() {
         ) : (
           <EmptyState
             title="Nada exige atenção neste filtro."
-            description="Quando alguma etapa do fluxo precisar de uma ação sua, ela aparecerá aqui."
+            description="Quando alguma etapa precisar de uma ação, ela aparecerá aqui."
           />
         )}
       </section>
 
       {/* =====================================================
-          PROJETOS + PRAZOS
+          SOLICITAÇÕES + PROJETOS
       ===================================================== */}
 
-      <div className="mt-5 grid gap-5 xl:grid-cols-[1.15fr_0.85fr]">
-        {/* PROJETOS */}
+      <div className="mt-5 grid gap-5 xl:grid-cols-2">
+        <section className="overflow-hidden rounded-[22px] border border-[#cddbe3] bg-white shadow-[0_10px_30px_rgba(7,31,45,0.035)]">
+          <SectionHeader
+            title="Solicitações recentes"
+            description="Entradas que ainda fazem parte do fluxo atual."
+            buttonLabel="Ver todas"
+            onClick={() =>
+              navigate(
+                "/portal/solicitacoes",
+              )
+            }
+          />
 
-        <section className="overflow-hidden rounded-[22px] border border-[#d1dde4] bg-white shadow-[0_10px_30px_rgba(34,67,90,0.025)]">
-          <div className="flex items-center justify-between gap-4 border-b border-[#e2e9ed] px-5 py-5 sm:px-6">
-            <div>
-              <p className="text-sm font-semibold text-[#17394f]">
-                Projetos sob minha responsabilidade
-              </p>
-
-              <p className="mt-1 text-xs text-[#7e919c]">
-                Acompanhamento resumido dos projetos ativos.
-              </p>
+          {data.recentRequests.length >
+          0 ? (
+            <div className="divide-y divide-[#e3eaee]">
+              {data.recentRequests.map(
+                (request) => (
+                  <RequestRow
+                    key={
+                      request.id
+                    }
+                    request={
+                      request
+                    }
+                    onOpen={() =>
+                      navigate(
+                        `/portal/solicitacoes/${request.id}`,
+                      )
+                    }
+                  />
+                ),
+              )}
             </div>
+          ) : (
+            <EmptyState
+              title="Nenhuma solicitação recente."
+              description="Novas entradas aparecerão nesta área."
+            />
+          )}
+        </section>
 
-            <button
-              type="button"
-              onClick={() =>
-                navigate(
-                  "/portal/projetos",
-                )
-              }
-              className="shrink-0 text-[9px] font-semibold uppercase tracking-[0.09em] text-[#356f9f] transition hover:text-[#0b2340]"
-            >
-              Ver todos →
-            </button>
-          </div>
+        <section className="overflow-hidden rounded-[22px] border border-[#cddbe3] bg-white shadow-[0_10px_30px_rgba(7,31,45,0.035)]">
+          <SectionHeader
+            title="Projetos em andamento"
+            description="Acompanhamento dos projetos ativos."
+            buttonLabel="Ver todos"
+            onClick={() =>
+              navigate(
+                "/portal/projetos",
+              )
+            }
+          />
 
-          {work.activeProjects
-            .length > 0 ? (
-            <div className="divide-y divide-[#e5ebef]">
-              {work.activeProjects
+          {data.activeProjects.length >
+          0 ? (
+            <div className="divide-y divide-[#e3eaee]">
+              {data.activeProjects
                 .slice(
                   0,
                   5,
@@ -321,28 +380,27 @@ export function MyWorkPage() {
           ) : (
             <EmptyState
               title="Nenhum projeto ativo."
-              description="Projetos sob sua responsabilidade aparecerão nesta área."
+              description="Projetos em andamento aparecerão aqui."
             />
           )}
         </section>
+      </div>
 
-        {/* PRAZOS */}
+      {/* =====================================================
+          PRAZOS + ACESSOS
+      ===================================================== */}
 
-        <section className="overflow-hidden rounded-[22px] border border-[#d1dde4] bg-white shadow-[0_10px_30px_rgba(34,67,90,0.025)]">
-          <div className="border-b border-[#e2e9ed] px-5 py-5 sm:px-6">
-            <p className="text-sm font-semibold text-[#17394f]">
-              Próximos prazos
-            </p>
+      <div className="mt-5 grid gap-5 xl:grid-cols-[1fr_0.9fr]">
+        <section className="overflow-hidden rounded-[22px] border border-[#cddbe3] bg-white">
+          <SectionHeader
+            title="Próximos prazos"
+            description="Projetos organizados pela proximidade da data prevista."
+          />
 
-            <p className="mt-1 text-xs text-[#7e919c]">
-              Projetos ordenados pela proximidade da data prevista.
-            </p>
-          </div>
-
-          {work.upcomingDeadlines
+          {data.work.upcomingDeadlines
             .length > 0 ? (
-            <div className="divide-y divide-[#e5ebef]">
-              {work.upcomingDeadlines.map(
+            <div className="divide-y divide-[#e3eaee]">
+              {data.work.upcomingDeadlines.map(
                 (item) => (
                   <DeadlineRow
                     key={
@@ -362,59 +420,319 @@ export function MyWorkPage() {
             </div>
           ) : (
             <EmptyState
-              title="Nenhum prazo disponível."
+              title="Nenhum prazo próximo."
               description="Projetos com datas previstas aparecerão aqui."
             />
           )}
         </section>
-      </div>
 
-      {/* =====================================================
-          EXPLICAÇÃO
-      ===================================================== */}
+        <section className="rounded-[22px] border border-[#c5d7e0] bg-[#e8f1f5] p-5 sm:p-6">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.13em] text-[#47738c]">
+            Acesso rápido
+          </p>
 
-      <section className="mt-5 rounded-[22px] border border-[#c7d9e3] bg-[#e6f0f5] p-5 sm:p-6">
-        <div className="grid gap-5 lg:grid-cols-[1fr_auto] lg:items-center">
-          <div>
-            <p className="text-[9px] font-semibold uppercase tracking-[0.14em] text-[#5681a0]">
-              Visão orientada por prioridade
-            </p>
+          <h2 className="mt-2 text-[20px] font-semibold tracking-[-0.03em] text-[#17384d]">
+            Áreas frequentes
+          </h2>
 
-            <h2 className="mt-2 text-lg font-semibold text-[#17394f]">
-              Nem toda atividade precisa aparecer aqui.
-            </h2>
+          <div className="mt-5 grid gap-2">
+            <QuickAction
+              title="Solicitações"
+              detail="Analisar novas entradas."
+              onClick={() =>
+                navigate(
+                  "/portal/solicitacoes",
+                )
+              }
+            />
 
-            <p className="mt-2 max-w-3xl text-xs leading-5 text-[#6d8390]">
-              Meu trabalho prioriza situações que exigem decisão ou ação,
-              desde uma nova solicitação até propostas em elaboração,
-              revisões, orçamentos aceitos aguardando início e projetos
-              próximos do prazo. O acompanhamento detalhado continua
-              dentro de cada processo.
-            </p>
+            <QuickAction
+              title="Orçamentos"
+              detail="Criar e acompanhar propostas."
+              onClick={() =>
+                navigate(
+                  "/portal/orcamentos",
+                )
+              }
+            />
+
+            <QuickAction
+              title="Base de conhecimento"
+              detail="Consultar regras e referências."
+              onClick={() =>
+                navigate(
+                  "/portal/conhecimento",
+                )
+              }
+            />
+
+            <QuickAction
+              title="Equipamentos e custos"
+              detail="Consultar parâmetros internos."
+              onClick={() =>
+                navigate(
+                  "/portal/equipamentos-custos",
+                )
+              }
+            />
           </div>
-
-          <button
-            type="button"
-            onClick={() =>
-              navigate(
-                "/portal/projetos",
-              )
-            }
-            className="w-fit rounded-[11px] border border-[#a9c6d6] bg-white px-5 py-3 text-[9px] font-semibold uppercase tracking-[0.09em] text-[#356f9f] transition hover:border-[#7ca9c0]"
-          >
-            Abrir projetos
-          </button>
-        </div>
-      </section>
+        </section>
+      </div>
     </div>
   );
 }
 
-/*
- * ============================================================
- * ITEM DE ATENÇÃO
- * ============================================================
- */
+/* ============================================================
+ * DADOS
+ * ============================================================ */
+
+function buildWorkData(
+  currentUser,
+) {
+  const requests =
+    getRuntimeRequests();
+
+  const quotes =
+    getRuntimeQuotes();
+
+  const projects =
+    getRuntimeProjects();
+
+  const work =
+    getCurrentUserWork(
+      currentUser,
+    );
+
+  const openRequests =
+    requests.filter(
+      (request) =>
+        ![
+          "Convertida em orçamento",
+          "Recusada",
+          "Cancelada",
+        ].includes(
+          request.status,
+        ),
+    );
+
+  const activeQuotes =
+    quotes.filter(
+      (quote) =>
+        ![
+          "Aceito",
+          "Recusado",
+          "Cancelado",
+        ].includes(
+          quote.status,
+        ),
+    );
+
+  const activeProjects =
+    projects.filter(
+      (project) =>
+        ![
+          "Concluído",
+          "Cancelado",
+        ].includes(
+          project.status,
+        ),
+    );
+
+  const newRequests =
+    openRequests.filter(
+      (request) =>
+        request.status ===
+        "Nova",
+    ).length;
+
+  const analysisRequests =
+    openRequests.filter(
+      (request) =>
+        request.status ===
+        "Em análise",
+    ).length;
+
+  const reviewQuotes =
+    activeQuotes.filter(
+      (quote) =>
+        quote.status ===
+        "Em revisão",
+    ).length;
+
+  const executionProjects =
+    activeProjects.filter(
+      (project) =>
+        project.status ===
+        "Em andamento",
+    ).length;
+
+  const recentRequests =
+    [...openRequests]
+      .sort(
+        (a, b) =>
+          parseDate(
+            b.updatedAt ??
+              b.createdAt,
+          ) -
+          parseDate(
+            a.updatedAt ??
+              a.createdAt,
+          ),
+      )
+      .slice(
+        0,
+        5,
+      );
+
+  return {
+    work,
+    openRequests,
+    activeQuotes,
+    activeProjects,
+    recentRequests,
+
+    requestDetail:
+      newRequests > 0
+        ? `${newRequests} nova${newRequests === 1 ? "" : "s"} aguardando análise`
+        : analysisRequests > 0
+          ? `${analysisRequests} em análise`
+          : "Fluxo sem novas entradas",
+
+    quoteDetail:
+      reviewQuotes > 0
+        ? `${reviewQuotes} aguardando revisão`
+        : activeQuotes.length > 0
+          ? "Propostas em andamento"
+          : "Nenhuma proposta aberta",
+
+    projectDetail:
+      executionProjects > 0
+        ? `${executionProjects} em execução`
+        : activeProjects.length > 0
+          ? "Projetos em planejamento"
+          : "Nenhum projeto ativo",
+
+    attentionDetail:
+      work.urgentCount > 0
+        ? `${work.urgentCount} situação${work.urgentCount === 1 ? "" : "ões"} urgente${work.urgentCount === 1 ? "" : "s"}`
+        : work.attentionCount > 0
+          ? "Itens organizados por prioridade"
+          : "Nenhuma situação crítica",
+  };
+}
+
+/* ============================================================
+ * COMPONENTES
+ * ============================================================ */
+
+function MetricCard({
+  label,
+  value,
+  description,
+  emphasis = false,
+  onClick,
+}) {
+  const Component =
+    onClick
+      ? "button"
+      : "div";
+
+  return (
+    <Component
+      type={
+        onClick
+          ? "button"
+          : undefined
+      }
+      onClick={
+        onClick
+      }
+      className={`
+        group rounded-[20px]
+        border p-5
+        text-left
+        shadow-[0_10px_30px_rgba(7,31,45,0.03)]
+        transition
+
+        ${
+          onClick
+            ? "hover:-translate-y-[1px] hover:shadow-[0_14px_34px_rgba(7,31,45,0.06)]"
+            : ""
+        }
+
+        ${
+          emphasis
+            ? "border-[#b7d1df] bg-[#edf6fa]"
+            : "border-[#cddbe3] bg-white"
+        }
+      `}
+    >
+      <div className="flex items-start justify-between gap-3">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-[#557585]">
+          {label}
+        </p>
+
+        {onClick && (
+          <span className="text-[14px] text-[#7895a5] transition group-hover:translate-x-1">
+            →
+          </span>
+        )}
+      </div>
+
+      <p
+        className={`
+          mt-3 text-[32px]
+          font-semibold tracking-[-0.04em]
+
+          ${
+            emphasis
+              ? "text-[#0057b8]"
+              : "text-[#071f2d]"
+          }
+        `}
+      >
+        {value}
+      </p>
+
+      <p className="mt-3 text-[12px] leading-5 text-[#587282]">
+        {description}
+      </p>
+    </Component>
+  );
+}
+
+function SectionHeader({
+  title,
+  description,
+  buttonLabel,
+  onClick,
+}) {
+  return (
+    <div className="flex items-center justify-between gap-4 border-b border-[#dce6eb] px-5 py-5 sm:px-6">
+      <div>
+        <p className="text-[15px] font-semibold text-[#17384d]">
+          {title}
+        </p>
+
+        <p className="mt-1 text-[12px] leading-5 text-[#607988]">
+          {description}
+        </p>
+      </div>
+
+      {buttonLabel && (
+        <button
+          type="button"
+          onClick={
+            onClick
+          }
+          className="shrink-0 text-[11px] font-semibold uppercase tracking-[0.07em] text-[#356f9f] hover:text-[#0057b8]"
+        >
+          {buttonLabel} →
+        </button>
+      )}
+    </div>
+  );
+}
 
 function AttentionRow({
   item,
@@ -431,19 +749,16 @@ function AttentionRow({
       onClick={
         onOpen
       }
-      className="group flex w-full gap-4 px-5 py-5 text-left transition hover:bg-[#f8fafb] sm:px-6"
+      className="group flex w-full gap-4 px-5 py-5 text-left transition hover:bg-[#f6f9fa] sm:px-6"
     >
       <span
         className={`
           mt-0.5
-          flex h-9 w-9
-          shrink-0
-          items-center
-          justify-center
+          flex h-10 w-10
+          shrink-0 items-center justify-center
           rounded-full
           border
-          text-[9px]
-          font-semibold
+          text-[11px] font-semibold
           ${style.icon}
         `}
       >
@@ -459,10 +774,9 @@ function AttentionRow({
               rounded-full
               border
               px-2.5 py-1
-              text-[8px]
-              font-semibold
-              uppercase
-              tracking-[0.08em]
+              text-[9px]
+              font-semibold uppercase
+              tracking-[0.07em]
               ${style.badge}
             `}
           >
@@ -471,50 +785,92 @@ function AttentionRow({
             }
           </span>
 
-          <span className="text-[9px] font-semibold uppercase tracking-[0.08em] text-[#81939d]">
+          <span className="text-[10px] font-semibold uppercase tracking-[0.07em] text-[#607988]">
             {
               item.referenceId
             }
           </span>
 
-          <span className="text-[9px] text-[#a0adb4]">
+          <span className="text-[10px] text-[#6b8391]">
             ·
           </span>
 
-          <span className="text-[9px] text-[#82949e]">
+          <span className="text-[10px] text-[#607988]">
             {getTypeLabel(
               item.type,
             )}
           </span>
         </div>
 
-        <p className="mt-2 text-sm font-semibold text-[#294e64] transition group-hover:text-[#096ab2]">
+        <p className="mt-2 text-[14px] font-semibold text-[#294e64] group-hover:text-[#0057b8]">
           {item.title}
         </p>
 
-        <p className="mt-1 text-xs font-medium text-[#607989]">
+        <p className="mt-1 text-[12px] font-medium text-[#506d7d]">
           {item.company}
         </p>
 
-        <p className="mt-1.5 text-[10px] leading-5 text-[#8999a3]">
+        <p className="mt-1.5 text-[11px] leading-5 text-[#617a88]">
           {
             item.description
           }
         </p>
       </div>
 
-      <span className="mt-2 shrink-0 text-sm text-[#9aabb4] transition group-hover:translate-x-1 group-hover:text-[#356f9f]">
+      <span className="mt-2 shrink-0 text-[15px] text-[#718d9c] transition group-hover:translate-x-1">
         →
       </span>
     </button>
   );
 }
 
-/*
- * ============================================================
- * PROJETO
- * ============================================================
- */
+function RequestRow({
+  request,
+  onOpen,
+}) {
+  return (
+    <button
+      type="button"
+      onClick={
+        onOpen
+      }
+      className="group flex w-full items-center justify-between gap-4 px-5 py-4 text-left transition hover:bg-[#f6f9fa] sm:px-6"
+    >
+      <div className="min-w-0">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-[11px] font-semibold uppercase tracking-[0.07em] text-[#356f9f]">
+            {
+              request.id
+            }
+          </span>
+
+          <span className="text-[10px] text-[#637d8b]">
+            {request.updatedAt ??
+              request.createdAt}
+          </span>
+        </div>
+
+        <p className="mt-1.5 truncate text-[14px] font-semibold text-[#294e64] group-hover:text-[#0057b8]">
+          {
+            request.company
+          }
+        </p>
+
+        <p className="mt-1 text-[11px] text-[#607988]">
+          {
+            request.service
+          }
+        </p>
+      </div>
+
+      <span className="shrink-0 rounded-full border border-[#bfd4df] bg-[#e9f2f6] px-3 py-1.5 text-[10px] font-semibold text-[#3f6f88]">
+        {
+          request.status
+        }
+      </span>
+    </button>
+  );
+}
 
 function ProjectRow({
   project,
@@ -541,21 +897,21 @@ function ProjectRow({
       onClick={
         onOpen
       }
-      className="group w-full px-5 py-5 text-left transition hover:bg-[#f8fafb] sm:px-6"
+      className="group w-full px-5 py-4 text-left transition hover:bg-[#f6f9fa] sm:px-6"
     >
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="text-[9px] font-semibold uppercase tracking-[0.1em] text-[#5681a0]">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.08em] text-[#356f9f]">
             {project.id}
           </p>
 
-          <p className="mt-1.5 truncate text-sm font-semibold text-[#17394f] transition group-hover:text-[#096ab2]">
+          <p className="mt-1.5 truncate text-[14px] font-semibold text-[#294e64] group-hover:text-[#0057b8]">
             {
               project.company
             }
           </p>
 
-          <p className="mt-1 text-[10px] text-[#7e919c]">
+          <p className="mt-1 text-[11px] text-[#607988]">
             {
               project.service
             }{" "}
@@ -574,7 +930,7 @@ function ProjectRow({
       </div>
 
       <div className="mt-4 flex items-center gap-4">
-        <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-[#e3eaee]">
+        <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-[#dfe8ec]">
           <div
             className="h-full rounded-full bg-[#1684c5]"
             style={{
@@ -583,19 +939,13 @@ function ProjectRow({
           />
         </div>
 
-        <span className="w-9 text-right text-[10px] font-semibold text-[#5681a0]">
+        <span className="w-9 text-right text-[11px] font-semibold text-[#356f9f]">
           {progress}%
         </span>
       </div>
     </button>
   );
 }
-
-/*
- * ============================================================
- * PRAZO
- * ============================================================
- */
 
 function DeadlineRow({
   item,
@@ -611,33 +961,29 @@ function DeadlineRow({
       onClick={
         onOpen
       }
-      className="group flex w-full items-start gap-4 px-5 py-4 text-left transition hover:bg-[#f8fafb] sm:px-6"
+      className="group flex w-full items-start gap-4 px-5 py-4 text-left transition hover:bg-[#f6f9fa] sm:px-6"
     >
       <div
         className={`
-          flex h-11 w-11
-          shrink-0
-          flex-col
-          items-center
-          justify-center
-          rounded-[11px]
+          flex h-12 w-12 shrink-0
+          flex-col items-center justify-center
+          rounded-[12px]
           border
 
           ${
             urgent
-              ? "border-[#e0c7b5] bg-[#f8eee7]"
-              : "border-[#cadce5] bg-[#edf6fa]"
+              ? "border-[#dfc2b2] bg-[#f8ece6]"
+              : "border-[#bed5e1] bg-[#edf6fa]"
           }
         `}
       >
         <span
           className={`
-            text-sm
-            font-semibold
+            text-[15px] font-semibold
 
             ${
               urgent
-                ? "text-[#a2603f]"
+                ? "text-[#9a5638]"
                 : "text-[#397392]"
             }
           `}
@@ -647,31 +993,31 @@ function DeadlineRow({
           }
         </span>
 
-        <span className="text-[7px] font-semibold uppercase tracking-[0.06em] text-[#82949e]">
+        <span className="text-[8px] font-semibold uppercase tracking-[0.05em] text-[#607988]">
           dias
         </span>
       </div>
 
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2">
-          <p className="text-[9px] font-semibold uppercase tracking-[0.09em] text-[#5681a0]">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.07em] text-[#356f9f]">
             {
               item.projectId
             }
           </p>
 
           {urgent && (
-            <span className="rounded-full border border-[#e1c9b8] bg-[#f8eee7] px-2 py-0.5 text-[7px] font-semibold uppercase tracking-[0.07em] text-[#9a5b3d]">
+            <span className="rounded-full border border-[#dfc2b2] bg-[#f8ece6] px-2 py-0.5 text-[8px] font-semibold uppercase text-[#94563b]">
               Próximo
             </span>
           )}
         </div>
 
-        <p className="mt-1.5 truncate text-xs font-semibold text-[#31566d] transition group-hover:text-[#096ab2]">
+        <p className="mt-1.5 truncate text-[13px] font-semibold text-[#294e64] group-hover:text-[#0057b8]">
           {item.company}
         </p>
 
-        <p className="mt-1 text-[9px] text-[#8999a3]">
+        <p className="mt-1 text-[11px] text-[#607988]">
           Prazo:{" "}
           {item.deadline}
         </p>
@@ -680,70 +1026,33 @@ function DeadlineRow({
   );
 }
 
-/*
- * ============================================================
- * CARDS
- * ============================================================
- */
-
-function MetricCard({
-  label,
-  value,
-  description,
-  emphasis = false,
+function QuickAction({
+  title,
+  detail,
+  onClick,
 }) {
   return (
-    <div
-      className={`
-        rounded-[20px]
-        border
-        p-5
-
-        ${
-          emphasis
-            ? "border-[#bed5e1] bg-[#edf6fa]"
-            : "border-[#d1dde4] bg-white"
-        }
-      `}
+    <button
+      type="button"
+      onClick={
+        onClick
+      }
+      className="group flex w-full items-center gap-4 rounded-[14px] border border-[#c8d9e1] bg-white/65 px-4 py-3.5 text-left transition hover:border-[#91b7ca] hover:bg-white"
     >
-      <p
-        className={`
-          text-[9px]
-          font-semibold
-          uppercase
-          tracking-[0.12em]
+      <div className="min-w-0 flex-1">
+        <p className="text-[13px] font-semibold text-[#294e64]">
+          {title}
+        </p>
 
-          ${
-            emphasis
-              ? "text-[#5681a0]"
-              : "text-[#718895]"
-          }
-        `}
-      >
-        {label}
-      </p>
+        <p className="mt-1 text-[11px] text-[#607988]">
+          {detail}
+        </p>
+      </div>
 
-      <p
-        className={`
-          mt-3
-          text-3xl
-          font-semibold
-          tracking-[-0.035em]
-
-          ${
-            emphasis
-              ? "text-[#096ab2]"
-              : "text-[#17394f]"
-          }
-        `}
-      >
-        {value}
-      </p>
-
-      <p className="mt-3 text-[10px] leading-5 text-[#84949e]">
-        {description}
-      </p>
-    </div>
+      <span className="text-[#567f95] transition group-hover:translate-x-1">
+        →
+      </span>
+    </button>
   );
 }
 
@@ -752,27 +1061,21 @@ function EmptyState({
   description,
 }) {
   return (
-    <div className="px-6 py-14 text-center">
-      <span className="mx-auto flex h-9 w-9 items-center justify-center rounded-full border border-[#d5e1e7] bg-[#f5f9fb] text-[11px] text-[#82949e]">
-        ✓
-      </span>
-
-      <p className="mt-3 text-xs font-semibold text-[#607989]">
+    <div className="px-6 py-12 text-center">
+      <p className="text-[13px] font-semibold text-[#496878]">
         {title}
       </p>
 
-      <p className="mx-auto mt-1.5 max-w-sm text-[10px] leading-5 text-[#8b9aa3]">
+      <p className="mx-auto mt-1.5 max-w-sm text-[11px] leading-5 text-[#607988]">
         {description}
       </p>
     </div>
   );
 }
 
-/*
- * ============================================================
- * TIPO
- * ============================================================
- */
+/* ============================================================
+ * HELPERS
+ * ============================================================ */
 
 function getTypeInitial(
   type,
@@ -809,12 +1112,6 @@ function getTypeLabel(
       return "Item";
   }
 }
-
-/*
- * ============================================================
- * CORES DE PRIORIDADE
- * ============================================================
- */
 
 function getUrgencyStyle(
   urgency,
@@ -866,4 +1163,36 @@ function getUrgencyStyle(
           "border-[#c7dbe5] bg-[#edf6fa] text-[#397392]",
       };
   }
+}
+
+function parseDate(
+  value,
+) {
+  if (!value) {
+    return 0;
+  }
+
+  const [
+    day,
+    month,
+    year,
+  ] = String(
+    value,
+  )
+    .split("/")
+    .map(Number);
+
+  if (
+    !day ||
+    !month ||
+    !year
+  ) {
+    return 0;
+  }
+
+  return new Date(
+    year,
+    month - 1,
+    day,
+  ).getTime();
 }

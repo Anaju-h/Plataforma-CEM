@@ -193,6 +193,10 @@ export function NotificationBell() {
       }
       className="relative"
     >
+      {/* =====================================================
+          BOTÃO
+      ===================================================== */}
+
       <button
         type="button"
         onClick={
@@ -240,7 +244,7 @@ export function NotificationBell() {
               border-2
               border-[#edf2f5]
               px-1
-              text-[8px]
+              text-[9px]
               font-bold
               leading-none
               text-white
@@ -261,37 +265,74 @@ export function NotificationBell() {
         )}
       </button>
 
+      {/* =====================================================
+          PAINEL
+      ===================================================== */}
+
       {open && (
         <div
           className="
             fixed
-            left-4 right-4
+            left-4
+            right-4
             top-[76px]
             z-[100]
+
+            flex
+            max-h-[calc(100dvh-96px)]
+            flex-col
+
             overflow-hidden
-            rounded-[20px]
-            border border-[#cddbe2]
+            rounded-[18px]
+            border
+            border-[#cddbe2]
             bg-white
-            shadow-[0_25px_70px_rgba(14,42,60,0.18)]
+            shadow-[0_22px_60px_rgba(14,42,60,0.16)]
 
             sm:absolute
             sm:left-auto
             sm:right-0
             sm:top-[48px]
-            sm:w-[390px]
+            sm:w-[370px]
+            sm:max-h-[min(560px,62vh)]
           "
         >
-          <div className="border-b border-[#e1e8ec] bg-[#f7fafb] px-5 py-4">
+          {/* =================================================
+              CABEÇALHO
+          ================================================= */}
+
+          <div
+            className="
+              shrink-0
+              border-b
+              border-[#e1e8ec]
+              bg-[#f7fafb]
+              px-4
+              py-3.5
+            "
+          >
             <div className="flex items-start justify-between gap-4">
               <div>
                 <div className="flex items-center gap-2">
-                  <p className="text-sm font-semibold text-[#17394f]">
+                  <p className="text-[14px] font-semibold text-[#17394f]">
                     Notificações
                   </p>
 
                   {unreadCount >
                     0 && (
-                    <span className="rounded-full border border-[#bdd4e1] bg-[#eaf4f9] px-2 py-0.5 text-[8px] font-semibold text-[#397392]">
+                    <span
+                      className="
+                        rounded-full
+                        border
+                        border-[#bdd4e1]
+                        bg-[#eaf4f9]
+                        px-2
+                        py-0.5
+                        text-[9px]
+                        font-semibold
+                        text-[#397392]
+                      "
+                    >
                       {
                         unreadCount
                       }{" "}
@@ -304,7 +345,7 @@ export function NotificationBell() {
                   )}
                 </div>
 
-                <p className="mt-1 text-[10px] leading-4 text-[#82949e]">
+                <p className="mt-1 text-[11px] leading-4 text-[#607988]">
                   Situações que merecem sua atenção.
                 </p>
               </div>
@@ -316,7 +357,16 @@ export function NotificationBell() {
                   onClick={
                     handleMarkAllRead
                   }
-                  className="shrink-0 text-[8px] font-semibold uppercase tracking-[0.07em] text-[#5681a0] transition hover:text-[#096ab2]"
+                  className="
+                    shrink-0
+                    text-[10px]
+                    font-semibold
+                    uppercase
+                    tracking-[0.06em]
+                    text-[#5681a0]
+                    transition
+                    hover:text-[#096ab2]
+                  "
                 >
                   Marcar lidas
                 </button>
@@ -324,9 +374,22 @@ export function NotificationBell() {
             </div>
           </div>
 
+          {/* =================================================
+              LISTA COM SCROLL
+          ================================================= */}
+
           {notifications.length >
           0 ? (
-            <div className="max-h-[470px] overflow-y-auto">
+            <div
+              className="
+                min-h-0
+                flex-1
+                overflow-y-auto
+                overscroll-contain
+                [scrollbar-color:#9eb5c2_transparent]
+                [scrollbar-width:thin]
+              "
+            >
               {notifications.map(
                 (
                   notification,
@@ -353,37 +416,61 @@ export function NotificationBell() {
               )}
             </div>
           ) : (
-            <EmptyNotifications />
+            <div className="min-h-0 flex-1 overflow-y-auto">
+              <EmptyNotifications />
+            </div>
           )}
 
-          <div className="border-t border-[#e1e8ec] bg-[#f7fafb] p-3">
+          {/* =================================================
+              RODAPÉ
+          ================================================= */}
+
+          <div
+            className="
+              shrink-0
+              border-t
+              border-[#e1e8ec]
+              bg-[#f7fafb]
+              p-2.5
+            "
+          >
             <button
               type="button"
               onClick={
                 handleOpenWork
               }
               className="
-                flex w-full
+                flex
+                w-full
                 items-center
                 justify-between
-                rounded-[11px]
-                px-3 py-2.5
+                rounded-[10px]
+                px-3
+                py-2
                 text-left
                 transition
                 hover:bg-white
               "
             >
               <div>
-                <p className="text-[9px] font-semibold uppercase tracking-[0.08em] text-[#356f9f]">
+                <p
+                  className="
+                    text-[10px]
+                    font-semibold
+                    uppercase
+                    tracking-[0.07em]
+                    text-[#356f9f]
+                  "
+                >
                   Ver tudo em Meu trabalho
                 </p>
 
-                <p className="mt-1 text-[8px] text-[#8a9aa3]">
+                <p className="mt-0.5 text-[10px] text-[#607988]">
                   Abra a visão completa de prioridades.
                 </p>
               </div>
 
-              <span className="text-sm text-[#6d92a7]">
+              <span className="text-[14px] text-[#6d92a7]">
                 →
               </span>
             </button>
@@ -393,6 +480,10 @@ export function NotificationBell() {
     </div>
   );
 }
+
+/* ============================================================
+ * ITEM
+ * ============================================================ */
 
 function NotificationItem({
   notification,
@@ -417,9 +508,11 @@ function NotificationItem({
       className={`
         group
         relative
-        flex w-full
-        gap-3.5
-        px-5 py-4
+        flex
+        w-full
+        gap-3
+        px-4
+        py-3.5
         text-left
         transition
         hover:bg-[#f8fafb]
@@ -445,7 +538,8 @@ function NotificationItem({
             absolute
             left-1.5
             top-1/2
-            h-1.5 w-1.5
+            h-1.5
+            w-1.5
             -translate-y-1/2
             rounded-full
 
@@ -465,16 +559,17 @@ function NotificationItem({
       />
 
       <div className="min-w-0 flex-1">
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-wrap items-center gap-1.5">
           <span
             className={`
               rounded-full
               border
-              px-2 py-0.5
-              text-[7px]
+              px-2
+              py-0.5
+              text-[9px]
               font-semibold
               uppercase
-              tracking-[0.07em]
+              tracking-[0.05em]
 
               ${
                 urgent
@@ -488,26 +583,34 @@ function NotificationItem({
             }
           </span>
 
-          <span className="text-[8px] font-semibold uppercase tracking-[0.07em] text-[#81939d]">
+          <span
+            className="
+              text-[9px]
+              font-semibold
+              uppercase
+              tracking-[0.05em]
+              text-[#647f8e]
+            "
+          >
             {
               notification.referenceId
             }
           </span>
 
-          <span className="text-[8px] text-[#a0adb4]">
+          <span className="text-[9px] text-[#81949f]">
             ·
           </span>
 
-          <span className="text-[8px] text-[#82949e]">
+          <span className="text-[9px] text-[#647f8e]">
             {type.label}
           </span>
         </div>
 
         <p
           className={`
-            mt-2
-            text-xs
-            leading-5
+            mt-1.5
+            text-[12px]
+            leading-[18px]
             transition
             group-hover:text-[#096ab2]
 
@@ -523,25 +626,47 @@ function NotificationItem({
           }
         </p>
 
-        <p className="mt-1 text-[10px] font-medium text-[#718795]">
+        <p className="mt-0.5 text-[10px] font-medium text-[#5f7988]">
           {
             notification.company
           }
         </p>
 
-        <p className="mt-1.5 line-clamp-2 text-[9px] leading-4 text-[#8a9aa3]">
+        <p
+          className="
+            mt-1
+            line-clamp-2
+            text-[10px]
+            leading-[16px]
+            text-[#6d8491]
+          "
+        >
           {
             notification.description
           }
         </p>
       </div>
 
-      <span className="mt-2 shrink-0 text-xs text-[#a0adb4] transition group-hover:translate-x-0.5 group-hover:text-[#5681a0]">
+      <span
+        className="
+          mt-2
+          shrink-0
+          text-[12px]
+          text-[#8ba0ab]
+          transition
+          group-hover:translate-x-0.5
+          group-hover:text-[#5681a0]
+        "
+      >
         →
       </span>
     </button>
   );
 }
+
+/* ============================================================
+ * ÍCONE DA NOTIFICAÇÃO
+ * ============================================================ */
 
 function NotificationIcon({
   notification,
@@ -558,13 +683,15 @@ function NotificationIcon({
   return (
     <span
       className={`
-        flex h-9 w-9
+        flex
+        h-9
+        w-9
         shrink-0
         items-center
         justify-center
         rounded-[10px]
         border
-        text-[8px]
+        text-[9px]
         font-bold
         tracking-[-0.02em]
 
@@ -580,23 +707,54 @@ function NotificationIcon({
   );
 }
 
+/* ============================================================
+ * ESTADO VAZIO
+ * ============================================================ */
+
 function EmptyNotifications() {
   return (
-    <div className="px-6 py-12 text-center">
-      <span className="mx-auto flex h-10 w-10 items-center justify-center rounded-full border border-[#cee0e8] bg-[#f5f9fb] text-[#5681a0]">
+    <div className="px-6 py-10 text-center">
+      <span
+        className="
+          mx-auto
+          flex
+          h-10
+          w-10
+          items-center
+          justify-center
+          rounded-full
+          border
+          border-[#cee0e8]
+          bg-[#f5f9fb]
+          text-[#5681a0]
+        "
+      >
         <BellIcon />
       </span>
 
-      <p className="mt-3 text-xs font-semibold text-[#536f80]">
+      <p className="mt-3 text-[12px] font-semibold text-[#536f80]">
         Nenhuma notificação agora.
       </p>
 
-      <p className="mx-auto mt-1.5 max-w-[250px] text-[9px] leading-4 text-[#8a9aa3]">
+      <p
+        className="
+          mx-auto
+          mt-1.5
+          max-w-[250px]
+          text-[10px]
+          leading-4
+          text-[#687f8c]
+        "
+      >
         Quando uma situação atingir um nível de atenção ou urgência, ela aparecerá aqui.
       </p>
     </div>
   );
 }
+
+/* ============================================================
+ * HELPERS
+ * ============================================================ */
 
 function getNotificationType(
   type,

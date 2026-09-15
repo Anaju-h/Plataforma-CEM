@@ -1,33 +1,128 @@
+import {
+  useState,
+} from "react";
+
+import {
+  applyEmailSuffix,
+  canSuggestEmailSuffix,
+  EMAIL_SUFFIXES,
+  formatPhone,
+  sanitizeEmail,
+  validateContactData,
+} from "../../utils/contactValidation";
+
 export function ContactStep({
   data,
   onChange,
+  mode = "public",
+  showValidation = false,
 }) {
-  function formatPhone(value) {
-    const numbers = value.replace(/\D/g, "").slice(0, 11);
+  const [
+    touched,
+    setTouched,
+  ] = useState({
+    name:
+      false,
 
-    if (numbers.length <= 2) {
-      return numbers ? `(${numbers}` : "";
-    }
+    email:
+      false,
 
-    if (numbers.length <= 6) {
-      return `(${numbers.slice(0, 2)}) ${numbers.slice(2)}`;
-    }
+    phone:
+      false,
+  });
 
-    if (numbers.length <= 10) {
-      return `(${numbers.slice(0, 2)}) ${numbers.slice(
-        2,
-        6,
-      )}-${numbers.slice(6)}`;
-    }
+  const validation =
+    validateContactData(
+      data,
+    );
 
-    return `(${numbers.slice(0, 2)}) ${numbers.slice(
-      2,
-      7,
-    )}-${numbers.slice(7)}`;
+  const internalMode =
+    mode ===
+    "internal";
+
+  const showNameError =
+    Boolean(
+      validation.errors.name,
+    ) &&
+    (
+      touched.name ||
+      showValidation
+    );
+
+  const showEmailError =
+    Boolean(
+      validation.errors.email,
+    ) &&
+    (
+      touched.email ||
+      showValidation
+    );
+
+  const showPhoneError =
+    Boolean(
+      validation.errors.phone,
+    ) &&
+    (
+      touched.phone ||
+      showValidation
+    );
+
+  const showEmailSuggestions =
+    canSuggestEmailSuffix(
+      data.email,
+    );
+
+  function markTouched(
+    field,
+  ) {
+    setTouched(
+      (
+        current,
+      ) => ({
+        ...current,
+
+        [field]:
+          true,
+      }),
+    );
+  }
+
+  function handleEmailChange(
+    value,
+  ) {
+    onChange(
+      "email",
+      sanitizeEmail(
+        value,
+      ),
+    );
+  }
+
+  function handleEmailSuggestion(
+    suffix,
+  ) {
+    const nextEmail =
+      applyEmailSuffix(
+        data.email,
+        suffix,
+      );
+
+    onChange(
+      "email",
+      nextEmail,
+    );
+
+    markTouched(
+      "email",
+    );
   }
 
   return (
     <div>
+      {/* =====================================================
+          CABEÇALHO
+      ===================================================== */}
+
       <div className="border-b border-[#e0e7ec] pb-7">
         <div className="flex items-center gap-3">
           <span className="text-xs font-medium tracking-[0.12em] text-[#356f9f]">
@@ -38,79 +133,239 @@ export function ContactStep({
         </div>
 
         <h2 className="mt-4 text-3xl font-semibold tracking-[-0.035em] text-[#0b2340] sm:text-4xl">
-          Seus dados de contato
+          {internalMode
+            ? "Dados de contato do solicitante"
+            : "Seus dados de contato"}
         </h2>
 
         <p className="mt-3 max-w-2xl text-sm leading-6 text-[#667887] sm:text-base">
-          Essas informações serão utilizadas para identificar a solicitação e
-          permitir que nossa equipe entre em contato sobre o projeto.
+          {internalMode
+            ? "Informe os dados da pessoa responsável pela demanda para manter a identificação e a rastreabilidade da solicitação."
+            : "Essas informações serão utilizadas para identificar a solicitação e permitir que nossa equipe entre em contato sobre o projeto."}
         </p>
       </div>
 
+      {/* =====================================================
+          CAMPOS
+      ===================================================== */}
+
       <div className="mt-8 grid gap-6 sm:grid-cols-2">
-        <Field label="Nome" required>
+        {/* ===================================================
+            NOME
+        =================================================== */}
+
+        <Field
+          label="Nome"
+          required
+          error={
+            showNameError
+              ? validation
+                  .errors
+                  .name
+              : ""
+          }
+        >
           <input
             type="text"
-            value={data.name}
-            onChange={(event) =>
-              onChange("name", event.target.value)
+            value={
+              data.name
             }
-            placeholder="Seu nome"
+            onChange={(event) =>
+              onChange(
+                "name",
+                event.target.value,
+              )
+            }
+            onBlur={() =>
+              markTouched(
+                "name",
+              )
+            }
+            placeholder={
+              internalMode
+                ? "Nome do contato"
+                : "Seu nome"
+            }
             autoComplete="name"
-            className={inputClasses}
+            className={getInputClasses(
+              showNameError,
+            )}
           />
         </Field>
+
+        {/* ===================================================
+            EMPRESA
+        =================================================== */}
 
         <Field label="Empresa">
           <input
             type="text"
-            value={data.company}
+            value={
+              data.company
+            }
             onChange={(event) =>
-              onChange("company", event.target.value)
+              onChange(
+                "company",
+                event.target.value,
+              )
             }
             placeholder="Nome da empresa"
             autoComplete="organization"
-            className={inputClasses}
+            className={getInputClasses(
+              false,
+            )}
           />
         </Field>
 
-        <Field label="E-mail" required>
+        {/* ===================================================
+            E-MAIL
+        =================================================== */}
+
+        <Field
+          label="E-mail"
+          required
+          error={
+            showEmailError
+              ? validation
+                  .errors
+                  .email
+              : ""
+          }
+        >
           <input
             type="email"
-            value={data.email}
+            value={
+              data.email
+            }
             onChange={(event) =>
-              onChange("email", event.target.value)
+              handleEmailChange(
+                event.target.value,
+              )
+            }
+            onBlur={() =>
+              markTouched(
+                "email",
+              )
             }
             placeholder="nome@empresa.com.br"
             autoComplete="email"
-            className={inputClasses}
+            inputMode="email"
+            maxLength={254}
+            spellCheck={false}
+            className={getInputClasses(
+              showEmailError,
+            )}
           />
+
+          {/* ===============================================
+              SUGESTÕES DE DOMÍNIO
+          =============================================== */}
+
+          {showEmailSuggestions && (
+            <div className="mt-2.5">
+              <p className="text-[10px] font-medium text-[#718895]">
+                Completar domínio:
+              </p>
+
+              <div className="mt-2 flex flex-wrap gap-2">
+                {EMAIL_SUFFIXES.map(
+                  (
+                    suffix,
+                  ) => (
+                    <button
+                      key={
+                        suffix
+                      }
+                      type="button"
+                      onMouseDown={(
+                        event,
+                      ) =>
+                        event.preventDefault()
+                      }
+                      onClick={() =>
+                        handleEmailSuggestion(
+                          suffix,
+                        )
+                      }
+                      className="
+                        rounded-full
+                        border
+                        border-[#c8dbe5]
+                        bg-[#f1f7fa]
+                        px-3
+                        py-1.5
+                        text-[10px]
+                        font-semibold
+                        text-[#477187]
+                        transition
+                        hover:border-[#8eb6ca]
+                        hover:bg-white
+                        hover:text-[#0057b8]
+                      "
+                    >
+                      {suffix}
+                    </button>
+                  ),
+                )}
+              </div>
+            </div>
+          )}
         </Field>
 
-        <Field label="Telefone" required>
+        {/* ===================================================
+            TELEFONE
+        =================================================== */}
+
+        <Field
+          label="Telefone"
+          required
+          error={
+            showPhoneError
+              ? validation
+                  .errors
+                  .phone
+              : ""
+          }
+        >
           <input
             type="tel"
-            value={data.phone}
+            value={
+              data.phone
+            }
             onChange={(event) =>
               onChange(
                 "phone",
-                formatPhone(event.target.value),
+                formatPhone(
+                  event.target.value,
+                ),
+              )
+            }
+            onBlur={() =>
+              markTouched(
+                "phone",
               )
             }
             placeholder="(00) 00000-0000"
             autoComplete="tel"
             inputMode="numeric"
-            className={inputClasses}
+            maxLength={15}
+            className={getInputClasses(
+              showPhoneError,
+            )}
           />
         </Field>
       </div>
+
+      {/* =====================================================
+          ORIENTAÇÃO
+      ===================================================== */}
 
       <div className="mt-8 rounded-[18px] border border-[#d9e6ed] bg-[#f3f8fb] px-5 py-4">
         <p className="text-xs leading-5 text-[#607786]">
           <span className="font-semibold text-[#356f9f]">
             Sobre os próximos passos:
           </span>{" "}
-          na próxima etapa você poderá cadastrar uma ou mais peças e informar
+          na próxima etapa será possível cadastrar uma ou mais peças e informar
           individualmente os serviços necessários para cada uma.
         </p>
       </div>
@@ -118,9 +373,14 @@ export function ContactStep({
   );
 }
 
+/* ============================================================
+ * FIELD
+ * ============================================================ */
+
 function Field({
   label,
   required = false,
+  error = "",
   children,
 }) {
   return (
@@ -129,27 +389,59 @@ function Field({
         {label}
 
         {required && (
-          <span className="ml-1 text-[#356f9f]">*</span>
+          <span className="ml-1 text-[#356f9f]">
+            *
+          </span>
         )}
       </span>
 
       {children}
+
+      {error && (
+        <span className="mt-2 block text-[11px] font-medium leading-4 text-[#a25443]">
+          {error}
+        </span>
+      )}
     </label>
   );
 }
 
-const inputClasses = `
-  h-12 w-full
-  rounded-[12px]
-  border border-[#d6e0e6]
-  bg-white
-  px-4
-  text-sm text-[#0b2340]
-  outline-none
-  transition-all duration-200
-  placeholder:text-[#9aa8b2]
-  hover:border-[#b8cbd7]
-  focus:border-[#568fb8]
-  focus:ring-4
-  focus:ring-[#568fb8]/10
-`;
+/* ============================================================
+ * INPUT
+ * ============================================================ */
+
+function getInputClasses(
+  error,
+) {
+  return `
+    h-12
+    w-full
+    rounded-[12px]
+    border
+    bg-white
+    px-4
+    text-sm
+    text-[#0b2340]
+    outline-none
+    transition-all
+    duration-200
+    placeholder:text-[#9aa8b2]
+
+    ${
+      error
+        ? `
+          border-[#cf8e7e]
+          focus:border-[#bd6f5c]
+          focus:ring-4
+          focus:ring-[#bd6f5c]/10
+        `
+        : `
+          border-[#d6e0e6]
+          hover:border-[#b8cbd7]
+          focus:border-[#568fb8]
+          focus:ring-4
+          focus:ring-[#568fb8]/10
+        `
+    }
+  `;
+}

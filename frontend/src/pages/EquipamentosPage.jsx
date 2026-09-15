@@ -55,6 +55,10 @@ const equipment = [
         label: "Medição dimensional",
         href: "/servicos#medicao-dimensional",
       },
+      {
+        label: "Inspeção óptica",
+        href: "/servicos#inspecao-optica",
+      },
     ],
     image: "/images/equipment/o-inspect.jpeg",
     imageFit: "cover",
@@ -110,7 +114,7 @@ const equipment = [
         href: "/servicos#engenharia-reversa",
       },
     ],
-    image: null,
+    image: "/images/equipment/t-scan.jpeg",
     imageFit: "cover",
   },
   {

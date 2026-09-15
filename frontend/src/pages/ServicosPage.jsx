@@ -19,6 +19,14 @@ const services = [
   },
   {
     number: "02",
+    title: "Inspeção óptica",
+    eyebrow: "Medição sem contato",
+    description:
+      "Avaliação de características visíveis com recursos ópticos, ampliando as possibilidades de inspeção de peças e detalhes.",
+    href: "#inspecao-optica",
+  },
+  {
+    number: "03",
     title: "Digitalização 3D",
     eyebrow: "Captura digital",
     description:
@@ -26,7 +34,7 @@ const services = [
     href: "#digitalizacao-3d",
   },
   {
-    number: "03",
+    number: "04",
     title: "Engenharia reversa",
     eyebrow: "Reconstrução digital",
     description:
@@ -34,7 +42,7 @@ const services = [
     href: "#engenharia-reversa",
   },
   {
-    number: "04",
+    number: "05",
     title: "Inspeção interna",
     eyebrow: "Além da superfície",
     description:
@@ -54,6 +62,19 @@ const dimensionalTechnologies = [
   "ZEISS PRISMO",
   "ZEISS DuraMax",
   "ZEISS O-INSPECT",
+];
+
+const opticalApplications = [
+  "Características visíveis e de pequenas dimensões",
+  "Contornos, bordas e geometrias acessíveis opticamente",
+  "Componentes delicados ou sensíveis ao contato",
+  "Complemento à medição por apalpação",
+];
+
+const opticalTechnologies = [
+  "ZEISS O-INSPECT",
+  "Medição óptica sem contato",
+  "Sistema multissensor",
 ];
 
 const scanningApplications = [
@@ -112,6 +133,7 @@ export function ServicosPage() {
 
       <div className="relative bg-[linear-gradient(180deg,#ffffff_0%,#f8fbfc_8%,#edf5f8_27%,#dfeef3_51%,#d5e8ef_67%,#e6f1f5_84%,#f8fbfc_96%,#ffffff_100%)]">
         <DimensionalSection />
+        <OpticalInspectionSection />
         <ScanningSection />
       </div>
 
@@ -286,7 +308,7 @@ function ServicesOverview() {
           </div>
 
           <h2 className="mt-4 max-w-[650px] text-[2.2rem] font-semibold leading-[1.04] tracking-[-0.045em] text-[#071f2d] sm:text-[2.8rem]">
-            Quatro caminhos.
+            Cinco caminhos.
             <br />
 
             <span className="text-[#356f9f]">
@@ -295,7 +317,7 @@ function ServicesOverview() {
           </h2>
         </ScrollReveal>
 
-        <div className="mt-7 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-7 grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
           {services.map((service, index) => (
             <ServiceOverviewCard
               key={service.number}
@@ -417,6 +439,60 @@ function DimensionalSection() {
   );
 }
 
+function OpticalInspectionSection() {
+  return (
+    <section
+      id="inspecao-optica"
+      className="scroll-mt-24 pb-8 pt-5 sm:pb-9 sm:pt-6 lg:pb-10 lg:pt-6"
+    >
+      <Container>
+        <div className="grid gap-7 lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:gap-12">
+          <ScrollReveal
+            direction="right"
+            distance={36}
+            className="order-2 lg:order-1"
+          >
+            <ServiceMedia
+              src="/videos/services/oinspect.mp4"
+              eyebrow="Medição óptica multissensor"
+              title="Detalhes visíveis avaliados sem depender apenas do contato."
+              number="02"
+            />
+          </ScrollReveal>
+
+          <ScrollReveal
+            direction="left"
+            distance={32}
+            className="order-1 lg:order-2"
+          >
+            <ServiceHeading
+              number="02"
+              eyebrow="Medição sem contato"
+              title="Inspeção óptica"
+              description="Avaliação de características dimensionais e geométricas por recursos ópticos do ZEISS O-INSPECT, ampliando as possibilidades de inspeção em detalhes visíveis, componentes delicados e regiões adequadas à medição sem contato."
+              compact
+            />
+
+            <div className="mt-6 grid gap-3 sm:grid-cols-2">
+              <InfoCard
+                title="Aplicações"
+                items={opticalApplications}
+              />
+
+              <InfoCard
+                title="Tecnologia"
+                items={opticalTechnologies}
+              />
+            </div>
+
+            <ServiceAction />
+          </ScrollReveal>
+        </div>
+      </Container>
+    </section>
+  );
+}
+
 function ScanningSection() {
   return (
     <section
@@ -434,7 +510,7 @@ function ScanningSection() {
               src="/videos/services/digitalizacao-3d.mp4"
               eyebrow="Captura da geometria"
               title="Da superfície física ao ambiente digital."
-              number="02"
+              number="03"
             />
           </ScrollReveal>
 
@@ -444,7 +520,7 @@ function ScanningSection() {
             className="order-1 lg:order-2 lg:-mt-2"
           >
             <ServiceHeading
-              number="02"
+              number="03"
               eyebrow="Captura digital"
               title="Digitalização 3D"
               description="Captura da geometria de peças e componentes para criação de representações digitais que podem apoiar análises, comparações e outras etapas do projeto."
@@ -669,6 +745,19 @@ function ServiceMedia({
   );
 }
 
+function ServiceAction() {
+  return (
+    <Link
+      to="/orcamento"
+      className="group mt-8 inline-flex items-center gap-3 text-sm font-medium text-[#356f9f] transition-colors hover:text-[#0b2340]"
+    >
+      Solicitar orçamento
+
+      <ArrowRightIcon className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+    </Link>
+  );
+}
+
 function ReverseEngineeringSection() {
   return (
     <section
@@ -699,7 +788,7 @@ function ReverseEngineeringSection() {
             <div>
               <div className="flex items-center gap-4">
                 <span className="text-[11px] font-semibold tracking-[0.15em] text-[#356f9f]">
-                  03
+                  04
                 </span>
 
                 <div className="h-px w-10 bg-[#65b8ee]" />
@@ -800,7 +889,7 @@ function ReverseEngineeringSection() {
                     </div>
 
                     <span className="text-[11px] font-semibold tracking-[0.14em] text-white/45">
-                      03
+                      04
                     </span>
                   </div>
                 </div>
@@ -878,7 +967,7 @@ function InternalInspectionSection() {
             distance={32}
           >
             <ServiceHeading
-              number="04"
+              number="05"
               eyebrow="Além da superfície"
               title="Inspeção interna"
               description="Investigação de estruturas e características internas que não podem ser avaliadas somente pela superfície da peça."
@@ -887,7 +976,9 @@ function InternalInspectionSection() {
             <div className="mt-6 grid gap-3 sm:grid-cols-2">
               <InfoCard
                 title="Aplicações"
-                items={internalApplications}
+                items={
+                  internalApplications
+                }
               />
 
               <InfoCard
@@ -899,106 +990,24 @@ function InternalInspectionSection() {
                 ]}
               />
             </div>
+
+            <ServiceAction />
           </ScrollReveal>
 
           <ScrollReveal
             direction="left"
             distance={36}
           >
-            <InternalVisual />
+            <ServiceMedia
+              src="/videos/services/raiox.mp4"
+              eyebrow="Inspeção por raios X"
+              title="O interior da peça também pode revelar informações importantes."
+              number="05"
+            />
           </ScrollReveal>
         </div>
       </Container>
     </section>
-  );
-}
-
-function InternalVisual() {
-  return (
-    <div className="relative overflow-hidden rounded-[28px] border border-white/65 bg-[#071f2d] shadow-[0_22px_58px_rgba(7,31,45,0.12)]">
-      <div className="relative aspect-[4/3] overflow-hidden sm:aspect-[16/10]">
-        <div
-          aria-hidden="true"
-          className="absolute inset-0 bg-[radial-gradient(circle_at_68%_44%,rgba(101,184,238,0.18),transparent_24%),radial-gradient(circle_at_30%_78%,rgba(255,255,255,0.07),transparent_24%),linear-gradient(135deg,#071f2d_0%,#0b2d40_48%,#12364e_100%)]"
-        />
-
-        <motion.div
-          aria-hidden="true"
-          animate={{
-            rotate: 360,
-          }}
-          transition={{
-            duration: 32,
-            repeat: Infinity,
-            ease: "linear",
-          }}
-          className="absolute left-1/2 top-1/2 h-[68%] w-[68%] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/12"
-        >
-          <div className="absolute left-1/2 top-0 h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#9dd1ef]/50 bg-[#65b8ee]/20" />
-        </motion.div>
-
-        <motion.div
-          aria-hidden="true"
-          animate={{
-            rotate: -360,
-          }}
-          transition={{
-            duration: 24,
-            repeat: Infinity,
-            ease: "linear",
-          }}
-          className="absolute left-1/2 top-1/2 h-[48%] w-[48%] -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#65b8ee]/20"
-        >
-          <div className="absolute bottom-[10%] right-[8%] h-2 w-2 rounded-full bg-[#9dd1ef]/60" />
-        </motion.div>
-
-        <div
-          aria-hidden="true"
-          className="absolute left-1/2 top-1/2 h-[28%] w-[28%] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/18 bg-white/[0.035] shadow-[0_0_70px_rgba(101,184,238,0.10)] backdrop-blur-[8px]"
-        />
-
-        <div
-          aria-hidden="true"
-          className="absolute left-[12%] right-[12%] top-1/2 h-px bg-gradient-to-r from-transparent via-white/12 to-transparent"
-        />
-
-        <div
-          aria-hidden="true"
-          className="absolute bottom-[12%] top-[12%] left-1/2 w-px bg-gradient-to-b from-transparent via-white/[0.08] to-transparent"
-        />
-
-        <div className="absolute left-6 top-6 sm:left-7 sm:top-7">
-          <p className="text-[9px] font-semibold uppercase tracking-[0.14em] text-[#9dd1ef]">
-            Internal inspection
-          </p>
-
-          <h3 className="mt-2 text-[21px] font-semibold tracking-[-0.03em] text-white sm:text-[24px]">
-            Além da superfície.
-          </h3>
-
-          <p className="mt-3 max-w-[310px] text-[11px] leading-5 text-white/55">
-            Investigação de características internas e regiões não
-            acessíveis.
-          </p>
-        </div>
-
-        <div className="absolute bottom-6 left-6 right-6 flex items-end justify-between gap-6 sm:bottom-7 sm:left-7 sm:right-7">
-          <div>
-            <p className="text-[8px] font-semibold uppercase tracking-[0.13em] text-white/35">
-              Tecnologia
-            </p>
-
-            <p className="mt-1 text-[11px] font-semibold text-white/70">
-              ZEISS BOSELLO MAX
-            </p>
-          </div>
-
-          <span className="text-[11px] font-semibold tracking-[0.14em] text-white/35">
-            04
-          </span>
-        </div>
-      </div>
-    </div>
   );
 }
 
