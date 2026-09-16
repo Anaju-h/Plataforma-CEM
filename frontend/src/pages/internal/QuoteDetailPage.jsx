@@ -914,7 +914,7 @@ export function QuoteDetailPage() {
                           }
                         >
                           {
-                            machine.name
+                            machine.name + (machine.local ? "" : " · Outra unidade (indisponível localmente)")
                           }
                         </option>
                       ),

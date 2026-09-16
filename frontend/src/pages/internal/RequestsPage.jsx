@@ -216,7 +216,7 @@ export function RequestsPage() {
             onClick={
               handleNewRequest
             }
-            className="
+            className="internal-card-title 
               inline-flex
               min-h-[44px]
               cursor-pointer
@@ -226,7 +226,7 @@ export function RequestsPage() {
               rounded-[13px]
               bg-[#12364e]
               px-5
-              text-[13px]
+              
               font-semibold
               text-white
               shadow-[0_8px_20px_rgba(18,54,78,0.13)]
@@ -337,17 +337,17 @@ export function RequestsPage() {
 
         <div className="flex flex-col gap-3 border-b border-[#dce7ec] px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
           <div>
-            <h2 className="text-[16px] font-semibold tracking-[-0.02em] text-[#17394f]">
+            <h2 className="internal-section-title font-semibold text-[#17394f]">
               Fila de solicitações
             </h2>
 
-            <p className="mt-1 text-[12px] leading-5 text-[#607987]">
+            <p className="internal-card-description mt-1 text-[#607987]">
               Priorize a análise técnica e acompanhe a evolução de cada demanda.
             </p>
           </div>
 
           <div className="rounded-full border border-[#c7dbe5] bg-[#edf5f8] px-3 py-1.5">
-            <span className="text-[11px] font-semibold text-[#496f84]">
+            <span className="internal-card-title font-semibold text-[#496f84]">
               {
                 filteredRequests.length
               }{" "}
@@ -419,13 +419,13 @@ export function RequestsPage() {
                     "
                   >
                     <td className="px-5 py-4 align-middle">
-                      <p className="text-[13px] font-semibold text-[#17394f]">
+                      <p className="internal-card-title font-semibold text-[#17394f]">
                         {
                           request.id
                         }
                       </p>
 
-                      <p className="mt-1 text-[11px] text-[#6c818d]">
+                      <p className="internal-help-text mt-1 text-[#526d7c]">
                         {
                           request.createdAt
                         }
@@ -433,13 +433,13 @@ export function RequestsPage() {
                     </td>
 
                     <td className="px-5 py-4 align-middle">
-                      <p className="max-w-[220px] truncate text-[13px] font-semibold text-[#294c60]">
+                      <p className="internal-card-title max-w-[220px] truncate font-semibold text-[#294c60]">
                         {
                           request.company
                         }
                       </p>
 
-                      <p className="mt-1 max-w-[220px] truncate text-[11px] text-[#6c818d]">
+                      <p className="internal-help-text mt-1 max-w-[220px] truncate text-[#526d7c]">
                         {
                           request.contact
                         }
@@ -447,13 +447,13 @@ export function RequestsPage() {
                     </td>
 
                     <td className="px-5 py-4 align-middle">
-                      <p className="max-w-[220px] text-[12px] font-medium leading-5 text-[#365a6d]">
+                      <p className="internal-card-title max-w-[220px] font-medium text-[#365a6d]">
                         {getServiceLabel(
                           request,
                         )}
                       </p>
 
-                      <p className="mt-1 text-[11px] text-[#748894]">
+                      <p className="internal-help-text mt-1 text-[#526d7c]">
                         {formatParts(
                           request.parts,
                         )}
@@ -469,7 +469,7 @@ export function RequestsPage() {
                     </td>
 
                     <td className="px-5 py-4 align-middle">
-                      <p className="max-w-[180px] truncate text-[12px] font-medium text-[#4b6878]">
+                      <p className="internal-card-title max-w-[180px] truncate font-medium text-[#4b6878]">
                         {request.responsible ||
                           "Não atribuído"}
                       </p>
@@ -495,7 +495,7 @@ export function RequestsPage() {
                             request.id,
                           );
                         }}
-                        className="
+                        className="internal-card-title 
                           cursor-pointer
                           rounded-[10px]
                           border
@@ -503,7 +503,7 @@ export function RequestsPage() {
                           bg-white
                           px-3
                           py-2
-                          text-[11px]
+                          
                           font-semibold
                           text-[#3e6d86]
                           transition
@@ -553,7 +553,7 @@ export function RequestsPage() {
                 <div className="flex items-start justify-between gap-4">
                   <div className="min-w-0">
                     <div className="flex flex-wrap items-center gap-2">
-                      <p className="text-[13px] font-semibold text-[#17394f]">
+                      <p className="internal-card-title font-semibold text-[#17394f]">
                         {
                           request.id
                         }
@@ -566,13 +566,13 @@ export function RequestsPage() {
                       />
                     </div>
 
-                    <p className="mt-2 truncate text-[14px] font-semibold text-[#294c60]">
+                    <p className="internal-card-title mt-2 truncate font-semibold text-[#294c60]">
                       {
                         request.company
                       }
                     </p>
 
-                    <p className="mt-1 truncate text-[12px] text-[#6c818d]">
+                    <p className="internal-help-text mt-1 truncate text-[#526d7c]">
                       {
                         request.contact
                       }
@@ -630,11 +630,11 @@ export function RequestsPage() {
               ↗
             </div>
 
-            <h3 className="mt-4 text-[15px] font-semibold text-[#294c60]">
+            <h3 className="internal-section-title mt-4 font-semibold text-[#294c60]">
               Nenhuma solicitação encontrada
             </h3>
 
-            <p className="mx-auto mt-2 max-w-[420px] text-[12px] leading-5 text-[#6c818d]">
+            <p className="internal-card-description mx-auto mt-2 max-w-[420px] text-[#526d7c]">
               Ajuste os filtros utilizados ou registre uma nova solicitação
               recebida pela equipe do laboratório.
             </p>
@@ -644,14 +644,14 @@ export function RequestsPage() {
               onClick={
                 handleNewRequest
               }
-              className="
+              className="internal-card-title 
                 mt-5
                 cursor-pointer
                 rounded-[11px]
                 bg-[#12364e]
                 px-4
                 py-2.5
-                text-[12px]
+                
                 font-semibold
                 text-white
                 transition
@@ -678,7 +678,7 @@ function SummaryCard({
 }) {
   return (
     <div className="rounded-[18px] border border-[#cadce5] bg-white/62 px-5 py-4 shadow-[0_8px_24px_rgba(31,68,92,0.04)] backdrop-blur-[16px]">
-      <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#607f90]">
+      <p className="internal-eyebrow font-semibold uppercase text-[#607f90]">
         {label}
       </p>
 
@@ -690,7 +690,7 @@ function SummaryCard({
         <span className="mb-1 h-2 w-2 rounded-full bg-[#65b8ee]" />
       </div>
 
-      <p className="mt-1 text-[11px] leading-5 text-[#708591]">
+      <p className="internal-card-description mt-1 text-[#526d7c]">
         {description}
       </p>
     </div>
@@ -707,14 +707,14 @@ function TableHeader({
 }) {
   return (
     <th
-      className={`
+      className={`internal-eyebrow 
         px-5
         py-3.5
-        text-[10px]
+        
         font-semibold
         uppercase
-        tracking-[0.09em]
-        text-[#66808e]
+        
+        text-[#526d7c]
 
         ${
           align ===
@@ -775,13 +775,13 @@ function OriginBadge({
   return (
     <div className="flex flex-col items-start gap-1.5">
       <span
-        className={`
+        className={`internal-card-title 
           inline-flex
           rounded-full
           border
           px-2.5
           py-1
-          text-[10px]
+          
           font-semibold
           ${classes}
         `}
@@ -791,7 +791,7 @@ function OriginBadge({
 
       {isInternal &&
         request.channel && (
-          <span className="pl-1 text-[10px] text-[#748894]">
+          <span className="internal-help-text pl-1 text-[#526d7c]">
             {
               request.channel
             }
@@ -811,11 +811,11 @@ function MobileInfo({
 }) {
   return (
     <div className="min-w-0">
-      <p className="text-[9px] font-semibold uppercase tracking-[0.08em] text-[#78909c]">
+      <p className="internal-eyebrow font-semibold uppercase text-[#526d7c]">
         {label}
       </p>
 
-      <p className="mt-1 truncate text-[11px] font-medium text-[#3f6072]">
+      <p className="internal-card-title mt-1 truncate font-medium text-[#3f6072]">
         {value}
       </p>
     </div>

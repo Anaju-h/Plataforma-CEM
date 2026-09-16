@@ -29,15 +29,15 @@ export function QuoteStatusBadge({
 }) {
   return (
     <span
-      className={`
+      className={`internal-eyebrow 
         inline-flex
         rounded-full
         border
         px-3 py-1.5
-        text-[9px]
+        
         font-semibold
         uppercase
-        tracking-[0.07em]
+        
 
         ${
           styles[status] ??

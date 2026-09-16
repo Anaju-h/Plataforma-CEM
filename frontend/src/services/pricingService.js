@@ -34,155 +34,58 @@ import {
  * ============================================================
  */
 
-let commercialReference = {
+// Estado demo em memória, com a mesma duração dos ORCs demo.
+// Datas ISO marcam a vigência [início, fim) nesta sessão, não um passado inventado.
+const sessionStartedAt = new Date().toISOString();
+let commercialReferences = [{
   ...initialCommercialReference,
-
-  effectiveFrom:
-    initialCommercialReference.effectiveFrom ??
-    "26/08/2026",
-
-  changedBy:
-    "Administrador",
-};
-
-/*
- * ============================================================
- * HISTÓRICO TEMPORÁRIO
- * ============================================================
- */
-
-let commercialReferenceHistory = [
-  {
-    id: "commercial-reference-001",
-
-    previousRate: 135,
-
-    newRate: 150,
-
-    effectiveFrom:
-      "01/07/2026",
-
-    changedAt:
-      "01/07/2026",
-
-    changedBy:
-      "Administrador",
-
-    reason:
-      "Atualização da referência comercial praticada pelo laboratório.",
-  },
-];
-
-/*
- * ============================================================
- * CONSULTAS
- * ============================================================
- */
+  effectiveFrom: sessionStartedAt,
+}];
 
 export function getCommercialReference() {
-  return {
-    ...commercialReference,
-  };
+  const now = new Date().toISOString();
+  const reference = commercialReferences.find(item =>
+    item.effectiveFrom <= now && (!item.effectiveTo || now < item.effectiveTo));
+  return { ...reference };
 }
 
+// Mantém previousRate/newRate para consumidores antigos, sem evento fictício.
 export function getCommercialReferenceHistory() {
-  return commercialReferenceHistory.map(
-    (item) => ({
-      ...item,
-    }),
-  );
+  return commercialReferences.filter(item => item.changedAt).map(item => ({ ...item }));
 }
 
-/*
- * ============================================================
- * ALTERAÇÃO DA REFERÊNCIA COMERCIAL
- * ============================================================
- */
-
-export function updateCommercialReference({
-  hourlyRate,
-  reason,
-  changedBy = "Administrador",
-}) {
-  const nextRate =
-    normalizeNumber(
-      hourlyRate,
-    );
-
-  if (nextRate <= 0) {
-    throw new Error(
-      "O valor/hora deve ser maior que zero.",
-    );
-  }
-
-  const previousRate =
-    commercialReference.hourlyRate;
-
-  if (
-    nextRate ===
-    previousRate
-  ) {
-    return {
-      reference:
-        getCommercialReference(),
-
-      historyItem: null,
-    };
-  }
-
-  const today =
-    formatCurrentDate();
-
-  const historyItem = {
-    id:
-      createHistoryId(),
-
-    previousRate,
-
-    newRate:
-      nextRate,
-
-    effectiveFrom:
-      today,
-
-    changedAt:
-      today,
-
-    changedBy,
-
-    reason:
-      reason?.trim() ||
-      "Alteração da referência comercial.",
-  };
-
-  commercialReferenceHistory = [
-    historyItem,
-    ...commercialReferenceHistory,
-  ];
-
-  commercialReference = {
-    ...commercialReference,
-
-    hourlyRate:
-      nextRate,
-
-    updatedAt:
-      today,
-
-    effectiveFrom:
-      today,
-
-    changedBy,
-  };
-
-  return {
-    reference:
-      getCommercialReference(),
-
-    historyItem,
-  };
+export function getCommercialRateReferences() {
+  return commercialReferences.map(item => ({ ...item }));
 }
 
+export function updateCommercialReference({ hourlyRate, reason, changedBy = null }) {
+  const nextRate = roundCurrency(normalizeNumber(hourlyRate));
+  if (!Number.isFinite(nextRate) || nextRate <= 0) {
+    throw new Error("O valor/hora deve ser maior que zero.");
+  }
+  const current = getCommercialReference();
+  if (nextRate === current.hourlyRate) {
+    return { reference: current, historyItem: null };
+  }
+  const now = new Date().toISOString();
+  const next = {
+    ...initialCommercialReference,
+    id: createHistoryId(),
+    hourlyRate: nextRate,
+    previousRate: current.hourlyRate,
+    newRate: nextRate,
+    effectiveFrom: now,
+    effectiveTo: null,
+    source: "Alteração administrativa na sessão demo",
+    changedAt: now,
+    updatedAt: now,
+    changedBy,
+    reason: reason?.trim() || "Alteração da referência comercial.",
+  };
+  commercialReferences = [next, ...commercialReferences.map(item =>
+    item.id === current.id ? { ...item, effectiveTo: now, status: "inactive" } : item)];
+  return { reference: { ...next }, historyItem: { ...next } };
+}
 /*
  * ============================================================
  * CONTEXTO DE PRECIFICAÇÃO
@@ -245,7 +148,9 @@ export function calculateTechnicalReference({
       machineId,
     );
 
-  if (!machine) {
+  if (!machine || machine.validationStatus !== "validated" ||
+      !machine.effectiveFrom || machine.effectiveFrom > new Date().toISOString() ||
+      (machine.effectiveTo && machine.effectiveTo <= new Date().toISOString())) {
     return null;
   }
 
@@ -385,14 +290,6 @@ function roundCurrency(
     Math.round(
       value * 100,
     ) / 100
-  );
-}
-
-function formatCurrentDate() {
-  return new Intl.DateTimeFormat(
-    "pt-BR",
-  ).format(
-    new Date(),
   );
 }
 

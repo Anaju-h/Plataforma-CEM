@@ -103,17 +103,17 @@ export function ProjectsPage() {
               )
             }
             placeholder="Buscar projeto, cliente, orçamento, serviço ou equipamento..."
-            className="
+            className="internal-field-value 
               h-11
               rounded-[12px]
               border border-[#d7e1e7]
               bg-[#f9fbfc]
               px-4
-              text-sm
+              
               text-[#17394f]
               outline-none
               transition
-              placeholder:text-[#98a8b2]
+              placeholder:text-[#526d7c]
               focus:border-[#76a9c7]
               focus:bg-white
             "
@@ -126,13 +126,13 @@ export function ProjectsPage() {
                 event.target.value,
               )
             }
-            className="
+            className="internal-field-value 
               h-11
               rounded-[12px]
               border border-[#d7e1e7]
               bg-[#f9fbfc]
               px-3
-              text-xs
+              
               font-medium
               text-[#536f80]
               outline-none
@@ -172,11 +172,11 @@ export function ProjectsPage() {
       {filteredProjects.length ===
         0 && (
         <div className="mt-5 rounded-[20px] border border-dashed border-[#cbd9e1] bg-[#f8fafb] px-6 py-16 text-center">
-          <p className="text-sm font-semibold text-[#536f80]">
+          <p className="internal-card-title font-semibold text-[#536f80]">
             Nenhum projeto encontrado.
           </p>
 
-          <p className="mt-2 text-xs text-[#82949e]">
+          <p className="internal-help-text mt-2 text-[#526d7c]">
             Projetos são criados a partir de orçamentos aceitos.
           </p>
         </div>
@@ -224,11 +224,11 @@ function ProjectCard({
     >
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <p className="text-[9px] font-semibold uppercase tracking-[0.12em] text-[#5681a0]">
+          <p className="internal-eyebrow font-semibold uppercase text-[#5681a0]">
             {project.id}
           </p>
 
-          <p className="mt-1 text-[9px] text-[#8c9ba4]">
+          <p className="internal-help-text mt-1 text-[#526d7c]">
             Origem:{" "}
             {project.quoteId}
           </p>
@@ -241,11 +241,11 @@ function ProjectCard({
         />
       </div>
 
-      <h2 className="mt-5 text-lg font-semibold text-[#17394f]">
+      <h2 className="internal-section-title mt-5 font-semibold text-[#17394f]">
         {project.company}
       </h2>
 
-      <p className="mt-1 text-xs text-[#708795]">
+      <p className="internal-help-text mt-1 text-[#526d7c]">
         {project.service}
       </p>
 
@@ -281,11 +281,11 @@ function ProjectCard({
 
       <div className="mt-5 border-t border-[#e4eaee] pt-4">
         <div className="flex items-center justify-between gap-3">
-          <p className="text-[9px] font-semibold uppercase tracking-[0.1em] text-[#82949e]">
+          <p className="internal-eyebrow font-semibold uppercase text-[#526d7c]">
             Andamento operacional
           </p>
 
-          <p className="text-xs font-semibold text-[#5681a0]">
+          <p className="internal-card-title font-semibold text-[#5681a0]">
             {progress}%
           </p>
         </div>
@@ -309,11 +309,11 @@ function Info({
 }) {
   return (
     <div>
-      <p className="text-[9px] font-semibold uppercase tracking-[0.09em] text-[#8999a3]">
+      <p className="internal-eyebrow font-semibold uppercase text-[#526d7c]">
         {label}
       </p>
 
-      <p className="mt-1 text-xs font-semibold text-[#476579]">
+      <p className="internal-card-title mt-1 font-semibold text-[#476579]">
         {value ||
           "A definir"}
       </p>

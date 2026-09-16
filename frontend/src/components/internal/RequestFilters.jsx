@@ -42,7 +42,7 @@ export function RequestFilters({
               left-3.5
               top-1/2
               -translate-y-1/2
-              text-[#6b8593]
+              text-[#526d7c]
             "
           >
             <SearchIcon />
@@ -59,7 +59,7 @@ export function RequestFilters({
               )
             }
             placeholder="Buscar por ID, empresa, contato, serviço ou responsável..."
-            className="
+            className="internal-field-value 
               h-11
               w-full
               rounded-[12px]
@@ -68,11 +68,11 @@ export function RequestFilters({
               bg-[#f8fafb]
               pl-10
               pr-4
-              text-[13px]
+              
               text-[#17384d]
               outline-none
               transition
-              placeholder:text-[#82949e]
+              placeholder:text-[#526d7c]
               hover:border-[#b6cbd6]
               focus:border-[#6b9fb9]
               focus:bg-white
@@ -98,7 +98,7 @@ export function RequestFilters({
                 event.target.value,
               )
             }
-            className="
+            className="internal-field-value 
               h-11
               w-full
               cursor-pointer
@@ -109,7 +109,7 @@ export function RequestFilters({
               bg-[#f8fafb]
               px-3
               pr-9
-              text-[12px]
+              
               font-medium
               text-[#405f70]
               outline-none
@@ -156,7 +156,7 @@ export function RequestFilters({
                 event.target.value,
               )
             }
-            className="
+            className="internal-field-value 
               h-11
               w-full
               cursor-pointer
@@ -167,7 +167,7 @@ export function RequestFilters({
               bg-[#f8fafb]
               px-3
               pr-9
-              text-[12px]
+              
               font-medium
               text-[#405f70]
               outline-none
@@ -208,21 +208,21 @@ export function RequestFilters({
           disabled={
             !hasActiveFilters
           }
-          className={`
+          className={`internal-eyebrow 
             h-11
             rounded-[12px]
             border
             px-4
-            text-[10px]
+            
             font-semibold
             uppercase
-            tracking-[0.07em]
+            
             transition
 
             ${
               hasActiveFilters
                 ? "border-[#bfd1db] bg-[#f5f9fb] text-[#476b7e] hover:border-[#8eafc0] hover:bg-white hover:text-[#0057b8]"
-                : "cursor-default border-[#e0e7eb] bg-[#f8fafb] text-[#9aabb4]"
+                : "cursor-default border-[#e0e7eb] bg-[#f8fafb] text-[#526d7c]"
             }
           `}
         >
@@ -236,13 +236,13 @@ export function RequestFilters({
 function SelectArrow() {
   return (
     <span
-      className="
+      className="internal-help-text 
         pointer-events-none
         absolute
         right-3
         top-1/2
         -translate-y-1/2
-        text-[11px]
+        
         text-[#607c8c]
       "
     >

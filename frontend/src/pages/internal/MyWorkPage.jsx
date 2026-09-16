@@ -152,13 +152,13 @@ export function MyWorkPage() {
         <div className="flex flex-col gap-4 border-b border-[#dce6eb] px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-6">
           <div className="flex items-center gap-3">
             <span
-              className="
+              className="internal-card-title 
                 flex h-9 w-9
                 shrink-0 items-center justify-center
                 rounded-full
                 border border-[#b8d1de]
                 bg-[#eaf4f8]
-                text-[13px] font-semibold
+                 font-semibold
                 text-[#296b90]
               "
             >
@@ -166,18 +166,18 @@ export function MyWorkPage() {
             </span>
 
             <div>
-              <p className="text-[16px] font-semibold text-[#17384d]">
+              <p className="internal-section-title font-semibold text-[#17384d]">
                 Precisam da minha atenção
               </p>
 
-              <p className="mt-1 text-[12px] leading-5 text-[#5c7584]">
+              <p className="internal-card-description mt-1 text-[#5c7584]">
                 Situações que exigem uma decisão, revisão ou continuidade do fluxo.
               </p>
             </div>
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="hidden text-[10px] font-semibold uppercase tracking-[0.1em] text-[#607c8c] sm:block">
+            <span className="internal-eyebrow hidden font-semibold uppercase text-[#607c8c] sm:block">
               Filtrar
             </span>
 
@@ -191,7 +191,7 @@ export function MyWorkPage() {
                     event.target.value,
                   )
                 }
-                className="
+                className="internal-field-value 
                   h-10 min-w-[175px]
                   cursor-pointer
                   appearance-none
@@ -199,9 +199,9 @@ export function MyWorkPage() {
                   border border-[#c3d4dd]
                   bg-[#f8fafb]
                   pl-3 pr-9
-                  text-[11px]
-                  font-semibold uppercase
-                  tracking-[0.05em]
+                  
+                  font-semibold 
+                  
                   text-[#405f70]
                   outline-none
                   transition
@@ -227,7 +227,7 @@ export function MyWorkPage() {
                 </option>
               </select>
 
-              <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[11px] text-[#567586]">
+              <span className="internal-help-text pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[#567586]">
                 ▾
               </span>
             </div>
@@ -235,7 +235,7 @@ export function MyWorkPage() {
         </div>
 
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#e7edf0] bg-[#f8fafb] px-5 py-3 sm:px-6">
-          <p className="text-[11px] text-[#607988]">
+          <p className="internal-help-text text-[#607988]">
             Exibindo{" "}
             <span className="font-semibold text-[#274b60]">
               {
@@ -257,7 +257,7 @@ export function MyWorkPage() {
                   "all",
                 )
               }
-              className="text-[10px] font-semibold uppercase tracking-[0.07em] text-[#356f9f] hover:text-[#0057b8]"
+              className="internal-eyebrow font-semibold uppercase text-[#356f9f] hover:text-[#0057b8]"
             >
               Limpar filtro
             </button>
@@ -427,11 +427,11 @@ export function MyWorkPage() {
         </section>
 
         <section className="rounded-[22px] border border-[#c5d7e0] bg-[#e8f1f5] p-5 sm:p-6">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.13em] text-[#47738c]">
+          <p className="internal-eyebrow font-semibold uppercase text-[#47738c]">
             Acesso rápido
           </p>
 
-          <h2 className="mt-2 text-[20px] font-semibold tracking-[-0.03em] text-[#17384d]">
+          <h2 className="internal-section-title mt-2 font-semibold text-[#17384d]">
             Áreas frequentes
           </h2>
 
@@ -668,12 +668,12 @@ function MetricCard({
       `}
     >
       <div className="flex items-start justify-between gap-3">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-[#557585]">
+        <p className="internal-eyebrow font-semibold uppercase text-[#557585]">
           {label}
         </p>
 
         {onClick && (
-          <span className="text-[14px] text-[#7895a5] transition group-hover:translate-x-1">
+          <span className="internal-help-text text-[#526d7c] transition group-hover:translate-x-1">
             →
           </span>
         )}
@@ -694,7 +694,7 @@ function MetricCard({
         {value}
       </p>
 
-      <p className="mt-3 text-[12px] leading-5 text-[#587282]">
+      <p className="internal-card-description mt-3 text-[#587282]">
         {description}
       </p>
     </Component>
@@ -714,7 +714,7 @@ function SectionHeader({
           {title}
         </p>
 
-        <p className="mt-1 text-[12px] leading-5 text-[#607988]">
+        <p className="internal-card-description mt-1 text-[#607988]">
           {description}
         </p>
       </div>
@@ -725,7 +725,7 @@ function SectionHeader({
           onClick={
             onClick
           }
-          className="shrink-0 text-[11px] font-semibold uppercase tracking-[0.07em] text-[#356f9f] hover:text-[#0057b8]"
+          className="internal-eyebrow shrink-0 font-semibold uppercase text-[#356f9f] hover:text-[#0057b8]"
         >
           {buttonLabel} →
         </button>
@@ -752,13 +752,13 @@ function AttentionRow({
       className="group flex w-full gap-4 px-5 py-5 text-left transition hover:bg-[#f6f9fa] sm:px-6"
     >
       <span
-        className={`
+        className={`internal-card-title 
           mt-0.5
           flex h-10 w-10
           shrink-0 items-center justify-center
           rounded-full
           border
-          text-[11px] font-semibold
+           font-semibold
           ${style.icon}
         `}
       >
@@ -770,13 +770,13 @@ function AttentionRow({
       <div className="min-w-0 flex-1">
         <div className="flex flex-wrap items-center gap-2">
           <span
-            className={`
+            className={`internal-eyebrow 
               rounded-full
               border
               px-2.5 py-1
-              text-[9px]
+              
               font-semibold uppercase
-              tracking-[0.07em]
+              
               ${style.badge}
             `}
           >
@@ -785,39 +785,39 @@ function AttentionRow({
             }
           </span>
 
-          <span className="text-[10px] font-semibold uppercase tracking-[0.07em] text-[#607988]">
+          <span className="internal-eyebrow font-semibold uppercase text-[#607988]">
             {
               item.referenceId
             }
           </span>
 
-          <span className="text-[10px] text-[#6b8391]">
+          <span className="internal-help-text text-[#526d7c]">
             ·
           </span>
 
-          <span className="text-[10px] text-[#607988]">
+          <span className="internal-help-text text-[#607988]">
             {getTypeLabel(
               item.type,
             )}
           </span>
         </div>
 
-        <p className="mt-2 text-[14px] font-semibold text-[#294e64] group-hover:text-[#0057b8]">
+        <p className="internal-card-title mt-2 font-semibold text-[#294e64] group-hover:text-[#0057b8]">
           {item.title}
         </p>
 
-        <p className="mt-1 text-[12px] font-medium text-[#506d7d]">
+        <p className="internal-card-title mt-1 font-medium text-[#506d7d]">
           {item.company}
         </p>
 
-        <p className="mt-1.5 text-[11px] leading-5 text-[#617a88]">
+        <p className="internal-card-description mt-1.5 text-[#617a88]">
           {
             item.description
           }
         </p>
       </div>
 
-      <span className="mt-2 shrink-0 text-[15px] text-[#718d9c] transition group-hover:translate-x-1">
+      <span className="mt-2 shrink-0 text-[15px] text-[#526d7c] transition group-hover:translate-x-1">
         →
       </span>
     </button>
@@ -838,32 +838,32 @@ function RequestRow({
     >
       <div className="min-w-0">
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-[11px] font-semibold uppercase tracking-[0.07em] text-[#356f9f]">
+          <span className="internal-eyebrow font-semibold uppercase text-[#356f9f]">
             {
               request.id
             }
           </span>
 
-          <span className="text-[10px] text-[#637d8b]">
+          <span className="internal-help-text text-[#637d8b]">
             {request.updatedAt ??
               request.createdAt}
           </span>
         </div>
 
-        <p className="mt-1.5 truncate text-[14px] font-semibold text-[#294e64] group-hover:text-[#0057b8]">
+        <p className="internal-card-title mt-1.5 truncate font-semibold text-[#294e64] group-hover:text-[#0057b8]">
           {
             request.company
           }
         </p>
 
-        <p className="mt-1 text-[11px] text-[#607988]">
+        <p className="internal-help-text mt-1 text-[#607988]">
           {
             request.service
           }
         </p>
       </div>
 
-      <span className="shrink-0 rounded-full border border-[#bfd4df] bg-[#e9f2f6] px-3 py-1.5 text-[10px] font-semibold text-[#3f6f88]">
+      <span className="internal-card-title shrink-0 rounded-full border border-[#bfd4df] bg-[#e9f2f6] px-3 py-1.5 font-semibold text-[#3f6f88]">
         {
           request.status
         }
@@ -901,17 +901,17 @@ function ProjectRow({
     >
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.08em] text-[#356f9f]">
+          <p className="internal-eyebrow font-semibold uppercase text-[#356f9f]">
             {project.id}
           </p>
 
-          <p className="mt-1.5 truncate text-[14px] font-semibold text-[#294e64] group-hover:text-[#0057b8]">
+          <p className="internal-card-title mt-1.5 truncate font-semibold text-[#294e64] group-hover:text-[#0057b8]">
             {
               project.company
             }
           </p>
 
-          <p className="mt-1 text-[11px] text-[#607988]">
+          <p className="internal-help-text mt-1 text-[#607988]">
             {
               project.service
             }{" "}
@@ -939,7 +939,7 @@ function ProjectRow({
           />
         </div>
 
-        <span className="w-9 text-right text-[11px] font-semibold text-[#356f9f]">
+        <span className="internal-card-title w-9 text-right font-semibold text-[#356f9f]">
           {progress}%
         </span>
       </div>
@@ -993,31 +993,31 @@ function DeadlineRow({
           }
         </span>
 
-        <span className="text-[8px] font-semibold uppercase tracking-[0.05em] text-[#607988]">
+        <span className="internal-eyebrow font-semibold uppercase text-[#607988]">
           dias
         </span>
       </div>
 
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.07em] text-[#356f9f]">
+          <p className="internal-eyebrow font-semibold uppercase text-[#356f9f]">
             {
               item.projectId
             }
           </p>
 
           {urgent && (
-            <span className="rounded-full border border-[#dfc2b2] bg-[#f8ece6] px-2 py-0.5 text-[8px] font-semibold uppercase text-[#94563b]">
+            <span className="internal-eyebrow rounded-full border border-[#dfc2b2] bg-[#f8ece6] px-2 py-0.5 font-semibold uppercase text-[#94563b]">
               Próximo
             </span>
           )}
         </div>
 
-        <p className="mt-1.5 truncate text-[13px] font-semibold text-[#294e64] group-hover:text-[#0057b8]">
+        <p className="internal-card-title mt-1.5 truncate font-semibold text-[#294e64] group-hover:text-[#0057b8]">
           {item.company}
         </p>
 
-        <p className="mt-1 text-[11px] text-[#607988]">
+        <p className="internal-help-text mt-1 text-[#607988]">
           Prazo:{" "}
           {item.deadline}
         </p>
@@ -1040,11 +1040,11 @@ function QuickAction({
       className="group flex w-full items-center gap-4 rounded-[14px] border border-[#c8d9e1] bg-white/65 px-4 py-3.5 text-left transition hover:border-[#91b7ca] hover:bg-white"
     >
       <div className="min-w-0 flex-1">
-        <p className="text-[13px] font-semibold text-[#294e64]">
+        <p className="internal-card-title font-semibold text-[#294e64]">
           {title}
         </p>
 
-        <p className="mt-1 text-[11px] text-[#607988]">
+        <p className="internal-help-text mt-1 text-[#607988]">
           {detail}
         </p>
       </div>
@@ -1062,11 +1062,11 @@ function EmptyState({
 }) {
   return (
     <div className="px-6 py-12 text-center">
-      <p className="text-[13px] font-semibold text-[#496878]">
+      <p className="internal-card-title font-semibold text-[#496878]">
         {title}
       </p>
 
-      <p className="mx-auto mt-1.5 max-w-sm text-[11px] leading-5 text-[#607988]">
+      <p className="internal-card-description mx-auto mt-1.5 max-w-sm text-[#607988]">
         {description}
       </p>
     </div>

@@ -20,18 +20,18 @@ export function QuoteFilters({
             )
           }
           placeholder="Buscar por orçamento, solicitação, cliente ou serviço..."
-          className="
+          className="internal-field-value 
             h-11
             w-full
             rounded-[12px]
             border border-[#d7e1e7]
             bg-[#f9fbfc]
             px-4
-            text-sm
+            
             text-[#17394f]
             outline-none
             transition
-            placeholder:text-[#98a8b2]
+            placeholder:text-[#526d7c]
             focus:border-[#76a9c7]
             focus:bg-white
           "
@@ -44,13 +44,13 @@ export function QuoteFilters({
               event.target.value,
             )
           }
-          className="
+          className="internal-field-value 
             h-11
             rounded-[12px]
             border border-[#d7e1e7]
             bg-[#f9fbfc]
             px-3
-            text-xs
+            
             font-medium
             text-[#536f80]
             outline-none

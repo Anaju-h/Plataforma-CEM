@@ -177,7 +177,7 @@ export function QuotesPage() {
             onClick={
               handleOpenRequestQueue
             }
-            className="
+            className="internal-card-title 
               inline-flex
               min-h-[44px]
               cursor-pointer
@@ -187,7 +187,7 @@ export function QuotesPage() {
               rounded-[13px]
               bg-[#12364e]
               px-5
-              text-[12px]
+              
               font-semibold
               text-white
               shadow-[0_8px_20px_rgba(18,54,78,0.13)]
@@ -265,17 +265,17 @@ export function QuotesPage() {
       <section className="mt-5 overflow-hidden rounded-[22px] border border-[#cadce5] bg-white/72 shadow-[0_12px_34px_rgba(31,68,92,0.055)] backdrop-blur-[18px]">
         <div className="flex flex-col gap-3 border-b border-[#dce7ec] px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
           <div>
-            <h2 className="text-[16px] font-semibold tracking-[-0.02em] text-[#17394f]">
+            <h2 className="internal-section-title font-semibold text-[#17394f]">
               Fluxo comercial
             </h2>
 
-            <p className="mt-1 text-[12px] leading-5 text-[#607987]">
+            <p className="internal-card-description mt-1 text-[#607987]">
               Cada orçamento mantém vínculo com a solicitação que originou a proposta.
             </p>
           </div>
 
           <div className="rounded-full border border-[#c7dbe5] bg-[#edf5f8] px-3 py-1.5">
-            <span className="text-[11px] font-semibold text-[#496f84]">
+            <span className="internal-card-title font-semibold text-[#496f84]">
               {
                 filteredQuotes.length
               }{" "}
@@ -287,7 +287,7 @@ export function QuotesPage() {
           </div>
         </div>
 
-        <div className="hidden grid-cols-[125px_125px_1.4fr_1fr_155px_125px_44px] gap-4 border-b border-[#e5ebef] bg-[#f4f8fa]/85 px-6 py-3 text-[10px] font-semibold uppercase tracking-[0.09em] text-[#66808e] xl:grid">
+        <div className="internal-eyebrow hidden grid-cols-[125px_125px_1.4fr_1fr_155px_125px_44px] gap-4 border-b border-[#e5ebef] bg-[#f4f8fa]/85 px-6 py-3 font-semibold uppercase text-[#526d7c] xl:grid">
           <span>
             Orçamento
           </span>
@@ -341,11 +341,11 @@ export function QuotesPage() {
                 $
               </div>
 
-              <h3 className="mt-4 text-[15px] font-semibold text-[#294c60]">
+              <h3 className="internal-section-title mt-4 font-semibold text-[#294c60]">
                 Nenhum orçamento encontrado
               </h3>
 
-              <p className="mx-auto mt-2 max-w-[440px] text-[12px] leading-5 text-[#6c818d]">
+              <p className="internal-card-description mx-auto mt-2 max-w-[440px] text-[#526d7c]">
                 Ajuste os filtros ou consulte as solicitações aptas para gerar uma nova proposta.
               </p>
 
@@ -354,7 +354,7 @@ export function QuotesPage() {
                 onClick={
                   handleOpenRequestQueue
                 }
-                className="mt-5 cursor-pointer rounded-[11px] bg-[#12364e] px-4 py-2.5 text-[12px] font-semibold text-white transition hover:bg-[#0d2d41]"
+                className="internal-card-title mt-5 cursor-pointer rounded-[11px] bg-[#12364e] px-4 py-2.5 font-semibold text-white transition hover:bg-[#0d2d41]"
               >
                 Ver solicitações
               </button>
@@ -393,7 +393,7 @@ function QuoteRow({
     >
       <div>
         <div className="flex flex-wrap items-center gap-2">
-          <p className="text-[12px] font-semibold tracking-[0.04em] text-[#356f9f]">
+          <p className="internal-card-title font-semibold tracking-[0.04em] text-[#356f9f]">
             {
               quote.id
             }
@@ -406,7 +406,7 @@ function QuoteRow({
           />
         </div>
 
-        <p className="mt-1 text-[10px] text-[#8999a3]">
+        <p className="internal-help-text mt-1 text-[#526d7c]">
           {
             quote.createdAt
           }
@@ -414,7 +414,7 @@ function QuoteRow({
       </div>
 
       <div>
-        <p className="text-[12px] font-semibold text-[#607989]">
+        <p className="internal-card-title font-semibold text-[#607989]">
           {
             quote.requestId
           }
@@ -422,13 +422,13 @@ function QuoteRow({
       </div>
 
       <div className="min-w-0">
-        <p className="truncate text-[14px] font-semibold text-[#17394f]">
+        <p className="internal-card-title truncate font-semibold text-[#17394f]">
           {
             quote.company
           }
         </p>
 
-        <p className="mt-1 truncate text-[11px] text-[#7c8f9a]">
+        <p className="internal-help-text mt-1 truncate text-[#526d7c]">
           {
             quote.contact
           }
@@ -436,12 +436,12 @@ function QuoteRow({
       </div>
 
       <div>
-        <p className="text-[12px] font-medium text-[#466478]">
+        <p className="internal-card-title font-medium text-[#466478]">
           {quote.service ||
             "Não definido"}
         </p>
 
-        <p className="mt-1 text-[10px] text-[#8797a0]">
+        <p className="internal-help-text mt-1 text-[#526d7c]">
           {quote.responsible ||
             "Não atribuído"}
         </p>
@@ -454,7 +454,7 @@ function QuoteRow({
       />
 
       <div>
-        <p className="text-[12px] font-semibold text-[#31566d]">
+        <p className="internal-card-title font-semibold text-[#31566d]">
           {quote.proposedValue >
           0
             ? formatCurrency(
@@ -478,7 +478,7 @@ function SummaryCard({
 }) {
   return (
     <div className="rounded-[18px] border border-[#cadce5] bg-white/62 px-5 py-4 shadow-[0_8px_24px_rgba(31,68,92,0.04)] backdrop-blur-[16px]">
-      <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#607f90]">
+      <p className="internal-eyebrow font-semibold uppercase text-[#607f90]">
         {label}
       </p>
 
@@ -490,7 +490,7 @@ function SummaryCard({
         <span className="mb-1 h-2 w-2 rounded-full bg-[#65b8ee]" />
       </div>
 
-      <p className="mt-1 text-[11px] leading-5 text-[#708591]">
+      <p className="internal-card-description mt-1 text-[#526d7c]">
         {description}
       </p>
     </div>
@@ -506,15 +506,15 @@ function SourceBadge({
 
   return (
     <span
-      className={`
+      className={`internal-eyebrow 
         rounded-full
         border
         px-2
         py-0.5
-        text-[8px]
+        
         font-semibold
         uppercase
-        tracking-[0.08em]
+        
 
         ${
           isReal

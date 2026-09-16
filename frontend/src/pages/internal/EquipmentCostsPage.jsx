@@ -98,19 +98,19 @@ export function EquipmentCostsPage() {
                       tab.id,
                     )
                   }
-                  className={`
+                  className={`internal-eyebrow 
                     rounded-[11px]
                     px-4 py-2.5
-                    text-[10px]
+                    
                     font-semibold
                     uppercase
-                    tracking-[0.08em]
+                    
                     transition
 
                     ${
                       active
                         ? "bg-[#0b3550] text-white"
-                        : "text-[#657e8e] hover:bg-[#f1f6f8] hover:text-[#17394f]"
+                        : "text-[#526d7c] hover:bg-[#f1f6f8] hover:text-[#17394f]"
                     }
                   `}
                 >
@@ -241,7 +241,7 @@ function OverviewTab({
         <MetricCard
           eyebrow="Última atualização"
           value={
-            commercialReference.updatedAt
+            commercialReference.updatedAt ?? "Configuração inicial demo"
           }
           description="Referência comercial vigente."
         />
@@ -249,15 +249,15 @@ function OverviewTab({
 
       <div className="grid gap-5 xl:grid-cols-[1.1fr_0.9fr]">
         <section className="rounded-[22px] border border-[#d1dde4] bg-white p-5 shadow-[0_10px_30px_rgba(34,67,90,0.025)] sm:p-6">
-          <p className="text-[9px] font-semibold uppercase tracking-[0.14em] text-[#5681a0]">
+          <p className="internal-eyebrow font-semibold uppercase text-[#5681a0]">
             Como utilizar estas informações
           </p>
 
-          <h2 className="mt-2 text-xl font-semibold tracking-[-0.03em] text-[#17394f]">
+          <h2 className="internal-section-title mt-2 font-semibold text-[#17394f]">
             Apoio à decisão, não tabela de preços.
           </h2>
 
-          <p className="mt-3 max-w-2xl text-sm leading-6 text-[#6c8290]">
+          <p className="internal-card-description mt-3 max-w-2xl text-[#526d7c]">
             Os custos técnicos e a referência comercial existem para oferecer contexto durante a elaboração de um orçamento. O responsável continua livre para definir o valor/hora e as horas cobradas.
           </p>
 
@@ -283,7 +283,7 @@ function OverviewTab({
         </section>
 
         <section className="rounded-[22px] border border-[#c7d9e3] bg-[#e6f0f5] p-5 sm:p-6">
-          <p className="text-[9px] font-semibold uppercase tracking-[0.14em] text-[#5681a0]">
+          <p className="internal-eyebrow font-semibold uppercase text-[#5681a0]">
             Referência vigente
           </p>
 
@@ -291,12 +291,12 @@ function OverviewTab({
             {formatCurrency(
               commercialReference.hourlyRate,
             )}
-            <span className="ml-1 text-sm font-medium text-[#5c7c8f]">
+            <span className="internal-card-title ml-1 font-medium text-[#5c7c8f]">
               /hora
             </span>
           </p>
 
-          <p className="mt-3 text-xs leading-5 text-[#6d8390]">
+          <p className="internal-card-description mt-3 text-[#526d7c]">
             Valor atualmente utilizado como ponto de partida em novos orçamentos.
           </p>
 
@@ -305,7 +305,7 @@ function OverviewTab({
             onClick={
               onOpenCommercial
             }
-            className="mt-5 rounded-[11px] bg-[#096ab2] px-4 py-3 text-[9px] font-semibold uppercase tracking-[0.09em] text-white transition hover:bg-[#075b99]"
+            className="internal-eyebrow mt-5 rounded-[11px] bg-[#096ab2] px-4 py-3 font-semibold uppercase text-white transition hover:bg-[#075b99]"
           >
             Gerenciar referência
           </button>
@@ -315,7 +315,7 @@ function OverviewTab({
             onClick={
               onOpenEquipment
             }
-            className="ml-2 mt-5 rounded-[11px] border border-[#a9c6d6] bg-white px-4 py-3 text-[9px] font-semibold uppercase tracking-[0.09em] text-[#356f9f]"
+            className="internal-eyebrow ml-2 mt-5 rounded-[11px] border border-[#a9c6d6] bg-white px-4 py-3 font-semibold uppercase text-[#356f9f]"
           >
             Ver equipamentos
           </button>
@@ -358,7 +358,7 @@ function EquipmentTab({
     <div className="grid gap-5 xl:grid-cols-[330px_1fr]">
       <section className="rounded-[22px] border border-[#d1dde4] bg-white p-4">
         <div className="px-2 pb-4">
-          <p className="text-[9px] font-semibold uppercase tracking-[0.13em] text-[#718895]">
+          <p className="internal-eyebrow font-semibold uppercase text-[#526d7c]">
             Equipamentos cadastrados
           </p>
         </div>
@@ -396,17 +396,17 @@ function EquipmentTab({
                     }
                   `}
                 >
-                  <p className="text-xs font-semibold text-[#31566d]">
-                    {machine.name}
+                  <p className="internal-card-title font-semibold text-[#31566d]">
+                    {machine.name}{!machine.local && " · Outra unidade"}
                   </p>
 
-                  <p className="mt-1 text-[9px] uppercase tracking-[0.08em] text-[#82949e]">
+                  <p className="internal-eyebrow mt-1 uppercase text-[#526d7c]">
                     {
                       machine.spreadsheetName
                     }
                   </p>
 
-                  <p className="mt-2 text-[11px] font-semibold text-[#5681a0]">
+                  <p className="internal-card-title mt-2 font-semibold text-[#5681a0]">
                     {formatCurrency(
                       machine.costWithAdministrative,
                     )}
@@ -422,15 +422,15 @@ function EquipmentTab({
       <section className="rounded-[22px] border border-[#d1dde4] bg-white p-5 shadow-[0_10px_30px_rgba(34,67,90,0.025)] sm:p-6">
         <div className="flex flex-col gap-5 border-b border-[#e2e9ed] pb-6 sm:flex-row sm:items-start sm:justify-between">
           <div>
-            <p className="text-[9px] font-semibold uppercase tracking-[0.14em] text-[#5681a0]">
+            <p className="internal-eyebrow font-semibold uppercase text-[#5681a0]">
               Referência econômica
             </p>
 
-            <h2 className="mt-2 text-2xl font-semibold tracking-[-0.035em] text-[#17394f]">
+            <h2 className="internal-section-title mt-2 font-semibold text-[#17394f]">
               {selectedMachine.name}
             </h2>
 
-            <p className="mt-2 text-xs text-[#788d99]">
+            <p className="internal-help-text mt-2 text-[#526d7c]">
               Origem na planilha:{" "}
               {
                 selectedMachine.spreadsheetName
@@ -438,11 +438,17 @@ function EquipmentTab({
             </p>
           </div>
 
-          <span className="w-fit rounded-full border border-[#c4d8e3] bg-[#edf6fa] px-3 py-1.5 text-[9px] font-semibold uppercase tracking-[0.08em] text-[#5681a0]">
-            Referência interna
+          <span className="internal-eyebrow w-fit rounded-full border border-[#c4d8e3] bg-[#edf6fa] px-3 py-1.5 font-semibold uppercase text-[#5681a0]">
+            Referência interna · Pendente de validação
           </span>
         </div>
 
+        <p className="internal-card-description mt-4 text-[#526d7c]">
+          {selectedMachine.local ? "Equipamento local." : "Outra unidade — indisponível localmente."}
+          {" "}Vigência: {selectedMachine.effectiveFrom ?? "não informada na fonte"}.
+          {" "}Unidade: {selectedMachine.unit ?? "não informada"}.
+          {" "}Valores documentais pendentes de validação; não alimentam sugestões de custo.
+        </p>
         <div className="mt-6 grid gap-4 sm:grid-cols-3">
           <CostMetric
             label="Sem mão de obra"
@@ -468,29 +474,29 @@ function EquipmentTab({
         </div>
 
         <div className="mt-6 rounded-[16px] border border-[#d3e1e8] bg-[#f7fafb] p-5">
-          <p className="text-[9px] font-semibold uppercase tracking-[0.11em] text-[#718895]">
+          <p className="internal-eyebrow font-semibold uppercase text-[#526d7c]">
             Interpretação
           </p>
 
-          <p className="mt-2 text-xs leading-6 text-[#6d8390]">
+          <p className="internal-card-description mt-2 text-[#526d7c]">
             Estes valores representam conhecimento econômico derivado da planilha interna. Eles não constituem tabela de preços e não determinam automaticamente o valor cobrado do cliente.
           </p>
         </div>
 
         <div className="mt-5 flex flex-wrap items-center justify-between gap-4 border-t border-[#e2e9ed] pt-5">
           <div>
-            <p className="text-[9px] font-semibold uppercase tracking-[0.1em] text-[#82949e]">
+            <p className="internal-eyebrow font-semibold uppercase text-[#526d7c]">
               Fonte
             </p>
 
-            <p className="mt-1 text-xs font-semibold text-[#476579]">
+            <p className="internal-card-title mt-1 font-semibold text-[#476579]">
               {
                 selectedMachine.source
               }
             </p>
           </div>
 
-          <p className="text-[10px] text-[#82949e]">
+          <p className="internal-help-text text-[#526d7c]">
             Dados destinados apenas ao uso interno.
           </p>
         </div>
@@ -551,8 +557,7 @@ function CommercialReferenceTab({
         updateCommercialReference({
           hourlyRate,
           reason,
-          changedBy:
-            "Administrador",
+          changedBy: null,
         });
 
       onReferenceChange(
@@ -590,12 +595,12 @@ function CommercialReferenceTab({
   return (
     <div className="grid gap-5 xl:grid-cols-[1fr_360px]">
       <section className="rounded-[22px] border border-[#d1dde4] bg-white p-5 shadow-[0_10px_30px_rgba(34,67,90,0.025)] sm:p-6">
-        <p className="text-[9px] font-semibold uppercase tracking-[0.14em] text-[#5681a0]">
+        <p className="internal-eyebrow font-semibold uppercase text-[#5681a0]">
           Referência comercial vigente
         </p>
 
         <div className="mt-5 rounded-[20px] border border-[#c6dae5] bg-[#eaf3f8] p-5 sm:p-6">
-          <p className="text-[9px] font-semibold uppercase tracking-[0.11em] text-[#718895]">
+          <p className="internal-eyebrow font-semibold uppercase text-[#526d7c]">
             Valor/hora atual
           </p>
 
@@ -609,7 +614,7 @@ function CommercialReferenceTab({
             </span>
           </p>
 
-          <p className="mt-4 max-w-xl text-xs leading-5 text-[#6d8390]">
+          <p className="internal-card-description mt-4 max-w-xl text-[#526d7c]">
             Este valor é utilizado como ponto de partida nos novos orçamentos. O responsável continua podendo definir outro valor em cada proposta.
           </p>
         </div>
@@ -627,7 +632,7 @@ function CommercialReferenceTab({
               <ReferenceInfo
                 label="Última atualização"
                 value={
-                  reference.updatedAt
+                  reference.updatedAt ?? "Sem alteração nesta sessão"
                 }
               />
 
@@ -635,7 +640,7 @@ function CommercialReferenceTab({
                 label="Responsável"
                 value={
                   reference.changedBy ??
-                  "Administrador"
+                  "Não informado (demo)"
                 }
               />
 
@@ -652,18 +657,18 @@ function CommercialReferenceTab({
                   true,
                 )
               }
-              className="mt-7 rounded-[12px] bg-[#096ab2] px-5 py-3 text-[10px] font-semibold uppercase tracking-[0.09em] text-white transition hover:bg-[#075b99]"
+              className="internal-eyebrow mt-7 rounded-[12px] bg-[#096ab2] px-5 py-3 font-semibold uppercase text-white transition hover:bg-[#075b99]"
             >
               Alterar referência
             </button>
           </>
         ) : (
           <div className="mt-6 border-t border-[#e0e7eb] pt-6">
-            <p className="text-sm font-semibold text-[#31566d]">
+            <p className="internal-card-title font-semibold text-[#31566d]">
               Nova referência comercial
             </p>
 
-            <p className="mt-1 text-xs leading-5 text-[#7b8f9a]">
+            <p className="internal-card-description mt-1 text-[#526d7c]">
               A alteração será aplicada somente aos novos contextos de precificação. Orçamentos existentes mantêm seus próprios valores.
             </p>
 
@@ -674,7 +679,7 @@ function CommercialReferenceTab({
                 </span>
 
                 <div className="relative mt-2">
-                  <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-xs text-[#7c909b]">
+                  <span className="internal-help-text pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[#526d7c]">
                     R$
                   </span>
 
@@ -693,7 +698,7 @@ function CommercialReferenceTab({
                     className={`${inputClasses} pl-10 pr-10`}
                   />
 
-                  <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-[10px] text-[#84949e]">
+                  <span className="internal-help-text pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-[#526d7c]">
                     /h
                   </span>
                 </div>
@@ -714,7 +719,7 @@ function CommercialReferenceTab({
                 }
                 rows={4}
                 placeholder="Ex.: reajuste anual, revisão da política comercial..."
-                className="mt-2 w-full resize-y rounded-[13px] border border-[#d3dfe6] bg-[#f8fafb] px-4 py-3 text-sm leading-6 text-[#294e64] outline-none transition focus:border-[#78a9c4] focus:bg-white"
+                className="internal-field-value mt-2 w-full resize-y rounded-[13px] border border-[#d3dfe6] bg-[#f8fafb] px-4 py-3 text-[#294e64] outline-none transition focus:border-[#78a9c4] focus:bg-white"
               />
             </label>
 
@@ -724,7 +729,7 @@ function CommercialReferenceTab({
                 onClick={
                   cancelEditing
                 }
-                className="rounded-[11px] border border-[#ccd9e0] bg-white px-5 py-3 text-[9px] font-semibold uppercase tracking-[0.08em] text-[#607989]"
+                className="internal-eyebrow rounded-[11px] border border-[#ccd9e0] bg-white px-5 py-3 font-semibold uppercase text-[#607989]"
               >
                 Cancelar
               </button>
@@ -734,7 +739,7 @@ function CommercialReferenceTab({
                 onClick={
                   saveReference
                 }
-                className="rounded-[11px] bg-[#096ab2] px-5 py-3 text-[9px] font-semibold uppercase tracking-[0.08em] text-white"
+                className="internal-eyebrow rounded-[11px] bg-[#096ab2] px-5 py-3 font-semibold uppercase text-white"
               >
                 Confirmar alteração
               </button>
@@ -744,7 +749,7 @@ function CommercialReferenceTab({
 
         {feedback && (
           <div className="mt-5 rounded-[13px] border border-[#bdd8c7] bg-[#eaf5ee] px-4 py-3">
-            <p className="text-xs font-semibold text-[#3b7252]">
+            <p className="internal-card-title font-semibold text-[#3b7252]">
               {feedback}
             </p>
           </div>
@@ -752,7 +757,7 @@ function CommercialReferenceTab({
       </section>
 
       <aside className="rounded-[22px] border border-[#c7d9e3] bg-[#e6f0f5] p-5">
-        <p className="text-[9px] font-semibold uppercase tracking-[0.14em] text-[#5681a0]">
+        <p className="internal-eyebrow font-semibold uppercase text-[#5681a0]">
           Como funciona
         </p>
 
@@ -798,11 +803,11 @@ function HistoryTab({
   return (
     <section className="overflow-hidden rounded-[22px] border border-[#d1dde4] bg-white shadow-[0_10px_30px_rgba(34,67,90,0.025)]">
       <div className="border-b border-[#e2e9ed] px-5 py-5 sm:px-6">
-        <p className="text-sm font-semibold text-[#17394f]">
+        <p className="internal-card-title font-semibold text-[#17394f]">
           Histórico de referência comercial
         </p>
 
-        <p className="mt-1 text-xs text-[#7e919c]">
+        <p className="internal-help-text mt-1 text-[#526d7c]">
           Registro das alterações realizadas na política de referência.
         </p>
       </div>
@@ -818,11 +823,11 @@ function HistoryTab({
                 className="grid gap-5 px-5 py-5 sm:px-6 lg:grid-cols-[150px_1fr_160px]"
               >
                 <div>
-                  <p className="text-[9px] font-semibold uppercase tracking-[0.1em] text-[#82949e]">
+                  <p className="internal-eyebrow font-semibold uppercase text-[#526d7c]">
                     Alteração
                   </p>
 
-                  <p className="mt-2 text-xs font-semibold text-[#476579]">
+                  <p className="internal-card-title mt-2 font-semibold text-[#476579]">
                     {
                       item.changedAt
                     }
@@ -831,13 +836,13 @@ function HistoryTab({
 
                 <div>
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className="text-sm font-semibold text-[#718895]">
+                    <span className="internal-card-title font-semibold text-[#526d7c]">
                       {formatCurrency(
                         item.previousRate,
                       )}
                     </span>
 
-                    <span className="text-[#8ca1ad]">
+                    <span className="text-[#526d7c]">
                       →
                     </span>
 
@@ -849,17 +854,17 @@ function HistoryTab({
                     </span>
                   </div>
 
-                  <p className="mt-2 text-xs leading-5 text-[#748995]">
+                  <p className="internal-card-description mt-2 text-[#526d7c]">
                     {item.reason}
                   </p>
                 </div>
 
                 <div>
-                  <p className="text-[9px] font-semibold uppercase tracking-[0.1em] text-[#82949e]">
+                  <p className="internal-eyebrow font-semibold uppercase text-[#526d7c]">
                     Alterado por
                   </p>
 
-                  <p className="mt-2 text-xs font-semibold text-[#476579]">
+                  <p className="internal-card-title mt-2 font-semibold text-[#476579]">
                     {
                       item.changedBy
                     }
@@ -871,7 +876,7 @@ function HistoryTab({
         </div>
       ) : (
         <div className="px-6 py-16 text-center">
-          <p className="text-xs text-[#7e919c]">
+          <p className="internal-help-text text-[#526d7c]">
             Nenhuma alteração registrada.
           </p>
         </div>
@@ -893,15 +898,15 @@ function MetricCard({
 }) {
   return (
     <div className="rounded-[20px] border border-[#d1dde4] bg-white p-5">
-      <p className="text-[9px] font-semibold uppercase tracking-[0.12em] text-[#718895]">
+      <p className="internal-eyebrow font-semibold uppercase text-[#526d7c]">
         {eyebrow}
       </p>
 
-      <p className="mt-3 text-2xl font-semibold tracking-[-0.035em] text-[#17394f]">
+      <p className="internal-section-title mt-3 font-semibold text-[#17394f]">
         {value}
       </p>
 
-      <p className="mt-3 text-[10px] leading-5 text-[#84949e]">
+      <p className="internal-card-description mt-3 text-[#526d7c]">
         {description}
       </p>
     </div>
@@ -915,15 +920,15 @@ function FlowStep({
 }) {
   return (
     <div className="rounded-[15px] border border-[#dce5e9] bg-[#f8fafb] p-4">
-      <span className="flex h-7 w-7 items-center justify-center rounded-full border border-[#c5d8e3] bg-white text-[9px] font-semibold text-[#5681a0]">
+      <span className="internal-card-title flex h-7 w-7 items-center justify-center rounded-full border border-[#c5d8e3] bg-white font-semibold text-[#5681a0]">
         {number}
       </span>
 
-      <p className="mt-3 text-xs font-semibold text-[#31566d]">
+      <p className="internal-card-title mt-3 font-semibold text-[#31566d]">
         {title}
       </p>
 
-      <p className="mt-1 text-[10px] leading-4 text-[#84949e]">
+      <p className="internal-card-description mt-1 text-[#526d7c]">
         {description}
       </p>
     </div>
@@ -949,14 +954,14 @@ function CostMetric({
         }
       `}
     >
-      <p className="text-[9px] font-semibold uppercase tracking-[0.1em] text-[#718895]">
+      <p className="internal-eyebrow font-semibold uppercase text-[#526d7c]">
         {label}
       </p>
 
       <p
-        className={`
+        className={`internal-section-title 
           mt-3
-          text-xl
+          
           font-semibold
 
           ${
@@ -969,7 +974,7 @@ function CostMetric({
         {formatCurrency(
           value,
         )}
-        <span className="ml-1 text-[10px] font-medium">
+        <span className="internal-card-title ml-1 font-medium">
           /h
         </span>
       </p>
@@ -983,11 +988,11 @@ function ReferenceInfo({
 }) {
   return (
     <div>
-      <p className="text-[9px] font-semibold uppercase tracking-[0.1em] text-[#82949e]">
+      <p className="internal-eyebrow font-semibold uppercase text-[#526d7c]">
         {label}
       </p>
 
-      <p className="mt-1.5 text-sm font-semibold text-[#476579]">
+      <p className="internal-card-title mt-1.5 font-semibold text-[#476579]">
         {value}
       </p>
     </div>
@@ -1001,16 +1006,16 @@ function ExplanationItem({
 }) {
   return (
     <div className="flex gap-3">
-      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-[#bdd2dd] bg-white/75 text-[9px] font-semibold text-[#5681a0]">
+      <span className="internal-card-title flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-[#bdd2dd] bg-white/75 font-semibold text-[#5681a0]">
         {number}
       </span>
 
       <div>
-        <p className="text-xs font-semibold text-[#31566d]">
+        <p className="internal-card-title font-semibold text-[#31566d]">
           {title}
         </p>
 
-        <p className="mt-1 text-[10px] leading-5 text-[#718795]">
+        <p className="internal-card-description mt-1 text-[#526d7c]">
           {text}
         </p>
       </div>
@@ -1033,16 +1038,16 @@ function formatCurrency(
 }
 
 const labelClasses =
-  "text-[10px] font-semibold uppercase tracking-[0.08em] text-[#607989]";
+  "internal-field-label  font-semibold uppercase  text-[#607989]";
 
-const inputClasses = `
+const inputClasses = `internal-field-value 
   h-12
   w-full
   rounded-[12px]
   border border-[#d3dfe6]
   bg-[#f8fafb]
   px-4
-  text-sm
+  
   text-[#294e64]
   outline-none
   transition

@@ -60,17 +60,17 @@ export function TeamPage() {
           <button
             type="button"
             disabled
-            className="
+            className="internal-eyebrow 
               cursor-not-allowed
               rounded-[12px]
               border border-[#d0dce3]
               bg-[#eef2f4]
               px-5 py-3
-              text-[10px]
+              
               font-semibold
               uppercase
-              tracking-[0.09em]
-              text-[#98a5ad]
+              
+              text-[#526d7c]
             "
           >
             + Adicionar membro
@@ -123,16 +123,16 @@ export function TeamPage() {
 
       <section className="mt-5 rounded-[18px] border border-[#c7d9e3] bg-[#eaf3f8] p-5">
         <div className="flex gap-4">
-          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[#bfd5e0] bg-white text-[11px] font-semibold text-[#5681a0]">
+          <span className="internal-card-title flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[#bfd5e0] bg-white font-semibold text-[#5681a0]">
             i
           </span>
 
           <div>
-            <p className="text-xs font-semibold text-[#31566d]">
+            <p className="internal-card-title font-semibold text-[#31566d]">
               Estrutura de usuários ainda em validação
             </p>
 
-            <p className="mt-1.5 max-w-4xl text-[10px] leading-5 text-[#718795]">
+            <p className="internal-section-description mt-1.5 max-w-4xl text-[#526d7c]">
               Nesta versão somente o administrador possui acesso ativo.
               Novos usuários, funções e permissões serão configurados após a
               definição oficial de como a equipe utilizará o sistema.
@@ -159,20 +159,20 @@ export function TeamPage() {
                     tab.id,
                   )
                 }
-                className={`
+                className={`internal-eyebrow 
                   rounded-[10px]
                   px-4 py-2.5
-                  text-[9px]
+                  
                   font-semibold
                   uppercase
-                  tracking-[0.08em]
+                  
                   transition
 
                   ${
                     activeTab ===
                     tab.id
                       ? "bg-[#0b3550] text-white"
-                      : "text-[#667f8e] hover:bg-[#f3f7f9]"
+                      : "text-[#526d7c] hover:bg-[#f3f7f9]"
                   }
                 `}
               >
@@ -244,11 +244,11 @@ function MembersTab({
   return (
     <section className="overflow-hidden rounded-[22px] border border-[#d1dde4] bg-white shadow-[0_10px_30px_rgba(34,67,90,0.025)]">
       <div className="border-b border-[#e2e9ed] px-5 py-5 sm:px-6">
-        <p className="text-sm font-semibold text-[#17394f]">
+        <p className="internal-section-title font-semibold text-[#17394f]">
           Membros com acesso
         </p>
 
-        <p className="mt-1 text-xs text-[#7e919c]">
+        <p className="internal-help-text mt-1 text-[#526d7c]">
           Usuários atualmente cadastrados no portal.
         </p>
       </div>
@@ -264,7 +264,7 @@ function MembersTab({
             >
               <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
                 <div className="flex items-center gap-4">
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-[#bdd5e1] bg-[#edf6fa] text-xs font-semibold text-[#397392]">
+                  <div className="internal-card-title flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-[#bdd5e1] bg-[#edf6fa] font-semibold text-[#397392]">
                     {
                       member.initials
                     }
@@ -272,7 +272,7 @@ function MembersTab({
 
                   <div>
                     <div className="flex flex-wrap items-center gap-2">
-                      <p className="text-sm font-semibold text-[#17394f]">
+                      <p className="internal-card-title font-semibold text-[#17394f]">
                         {
                           member.name
                         }
@@ -285,11 +285,11 @@ function MembersTab({
                       />
                     </div>
 
-                    <p className="mt-1 text-xs text-[#718795]">
+                    <p className="internal-help-text mt-1 text-[#526d7c]">
                       {member.role}
                     </p>
 
-                    <p className="mt-1 text-[9px] uppercase tracking-[0.07em] text-[#98a5ad]">
+                    <p className="internal-eyebrow mt-1 uppercase text-[#526d7c]">
                       {member.id}
                     </p>
                   </div>
@@ -325,7 +325,7 @@ function MembersTab({
               </div>
 
               <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-[#e8edef] pt-4">
-                <p className="text-[10px] text-[#82949e]">
+                <p className="internal-help-text text-[#526d7c]">
                   Acesso completo nesta versão inicial do portal.
                 </p>
 
@@ -334,7 +334,7 @@ function MembersTab({
                   onClick={
                     onOpenWork
                   }
-                  className="text-[9px] font-semibold uppercase tracking-[0.09em] text-[#356f9f]"
+                  className="internal-eyebrow font-semibold uppercase text-[#356f9f]"
                 >
                   Ver visão de trabalho →
                 </button>
@@ -369,26 +369,26 @@ function DistributionTab({
           >
             <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#e2e9ed] px-5 py-5 sm:px-6">
               <div className="flex items-center gap-3">
-                <div className="flex h-9 w-9 items-center justify-center rounded-full border border-[#bdd5e1] bg-[#edf6fa] text-[10px] font-semibold text-[#397392]">
+                <div className="internal-card-title flex h-9 w-9 items-center justify-center rounded-full border border-[#bdd5e1] bg-[#edf6fa] font-semibold text-[#397392]">
                   {
                     member.initials
                   }
                 </div>
 
                 <div>
-                  <p className="text-sm font-semibold text-[#17394f]">
+                  <p className="internal-card-title font-semibold text-[#17394f]">
                     {
                       member.name
                     }
                   </p>
 
-                  <p className="mt-0.5 text-[10px] text-[#82949e]">
+                  <p className="internal-help-text mt-0.5 text-[#526d7c]">
                     {member.role}
                   </p>
                 </div>
               </div>
 
-              <span className="rounded-full border border-[#c9dce6] bg-[#edf6fa] px-3 py-1.5 text-[9px] font-semibold text-[#5681a0]">
+              <span className="internal-card-title rounded-full border border-[#c9dce6] bg-[#edf6fa] px-3 py-1.5 font-semibold text-[#5681a0]">
                 {
                   member
                     .activeProjects
@@ -417,7 +417,7 @@ function DistributionTab({
                       className="grid w-full gap-4 px-5 py-4 text-left transition hover:bg-[#f8fafb] sm:px-6 md:grid-cols-[120px_1fr_180px_120px] md:items-center"
                     >
                       <div>
-                        <p className="text-[9px] font-semibold uppercase tracking-[0.09em] text-[#5681a0]">
+                        <p className="internal-eyebrow font-semibold uppercase text-[#5681a0]">
                           {
                             project.id
                           }
@@ -425,13 +425,13 @@ function DistributionTab({
                       </div>
 
                       <div>
-                        <p className="text-xs font-semibold text-[#31566d]">
+                        <p className="internal-card-title font-semibold text-[#31566d]">
                           {
                             project.company
                           }
                         </p>
 
-                        <p className="mt-1 text-[9px] text-[#82949e]">
+                        <p className="internal-help-text mt-1 text-[#526d7c]">
                           {
                             project.service
                           }
@@ -439,11 +439,11 @@ function DistributionTab({
                       </div>
 
                       <div>
-                        <p className="text-[9px] uppercase tracking-[0.08em] text-[#8999a3]">
+                        <p className="internal-eyebrow uppercase text-[#526d7c]">
                           Equipamento
                         </p>
 
-                        <p className="mt-1 text-[10px] font-semibold text-[#536f80]">
+                        <p className="internal-card-title mt-1 font-semibold text-[#536f80]">
                           {
                             project.machine
                           }
@@ -451,11 +451,11 @@ function DistributionTab({
                       </div>
 
                       <div>
-                        <p className="text-[9px] uppercase tracking-[0.08em] text-[#8999a3]">
+                        <p className="internal-eyebrow uppercase text-[#526d7c]">
                           Prazo
                         </p>
 
-                        <p className="mt-1 text-[10px] font-semibold text-[#536f80]">
+                        <p className="internal-card-title mt-1 font-semibold text-[#536f80]">
                           {
                             project.deadline
                           }
@@ -467,7 +467,7 @@ function DistributionTab({
               </div>
             ) : (
               <div className="px-6 py-10 text-center">
-                <p className="text-xs text-[#82949e]">
+                <p className="internal-help-text text-[#526d7c]">
                   Nenhum projeto ativo atribuído.
                 </p>
               </div>
@@ -499,7 +499,7 @@ function ProfilesTab({
             className="rounded-[20px] border border-[#d1dde4] bg-white p-5"
           >
             <div className="flex items-start justify-between gap-3">
-              <span className="flex h-9 w-9 items-center justify-center rounded-[10px] border border-[#c7dae4] bg-[#edf6fa] text-[10px] font-semibold text-[#5681a0]">
+              <span className="internal-card-title flex h-9 w-9 items-center justify-center rounded-[10px] border border-[#c7dae4] bg-[#edf6fa] font-semibold text-[#5681a0]">
                 {
                   profile.name
                     .charAt(0)
@@ -513,11 +513,11 @@ function ProfilesTab({
               />
             </div>
 
-            <h3 className="mt-5 text-sm font-semibold text-[#17394f]">
+            <h3 className="internal-section-title mt-5 font-semibold text-[#17394f]">
               {profile.name}
             </h3>
 
-            <p className="mt-2 text-xs leading-5 text-[#718795]">
+            <p className="internal-card-description mt-2 text-[#526d7c]">
               {
                 profile.description
               }
@@ -526,7 +526,7 @@ function ProfilesTab({
             {profile.status ===
               "A validar" && (
               <div className="mt-5 border-t border-[#e5ebef] pt-4">
-                <p className="text-[9px] leading-4 text-[#8a9aa3]">
+                <p className="internal-card-description text-[#526d7c]">
                   Permissões e funções serão definidas somente após validação do fluxo real com a empresa.
                 </p>
               </div>
@@ -551,7 +551,7 @@ function MetricCard({
 }) {
   return (
     <div className="rounded-[20px] border border-[#d1dde4] bg-white p-5">
-      <p className="text-[9px] font-semibold uppercase tracking-[0.12em] text-[#718895]">
+      <p className="internal-eyebrow font-semibold uppercase text-[#526d7c]">
         {label}
       </p>
 
@@ -559,7 +559,7 @@ function MetricCard({
         {value}
       </p>
 
-      <p className="mt-3 text-[10px] leading-5 text-[#84949e]">
+      <p className="internal-card-description mt-3 text-[#526d7c]">
         {description}
       </p>
     </div>
@@ -573,7 +573,7 @@ function SmallMetric({
 }) {
   return (
     <div>
-      <p className="text-[8px] font-semibold uppercase tracking-[0.08em] text-[#8999a3]">
+      <p className="internal-eyebrow font-semibold uppercase text-[#526d7c]">
         {label}
       </p>
 
@@ -585,7 +585,7 @@ function SmallMetric({
 
           ${
             text
-              ? "text-[10px]"
+              ? "internal-help-text "
               : "text-lg"
           }
         `}
@@ -600,7 +600,7 @@ function StatusBadge({
   status,
 }) {
   return (
-    <span className="rounded-full border border-[#b8d6c4] bg-[#edf7f1] px-2.5 py-1 text-[8px] font-semibold uppercase tracking-[0.07em] text-[#397250]">
+    <span className="internal-eyebrow rounded-full border border-[#b8d6c4] bg-[#edf7f1] px-2.5 py-1 font-semibold uppercase text-[#397250]">
       {status}
     </span>
   );
@@ -615,14 +615,14 @@ function ProfileStatus({
 
   return (
     <span
-      className={`
+      className={`internal-eyebrow 
         rounded-full
         border
         px-2.5 py-1
-        text-[8px]
+        
         font-semibold
         uppercase
-        tracking-[0.07em]
+        
 
         ${
           active

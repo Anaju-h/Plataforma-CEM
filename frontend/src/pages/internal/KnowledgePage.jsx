@@ -89,7 +89,7 @@ export function KnowledgePage() {
         action={
           <button
             type="button"
-            className="rounded-[12px] bg-[#096ab2] px-5 py-3 text-[10px] font-semibold uppercase tracking-[0.1em] text-white transition hover:bg-[#075b99]"
+            className="internal-eyebrow rounded-[12px] bg-[#096ab2] px-5 py-3 font-semibold uppercase text-white transition hover:bg-[#075b99]"
           >
             + Novo conteúdo
           </button>
@@ -151,18 +151,18 @@ export function KnowledgePage() {
               )
             }
             placeholder="Pesquisar equipamento, tecnologia, procedimento, palavra-chave..."
-            className="
+            className="internal-field-value 
               h-11
               w-full
               rounded-[12px]
               border border-[#d7e1e7]
               bg-[#f9fbfc]
               px-4
-              text-sm
+              
               text-[#17394f]
               outline-none
               transition
-              placeholder:text-[#98a8b2]
+              placeholder:text-[#526d7c]
               focus:border-[#76a9c7]
               focus:bg-white
             "
@@ -175,13 +175,13 @@ export function KnowledgePage() {
                 event.target.value,
               )
             }
-            className="
+            className="internal-field-value 
               h-11
               rounded-[12px]
               border border-[#d7e1e7]
               bg-[#f9fbfc]
               px-3
-              text-xs
+              
               font-medium
               text-[#536f80]
               outline-none
@@ -233,11 +233,11 @@ export function KnowledgePage() {
       {filteredItems.length ===
         0 && (
         <div className="mt-5 rounded-[20px] border border-dashed border-[#cbd9e1] bg-[#f8fafb] px-6 py-16 text-center">
-          <p className="text-sm font-semibold text-[#536f80]">
+          <p className="internal-card-title font-semibold text-[#536f80]">
             Nenhum conteúdo encontrado.
           </p>
 
-          <p className="mt-2 text-xs text-[#82949e]">
+          <p className="internal-help-text mt-2 text-[#526d7c]">
             Tente alterar a busca ou a categoria selecionada.
           </p>
         </div>
@@ -265,12 +265,12 @@ function KnowledgeCard({
     >
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <p className="text-[9px] font-semibold uppercase tracking-[0.13em] text-[#5681a0]">
+          <p className="internal-eyebrow font-semibold uppercase text-[#5681a0]">
             {category?.label ??
               "Conhecimento"}
           </p>
 
-          <p className="mt-1 text-[9px] font-medium tracking-[0.08em] text-[#94a2aa]">
+          <p className="internal-card-title mt-1 font-medium tracking-[0.08em] text-[#526d7c]">
             {item.id}
           </p>
         </div>
@@ -282,11 +282,11 @@ function KnowledgeCard({
         />
       </div>
 
-      <h2 className="mt-5 text-lg font-semibold leading-7 tracking-[-0.025em] text-[#17394f]">
+      <h2 className="internal-section-title mt-5 font-semibold text-[#17394f]">
         {item.title}
       </h2>
 
-      <p className="mt-2 line-clamp-3 text-xs leading-5 text-[#748995]">
+      <p className="internal-section-description mt-2 line-clamp-3 text-[#526d7c]">
         {item.summary}
       </p>
 
@@ -296,7 +296,7 @@ function KnowledgeCard({
           .map((tag) => (
             <span
               key={tag}
-              className="rounded-full border border-[#d5e2e8] bg-[#f5f9fb] px-2.5 py-1 text-[9px] text-[#668090]"
+              className="internal-help-text rounded-full border border-[#d5e2e8] bg-[#f5f9fb] px-2.5 py-1 text-[#526d7c]"
             >
               {tag}
             </span>
@@ -305,11 +305,11 @@ function KnowledgeCard({
 
       <div className="mt-auto flex items-center justify-between border-t border-[#e5ebef] pt-5">
         <div>
-          <p className="text-[8px] font-semibold uppercase tracking-[0.1em] text-[#94a2aa]">
+          <p className="internal-eyebrow font-semibold uppercase text-[#526d7c]">
             Última revisão
           </p>
 
-          <p className="mt-1 text-[10px] font-medium text-[#607989]">
+          <p className="internal-card-title mt-1 font-medium text-[#607989]">
             {item.lastReview}
           </p>
         </div>
@@ -329,7 +329,7 @@ function MetricCard({
 }) {
   return (
     <div className="rounded-[20px] border border-[#d1dde4] bg-white p-5">
-      <p className="text-[9px] font-semibold uppercase tracking-[0.12em] text-[#718895]">
+      <p className="internal-eyebrow font-semibold uppercase text-[#526d7c]">
         {label}
       </p>
 
@@ -337,7 +337,7 @@ function MetricCard({
         {value}
       </p>
 
-      <p className="mt-3 text-[10px] leading-5 text-[#84949e]">
+      <p className="internal-card-description mt-3 text-[#526d7c]">
         {detail}
       </p>
     </div>

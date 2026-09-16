@@ -1,3 +1,4 @@
+import { getCommercialReference } from "./pricingService";
 import {
   quotes,
 } from "../data/internal/quotes";
@@ -841,6 +842,8 @@ export function createQuoteFromRequest(
     );
   }
 
+  const commercialRateReference = Object.freeze(getCommercialReference());
+
   const quoteId =
     generateNextQuoteId();
 
@@ -943,8 +946,10 @@ export function createQuoteFromRequest(
     billableHours:
       0,
 
+    commercialRateReference,
+
     hourlyRate:
-      initialCommercialReference.hourlyRate,
+      commercialRateReference.hourlyRate,
 
     internalCost:
       0,

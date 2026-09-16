@@ -1,5 +1,64 @@
 @import "tailwindcss";
 
+/* Opt-in typography for internal pages; public and customer surfaces keep their styles. */
+@layer components {
+  .internal-page-title {
+    font-size: clamp(28px, 2.5vw, 32px);
+    line-height: 1.2;
+    font-weight: 600;
+    letter-spacing: -0.035em;
+  }
+
+  .internal-page-description {
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  .internal-eyebrow,
+  .internal-field-label {
+    font-size: 12px;
+    line-height: 1.5;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .internal-section-title {
+    font-size: 20px;
+    line-height: 1.4;
+    font-weight: 600;
+    letter-spacing: -0.025em;
+  }
+
+  .internal-section-description,
+  .internal-body {
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  .internal-field-value {
+    font-size: 15px;
+    line-height: 1.4;
+    letter-spacing: normal;
+    text-transform: none;
+  }
+
+  .internal-field-value::placeholder {
+    color: #526d7c;
+  }
+
+  .internal-card-title {
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  .internal-card-description,
+  .internal-help-text {
+    font-size: 13px;
+    line-height: 1.5;
+  }
+}
+
 :root {
   --color-brand: #0057b8;
   --color-brand-dark: #003a70;
@@ -53,6 +112,13 @@ input,
 textarea,
 select {
   font: inherit;
+}
+
+/* Let opt-in internal controls use their component typography over the reset. */
+:is(button, input, textarea, select)[class*="internal-"] {
+  font-size: revert-layer;
+  line-height: revert-layer;
+  font-weight: revert-layer;
 }
 
 a {

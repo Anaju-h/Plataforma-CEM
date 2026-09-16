@@ -1,3 +1,4 @@
+import { CommercialRateSettings } from "../../components/internal/CommercialRateSettings";
 import {
   useState,
 } from "react";
@@ -163,20 +164,20 @@ export function AdministrationPage() {
                     tab.id,
                   )
                 }
-                className={`
+                className={`internal-eyebrow 
                   rounded-[10px]
                   px-4 py-2.5
-                  text-[9px]
+                  
                   font-semibold
                   uppercase
-                  tracking-[0.08em]
+                  
                   transition
 
                   ${
                     activeTab ===
                     tab.id
                       ? "bg-[#0b3550] text-white"
-                      : "text-[#667f8e] hover:bg-[#f3f7f9]"
+                      : "text-[#526d7c] hover:bg-[#f3f7f9]"
                   }
                 `}
               >
@@ -188,6 +189,7 @@ export function AdministrationPage() {
       </div>
 
       <div className="mt-5">
+        {activeTab === "general" && <CommercialRateSettings />}
         {activeTab ===
           "general" && (
           <GeneralTab
@@ -351,15 +353,15 @@ function GeneralTab({
       ===================================================== */}
 
       <section className="rounded-[20px] border border-[#c7d9e3] bg-[#eaf3f8] p-5 sm:p-6">
-        <p className="text-[9px] font-semibold uppercase tracking-[0.14em] text-[#5681a0]">
+        <p className="internal-eyebrow font-semibold uppercase text-[#5681a0]">
           Regras gerais do portal
         </p>
 
-        <h2 className="mt-2 text-lg font-semibold text-[#17394f]">
+        <h2 className="internal-section-title mt-2 font-semibold text-[#17394f]">
           Configurações que orientam o fluxo operacional.
         </h2>
 
-        <p className="mt-2 max-w-4xl text-xs leading-5 text-[#6d8390]">
+        <p className="internal-section-description mt-2 max-w-4xl text-[#526d7c]">
           Esta área reúne parâmetros usados como padrão para novos registros e
           regras gerais do processo. Valores definidos em um orçamento ou
           projeto específico continuam podendo seguir suas próprias condições
@@ -375,15 +377,15 @@ function GeneralTab({
 
           <section className="rounded-[22px] border border-[#d1dde4] bg-white p-5 shadow-[0_10px_30px_rgba(34,67,90,0.025)] sm:p-6">
             <div>
-              <p className="text-[9px] font-semibold uppercase tracking-[0.14em] text-[#5681a0]">
+              <p className="internal-eyebrow font-semibold uppercase text-[#5681a0]">
                 Configurações operacionais
               </p>
 
-              <h2 className="mt-2 text-lg font-semibold text-[#17394f]">
+              <h2 className="internal-section-title mt-2 font-semibold text-[#17394f]">
                 Padrões utilizados nos novos processos
               </h2>
 
-              <p className="mt-2 max-w-3xl text-xs leading-5 text-[#7a8e99]">
+              <p className="internal-section-description mt-2 max-w-3xl text-[#526d7c]">
                 Estes valores funcionam como ponto inicial e podem ser
                 substituídos quando um caso específico exigir outra condição.
               </p>
@@ -482,11 +484,11 @@ function GeneralTab({
           ================================================= */}
 
           <section className="rounded-[22px] border border-[#d1dde4] bg-white p-5 shadow-[0_10px_30px_rgba(34,67,90,0.025)] sm:p-6">
-            <p className="text-[9px] font-semibold uppercase tracking-[0.14em] text-[#5681a0]">
+            <p className="internal-eyebrow font-semibold uppercase text-[#5681a0]">
               Fluxo comercial e operacional
             </p>
 
-            <h2 className="mt-2 text-lg font-semibold text-[#17394f]">
+            <h2 className="internal-section-title mt-2 font-semibold text-[#17394f]">
               Regras de transição entre etapas
             </h2>
 
@@ -533,7 +535,7 @@ function GeneralTab({
             </div>
 
             <div className="mt-5 rounded-[13px] border border-[#d4e1e7] bg-[#f8fafb] p-4">
-              <p className="text-[10px] leading-5 text-[#7b8f9a]">
+              <p className="internal-card-description text-[#526d7c]">
                 Algumas regras desta área já fazem parte do fluxo atual. Outras
                 estão preparadas para serem conectadas à lógica definitiva após
                 a revisão geral do portal e a implementação do backend.
@@ -546,15 +548,15 @@ function GeneralTab({
           ================================================= */}
 
           <section className="rounded-[22px] border border-[#d1dde4] bg-white p-5 shadow-[0_10px_30px_rgba(34,67,90,0.025)] sm:p-6">
-            <p className="text-[9px] font-semibold uppercase tracking-[0.14em] text-[#5681a0]">
+            <p className="internal-eyebrow font-semibold uppercase text-[#5681a0]">
               Identificação dos processos
             </p>
 
-            <h2 className="mt-2 text-lg font-semibold text-[#17394f]">
+            <h2 className="internal-section-title mt-2 font-semibold text-[#17394f]">
               Prefixos utilizados nos registros
             </h2>
 
-            <p className="mt-2 max-w-3xl text-xs leading-5 text-[#7a8e99]">
+            <p className="internal-section-description mt-2 max-w-3xl text-[#526d7c]">
               Estes identificadores ajudam a reconhecer rapidamente o tipo de
               registro durante a navegação e a rastreabilidade do processo.
             </p>
@@ -610,7 +612,7 @@ function GeneralTab({
             </div>
 
             <div className="mt-5 rounded-[13px] border border-[#dfd4b7] bg-[#f8f2e5] p-4">
-              <p className="text-[10px] leading-5 text-[#80682e]">
+              <p className="internal-card-description text-[#80682e]">
                 Alterar estes prefixos no protótipo ainda não modifica os IDs já
                 existentes. A numeração definitiva será controlada pelo backend.
               </p>
@@ -627,13 +629,13 @@ function GeneralTab({
               onClick={
                 save
               }
-              className="rounded-[11px] bg-[#096ab2] px-5 py-3 text-[9px] font-semibold uppercase tracking-[0.09em] text-white transition hover:bg-[#075b99]"
+              className="internal-eyebrow rounded-[11px] bg-[#096ab2] px-5 py-3 font-semibold uppercase text-white transition hover:bg-[#075b99]"
             >
               Salvar configurações
             </button>
 
             {feedback && (
-              <span className="text-[10px] font-semibold text-[#397250]">
+              <span className="internal-card-title font-semibold text-[#397250]">
                 ✓ {feedback}
               </span>
             )}
@@ -646,11 +648,11 @@ function GeneralTab({
 
         <aside className="space-y-5">
           <section className="rounded-[22px] border border-[#c7d9e3] bg-[#e6f0f5] p-5">
-            <p className="text-[9px] font-semibold uppercase tracking-[0.14em] text-[#5681a0]">
+            <p className="internal-eyebrow font-semibold uppercase text-[#5681a0]">
               Atalhos administrativos
             </p>
 
-            <p className="mt-2 text-xs leading-5 text-[#6d8390]">
+            <p className="internal-card-description mt-2 text-[#526d7c]">
               Algumas configurações possuem áreas próprias para evitar
               duplicidade de informações.
             </p>
@@ -691,7 +693,7 @@ function GeneralTab({
           </section>
 
           <section className="rounded-[22px] border border-[#d1dde4] bg-white p-5">
-            <p className="text-[9px] font-semibold uppercase tracking-[0.12em] text-[#718895]">
+            <p className="internal-eyebrow font-semibold uppercase text-[#526d7c]">
               Fluxo principal
             </p>
 
@@ -723,15 +725,15 @@ function AttentionRulesTab({
   return (
     <div className="space-y-4">
       <section className="rounded-[20px] border border-[#c7d9e3] bg-[#eaf3f8] p-5">
-        <p className="text-[9px] font-semibold uppercase tracking-[0.14em] text-[#5681a0]">
+        <p className="internal-eyebrow font-semibold uppercase text-[#5681a0]">
           Inteligência operacional
         </p>
 
-        <h2 className="mt-2 text-lg font-semibold text-[#17394f]">
+        <h2 className="internal-section-title mt-2 font-semibold text-[#17394f]">
           Quando uma situação deve ganhar prioridade?
         </h2>
 
-        <p className="mt-2 max-w-4xl text-xs leading-5 text-[#6d8390]">
+        <p className="internal-section-description mt-2 max-w-4xl text-[#526d7c]">
           Estas regras serão utilizadas pelo motor de atenção para transformar
           tempo parado, proximidade de prazo e estados do fluxo em alertas no
           Meu trabalho e, futuramente, em notificações.
@@ -786,18 +788,18 @@ function AttentionRuleCard({
       <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
         <div className="max-w-2xl">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="rounded-full border border-[#c9dce6] bg-[#edf6fa] px-3 py-1 text-[8px] font-semibold uppercase tracking-[0.08em] text-[#5681a0]">
+            <span className="internal-eyebrow rounded-full border border-[#c9dce6] bg-[#edf6fa] px-3 py-1 font-semibold uppercase text-[#5681a0]">
               {rule.entity}
             </span>
 
-            <span className="text-xs font-semibold text-[#31566d]">
+            <span className="internal-card-title font-semibold text-[#31566d]">
               {
                 rule.situation
               }
             </span>
           </div>
 
-          <p className="mt-3 text-xs leading-5 text-[#748995]">
+          <p className="internal-card-description mt-3 text-[#526d7c]">
             {rule.description}
           </p>
         </div>
@@ -873,11 +875,11 @@ function SecurityTab({
   return (
     <div className="grid gap-5 xl:grid-cols-[1fr_340px]">
       <section className="rounded-[22px] border border-[#d1dde4] bg-white p-5 sm:p-6">
-        <p className="text-[9px] font-semibold uppercase tracking-[0.14em] text-[#5681a0]">
+        <p className="internal-eyebrow font-semibold uppercase text-[#5681a0]">
           Acesso e segurança
         </p>
 
-        <h2 className="mt-2 text-lg font-semibold text-[#17394f]">
+        <h2 className="internal-section-title mt-2 font-semibold text-[#17394f]">
           Modelo atual de acesso
         </h2>
 
@@ -919,11 +921,11 @@ function SecurityTab({
         />
 
         <section className="rounded-[22px] border border-[#d1dde4] bg-white p-5">
-          <p className="text-[9px] font-semibold uppercase tracking-[0.12em] text-[#718895]">
+          <p className="internal-eyebrow font-semibold uppercase text-[#526d7c]">
             Usuários
           </p>
 
-          <p className="mt-3 text-xs leading-5 text-[#718795]">
+          <p className="internal-card-description mt-3 text-[#526d7c]">
             Consulte a estrutura atual de membros e perfis previstos na área
             Equipe.
           </p>
@@ -933,7 +935,7 @@ function SecurityTab({
             onClick={
               onOpenTeam
             }
-            className="mt-4 text-[9px] font-semibold uppercase tracking-[0.09em] text-[#356f9f]"
+            className="internal-eyebrow mt-4 font-semibold uppercase text-[#356f9f]"
           >
             Abrir equipe →
           </button>
@@ -963,7 +965,7 @@ function IntegrationsTab({
             className="rounded-[20px] border border-[#d1dde4] bg-white p-5"
           >
             <div className="flex items-start justify-between gap-4">
-              <span className="flex h-10 w-10 items-center justify-center rounded-[11px] border border-[#c7dae4] bg-[#edf6fa] text-xs font-semibold text-[#5681a0]">
+              <span className="internal-card-title flex h-10 w-10 items-center justify-center rounded-[11px] border border-[#c7dae4] bg-[#edf6fa] font-semibold text-[#5681a0]">
                 {integration.name.charAt(
                   0,
                 )}
@@ -976,20 +978,20 @@ function IntegrationsTab({
               />
             </div>
 
-            <h3 className="mt-5 text-sm font-semibold text-[#17394f]">
+            <h3 className="internal-section-title mt-5 font-semibold text-[#17394f]">
               {
                 integration.name
               }
             </h3>
 
-            <p className="mt-2 text-xs leading-5 text-[#718795]">
+            <p className="internal-card-description mt-2 text-[#526d7c]">
               {
                 integration.description
               }
             </p>
 
             <div className="mt-5 border-t border-[#e5ebef] pt-4">
-              <p className="text-[9px] leading-4 text-[#8a9aa3]">
+              <p className="internal-card-description text-[#526d7c]">
                 Configuração será habilitada quando os requisitos técnicos e
                 corporativos forem definidos.
               </p>
@@ -1013,11 +1015,11 @@ function AuditTab({
   return (
     <section className="overflow-hidden rounded-[22px] border border-[#d1dde4] bg-white">
       <div className="border-b border-[#e2e9ed] px-5 py-5 sm:px-6">
-        <p className="text-sm font-semibold text-[#17394f]">
+        <p className="internal-card-title font-semibold text-[#17394f]">
           Histórico administrativo
         </p>
 
-        <p className="mt-1 text-xs text-[#7e919c]">
+        <p className="internal-help-text mt-1 text-[#526d7c]">
           Eventos relevantes relacionados à configuração do portal.
         </p>
       </div>
@@ -1034,11 +1036,11 @@ function AuditTab({
                 className="grid gap-4 px-5 py-5 sm:px-6 lg:grid-cols-[140px_1fr_180px]"
               >
                 <div>
-                  <p className="text-[8px] font-semibold uppercase tracking-[0.09em] text-[#8999a3]">
+                  <p className="internal-eyebrow font-semibold uppercase text-[#526d7c]">
                     Data
                   </p>
 
-                  <p className="mt-1.5 text-xs font-semibold text-[#536f80]">
+                  <p className="internal-card-title mt-1.5 font-semibold text-[#536f80]">
                     {
                       event.date
                     }
@@ -1047,20 +1049,20 @@ function AuditTab({
 
                 <div>
                   <div className="flex flex-wrap items-center gap-2">
-                    <p className="text-xs font-semibold text-[#31566d]">
+                    <p className="internal-card-title font-semibold text-[#31566d]">
                       {
                         event.action
                       }
                     </p>
 
-                    <span className="rounded-full border border-[#d2e1e8] bg-[#f5f9fb] px-2.5 py-1 text-[8px] font-semibold text-[#668090]">
+                    <span className="internal-card-title rounded-full border border-[#d2e1e8] bg-[#f5f9fb] px-2.5 py-1 font-semibold text-[#526d7c]">
                       {
                         event.area
                       }
                     </span>
                   </div>
 
-                  <p className="mt-2 text-[10px] leading-5 text-[#82949e]">
+                  <p className="internal-card-description mt-2 text-[#526d7c]">
                     {
                       event.description
                     }
@@ -1068,11 +1070,11 @@ function AuditTab({
                 </div>
 
                 <div>
-                  <p className="text-[8px] font-semibold uppercase tracking-[0.09em] text-[#8999a3]">
+                  <p className="internal-eyebrow font-semibold uppercase text-[#526d7c]">
                     Responsável
                   </p>
 
-                  <p className="mt-1.5 text-xs font-semibold text-[#536f80]">
+                  <p className="internal-card-title mt-1.5 font-semibold text-[#536f80]">
                     {
                       event.actor
                     }
@@ -1084,7 +1086,7 @@ function AuditTab({
         </div>
       ) : (
         <div className="px-6 py-14 text-center">
-          <p className="text-xs text-[#82949e]">
+          <p className="internal-help-text text-[#526d7c]">
             Nenhum evento registrado.
           </p>
         </div>
@@ -1149,13 +1151,13 @@ function NumberSetting({
           className={`${inputClasses} pr-16`}
         />
 
-        <span className="pointer-events-none absolute right-4 top-[22px] -translate-y-1/2 text-[9px] text-[#84949e]">
+        <span className="internal-help-text pointer-events-none absolute right-4 top-[22px] -translate-y-1/2 text-[#526d7c]">
           {suffix}
         </span>
       </div>
 
       {help && (
-        <p className="mt-2 text-[9px] leading-4 text-[#8a9aa3]">
+        <p className="internal-card-description mt-2 text-[#526d7c]">
           {help}
         </p>
       )}
@@ -1206,7 +1208,7 @@ function SelectSetting({
       </select>
 
       {help && (
-        <p className="mt-2 text-[9px] leading-4 text-[#8a9aa3]">
+        <p className="internal-card-description mt-2 text-[#526d7c]">
           {help}
         </p>
       )}
@@ -1222,7 +1224,7 @@ function PrefixSetting({
 }) {
   return (
     <label className="rounded-[15px] border border-[#d9e3e8] bg-[#f8fafb] p-4">
-      <span className="text-[9px] font-semibold uppercase tracking-[0.09em] text-[#718895]">
+      <span className="internal-eyebrow font-semibold uppercase text-[#526d7c]">
         {label}
       </span>
 
@@ -1237,10 +1239,10 @@ function PrefixSetting({
             event.target.value,
           )
         }
-        className="mt-3 h-10 w-full rounded-[10px] border border-[#d3dfe6] bg-white px-3 text-sm font-semibold uppercase tracking-[0.1em] text-[#31566d] outline-none transition focus:border-[#78a9c4]"
+        className="internal-field-value mt-3 h-10 w-full rounded-[10px] border border-[#d3dfe6] bg-white px-3 font-semibold text-[#31566d] outline-none transition focus:border-[#78a9c4]"
       />
 
-      <p className="mt-3 text-[9px] text-[#8a9aa3]">
+      <p className="internal-help-text mt-3 text-[#526d7c]">
         Exemplo:{" "}
         <span className="font-semibold text-[#607989]">
           {example}
@@ -1263,40 +1265,40 @@ function FlowRule({
     <div className="flex flex-col gap-4 rounded-[15px] border border-[#d9e3e8] bg-[#f8fafb] p-4 sm:flex-row sm:items-center sm:justify-between">
       <div>
         <div className="flex flex-wrap items-center gap-2">
-          <p className="text-xs font-semibold text-[#31566d]">
+          <p className="internal-card-title font-semibold text-[#31566d]">
             {title}
           </p>
 
           {implemented && (
-            <span className="rounded-full border border-[#b8d6c4] bg-[#edf7f1] px-2 py-0.5 text-[7px] font-semibold uppercase tracking-[0.07em] text-[#397250]">
+            <span className="internal-eyebrow rounded-full border border-[#b8d6c4] bg-[#edf7f1] px-2 py-0.5 font-semibold uppercase text-[#397250]">
               Em uso
             </span>
           )}
 
           {prepared && (
-            <span className="rounded-full border border-[#d9d4bb] bg-[#f7f3e7] px-2 py-0.5 text-[7px] font-semibold uppercase tracking-[0.07em] text-[#806b36]">
+            <span className="internal-eyebrow rounded-full border border-[#d9d4bb] bg-[#f7f3e7] px-2 py-0.5 font-semibold uppercase text-[#806b36]">
               Preparada
             </span>
           )}
         </div>
 
-        <p className="mt-1.5 max-w-2xl text-[10px] leading-5 text-[#82949e]">
+        <p className="internal-card-description mt-1.5 max-w-2xl text-[#526d7c]">
           {description}
         </p>
       </div>
 
       <div className="flex shrink-0 items-center gap-3">
         <span
-          className={`
-            text-[8px]
+          className={`internal-eyebrow 
+            
             font-semibold
             uppercase
-            tracking-[0.07em]
+            
 
             ${
               enabled
                 ? "text-[#397250]"
-                : "text-[#8a979f]"
+                : "text-[#526d7c]"
             }
           `}
         >
@@ -1330,16 +1332,16 @@ function AdminShortcut({
       className="group flex w-full items-center justify-between gap-4 rounded-[13px] border border-[#c9dce5] bg-white/75 p-3.5 text-left transition hover:border-[#98bccd] hover:bg-white"
     >
       <div>
-        <p className="text-[10px] font-semibold text-[#31566d]">
+        <p className="internal-card-title font-semibold text-[#31566d]">
           {title}
         </p>
 
-        <p className="mt-1 text-[8px] leading-4 text-[#83949e]">
+        <p className="internal-card-description mt-1 text-[#526d7c]">
           {description}
         </p>
       </div>
 
-      <span className="shrink-0 text-xs text-[#7c9eb0] transition group-hover:translate-x-1">
+      <span className="internal-help-text shrink-0 text-[#526d7c] transition group-hover:translate-x-1">
         →
       </span>
     </button>
@@ -1386,13 +1388,13 @@ function ProcessFlow() {
             }
           >
             <div className="flex items-center gap-3">
-              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[#c7dae4] bg-[#edf6fa] text-[8px] font-semibold text-[#5681a0]">
+              <span className="internal-card-title flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[#c7dae4] bg-[#edf6fa] font-semibold text-[#5681a0]">
                 {
                   item.code
                 }
               </span>
 
-              <p className="text-[10px] font-semibold text-[#536f80]">
+              <p className="internal-card-title font-semibold text-[#536f80]">
                 {
                   item.label
                 }
@@ -1452,7 +1454,7 @@ function DayInput({
           className={`${inputClasses} pr-14 disabled:cursor-not-allowed disabled:bg-[#eef2f4]`}
         />
 
-        <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-[9px] text-[#84949e]">
+        <span className="internal-help-text pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-[#526d7c]">
           dias
         </span>
       </div>
@@ -1522,21 +1524,21 @@ function SecurityItem({
     <div className="rounded-[16px] border border-[#d9e3e8] bg-[#f8fafb] p-4">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <p className="text-xs font-semibold text-[#31566d]">
+          <p className="internal-card-title font-semibold text-[#31566d]">
             {title}
           </p>
 
-          <p className="mt-1 text-[10px] font-medium text-[#718795]">
+          <p className="internal-card-title mt-1 font-medium text-[#526d7c]">
             {value}
           </p>
         </div>
 
-        <span className="rounded-full border border-[#d0dde4] bg-white px-2.5 py-1 text-[8px] font-semibold uppercase tracking-[0.06em] text-[#667f8e]">
+        <span className="internal-eyebrow rounded-full border border-[#d0dde4] bg-white px-2.5 py-1 font-semibold uppercase text-[#526d7c]">
           {status}
         </span>
       </div>
 
-      <p className="mt-3 text-[10px] leading-5 text-[#8797a0]">
+      <p className="internal-card-description mt-3 text-[#526d7c]">
         {description}
       </p>
     </div>
@@ -1551,7 +1553,7 @@ function MetricCard({
 }) {
   return (
     <div className="rounded-[20px] border border-[#d1dde4] bg-white p-5">
-      <p className="text-[9px] font-semibold uppercase tracking-[0.12em] text-[#718895]">
+      <p className="internal-eyebrow font-semibold uppercase text-[#526d7c]">
         {label}
       </p>
 
@@ -1572,7 +1574,7 @@ function MetricCard({
         {value}
       </p>
 
-      <p className="mt-3 text-[10px] leading-5 text-[#84949e]">
+      <p className="internal-card-description mt-3 text-[#526d7c]">
         {description}
       </p>
     </div>
@@ -1585,11 +1587,11 @@ function InfoBox({
 }) {
   return (
     <section className="rounded-[22px] border border-[#c7d9e3] bg-[#e6f0f5] p-5">
-      <p className="text-[9px] font-semibold uppercase tracking-[0.12em] text-[#5681a0]">
+      <p className="internal-eyebrow font-semibold uppercase text-[#5681a0]">
         {title}
       </p>
 
-      <p className="mt-3 text-xs leading-5 text-[#6d8390]">
+      <p className="internal-card-description mt-3 text-[#526d7c]">
         {text}
       </p>
     </section>
@@ -1600,7 +1602,7 @@ function IntegrationStatus({
   status,
 }) {
   return (
-    <span className="rounded-full border border-[#d4d9dc] bg-[#f4f6f7] px-2.5 py-1 text-[8px] font-semibold uppercase tracking-[0.07em] text-[#707d84]">
+    <span className="internal-eyebrow rounded-full border border-[#d4d9dc] bg-[#f4f6f7] px-2.5 py-1 font-semibold uppercase text-[#526d7c]">
       {status}
     </span>
   );
@@ -1624,16 +1626,16 @@ function sanitizePrefix(
 }
 
 const labelClasses =
-  "text-[9px] font-semibold uppercase tracking-[0.09em] text-[#607989]";
+  "internal-field-label  font-semibold uppercase  text-[#607989]";
 
-const inputClasses = `
+const inputClasses = `internal-field-value 
   h-11
   w-full
   rounded-[11px]
   border border-[#d3dfe6]
   bg-[#f8fafb]
   px-4
-  text-xs
+  
   text-[#294e64]
   outline-none
   transition
