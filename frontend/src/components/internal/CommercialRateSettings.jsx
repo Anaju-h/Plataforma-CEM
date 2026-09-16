@@ -10,7 +10,7 @@ const currency = value => new Intl.NumberFormat("pt-BR", {
 }).format(value);
 const date = value => value ? new Date(value).toLocaleString("pt-BR") : "Em aberto";
 
-export function CommercialRateSettings() {
+export function CommercialRateSettings({ onSaved } = {}) {
   const [reference, setReference] = useState(getCommercialReference);
   const [history, setHistory] = useState(getCommercialRateReferences);
   const [rate, setRate] = useState(String(reference.hourlyRate));
@@ -23,7 +23,8 @@ export function CommercialRateSettings() {
       setReference(result.reference);
       setRate(String(result.reference.hourlyRate));
       setHistory(getCommercialRateReferences());
-      setFeedback(result.historyItem ? "Referência atualizada para novos orçamentos." : "Nenhuma alteração necessária.");
+      onSaved?.(result);
+      setFeedback(result.historyItem ? "Referência atualizada para novos itens de orçamento." : "Nenhuma alteração necessária.");
     } catch (error) {
       setFeedback(error.message);
     }
@@ -33,8 +34,8 @@ export function CommercialRateSettings() {
     <section className="mb-5 rounded-[22px] border border-[#d1dde4] bg-white p-6">
       <h2 className="internal-section-title font-semibold text-[#17394f]">Valor/hora comercial padrão</h2>
       <p className="internal-section-description mt-2 text-[#607989]">
-        Vigente: {currency(reference.hourlyRate)}/h. Referência para novos orçamentos;
-        ORCs existentes mantêm seus valores. O responsável pode ajustar cada orçamento.
+        Vigente: {currency(reference.hourlyRate)}/h. Referência para novos itens, inclusive em ORCs em elaboração.
+        Itens existentes mantêm a referência capturada. O responsável pode escolher valores acima ou abaixo dela, com justificativa opcional.
       </p>
       <p className="internal-help-text mt-2 text-[#607989]">
         Demo: alterações e histórico ficam em memória e são reiniciados ao recarregar a página.

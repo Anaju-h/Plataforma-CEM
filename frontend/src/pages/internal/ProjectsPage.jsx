@@ -20,7 +20,8 @@ import {
 } from "../../data/internal/projects";
 
 import {
-  getRuntimeProjects,
+  getActiveProjects,
+  isArchivedProject,
 } from "../../services/projectService";
 
 export function ProjectsPage() {
@@ -38,7 +39,7 @@ export function ProjectsPage() {
   ] = useState("Todos");
 
   const runtimeProjects =
-    getRuntimeProjects();
+    getActiveProjects();
 
   const filteredProjects =
     useMemo(() => {
@@ -139,7 +140,7 @@ export function ProjectsPage() {
               focus:border-[#76a9c7]
             "
           >
-            {projectStatuses.map(
+            {projectStatuses.filter(status => !isArchivedProject({ status })).map(
               (item) => (
                 <option
                   key={item}

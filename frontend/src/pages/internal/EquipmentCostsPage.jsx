@@ -258,7 +258,7 @@ function OverviewTab({
           </h2>
 
           <p className="internal-card-description mt-3 max-w-2xl text-[#526d7c]">
-            Os custos técnicos e a referência comercial existem para oferecer contexto durante a elaboração de um orçamento. O responsável continua livre para definir o valor/hora e as horas cobradas.
+            Os custos técnicos oferecem contexto interno. A referência comercial é capturada por item; o responsável define as horas cotadas e pode editar livremente o valor/hora, com justificativa opcional.
           </p>
 
           <div className="mt-6 grid gap-3 sm:grid-cols-3">
@@ -297,7 +297,7 @@ function OverviewTab({
           </p>
 
           <p className="internal-card-description mt-3 text-[#526d7c]">
-            Valor atualmente utilizado como ponto de partida em novos orçamentos.
+            Valor atualmente utilizado como referência em novos itens de orçamento.
           </p>
 
           <button
@@ -615,7 +615,7 @@ function CommercialReferenceTab({
           </p>
 
           <p className="internal-card-description mt-4 max-w-xl text-[#526d7c]">
-            Este valor é utilizado como ponto de partida nos novos orçamentos. O responsável continua podendo definir outro valor em cada proposta.
+            Este valor é capturado nos novos itens de orçamento. O responsável pode escolher valores acima ou abaixo da referência, com justificativa opcional.
           </p>
         </div>
 
@@ -669,7 +669,7 @@ function CommercialReferenceTab({
             </p>
 
             <p className="internal-card-description mt-1 text-[#526d7c]">
-              A alteração será aplicada somente aos novos contextos de precificação. Orçamentos existentes mantêm seus próprios valores.
+              A alteração será aplicada aos novos itens, inclusive em ORCs em elaboração. Itens existentes preservam suas referências e valores.
             </p>
 
             <div className="mt-5 max-w-[300px]">
@@ -777,7 +777,7 @@ function CommercialReferenceTab({
           <ExplanationItem
             number="03"
             title="Reajuste"
-            text="Uma nova referência não altera propostas que já foram criadas."
+            text="Uma nova referência não altera os itens de orçamento já criados."
           />
 
           <ExplanationItem

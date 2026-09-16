@@ -60,7 +60,7 @@ const equipment = [
         href: "/servicos#inspecao-optica",
       },
     ],
-    image: "/images/equipment/o-inspect.jpeg",
+    image: "/images/equipment/oinspect.jpeg",
     imageFit: "cover",
   },
   {
@@ -143,7 +143,7 @@ const equipment = [
         href: "/servicos#engenharia-reversa",
       },
     ],
-    image: "/images/equipment/atos-q.jpeg",
+    image: "/images/equipment/atos-q-2.jpeg",
     imageFit: "cover",
   },
   {
@@ -305,7 +305,7 @@ function EquipmentHero() {
             <div className="group relative overflow-hidden rounded-[30px] border border-white/65 bg-[#071f2d] shadow-[0_28px_70px_rgba(7,31,45,0.14)]">
               <div className="relative aspect-[16/11] overflow-hidden">
                 <img
-                  src="/images/equipment/centro-1.jpeg"
+                  src="/images/equipment/laboratorio.jpeg"
                   alt="Centro de Excelência em Metrologia"
                   className="h-full w-full object-cover object-center transition-transform duration-[1200ms] ease-out group-hover:scale-[1.025]"
                 />

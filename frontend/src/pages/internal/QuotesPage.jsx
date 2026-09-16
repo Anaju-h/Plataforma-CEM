@@ -20,14 +20,11 @@ import {
 } from "../../components/internal/QuoteStatusBadge";
 
 import {
-  getRuntimeQuotes,
+  getActiveQuotes,
+  isArchivedQuote,
 } from "../../services/quoteService";
+import { quoteStatuses } from "../../data/internal/quotes";
 
-const CLOSED_STATUSES = [
-  "Aceito",
-  "Recusado",
-  "Cancelado",
-];
 
 export function QuotesPage() {
   const navigate =
@@ -46,7 +43,7 @@ export function QuotesPage() {
   );
 
   const runtimeQuotes =
-    getRuntimeQuotes();
+    getActiveQuotes();
 
   const filteredQuotes =
     useMemo(
@@ -110,12 +107,7 @@ export function QuotesPage() {
     useMemo(
       () => {
         const active =
-          runtimeQuotes.filter(
-            (quote) =>
-              !CLOSED_STATUSES.includes(
-                quote.status,
-              ),
-          );
+          runtimeQuotes;
 
         return {
           active:
@@ -203,7 +195,7 @@ export function QuotesPage() {
         }
       />
 
-      <div className="mt-7 grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
+      <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
         <SummaryCard
           label="Em andamento"
           value={
@@ -246,7 +238,8 @@ export function QuotesPage() {
       </div>
 
       <div className="mt-5">
-        <QuoteFilters
+      <QuoteFilters
+        statusOptions={quoteStatuses.filter(status => !isArchivedQuote({ status }))}
           search={
             search
           }
@@ -477,12 +470,12 @@ function SummaryCard({
   description,
 }) {
   return (
-    <div className="rounded-[18px] border border-[#cadce5] bg-white/62 px-5 py-4 shadow-[0_8px_24px_rgba(31,68,92,0.04)] backdrop-blur-[16px]">
+    <div className="rounded-[18px] border border-[#cadce5] bg-white/62 px-4 py-3 shadow-[0_8px_24px_rgba(31,68,92,0.04)] backdrop-blur-[16px]">
       <p className="internal-eyebrow font-semibold uppercase text-[#607f90]">
         {label}
       </p>
 
-      <div className="mt-3 flex items-end justify-between gap-3">
+      <div className="mt-1 flex items-end justify-between gap-3">
         <p className="text-[28px] font-semibold tracking-[-0.04em] text-[#17394f]">
           {value}
         </p>

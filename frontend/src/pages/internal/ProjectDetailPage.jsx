@@ -27,6 +27,7 @@ import {
 import {
   completeRuntimeProject,
   getRuntimeProjectById,
+  isArchivedProject,
   reopenRuntimeProject,
   returnProjectToExecution,
   saveProjectInternalNotes,
@@ -122,9 +123,7 @@ export function ProjectDetailPage() {
         )
       : 0;
 
-  const isCompleted =
-    project.status ===
-    "Concluído";
+  const isCompleted = isArchivedProject(project);
 
   function toggleTask(
     taskId,
@@ -398,7 +397,7 @@ export function ProjectDetailPage() {
         {isCompleted && (
           <div className="mt-5 rounded-[14px] border border-[#bad7c5] bg-[#eef7f1] px-4 py-3">
             <p className="text-xs leading-5 text-[#557767]">
-              Este projeto está concluído. O checklist e as observações internas estão bloqueados até que o projeto seja reaberto.
+              Este projeto está encerrado. O checklist e as observações internas estão bloqueados. O registro permanece disponível no Histórico.
             </p>
           </div>
         )}

@@ -1,8 +1,10 @@
+import { InternalAccountPage } from "../pages/internal/InternalAccountPage";
 import {
   Navigate,
   Route,
   Routes,
 } from "react-router-dom";
+import { OperationalHistoryPage } from "../pages/internal/OperationalHistoryPage";
 
 import {
   ProtectedRoute,
@@ -249,6 +251,8 @@ export function AppRoutes() {
 
         <Route element={<ProtectedRoute />}>
           <Route element={<InternalLayout />}>
+            <Route path="/portal/conta" element={<InternalAccountPage />} />
+            <Route path="/portal/historico" element={<OperationalHistoryPage />} />
             <Route
               path="/portal"
               element={<DashboardPage />}

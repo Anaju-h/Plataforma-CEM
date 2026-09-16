@@ -74,7 +74,6 @@ export function Footer() {
         bg-[linear-gradient(105deg,#8199a8_0%,#9eb1bd_10%,#becdd5_23%,#dce6eb_37%,#f4f7f9_50%,#dce6eb_63%,#becdd5_77%,#9eb1bd_90%,#8199a8_100%)]
       "
     >
-      {/* CAMADAS DE PROFUNDIDADE */}
       <div
         aria-hidden="true"
         className="
@@ -83,7 +82,6 @@ export function Footer() {
           -z-10
         "
       >
-        {/* TOM NAVY ESQUERDO */}
         <div
           className="
             absolute
@@ -93,7 +91,6 @@ export function Footer() {
           "
         />
 
-        {/* TOM NAVY DIREITO */}
         <div
           className="
             absolute
@@ -103,7 +100,6 @@ export function Footer() {
           "
         />
 
-        {/* LUZ CENTRAL */}
         <div
           className="
             absolute
@@ -117,7 +113,6 @@ export function Footer() {
           "
         />
 
-        {/* REFLEXO SUPERIOR */}
         <div
           className="
             absolute
@@ -130,7 +125,6 @@ export function Footer() {
           "
         />
 
-        {/* REFLEXO SUAVE INTERNO */}
         <div
           className="
             absolute inset-0
@@ -146,17 +140,16 @@ export function Footer() {
               grid
               gap-8
               md:grid-cols-2
-              lg:grid-cols-[1.15fr_0.9fr_1fr_0.85fr]
+              lg:grid-cols-[1.2fr_0.78fr_0.9fr_0.78fr_1.32fr]
               lg:items-start
-              lg:gap-10
+              lg:gap-6
             "
           >
-            {/* MARCAS */}
             <div className="min-w-0">
               <p
                 className="
                   mb-3
-                  text-[10px]
+                  text-[9px]
                   font-semibold
                   uppercase
                   tracking-[0.18em]
@@ -172,10 +165,9 @@ export function Footer() {
                   w-[220px]
                   flex-col
                   items-center
-                  gap-1
+                  gap-3
                 "
               >
-                {/* SENAI */}
                 <div
                   className="
                     flex
@@ -205,7 +197,6 @@ export function Footer() {
                   "
                 />
 
-                {/* ZEISS */}
                 <div
                   className="
                     flex
@@ -229,26 +220,24 @@ export function Footer() {
               </div>
             </div>
 
-            {/* SERVIÇOS */}
             <FooterColumn
               title="Serviços"
               links={serviceLinks}
             />
 
-            {/* EQUIPAMENTOS */}
             <FooterColumn
               title="Equipamentos"
               links={equipmentLinks}
             />
 
-            {/* SOLUÇÕES */}
             <FooterColumn
               title="Soluções"
               links={solutionLinks}
             />
+
+            <FooterContact />
           </div>
 
-          {/* LINHA FINAL */}
           <div
             className="
               mt-7
@@ -323,7 +312,7 @@ export function Footer() {
 
 function FooterColumn({ title, links }) {
   return (
-    <div>
+    <div className="min-w-0">
       <p
         className="
           text-[11px]
@@ -377,6 +366,119 @@ function FooterColumn({ title, links }) {
           </Link>
         ))}
       </nav>
+    </div>
+  );
+}
+
+function FooterContact() {
+  return (
+    <div className="min-w-0">
+      <p
+        className="
+          text-[11px]
+          font-bold
+          uppercase
+          tracking-[0.15em]
+          text-[#12364e]
+        "
+      >
+        Contato
+      </p>
+
+      <div
+        className="
+          mt-2
+          h-[2px]
+          w-6
+          rounded-full
+          bg-[#315b75]
+        "
+      />
+
+      <div className="mt-4">
+        <p
+          className="
+            text-[10px]
+            font-semibold
+            uppercase
+            tracking-[0.12em]
+            text-[#536d7c]
+          "
+        >
+          E-mail
+        </p>
+
+        <a
+          href="mailto:cem.senaizeiss@fieg.com.br"
+          className="
+            mt-1
+            block
+            break-words
+            text-[13px]
+            font-medium
+            leading-5
+            text-[#203f52]
+            transition-colors
+            duration-200
+            hover:text-[#071f2d]
+          "
+        >
+          cem.senaizeiss@fieg.com.br
+        </a>
+      </div>
+
+      <div className="mt-5">
+        <p
+          className="
+            text-[10px]
+            font-semibold
+            uppercase
+            tracking-[0.12em]
+            text-[#536d7c]
+          "
+        >
+          Localização
+        </p>
+
+        <p
+          className="
+            mt-1
+            max-w-[260px]
+            text-[13px]
+            font-medium
+            leading-[1.6]
+            text-[#203f52]
+          "
+        >
+          R. Armogaste José da Silveira, 612
+          <br />
+          St. Centro Oeste, Goiânia - GO
+          <br />
+          74560-550
+        </p>
+
+        <a
+          href="https://maps.app.goo.gl/VANnfLem1ExzaLdR8"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="
+            mt-3
+            inline-flex
+            items-center
+            text-[11px]
+            font-bold
+            uppercase
+            tracking-[0.1em]
+            text-[#315b75]
+            transition-all
+            duration-200
+            hover:translate-x-[2px]
+            hover:text-[#071f2d]
+          "
+        >
+          Como chegar ↗
+        </a>
+      </div>
     </div>
   );
 }

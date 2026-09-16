@@ -86,60 +86,10 @@ export function KnowledgePage() {
         eyebrow="Conhecimento"
         title="Base de conhecimento"
         description="Centralize conhecimento técnico, operacional e corporativo para facilitar consultas, decisões e a continuidade do trabalho no laboratório."
-        action={
-          <button
-            type="button"
-            className="internal-eyebrow rounded-[12px] bg-[#096ab2] px-5 py-3 font-semibold uppercase text-white transition hover:bg-[#075b99]"
-          >
-            + Novo conteúdo
-          </button>
-        }
+
       />
 
-      <div className="mt-7 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <MetricCard
-          label="Conteúdos"
-          value={
-            knowledgeItems.length
-          }
-          detail="Registros disponíveis na base."
-        />
-
-        <MetricCard
-          label="Categorias"
-          value={
-            knowledgeCategories.length
-          }
-          detail="Áreas de conhecimento."
-        />
-
-        <MetricCard
-          label="Revisados"
-          value={
-            knowledgeItems.filter(
-              (item) =>
-                item.status ===
-                "Revisado",
-            ).length
-          }
-          detail="Conteúdos com revisão registrada."
-        />
-
-        <MetricCard
-          label="Pendentes"
-          value={
-            knowledgeItems.filter(
-              (item) =>
-                item.status ===
-                  "Pendente de análise" ||
-                item.status ===
-                  "Em validação",
-            ).length
-          }
-          detail="Itens que ainda demandam validação."
-        />
-      </div>
-
+      <p className="internal-body mt-5 text-[#526d7c]">{knowledgeItems.length} referência(s) disponível(is). Casos de serviço formalizados são registrados separadamente das referências e dos dados de demonstração.</p>
       <section className="mt-5 rounded-[20px] border border-[#d1dde4] bg-white p-4 shadow-[0_10px_30px_rgba(34,67,90,0.025)]">
         <div className="grid gap-3 lg:grid-cols-[1fr_230px]">
           <input
@@ -214,7 +164,7 @@ export function KnowledgePage() {
         </div>
       </section>
 
-      <div className="mt-5 grid gap-4 xl:grid-cols-2">
+      <div className={"mt-5 grid gap-4 " + (filteredItems.length > 1 ? "xl:grid-cols-2" : "")}>
         {filteredItems.map(
           (item) => (
             <KnowledgeCard
@@ -234,11 +184,11 @@ export function KnowledgePage() {
         0 && (
         <div className="mt-5 rounded-[20px] border border-dashed border-[#cbd9e1] bg-[#f8fafb] px-6 py-16 text-center">
           <p className="internal-card-title font-semibold text-[#536f80]">
-            Nenhum conteúdo encontrado.
+            Nenhum registro disponível nesta seleção.
           </p>
 
           <p className="internal-help-text mt-2 text-[#526d7c]">
-            Tente alterar a busca ou a categoria selecionada.
+            Consulte outra categoria ou ajuste a busca.
           </p>
         </div>
       )}
@@ -275,7 +225,8 @@ function KnowledgeCard({
           </p>
         </div>
 
-        <KnowledgeStatusBadge
+        <span className="internal-help-text text-[#806b3d]">Referência demo · uso interno</span>
+      <KnowledgeStatusBadge
           status={
             item.status
           }
@@ -322,27 +273,6 @@ function KnowledgeCard({
   );
 }
 
-function MetricCard({
-  label,
-  value,
-  detail,
-}) {
-  return (
-    <div className="rounded-[20px] border border-[#d1dde4] bg-white p-5">
-      <p className="internal-eyebrow font-semibold uppercase text-[#526d7c]">
-        {label}
-      </p>
-
-      <p className="mt-3 text-3xl font-semibold tracking-[-0.04em] text-[#17394f]">
-        {value}
-      </p>
-
-      <p className="internal-card-description mt-3 text-[#526d7c]">
-        {detail}
-      </p>
-    </div>
-  );
-}
 
 function normalizeText(
   value,

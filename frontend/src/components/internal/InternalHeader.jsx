@@ -1,5 +1,7 @@
+import { useCurrentUser } from "../../hooks/useCurrentUser";
 import {
   useLocation,
+  Link,
 } from "react-router-dom";
 
 import {
@@ -7,6 +9,7 @@ import {
 } from "./NotificationBell";
 
 const pageInformation = {
+  "/portal/conta": { eyebrow: "Perfil", title: "Minha Conta" },
   "/portal": {
     eyebrow: "Visão geral",
     title: "Meu trabalho",
@@ -56,6 +59,7 @@ const pageInformation = {
 export function InternalHeader({
   onOpenSidebar,
 }) {
+  const user = useCurrentUser();
   const location =
     useLocation();
 
@@ -180,7 +184,7 @@ export function InternalHeader({
           <div className="min-w-0">
             <p
               className="
-                text-[10px]
+                text-[12px]
                 font-semibold
                 uppercase
                 tracking-[0.15em]
@@ -254,7 +258,7 @@ export function InternalHeader({
               USUÁRIO
           ================================================= */}
 
-          <div
+          <Link to="/portal/conta" aria-label="Minha Conta"
             className="
               hidden
               items-center
@@ -281,29 +285,25 @@ export function InternalHeader({
                 font-semibold
                 text-white
               "
-            >
-              AD
-            </div>
+            >{user.initials}</div>
 
             <div className="hidden pr-1 xl:block">
-              <p className="text-[12px] font-semibold text-[#17384d]">
-                Administrador
-              </p>
+              <p className="text-[12px] font-semibold text-[#17384d]">{user.name}</p>
 
               <p
                 className="
                   mt-0.5
-                  text-[10px]
+                  text-[12px]
                   font-medium
                   uppercase
                   tracking-[0.06em]
                   text-[#617b89]
                 "
               >
-                Gerente do laboratório
+                {user.accessProfile}
               </p>
             </div>
-          </div>
+          </Link>
         </div>
       </div>
     </header>

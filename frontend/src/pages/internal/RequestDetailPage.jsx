@@ -1,3 +1,5 @@
+import "../../styles/internalWorkspace.css";
+import { ValidationFeedback } from "../../components/internal/ValidationFeedback";
 import {
   useState,
 } from "react";
@@ -23,12 +25,14 @@ import {
 import {
   createQuoteFromRequest,
   getQuoteByRequestId,
+  validateRequestForQuote,
 } from "../../services/quoteService";
 
 import {
   cancelRuntimeRequest,
   finishRequestAnalysis,
   getRuntimeRequestById,
+  isArchivedRequest,
   markRequestAsConverted,
   resumeRequestAnalysis,
   saveRequestInternalNotes,
@@ -121,7 +125,7 @@ export function RequestDetailPage() {
 
   if (!request) {
     return (
-      <div className="mx-auto max-w-[1500px]">
+      <div className="internal-workspace mx-auto max-w-[1500px]">
         <button
           type="button"
           onClick={() =>
@@ -129,7 +133,7 @@ export function RequestDetailPage() {
               "/portal/solicitacoes",
             )
           }
-          className="text-[12px] font-semibold text-[#356f9f]"
+          className="internal-body font-semibold text-[#356f9f]"
         >
           ← Voltar para solicitações
         </button>
@@ -143,14 +147,8 @@ export function RequestDetailPage() {
     );
   }
 
-  const closed =
-    [
-      "Convertida em orçamento",
-      "Recusada",
-      "Cancelada",
-    ].includes(
-      request.status,
-    );
+  const closed = isArchivedRequest(request);
+  const quoteValidation = validateRequestForQuote(request);
 
   const analysisEditable =
     !closed &&
@@ -296,9 +294,9 @@ export function RequestDetailPage() {
     }
 
     if (
-      request.status !==
-      "Apta para orçamento"
+      !quoteValidation.isValid
     ) {
+      showFeedback(quoteValidation.problems.join(" "), "error");
       return;
     }
 
@@ -458,7 +456,7 @@ export function RequestDetailPage() {
 
   return (
     <>
-      <div className="mx-auto max-w-[1500px]">
+      <div className="internal-workspace mx-auto max-w-[1500px]">
         {/* ===================================================
             VOLTAR
         =================================================== */}
@@ -470,7 +468,7 @@ export function RequestDetailPage() {
               "/portal/solicitacoes",
             )
           }
-          className="mb-5 text-[11px] font-semibold uppercase tracking-[0.08em] text-[#477187] transition hover:text-[#0057b8]"
+          className="mb-5 internal-help-text font-semibold uppercase tracking-[0.08em] text-[#477187] transition hover:text-[#0057b8]"
         >
           ← Voltar para solicitações
         </button>
@@ -522,15 +520,9 @@ export function RequestDetailPage() {
             LAYOUT
         =================================================== */}
 
-        <div className="mt-7 grid gap-5 xl:grid-cols-[minmax(0,1fr)_340px]">
-          <div className="space-y-5">
-            {/* ===============================================
-                01 — VISÃO GERAL
-            =============================================== */}
-
-            <RequestDetailSection
+<div className="internal-workspace-columns mt-6 grid items-start gap-6 xl:grid-cols-[minmax(0,1.6fr)_minmax(320px,0.85fr)]"><div className="flex min-w-0 flex-col gap-5"><RequestDetailSection
               eyebrow="01"
-              title="Visão geral"
+              title="Dados da solicitação"
               description="Informações comerciais e de contato associadas à necessidade recebida."
             >
               <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
@@ -578,20 +570,6 @@ export function RequestDetailPage() {
                 />
 
                 <RequestInfoItem
-                  label="Origem"
-                  value={
-                    request.origin
-                  }
-                />
-
-                <RequestInfoItem
-                  label="Canal"
-                  value={
-                    request.channel
-                  }
-                />
-
-                <RequestInfoItem
                   label="Serviço informado"
                   value={getServiceLabel(
                     request.service,
@@ -619,12 +597,7 @@ export function RequestDetailPage() {
                 </div>
               )}
             </RequestDetailSection>
-
-            {/* ===============================================
-                02 — PEÇAS
-            =============================================== */}
-
-            <RequestDetailSection
+<RequestDetailSection
               eyebrow="02"
               title="Peças e requisitos"
               description="Dados técnicos recebidos para apoiar a análise e a futura elaboração do orçamento."
@@ -654,13 +627,7 @@ export function RequestDetailPage() {
               ) : (
                 <EmptyBlock text="Os detalhes estruturados das peças ainda não estão disponíveis nesta solicitação." />
               )}
-            </RequestDetailSection>
-
-            {/* ===============================================
-                03 — ORIENTAÇÃO PRELIMINAR
-            =============================================== */}
-
-            {request.channel ===
+            </RequestDetailSection>{request.channel ===
               "Configurador" && (
               <RequestDetailSection
                 eyebrow="03"
@@ -697,12 +664,7 @@ export function RequestDetailPage() {
                 )}
               </RequestDetailSection>
             )}
-
-            {/* ===============================================
-                ANÁLISE TÉCNICA
-            =============================================== */}
-
-            <RequestDetailSection
+<RequestDetailSection
               eyebrow={
                 request.channel ===
                 "Configurador"
@@ -723,7 +685,7 @@ export function RequestDetailPage() {
                       border border-[#aac8d8]
                       bg-[#edf6fa]
                       px-4 py-2.5
-                      text-[10px]
+                      internal-field-label
                       font-semibold
                       uppercase
                       tracking-[0.06em]
@@ -749,26 +711,8 @@ export function RequestDetailPage() {
                   !analysisEditable
                 }
               />
-
-              <div className="mt-6 rounded-[15px] border border-[#cbdde6] bg-[#f1f7fa] p-4">
-                <p className="text-[10px] font-semibold uppercase tracking-[0.09em] text-[#47758e]">
-                  Preparação para Gestão do Conhecimento
-                </p>
-
-                <p className="mt-2 text-[12px] leading-5 text-[#4f6d7d]">
-                  Nesta etapa apenas classificamos e registramos o contexto técnico.
-                  O aprendizado definitivo será produzido após a execução do projeto,
-                  quando o sistema comparar o que foi orçado com o que realmente
-                  aconteceu.
-                </p>
-              </div>
             </RequestDetailSection>
-
-            {/* ===============================================
-                ARQUIVOS
-            =============================================== */}
-
-            <RequestDetailSection
+<RequestDetailSection
               eyebrow={
                 request.channel ===
                 "Configurador"
@@ -797,115 +741,14 @@ export function RequestDetailPage() {
               ) : (
                 <EmptyBlock text="Nenhum arquivo foi anexado." />
               )}
-            </RequestDetailSection>
-
-            {/* ===============================================
-                HISTÓRICO
-            =============================================== */}
-
-            <RequestDetailSection
-              eyebrow={
-                request.channel ===
-                "Configurador"
-                  ? "06"
-                  : "05"
-              }
-              title="Histórico e rastreabilidade"
-              description="Registro cronológico das movimentações realizadas pela equipe e pelo sistema."
-            >
-              {request.history
-                ?.length > 0 ? (
-                <div>
-                  {request.history.map(
-                    (
-                      item,
-                      index,
-                    ) => (
-                      <HistoryItem
-                        key={
-                          item.id
-                        }
-                        item={
-                          item
-                        }
-                        last={
-                          index ===
-                          request.history
-                            .length -
-                            1
-                        }
-                      />
-                    ),
-                  )}
-                </div>
-              ) : (
-                <EmptyBlock text="Nenhum evento adicional registrado até o momento." />
-              )}
-            </RequestDetailSection>
-          </div>
-
-          {/* =================================================
-              SIDEBAR
-          ================================================= */}
-
-          <aside className="space-y-5">
-            <section className="rounded-[22px] border border-[#bfd5e0] bg-[#e8f2f6] p-5">
-              <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[#47758e]">
-                Gestão da solicitação
-              </p>
-
-              <div className="mt-5 space-y-5">
-                <SideInfo
-                  label="Status"
-                  value={
-                    request.status
-                  }
-                />
-
-                <SideInfo
-                  label="Prioridade"
-                  value={
-                    request.priority
-                  }
-                />
-
-                <SideInfo
-                  label="Responsável"
-                  value={
-                    request.responsible
-                  }
-                />
-
-                <SideInfo
-                  label="Última atualização"
-                  value={
-                    request.updatedAt ??
-                    request.createdAt
-                  }
-                />
-
-                <SideInfo
-                  label="Origem"
-                  value={
-                    request.origin
-                  }
-                />
-
-                <SideInfo
-                  label="Canal"
-                  value={
-                    request.channel
-                  }
-                />
-
-                <SideInfo
-                  label="Peças"
-                  value={`${request.parts}`}
-                />
-              </div>
-
-              <div className="mt-6 border-t border-[#c8dbe4] pt-5">
-                <RequestPrimaryAction
+            </RequestDetailSection></div><aside className="flex min-w-0 flex-col gap-5"><RequestDetailSection title="Controle da solicitação"><div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-1">
+  <SideInfo label="Origem" value={request.origin} /><SideInfo label="Canal" value={request.channel} />
+  <SideInfo label="Status" value={request.status} /><SideInfo label="Responsável" value={request.responsible} />
+  <SideInfo label="Prioridade" value={request.priority} /><SideInfo label="Última atualização" value={request.updatedAt ?? request.createdAt} />
+  <SideInfo label="Base" value={request.source === "demo" ? "Demonstração" : "Real"} />
+  <SideInfo label="Visibilidade" value={request.visibility === "restricted" ? "Restrita" : "Interna"} />
+</div></RequestDetailSection>
+<RequestDetailSection title="Ações e pendências"><RequestPrimaryAction
                   request={
                     request
                   }
@@ -928,6 +771,12 @@ export function RequestDetailPage() {
                   }
                 />
 
+                {!closed && !existingQuote && <div className="mt-4 space-y-3">
+                  <ValidationFeedback validation={quoteValidation} title="Pendências para criar orçamento" />
+                  <p className="internal-help-text text-[#607989]">* Obrigatório: análise concluída com status Apta para orçamento.</p>
+                  <button type="button" disabled={!quoteValidation.isValid} onClick={handleQuoteAction} className="internal-help-text w-full rounded-[12px] bg-[#096ab2] px-4 py-3 font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50">CRIAR ORÇAMENTO</button>
+                </div>}
+
                 {!closed && (
                   <button
                     type="button"
@@ -943,7 +792,7 @@ export function RequestDetailPage() {
                       border border-[#dfc7c0]
                       bg-white
                       px-4 py-2.5
-                      text-[10px]
+                      internal-field-label
                       font-semibold
                       uppercase
                       tracking-[0.06em]
@@ -954,46 +803,13 @@ export function RequestDetailPage() {
                   >
                     Cancelar solicitação
                   </button>
-                )}
-              </div>
-            </section>
-
-            {existingQuote && (
-              <section className="rounded-[22px] border border-[#bcd6e3] bg-[#edf6fa] p-5">
-                <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[#47758e]">
-                  Orçamento vinculado
-                </p>
-
-                <p className="mt-3 text-[20px] font-semibold text-[#17394f]">
-                  {
-                    existingQuote.id
-                  }
-                </p>
-
-                <p className="mt-1 text-[12px] leading-5 text-[#587282]">
-                  Esta solicitação já avançou para a etapa comercial.
-                </p>
-
-                <button
-                  type="button"
-                  onClick={() =>
-                    navigate(
-                      `/portal/orcamentos/${existingQuote.id}`,
-                    )
-                  }
-                  className="mt-4 text-[11px] font-semibold uppercase tracking-[0.07em] text-[#356f9f] hover:text-[#0057b8]"
-                >
-                  Abrir orçamento →
-                </button>
-              </section>
-            )}
-
-            <section className="rounded-[22px] border border-[#cddbe3] bg-white p-5">
-              <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[#557585]">
+                )}</RequestDetailSection>
+<section className="rounded-[22px] border border-[#cddbe3] bg-white p-5">
+              <p className="internal-field-label font-semibold uppercase tracking-[0.12em] text-[#557585]">
                 Observações internas
               </p>
 
-              <p className="mt-1.5 text-[11px] leading-5 text-[#607988]">
+              <p className="mt-1.5 internal-help-text leading-5 text-[#607988]">
                 Não ficam visíveis para o cliente.
               </p>
 
@@ -1039,7 +855,7 @@ export function RequestDetailPage() {
                   border border-[#c5d7e0]
                   bg-[#f5f9fb]
                   px-4 py-2.5
-                  text-[10px]
+                  internal-field-label
                   font-semibold
                   uppercase
                   tracking-[0.07em]
@@ -1052,42 +868,45 @@ export function RequestDetailPage() {
                 Salvar observação
               </button>
             </section>
-
-            <section className="rounded-[22px] border border-[#d4d8e9] bg-[#f4f3fa] p-5">
-              <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[#69668d]">
-                Classificação do registro
-              </p>
-
-              <div className="mt-4 space-y-4">
-                <SideInfo
-                  label="Base"
-                  value={
-                    request.source ===
-                    "demo"
-                      ? "Demonstração"
-                      : "Histórico real"
-                  }
-                />
-
-                <SideInfo
-                  label="Visibilidade"
-                  value={
-                    request.visibility ===
-                    "restricted"
-                      ? "Restrita"
-                      : "Interna"
-                  }
-                />
-              </div>
-
-              <p className="mt-4 text-[11px] leading-5 text-[#676681]">
-                Registros de demonstração permanecem separados do histórico
-                real e não devem compor os indicadores oficiais.
-              </p>
-            </section>
-          </aside>
-        </div>
-      </div>
+<RequestDetailSection
+              eyebrow={
+                request.channel ===
+                "Configurador"
+                  ? "06"
+                  : "05"
+              }
+              title="Histórico e rastreabilidade"
+              description="Registro cronológico das movimentações realizadas pela equipe e pelo sistema."
+            >
+              {request.history
+                ?.length > 0 ? (
+                <div>
+                  {request.history.map(
+                    (
+                      item,
+                      index,
+                    ) => (
+                      <HistoryItem
+                        key={
+                          item.id
+                        }
+                        item={
+                          item
+                        }
+                        last={
+                          index ===
+                          request.history
+                            .length -
+                            1
+                        }
+                      />
+                    ),
+                  )}
+                </div>
+              ) : (
+                <EmptyBlock text="Nenhum evento adicional registrado até o momento." />
+              )}
+            </RequestDetailSection></aside></div></div>
 
       {/* =====================================================
           MODAIS
@@ -1358,7 +1177,7 @@ function TechnicalAnalysisForm({
           )}
         />
 
-        <p className="mt-1.5 text-[10px] leading-4 text-[#6b818e]">
+        <p className="mt-1.5 internal-field-label leading-4 text-[#6b818e]">
           Temporariamente separados por vírgula. Quando implementarmos o
           vocabulário controlado, este campo passará a consumir os termos
           administráveis do backend.
@@ -1417,15 +1236,7 @@ function RequestPrimaryAction({
       );
 
     case "Apta para orçamento":
-      return (
-        <PrimaryButton
-          onClick={
-            onQuoteAction
-          }
-        >
-          Criar orçamento
-        </PrimaryButton>
-      );
+      return existingQuote ? <PrimaryButton onClick={onQuoteAction}>Abrir {existingQuote.id}</PrimaryButton> : null;
 
     case "Convertida em orçamento":
       return existingQuote ? (
@@ -1471,7 +1282,7 @@ function PrimaryButton({
         rounded-[12px]
         bg-[#096ab2]
         px-4 py-3
-        text-[11px]
+        internal-help-text
         font-semibold
         uppercase
         tracking-[0.07em]
@@ -1490,7 +1301,7 @@ function ClosedMessage({
 }) {
   return (
     <div className="rounded-[12px] border border-[#cbd9e1] bg-white/70 px-4 py-3">
-      <p className="text-center text-[10px] font-semibold uppercase tracking-[0.06em] text-[#617987]">
+      <p className="text-center internal-field-label font-semibold uppercase tracking-[0.06em] text-[#617987]">
         {text}
       </p>
     </div>
@@ -1575,7 +1386,7 @@ function AnalysisResultModal({
 
   return (
     <ModalShell>
-      <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[#47758e]">
+      <p className="internal-field-label font-semibold uppercase tracking-[0.12em] text-[#47758e]">
         Análise técnica
       </p>
 
@@ -1583,7 +1394,7 @@ function AnalysisResultModal({
         Concluir análise
       </h2>
 
-      <p className="mt-2 text-[12px] leading-5 text-[#587282]">
+      <p className="mt-2 internal-body leading-5 text-[#587282]">
         Registre a decisão técnica referente à{" "}
         <strong className="font-semibold text-[#31566d]">
           {request.id}
@@ -1654,7 +1465,7 @@ function AnalysisResultModal({
                       }
                     </p>
 
-                    <p className="mt-1 text-[11px] leading-5 text-[#617987]">
+                    <p className="mt-1 internal-help-text leading-5 text-[#617987]">
                       {
                         option.description
                       }
@@ -1774,7 +1585,7 @@ function QuoteCreationModal({
     <ModalShell
       maxWidth="max-w-[500px]"
     >
-      <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[#47758e]">
+      <p className="internal-field-label font-semibold uppercase tracking-[0.12em] text-[#47758e]">
         Próxima etapa
       </p>
 
@@ -1798,13 +1609,15 @@ function QuoteCreationModal({
           )}
         </p>
 
-        <p className="mt-1 text-[11px] leading-5 text-[#617987]">
+        <p className="mt-1 internal-help-text leading-5 text-[#617987]">
           O orçamento será criado como “Em elaboração” e será a próxima fonte do
           ciclo de conhecimento, registrando esforço, custo, premissas e estimativa.
         </p>
       </div>
 
+      <ValidationFeedback validation={validateRequestForQuote(request)} title="Prontidão para criar orçamento" />
       <ModalActions
+        disabled={!validateRequestForQuote(request).isValid}
         cancelLabel="Cancelar"
         confirmLabel="Criar e continuar"
         onCancel={
@@ -1836,7 +1649,7 @@ function CancelRequestModal({
     <ModalShell
       maxWidth="max-w-[480px]"
     >
-      <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[#8f5544]">
+      <p className="internal-field-label font-semibold uppercase tracking-[0.12em] text-[#8f5544]">
         Encerrar solicitação
       </p>
 
@@ -1844,7 +1657,7 @@ function CancelRequestModal({
         Cancelar {request.id}?
       </h2>
 
-      <p className="mt-3 text-[12px] leading-5 text-[#587282]">
+      <p className="mt-3 internal-body leading-5 text-[#587282]">
         A solicitação deixará o fluxo ativo. O registro e seu histórico serão
         preservados para rastreabilidade.
       </p>
@@ -1900,7 +1713,7 @@ function PieceCard({
     <div className="overflow-hidden rounded-[18px] border border-[#d6e2e8] bg-[#f8fafb]">
       <div className="flex flex-col gap-3 border-b border-[#e0e7eb] px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[#47758e]">
+          <p className="internal-field-label font-semibold uppercase tracking-[0.1em] text-[#47758e]">
             Peça{" "}
             {String(
               index + 1,
@@ -1915,7 +1728,7 @@ function PieceCard({
           </h3>
         </div>
 
-        <span className="w-fit rounded-full border border-[#d0dfe7] bg-white px-3 py-1.5 text-[10px] font-semibold text-[#536f80]">
+        <span className="w-fit rounded-full border border-[#d0dfe7] bg-white px-3 py-1.5 internal-field-label font-semibold text-[#536f80]">
           {piece.quantity}{" "}
           {piece.quantity ===
           1
@@ -1924,7 +1737,7 @@ function PieceCard({
         </span>
       </div>
 
-      <div className="grid gap-5 p-5 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-5 p-5 sm:grid-cols-2 2xl:grid-cols-4">
         <RequestInfoItem
           label="Tipo"
           value={
@@ -1957,7 +1770,7 @@ function PieceCard({
       {piece.services?.length >
         0 && (
         <div className="border-t border-[#e1e8ec] px-5 py-4">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.08em] text-[#5c7888]">
+          <p className="internal-field-label font-semibold uppercase tracking-[0.08em] text-[#5c7888]">
             Serviços
           </p>
 
@@ -1969,7 +1782,7 @@ function PieceCard({
               ) => (
                 <span
                   key={`${service}-${index}`}
-                  className="rounded-full border border-[#cbdde7] bg-[#eaf4f9] px-3 py-1.5 text-[10px] font-semibold text-[#3e708e]"
+                  className="rounded-full border border-[#cbdde7] bg-[#eaf4f9] px-3 py-1.5 internal-field-label font-semibold text-[#3e708e]"
                 >
                   {getServiceLabel(
                     service,
@@ -1985,7 +1798,7 @@ function PieceCard({
         ?.dimensional
         ?.length > 0 && (
         <div className="border-t border-[#e1e8ec] px-5 py-5">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.08em] text-[#5c7888]">
+          <p className="internal-field-label font-semibold uppercase tracking-[0.08em] text-[#5c7888]">
             Requisitos informados
           </p>
 
@@ -2025,7 +1838,7 @@ function RecommendationCard({
 
   return (
     <div className="rounded-[18px] border border-[#c8dce6] bg-[#edf6fa] p-5">
-      <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[#47758e]">
+      <p className="internal-field-label font-semibold uppercase tracking-[0.1em] text-[#47758e]">
         Peça{" "}
         {String(
           index + 1,
@@ -2037,7 +1850,7 @@ function RecommendationCard({
       </p>
 
       <div className="mt-4 rounded-[16px] border border-[#b7d3e2] bg-white p-4">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.08em] text-[#5c7888]">
+        <p className="internal-field-label font-semibold uppercase tracking-[0.08em] text-[#5c7888]">
           Tecnologia principal
         </p>
 
@@ -2051,7 +1864,7 @@ function RecommendationCard({
               }
             </h3>
 
-            <p className="mt-1 text-[12px] text-[#567487]">
+            <p className="mt-1 internal-body text-[#567487]">
               {
                 recommendation
                   .primaryMachine
@@ -2073,7 +1886,7 @@ function RecommendationCard({
 
       <div className="mt-5 grid gap-5 lg:grid-cols-2">
         <div>
-          <p className="text-[10px] font-semibold uppercase tracking-[0.08em] text-[#5c7888]">
+          <p className="internal-field-label font-semibold uppercase tracking-[0.08em] text-[#5c7888]">
             Justificativas
           </p>
 
@@ -2095,7 +1908,7 @@ function RecommendationCard({
         </div>
 
         <div>
-          <p className="text-[10px] font-semibold uppercase tracking-[0.08em] text-[#5c7888]">
+          <p className="internal-field-label font-semibold uppercase tracking-[0.08em] text-[#5c7888]">
             Alternativas consideradas
           </p>
 
@@ -2111,20 +1924,20 @@ function RecommendationCard({
                   className="flex items-center justify-between rounded-[11px] border border-[#d4e2e9] bg-white/75 px-3 py-2.5"
                 >
                   <div>
-                    <p className="text-[12px] font-semibold text-[#3b5d71]">
+                    <p className="internal-body font-semibold text-[#3b5d71]">
                       {
                         alternative.name
                       }
                     </p>
 
-                    <p className="mt-0.5 text-[10px] text-[#617987]">
+                    <p className="mt-0.5 internal-field-label text-[#617987]">
                       {
                         alternative.match
                       }
                     </p>
                   </div>
 
-                  <span className="text-[12px] font-semibold text-[#5681a0]">
+                  <span className="internal-body font-semibold text-[#5681a0]">
                     {
                       alternative.score
                     }
@@ -2156,7 +1969,7 @@ function RecommendationCard({
         </div>
       )}
 
-      <p className="mt-4 text-[11px] leading-5 text-[#5d7786]">
+      <p className="mt-4 internal-help-text leading-5 text-[#5d7786]">
         Esta orientação foi calculada antes da análise humana e não representa
         uma decisão final da equipe.
       </p>
@@ -2194,11 +2007,11 @@ function FileCard({
       </span>
 
       <div className="min-w-0">
-        <p className="truncate text-[12px] font-semibold text-[#31566d]">
+        <p className="truncate internal-body font-semibold text-[#31566d]">
           {file.name}
         </p>
 
-        <p className="mt-1 text-[10px] uppercase tracking-[0.05em] text-[#617987]">
+        <p className="mt-1 internal-field-label uppercase tracking-[0.05em] text-[#617987]">
           {file.type} ·{" "}
           {file.size}
         </p>
@@ -2221,7 +2034,7 @@ function HistoryItem({
         <div className="absolute left-[15px] top-8 h-[calc(100%-20px)] w-px bg-[#d5e2e8]" />
       )}
 
-      <div className="relative z-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[#bfd5e1] bg-[#edf6fa] text-[10px] text-[#5681a0]">
+      <div className="relative z-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[#bfd5e1] bg-[#edf6fa] internal-field-label text-[#5681a0]">
         ✓
       </div>
 
@@ -2231,17 +2044,17 @@ function HistoryItem({
             {item.action}
           </p>
 
-          <span className="text-[10px] text-[#647f8e]">
+          <span className="internal-field-label text-[#647f8e]">
             {item.date} ·{" "}
             {item.time}
           </span>
         </div>
 
-        <p className="mt-1 text-[10px] font-medium text-[#607988]">
+        <p className="mt-1 internal-field-label font-medium text-[#607988]">
           por {item.actor}
         </p>
 
-        <p className="mt-2 text-[12px] leading-5 text-[#587282]">
+        <p className="mt-2 internal-body leading-5 text-[#587282]">
           {
             item.description
           }
@@ -2289,7 +2102,7 @@ function FeedbackBanner({
           justify-center
           rounded-full
           bg-white
-          text-[11px]
+          internal-help-text
           font-semibold
 
           ${
@@ -2306,7 +2119,7 @@ function FeedbackBanner({
 
       <p
         className={`
-          text-[12px]
+          internal-body
           font-semibold
 
           ${
@@ -2324,7 +2137,7 @@ function FeedbackBanner({
 
 function DemoBadge() {
   return (
-    <span className="rounded-full border border-[#e2c7b5] bg-[#fbefe8] px-3 py-1.5 text-[9px] font-semibold uppercase tracking-[0.07em] text-[#9b603f]">
+    <span className="rounded-full border border-[#e2c7b5] bg-[#fbefe8] px-3 py-1.5 internal-help-text font-semibold uppercase tracking-[0.07em] text-[#9b603f]">
       Demonstração
     </span>
   );
@@ -2336,7 +2149,7 @@ function SideInfo({
 }) {
   return (
     <div>
-      <p className="text-[10px] font-semibold uppercase tracking-[0.08em] text-[#5c7888]">
+      <p className="internal-field-label font-semibold uppercase tracking-[0.08em] text-[#5c7888]">
         {label}
       </p>
 
@@ -2354,11 +2167,11 @@ function TechnicalPoint({
 }) {
   return (
     <div className="flex items-start gap-2.5">
-      <span className="mt-[1px] flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#dcecf5] text-[9px] font-semibold text-[#397392]">
+      <span className="mt-[1px] flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#dcecf5] internal-help-text font-semibold text-[#397392]">
         {symbol}
       </span>
 
-      <p className="text-[11px] leading-5 text-[#587282]">
+      <p className="internal-help-text leading-5 text-[#587282]">
         {text}
       </p>
     </div>
@@ -2370,7 +2183,7 @@ function EmptyBlock({
 }) {
   return (
     <div className="rounded-[15px] border border-dashed border-[#cad9e1] bg-[#f8fafb] px-5 py-8 text-center">
-      <p className="text-[12px] leading-5 text-[#617987]">
+      <p className="internal-body leading-5 text-[#617987]">
         {text}
       </p>
     </div>
@@ -2391,7 +2204,7 @@ function FieldLabel({
   children,
 }) {
   return (
-    <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.08em] text-[#557585]">
+    <p className="mb-2 internal-field-label font-semibold uppercase tracking-[0.08em] text-[#557585]">
       {children}
     </p>
   );
@@ -2477,6 +2290,7 @@ function ModalShell({
 }
 
 function ModalActions({
+  disabled = false,
   cancelLabel,
   confirmLabel,
   onCancel,
@@ -2490,20 +2304,22 @@ function ModalActions({
         onClick={
           onCancel
         }
-        className="rounded-[11px] border border-[#d0dce3] bg-white px-5 py-3 text-[10px] font-semibold uppercase tracking-[0.07em] text-[#607989]"
+        className="rounded-[11px] border border-[#d0dce3] bg-white px-5 py-3 internal-field-label font-semibold uppercase tracking-[0.07em] text-[#607989]"
       >
         {cancelLabel}
       </button>
 
       <button
         type="button"
+        disabled={disabled}
         onClick={
           onConfirm
         }
         className={`
+          disabled:opacity-50 disabled:cursor-not-allowed
           rounded-[11px]
           px-5 py-3
-          text-[10px]
+          internal-field-label
           font-semibold
           uppercase
           tracking-[0.07em]

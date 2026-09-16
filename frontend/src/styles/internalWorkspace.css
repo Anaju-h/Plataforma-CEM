@@ -1,0 +1,59 @@
+/* Scoped to the operational screens; public/customer layouts are unaffected. */
+.internal-workspace .internal-detail-section {
+  padding: 1.25rem;
+  background: rgb(255 255 255 / 86%);
+}
+.internal-workspace .internal-detail-section > header {
+  padding-bottom: 0.875rem;
+  gap: 0.75rem;
+}
+.internal-workspace .internal-detail-section > .internal-section-content {
+  padding-top: 1rem;
+}
+.internal-workspace .internal-detail-section h2 {
+  font-size: 1.125rem;
+  line-height: 1.4;
+  margin-top: 0;
+}
+.internal-workspace .internal-detail-section header p {
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+.internal-workspace textarea,
+.internal-workspace select,
+.internal-workspace input {
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  text-transform: none;
+  letter-spacing: normal;
+}
+.internal-workspace input:focus-visible,
+.internal-workspace select:focus-visible,
+.internal-workspace textarea:focus-visible,
+.internal-workspace summary:focus-visible {
+  outline: 2px solid #5681a0;
+  outline-offset: 2px;
+}
+.internal-workspace .internal-item-calculation input {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #17394f;
+  min-height: 3rem;
+}
+.internal-workspace .internal-item-calculation output {
+  overflow-wrap: anywhere;
+  font-size: clamp(1.25rem, 1.7vw, 1.65rem);
+  line-height: 1.3;
+}
+.internal-workspace .internal-section-content label {
+  min-width: 0;
+}
+.internal-workspace .internal-info-item > p:first-child {
+  font-size: 0.75rem;
+  line-height: 1.5;
+}
+.internal-workspace .internal-info-item > p:last-child {
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}

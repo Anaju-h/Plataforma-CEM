@@ -7,6 +7,7 @@ export function QuoteFilters({
   onSearchChange,
   status,
   onStatusChange,
+  statusOptions = quoteStatuses,
 }) {
   return (
     <div className="rounded-[20px] border border-[#d1dde4] bg-white p-4 shadow-[0_10px_30px_rgba(34,67,90,0.025)]">
@@ -59,7 +60,7 @@ export function QuoteFilters({
             focus:bg-white
           "
         >
-          {quoteStatuses.map(
+          {statusOptions.map(
             (item) => (
               <option
                 key={item}

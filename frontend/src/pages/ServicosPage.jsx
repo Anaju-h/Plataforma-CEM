@@ -138,9 +138,9 @@ export function ServicosPage() {
       </div>
 
       <ReverseEngineeringSection />
+      <InternalInspectionSection />
 
-      <div className="relative bg-[linear-gradient(180deg,#ffffff_0%,#f7fafb_10%,#edf4f7_32%,#e1edf2_57%,#d9e9ef_72%,#edf5f8_90%,#ffffff_100%)]">
-        <InternalInspectionSection />
+      <div className="relative bg-[linear-gradient(180deg,#ffffff_0%,#f7fafb_12%,#edf4f7_36%,#e1edf2_62%,#eef5f8_86%,#ffffff_100%)]">
         <IntegratedSection />
       </div>
 
@@ -745,11 +745,17 @@ function ServiceMedia({
   );
 }
 
-function ServiceAction() {
+function ServiceAction({
+  dark = false,
+}) {
   return (
     <Link
       to="/orcamento"
-      className="group mt-8 inline-flex items-center gap-3 text-sm font-medium text-[#356f9f] transition-colors hover:text-[#0b2340]"
+      className={`group mt-8 inline-flex items-center gap-3 text-sm font-medium transition-colors ${
+        dark
+          ? "text-[#b9ddf2] hover:text-white"
+          : "text-[#356f9f] hover:text-[#0b2340]"
+      }`}
     >
       Solicitar orçamento
 
@@ -958,30 +964,53 @@ function InternalInspectionSection() {
   return (
     <section
       id="inspecao-interna"
-      className="scroll-mt-24 pb-9 pt-7 sm:pb-10 sm:pt-8 lg:pb-11 lg:pt-9"
+      className="relative scroll-mt-24 overflow-hidden bg-[linear-gradient(180deg,#173e54_0%,#0f3348_16%,#082a3e_34%,#071f2d_54%,#0a293b_72%,#31596d_88%,#7f9eac_95%,#dce8ed_99%,#ffffff_100%)] pb-20 pt-10 sm:pb-22 sm:pt-11 lg:pb-24 lg:pt-12"
     >
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -left-36 top-[10%] h-[420px] w-[420px] rounded-full bg-[#65b8ee]/[0.08] blur-[135px]"
+      />
+
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -right-40 top-[34%] h-[440px] w-[440px] rounded-full bg-white/[0.04] blur-[140px]"
+      />
+
       <Container>
-        <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:gap-12">
+        <div className="relative z-10 grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:gap-12">
           <ScrollReveal
             direction="right"
             distance={32}
           >
-            <ServiceHeading
-              number="05"
-              eyebrow="Além da superfície"
-              title="Inspeção interna"
-              description="Investigação de estruturas e características internas que não podem ser avaliadas somente pela superfície da peça."
-            />
+            <div>
+              <div className="flex items-center gap-4">
+                <span className="text-[11px] font-semibold tracking-[0.15em] text-[#9dd1ef]">
+                  05
+                </span>
+
+                <div className="h-px w-10 bg-[#65b8ee]" />
+              </div>
+
+              <p className="mt-4 text-[10px] font-semibold uppercase tracking-[0.13em] text-[#9dd1ef]">
+                Além da superfície
+              </p>
+
+              <h2 className="mt-2 text-[2.45rem] font-semibold leading-[1.02] tracking-[-0.045em] text-white sm:text-[3.1rem]">
+                Inspeção interna
+              </h2>
+
+              <p className="mt-4 max-w-[580px] text-[14px] leading-7 text-white/62 sm:text-[15px]">
+                Investigação de estruturas e características internas que não podem ser avaliadas somente pela superfície da peça.
+              </p>
+            </div>
 
             <div className="mt-6 grid gap-3 sm:grid-cols-2">
-              <InfoCard
+              <DarkInfoCard
                 title="Aplicações"
-                items={
-                  internalApplications
-                }
+                items={internalApplications}
               />
 
-              <InfoCard
+              <DarkInfoCard
                 title="Tecnologia"
                 items={[
                   "ZEISS BOSELLO MAX",
@@ -991,7 +1020,7 @@ function InternalInspectionSection() {
               />
             </div>
 
-            <ServiceAction />
+            <ServiceAction dark />
           </ScrollReveal>
 
           <ScrollReveal
@@ -999,7 +1028,7 @@ function InternalInspectionSection() {
             distance={36}
           >
             <ServiceMedia
-              src="/videos/services/raiox.mp4"
+              src="/videos/services/inspecao.mp4"
               eyebrow="Inspeção por raios X"
               title="O interior da peça também pode revelar informações importantes."
               number="05"
@@ -1008,6 +1037,34 @@ function InternalInspectionSection() {
         </div>
       </Container>
     </section>
+  );
+}
+
+function DarkInfoCard({
+  title,
+  items,
+}) {
+  return (
+    <div className="rounded-[18px] border border-white/16 bg-white/[0.07] p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_10px_28px_rgba(0,0,0,0.08)] backdrop-blur-[20px]">
+      <p className="text-[9px] font-semibold uppercase tracking-[0.13em] text-[#9dd1ef]">
+        {title}
+      </p>
+
+      <div className="mt-3 space-y-2.5">
+        {items.map((item) => (
+          <div
+            key={item}
+            className="flex items-start gap-2.5"
+          >
+            <span className="mt-[7px] h-1 w-1 shrink-0 rounded-full bg-[#65b8ee]" />
+
+            <p className="text-[11px] leading-5 text-white/64">
+              {item}
+            </p>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }
 

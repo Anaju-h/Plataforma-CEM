@@ -21,6 +21,7 @@ let runtimeProjects =
   projects.map(
     (project) => ({
       ...project,
+      source: project.source ?? "demo",
 
       updatedAt:
         project.updatedAt ??
@@ -59,6 +60,10 @@ let runtimeProjects =
  * CONSULTAS
  * ============================================================
  */
+
+export function isArchivedProject(project) { return ["Concluído", "Cancelado"].includes(project.status); }
+export function getActiveProjects() { return getRuntimeProjects().filter(project => !isArchivedProject(project)); }
+export function getArchivedProjects() { return getRuntimeProjects().filter(isArchivedProject); }
 
 export function getRuntimeProjects() {
   return runtimeProjects;
@@ -168,6 +173,7 @@ export function createProjectFromQuote(
     "Administrador";
 
   const project = {
+    source: quote.source ?? "demo",
     id:
       projectId,
 
@@ -335,11 +341,10 @@ export function updateProjectTask(
   }
 
   if (
-    project.status ===
-    "Concluído"
+    isArchivedProject(project)
   ) {
     throw new Error(
-      "Um projeto concluído precisa ser reaberto antes de alterar o checklist.",
+      "O checklist de um projeto encerrado não pode ser alterado.",
     );
   }
 
@@ -453,11 +458,10 @@ export function saveProjectInternalNotes(
   }
 
   if (
-    project.status ===
-    "Concluído"
+    isArchivedProject(project)
   ) {
     throw new Error(
-      "Um projeto concluído precisa ser reaberto antes de receber alterações.",
+      "As observações de um projeto encerrado não podem ser alteradas.",
     );
   }
 

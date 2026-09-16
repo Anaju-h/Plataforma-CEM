@@ -8,7 +8,7 @@ export function RequestDetailSection({
   return (
     <section
       className="
-        rounded-[22px]
+        internal-detail-section rounded-[22px]
         border
         border-[#cddbe3]
         bg-white
@@ -17,7 +17,7 @@ export function RequestDetailSection({
         sm:p-6
       "
     >
-      <div
+      <header
         className="
           flex
           flex-col
@@ -77,9 +77,9 @@ export function RequestDetailSection({
             {action}
           </div>
         )}
-      </div>
+      </header>
 
-      <div className="pt-5">
+      <div className="internal-section-content pt-5">
         {children}
       </div>
     </section>
@@ -92,7 +92,7 @@ export function RequestInfoItem({
   highlight = false,
 }) {
   return (
-    <div>
+    <div className="internal-info-item min-w-0">
       <p
         className="
           text-[10px]

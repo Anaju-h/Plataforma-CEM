@@ -1,4 +1,14 @@
+import { validationResult, validateRequestForQuote } from "./workflowValidation";
+import { getGeneralSettings } from "./administrationService";
+export { validateRequestForQuote } from "./workflowValidation";
 import { getCommercialReference } from "./pricingService";
+import {
+  calculateQuoteItemTotals,
+  createQuoteItem,
+  getQuoteItemService,
+  normalizeQuoteItem,
+  getQuoteItemsValidation,
+} from "./quoteItemService";
 import {
   quotes,
 } from "../data/internal/quotes";
@@ -18,6 +28,10 @@ const EDITABLE_STATUSES = [
   "Rascunho",
   "Em elaboração",
 ];
+
+export function isQuoteEditable(quote) {
+  return Boolean(quote && EDITABLE_STATUSES.includes(quote.status) && !quote.convertedToProject && !quote.projectId);
+}
 
 const CLOSED_STATUSES = [
   "Aceito",
@@ -75,6 +89,12 @@ export function getQuoteByRequestId(
       requestId,
   );
 }
+
+export function isArchivedQuote(quote) {
+  return Boolean(quote.convertedToProject || quote.projectId || ["Recusado", "Cancelado"].includes(quote.status));
+}
+export function getActiveQuotes() { return getRuntimeQuotes().filter(quote => !isArchivedQuote(quote)); }
+export function getArchivedQuotes() { return getRuntimeQuotes().filter(isArchivedQuote); }
 
 export function getOpenRuntimeQuotes() {
   return runtimeQuotes.filter(
@@ -175,6 +195,28 @@ export function updateRuntimeQuote(
     );
   }
 
+  if (Object.hasOwn(patch, "items")) {
+    if (!isQuoteEditable(quote)) {
+      throw new Error("Os itens só podem ser alterados durante a elaboração.");
+    }
+    if (!Array.isArray(patch.items)) throw new Error("Composição do orçamento inválida.");
+    const ids = new Set();
+    const items = patch.items.map(item => {
+      if (!item.id || ids.has(item.id)) throw new Error("Cada item deve ter um identificador único.");
+      ids.add(item.id);
+      const original = quote.items?.find(existing => existing.id === item.id);
+      const normalized = normalizeQuoteItem(item, original ?? { ...item, isDemoCompatibility: false });
+      return normalized;
+    });
+    patch = { ...patch, items: Object.freeze(items) };
+  }
+  const nextItems = patch.items ?? quote.items;
+  if (Array.isArray(nextItems)) patch = { ...patch, ...calculateQuoteItemTotals(nextItems) };
+  if (patch.status === "Em revisão") {
+    const validation = validateQuoteForReview({ ...quote, ...patch, status: quote.status });
+    if (!validation.valid) throw new Error(`Antes da revisão, preencha: ${validation.problems.join(", ")}.`);
+  }
+
   const updatedAt =
     formatCurrentDate();
 
@@ -219,108 +261,18 @@ export function updateRuntimeQuoteStatus(
  * VALIDAÇÃO PARA REVISÃO
  * ============================================================ */
 
-export function validateQuoteForReview(
-  quote,
-) {
-  const problems = [];
-
-  if (
-    !normalizeText(
-      quote.scope,
-    )
-  ) {
-    problems.push(
-      "escopo técnico",
-    );
-  }
-
-  if (
-    !normalizeText(
-      quote.machineId,
-    )
-  ) {
-    problems.push(
-      "tecnologia de referência",
-    );
-  }
-
-  if (
-    toNumber(
-      quote.technicalHours,
-    ) <= 0
-  ) {
-    problems.push(
-      "horas técnicas previstas",
-    );
-  }
-
-  if (
-    toNumber(
-      quote.billableHours,
-    ) <= 0
-  ) {
-    problems.push(
-      "horas cobradas",
-    );
-  }
-
-  if (
-    toNumber(
-      quote.hourlyRate,
-    ) <= 0
-  ) {
-    problems.push(
-      "valor/hora",
-    );
-  }
-
-  if (
-    toNumber(
-      quote.proposedValue,
-    ) <= 0
-  ) {
-    problems.push(
-      "valor da proposta",
-    );
-  }
-
-  if (
-    toNumber(
-      quote.deadlineDays,
-    ) <= 0
-  ) {
-    problems.push(
-      "prazo de execução",
-    );
-  }
-
-  if (
-    toNumber(
-      quote.validityDays,
-    ) <= 0
-  ) {
-    problems.push(
-      "validade da proposta",
-    );
-  }
-
-  if (
-    !normalizeText(
-      quote.estimateJustification,
-    )
-  ) {
-    problems.push(
-      "justificativa técnica da estimativa",
-    );
-  }
-
-  return {
-    valid:
-      problems.length ===
-      0,
-
-    problems,
-  };
+export function validateQuoteForReview(quote) {
+  if (!quote) return validationResult([{ code: "quote.missing", field: "id", message: "Orçamento não encontrado." }]);
+  const issues = Array.isArray(quote.items) ? [...getQuoteItemsValidation(quote.items).issues] : [];
+  const add = (field, message) => issues.push({ code: "quote." + field, field, message });
+  if (!isQuoteEditable(quote)) add("status", "Este orçamento não pode ser enviado para revisão neste estado.");
+  if (!normalizeText(quote.scope)) add("scope", "Informe o escopo técnico.");
+  if (!normalizeText(quote.machineId)) add("machineId", "Selecione a tecnologia de referência.");
+  if (!normalizeText(quote.estimateJustification)) add("estimateJustification", "Informe a justificativa técnica da estimativa.");
+  const numericFields = [["deadlineDays", "Informe um prazo de execução maior que zero."], ["validityDays", "Informe uma validade da proposta maior que zero."]];
+  if (!Array.isArray(quote.items)) numericFields.push(["billableHours", "Informe as horas cotadas."], ["hourlyRate", "Informe o valor/hora."], ["proposedValue", "Informe o valor da proposta."]);
+  for (const [field, message] of numericFields) if (!Number.isFinite(Number(quote[field])) || Number(quote[field]) <= 0) add(field, message);
+  return validationResult(issues);
 }
 
 /* ============================================================
@@ -801,6 +753,29 @@ export function recordQuoteEvent(
  * CRIAÇÃO A PARTIR DE SOLICITAÇÃO
  * ============================================================ */
 
+function createItemsFromRequest(request, reference) {
+  const pieces = Array.isArray(request.piecesData) ? request.piecesData : [];
+  const items = pieces.filter(piece => normalizeText(piece.name)).flatMap(piece => {
+    const services = piece.services?.length ? piece.services : [null];
+    return services.map(value => {
+      const service = getQuoteItemService(value);
+      return createQuoteItem({
+        name: `${piece.name}${value ? ` — ${service?.name ?? value}` : ""}`,
+        serviceId: service?.id ?? null,
+        requestPieceId: piece.id ?? null,
+        // Recomendações não são uma escolha confirmada de equipamento.
+        machineId: piece.machineId ?? null,
+      }, reference);
+    });
+  });
+  if (items.length) return items;
+  const services = request.services?.length ? request.services : [request.service];
+  return services.filter(value => getQuoteItemService(value)).map(value => {
+    const service = getQuoteItemService(value);
+    return createQuoteItem({ name: service.name, serviceId: service.id }, reference);
+  });
+}
+
 export function createQuoteFromRequest(
   request,
 ) {
@@ -829,20 +804,11 @@ export function createQuoteFromRequest(
     };
   }
 
-  if (
-    ![
-      "Apta para orçamento",
-      "Convertida em orçamento",
-    ].includes(
-      request.status,
-    )
-  ) {
-    throw new Error(
-      "A solicitação precisa estar apta para orçamento antes da criação da proposta.",
-    );
-  }
+  const validation = validateRequestForQuote(request);
+  if (!validation.isValid) throw new Error(validation.problems.join(" "));
 
   const commercialRateReference = Object.freeze(getCommercialReference());
+  const defaults = getGeneralSettings();
 
   const quoteId =
     generateNextQuoteId();
@@ -871,7 +837,7 @@ export function createQuoteFromRequest(
     !request.responsible ||
     request.responsible ===
       "Não atribuído"
-      ? DEFAULT_ACTOR
+      ? defaults.defaultResponsible
       : request.responsible;
 
   const service =
@@ -883,6 +849,8 @@ export function createQuoteFromRequest(
   const quote = {
     id:
       quoteId,
+
+    items: Object.freeze(createItemsFromRequest(request, commercialRateReference)),
 
     requestId:
       request.id,
@@ -958,10 +926,10 @@ export function createQuoteFromRequest(
       0,
 
     deadlineDays:
-      0,
+      defaults.defaultExecutionDeadlineDays,
 
     validityDays:
-      15,
+      defaults.defaultQuoteValidityDays,
 
     scope:
       request.objective
@@ -1027,6 +995,8 @@ export function createQuoteFromRequest(
     ],
   };
 
+  Object.assign(quote, calculateQuoteItemTotals(quote.items));
+
   runtimeQuotes = [
     quote,
     ...runtimeQuotes,
@@ -1063,6 +1033,23 @@ function normalizeQuote(
   const quote = {
     ...rawQuote,
   };
+
+  // Os mocks não possuem composição histórica. Preservamos o original para
+  // rastreabilidade; somente horas explicitamente registradas são migradas.
+  const reference = quote.commercialRateReference ?? initialCommercialReference;
+  const items = Array.isArray(quote.items)
+    ? quote.items.map(item => normalizeQuoteItem(item))
+    : [createQuoteItem({
+        id: `${quote.id}-ITEM-DEMO`,
+        name: `${quote.service || "Orçamento anterior"} — compatibilidade demo`,
+        description: "Item demo: horas ausentes permanecem desconhecidas; valor histórico preservado separadamente.",
+        serviceId: getQuoteItemService(quote.service)?.id ?? null,
+        machineId: quote.machineId,
+        technicalHours: quote.technicalHours > 0 ? quote.technicalHours : null,
+        quotedHours: quote.billableHours > 0 ? quote.billableHours : null,
+        hourlyRate: quote.hourlyRate ?? reference.hourlyRate,
+        isDemoCompatibility: true,
+      }, reference)];
 
   return {
     ...quote,
@@ -1174,6 +1161,16 @@ function normalizeQuote(
       quote.projectId ??
       null,
 
+    commercialRateReference: Object.freeze({ ...reference }),
+    legacyEstimate: quote.legacyEstimate ?? Object.freeze({
+      technicalHours: quote.technicalHours,
+      billableHours: quote.billableHours,
+      hourlyRate: quote.hourlyRate,
+      proposedValue: quote.proposedValue,
+    }),
+    items: Object.freeze(items),
+    ...calculateQuoteItemTotals(items),
+
     history:
       Array.isArray(
         quote.history,
@@ -1197,6 +1194,9 @@ function createEstimateVersion(
     new Date();
 
   return {
+    items: Object.freeze((quote.items ?? []).map(item => normalizeQuoteItem(item))),
+    totalTechnicalHours: quote.totalTechnicalHours,
+    totalQuotedHours: quote.totalQuotedHours,
     id:
       `EST-${String(
         (quote.estimateVersions
@@ -1216,15 +1216,9 @@ function createEstimateVersion(
     machineId:
       quote.machineId,
 
-    technicalHours:
-      toNumber(
-        quote.technicalHours,
-      ),
+    technicalHours: quote.technicalHours ?? null,
 
-    billableHours:
-      toNumber(
-        quote.billableHours,
-      ),
+    billableHours: quote.billableHours ?? null,
 
     hourlyRate:
       toNumber(

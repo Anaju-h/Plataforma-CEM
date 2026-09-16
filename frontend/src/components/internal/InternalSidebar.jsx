@@ -1,3 +1,4 @@
+import { useCurrentUser } from "../../hooks/useCurrentUser";
 import {
   NavLink,
   useNavigate,
@@ -32,6 +33,11 @@ const navigation = [
         label: "Projetos",
         to: "/portal/projetos",
         icon: ProjectsIcon,
+      },
+      {
+        label: "Histórico",
+        to: "/portal/historico",
+        icon: RequestsIcon,
       },
     ],
   },
@@ -121,6 +127,7 @@ function SidebarContent({
   mobile = false,
   onClose,
 }) {
+  const user = useCurrentUser();
   const navigate =
     useNavigate();
 
@@ -135,7 +142,7 @@ function SidebarContent({
 
   function handleOpenAccount() {
     navigate(
-      "/portal/administracao",
+      "/portal/conta",
     );
 
     handleNavigate();
@@ -225,7 +232,7 @@ function SidebarContent({
             </div>
 
             <div>
-              <p className="text-[10px] font-semibold uppercase tracking-[0.15em] text-[#afd1e1]">
+              <p className="text-[12px] font-semibold uppercase tracking-[0.15em] text-[#afd1e1]">
                 Plataforma
               </p>
 
@@ -257,7 +264,7 @@ function SidebarContent({
                   : "mb-4"
               }
             >
-              <p className="px-2 pb-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#527286]">
+              <p className="px-2 pb-2 text-[12px] font-semibold uppercase tracking-[0.14em] text-[#527286]">
                 {
                   section.group
                 }
@@ -366,6 +373,7 @@ function SidebarContent({
             onClick={
               handleOpenAccount
             }
+            aria-label="Minha Conta"
             className="
               flex w-full items-center gap-3
               rounded-[14px]
@@ -387,17 +395,13 @@ function SidebarContent({
                 text-[11px]
                 font-semibold text-white
               "
-            >
-              AD
-            </div>
+            >{user.initials}</div>
 
             <div className="min-w-0 flex-1">
-              <p className="truncate text-[12px] font-semibold text-[#17384d]">
-                Administrador
-              </p>
+              <p className="truncate text-[12px] font-semibold text-[#17384d]">{user.name}</p>
 
-              <p className="mt-0.5 text-[10px] font-medium text-[#5d7888]">
-                Gerente do laboratório
+              <p className="mt-0.5 text-[12px] font-medium text-[#5d7888]">
+                {user.accessProfile}
               </p>
             </div>
 

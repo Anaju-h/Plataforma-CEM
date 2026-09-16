@@ -63,7 +63,7 @@ export function KnowledgeDetailPage() {
             "/portal/conhecimento",
           )
         }
-        className="mb-5 text-[10px] font-semibold uppercase tracking-[0.1em] text-[#5681a0] transition hover:text-[#0b2340]"
+        className="mb-5 internal-help-text font-semibold uppercase tracking-[0.1em] text-[#5681a0] transition hover:text-[#0b2340]"
       >
         ← Voltar para conhecimento
       </button>
@@ -73,7 +73,7 @@ export function KnowledgeDetailPage() {
           <section className="rounded-[24px] border border-[#d1dde4] bg-white p-6 shadow-[0_12px_35px_rgba(34,67,90,0.035)] sm:p-8">
             <div className="flex flex-wrap items-start justify-between gap-4">
               <div>
-                <p className="text-[9px] font-semibold uppercase tracking-[0.14em] text-[#5681a0]">
+                <p className="internal-field-label font-semibold uppercase tracking-[0.14em] text-[#5681a0]">
                   {category?.label ??
                     "Conhecimento"}{" "}
                   · {item.id}
@@ -91,6 +91,7 @@ export function KnowledgeDetailPage() {
               />
             </div>
 
+            {item.isDemo && <p className="internal-help-text mt-4 text-[#806b3d]">Referência demo · uso interno. Não é um caso de serviço formalizado e não alimenta recomendações reais.</p>}
             <p className="mt-5 max-w-3xl text-sm leading-7 text-[#667f8f]">
               {item.summary}
             </p>
@@ -100,7 +101,7 @@ export function KnowledgeDetailPage() {
                 (tag) => (
                   <span
                     key={tag}
-                    className="rounded-full border border-[#d3e1e8] bg-[#f5f9fb] px-3 py-1.5 text-[9px] font-medium text-[#607989]"
+                    className="rounded-full border border-[#d3e1e8] bg-[#f5f9fb] px-3 py-1.5 internal-field-label font-medium text-[#607989]"
                   >
                     {tag}
                   </span>
@@ -110,7 +111,7 @@ export function KnowledgeDetailPage() {
           </section>
 
           <section className="rounded-[24px] border border-[#d1dde4] bg-white p-6 sm:p-8">
-            <p className="text-[9px] font-semibold uppercase tracking-[0.14em] text-[#5681a0]">
+            <p className="internal-field-label font-semibold uppercase tracking-[0.14em] text-[#5681a0]">
               Conteúdo
             </p>
 
@@ -124,7 +125,7 @@ export function KnowledgeDetailPage() {
                     key={`${section.title}-${index}`}
                   >
                     <div className="flex gap-4">
-                      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[#c6d9e3] bg-[#edf6fa] text-[9px] font-semibold text-[#5681a0]">
+                      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[#c6d9e3] bg-[#edf6fa] internal-field-label font-semibold text-[#5681a0]">
                         {String(
                           index + 1,
                         ).padStart(
@@ -156,7 +157,7 @@ export function KnowledgeDetailPage() {
           {item.attachments.length >
             0 && (
             <section className="rounded-[24px] border border-[#d1dde4] bg-white p-6 sm:p-8">
-              <p className="text-[9px] font-semibold uppercase tracking-[0.14em] text-[#5681a0]">
+              <p className="internal-field-label font-semibold uppercase tracking-[0.14em] text-[#5681a0]">
                 Documentos relacionados
               </p>
 
@@ -165,15 +166,14 @@ export function KnowledgeDetailPage() {
                   (
                     attachment,
                   ) => (
-                    <button
+                    <div
                       key={
                         attachment.id
                       }
-                      type="button"
-                      className="flex items-center gap-4 rounded-[15px] border border-[#d9e3e8] bg-[#f8fafb] p-4 text-left transition hover:border-[#a9c6d6] hover:bg-white"
+                      className="flex items-center gap-4 rounded-[15px] border border-[#d9e3e8] bg-[#f8fafb] p-4 text-left"
                     >
                       <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] border border-[#ccdde6] bg-white text-xs text-[#5681a0]">
-                        ↓
+                        XLS
                       </span>
 
                       <div className="min-w-0">
@@ -183,19 +183,19 @@ export function KnowledgeDetailPage() {
                           }
                         </p>
 
-                        <p className="mt-1 text-[9px] uppercase tracking-[0.07em] text-[#84949e]">
+                        <p className="mt-1 internal-field-label uppercase tracking-[0.07em] text-[#84949e]">
                           {
                             attachment.type
                           }
                         </p>
 
-                        <p className="mt-2 text-[10px] leading-4 text-[#7e919c]">
+                        <p className="mt-2 internal-help-text leading-4 text-[#7e919c]">
                           {
                             attachment.description
                           }
                         </p>
                       </div>
-                    </button>
+                    </div>
                   ),
                 )}
               </div>
@@ -205,7 +205,7 @@ export function KnowledgeDetailPage() {
 
         <aside className="space-y-5">
           <section className="rounded-[22px] border border-[#c7d9e3] bg-[#e6f0f5] p-5">
-            <p className="text-[9px] font-semibold uppercase tracking-[0.14em] text-[#5681a0]">
+            <p className="internal-field-label font-semibold uppercase tracking-[0.14em] text-[#5681a0]">
               Informações
             </p>
 
@@ -267,25 +267,7 @@ export function KnowledgeDetailPage() {
             />
           )}
 
-          <section className="rounded-[22px] border border-[#d1dde4] bg-white p-5">
-            <p className="text-[9px] font-semibold uppercase tracking-[0.14em] text-[#718895]">
-              Gestão do conteúdo
-            </p>
 
-            <button
-              type="button"
-              className="mt-4 w-full rounded-[11px] border border-[#cbd9e1] bg-[#f5f9fb] px-4 py-3 text-[9px] font-semibold uppercase tracking-[0.09em] text-[#536f80]"
-            >
-              Editar conteúdo
-            </button>
-
-            <button
-              type="button"
-              className="mt-2 w-full rounded-[11px] border border-[#cbd9e1] bg-white px-4 py-3 text-[9px] font-semibold uppercase tracking-[0.09em] text-[#536f80]"
-            >
-              Registrar revisão
-            </button>
-          </section>
         </aside>
       </div>
     </div>
@@ -298,7 +280,7 @@ function InfoItem({
 }) {
   return (
     <div>
-      <p className="text-[9px] font-semibold uppercase tracking-[0.1em] text-[#718895]">
+      <p className="internal-field-label font-semibold uppercase tracking-[0.1em] text-[#718895]">
         {label}
       </p>
 
@@ -316,7 +298,7 @@ function RelatedSection({
 }) {
   return (
     <section className="rounded-[22px] border border-[#d1dde4] bg-white p-5">
-      <p className="text-[9px] font-semibold uppercase tracking-[0.14em] text-[#718895]">
+      <p className="internal-field-label font-semibold uppercase tracking-[0.14em] text-[#718895]">
         {title}
       </p>
 
@@ -325,7 +307,7 @@ function RelatedSection({
           (item) => (
             <span
               key={item}
-              className="rounded-full border border-[#d2e1e8] bg-[#f5f9fb] px-3 py-1.5 text-[9px] font-semibold text-[#567487]"
+              className="rounded-full border border-[#d2e1e8] bg-[#f5f9fb] px-3 py-1.5 internal-field-label font-semibold text-[#567487]"
             >
               {item}
             </span>

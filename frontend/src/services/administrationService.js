@@ -1,6 +1,5 @@
 import {
   initialAttentionRules,
-  initialAuditEvents,
   initialGeneralSettings,
   integrationCatalog,
 } from "../data/internal/administration";
@@ -36,12 +35,7 @@ let attentionRules =
     }),
   );
 
-let auditEvents =
-  initialAuditEvents.map(
-    (event) => ({
-      ...event,
-    }),
-  );
+let auditEvents = [];
 
 /*
  * ============================================================
@@ -58,6 +52,11 @@ export function getGeneralSettings() {
 export function updateGeneralSettings(
   patch,
 ) {
+  for (const [field, minimum] of [["defaultQuoteValidityDays", 1], ["defaultExecutionDeadlineDays", 0]]) {
+    if (Object.hasOwn(patch, field) && (!Number.isInteger(patch[field]) || patch[field] < minimum)) {
+      throw new Error("Informe validade e prazo em dias inteiros válidos.");
+    }
+  }
   const previousSettings = {
     ...generalSettings,
   };

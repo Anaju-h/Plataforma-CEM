@@ -1,3 +1,4 @@
+import { validateRequestForQuote } from "./workflowValidation";
 import {
   requests as baseRequests,
 } from "../data/internal/requests";
@@ -66,6 +67,10 @@ export function getRuntimeRequestById(
       )
     : null;
 }
+
+export function isArchivedRequest(request) { return Boolean(request.linkedQuoteId || CLOSED_STATUSES.includes(request.status)); }
+export function getActiveRequests() { return getRuntimeRequests().filter(request => !isArchivedRequest(request)); }
+export function getArchivedRequests() { return getRuntimeRequests().filter(isArchivedRequest); }
 
 export function getOpenRuntimeRequests() {
   return runtimeRequests
@@ -1119,14 +1124,8 @@ export function markRequestAsConverted(
     );
   }
 
-  if (
-    request.status !==
-    "Apta para orçamento"
-  ) {
-    throw new Error(
-      "A solicitação precisa estar apta para orçamento antes da conversão.",
-    );
-  }
+  const validation = validateRequestForQuote(request);
+  if (!validation.isValid) throw new Error(validation.problems.join(" "));
 
   const normalizedQuoteId =
     normalizeText(

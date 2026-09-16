@@ -171,6 +171,7 @@ export function SobrePage() {
         />
 
         <ContinuitySection />
+        <LocationSection />
         <CapabilitiesSection />
       </div>
 
@@ -1367,6 +1368,261 @@ function ContinuityDivider() {
 /* =========================================================
    ESTRUTURA TECNOLÓGICA
 ========================================================= */
+
+
+function LocationSection() {
+  const mapsUrl = "https://maps.app.goo.gl/VANnfLem1ExzaLdR8";
+  const mapEmbedUrl =
+    "https://www.google.com/maps?ll=-16.6556338,-49.2707544&z=16&output=embed";
+
+  return (
+    <section
+      className="
+        relative
+        pb-14
+        pt-4
+        sm:pb-16
+        sm:pt-6
+        lg:pb-[72px]
+        lg:pt-8
+      "
+    >
+      <Container>
+        <div
+          className="
+            grid
+            items-stretch
+            gap-8
+            lg:grid-cols-[1.08fr_0.92fr]
+            lg:gap-12
+          "
+        >
+          <motion.a
+            href={mapsUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            initial={{
+              opacity: 0,
+              x: -28,
+              scale: 0.985,
+            }}
+            whileInView={{
+              opacity: 1,
+              x: 0,
+              scale: 1,
+            }}
+            viewport={{
+              once: false,
+              amount: 0.25,
+            }}
+            transition={{
+              duration: 0.75,
+              ease: [0.22, 1, 0.36, 1],
+            }}
+            className="
+              group
+              relative
+              min-h-[360px]
+              overflow-hidden
+              rounded-[26px]
+              border
+              border-white/80
+              bg-[#dce7ed]
+              shadow-[0_22px_58px_rgba(7,31,45,0.10)]
+              sm:min-h-[410px]
+              lg:min-h-[450px]
+            "
+            aria-label="Abrir localização do Centro de Excelência em Metrologia no Google Maps"
+          >
+            <iframe
+              src={mapEmbedUrl}
+              title="Localização do Centro de Excelência em Metrologia"
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              className="
+                pointer-events-none
+                absolute
+                inset-0
+                h-full
+                w-full
+                border-0
+              "
+            />
+
+            <div
+              aria-hidden="true"
+              className="
+                pointer-events-none
+                absolute
+                inset-0
+                ring-1
+                ring-inset
+                ring-white/45
+              "
+            />
+
+            <div
+              aria-hidden="true"
+              className="
+                pointer-events-none
+                absolute
+                left-1/2
+                top-1/2
+                h-5
+                w-5
+                -translate-x-1/2
+                -translate-y-1/2
+                rounded-full
+                border-[4px]
+                border-white
+                bg-[#0057b8]
+                shadow-[0_7px_18px_rgba(7,31,45,0.28),0_0_0_5px_rgba(0,87,184,0.16)]
+              "
+            />
+          </motion.a>
+
+          <motion.div
+            initial={{
+              opacity: 0,
+              x: 28,
+            }}
+            whileInView={{
+              opacity: 1,
+              x: 0,
+            }}
+            viewport={{
+              once: false,
+              amount: 0.25,
+            }}
+            transition={{
+              delay: 0.08,
+              duration: 0.75,
+              ease: [0.22, 1, 0.36, 1],
+            }}
+            className="
+              flex
+              flex-col
+              justify-center
+              lg:pl-2
+            "
+          >
+            <div className="flex items-center gap-3">
+              <span
+                className="
+                  h-[5px]
+                  w-[5px]
+                  rounded-full
+                  bg-[#0057b8]
+                  shadow-[0_0_0_5px_rgba(0,87,184,0.07)]
+                "
+              />
+
+              <p
+                className="
+                  text-[10px]
+                  font-bold
+                  uppercase
+                  tracking-[0.21em]
+                  text-[#315b75]
+                "
+              >
+                Onde estamos
+              </p>
+
+              <div className="h-px w-10 bg-[#315b75]/24" />
+            </div>
+
+            <h2
+              className="
+                mt-5
+                max-w-[520px]
+                text-[2.3rem]
+                font-semibold
+                leading-[1.02]
+                tracking-[-0.045em]
+                text-[#071f2d]
+                sm:text-[2.85rem]
+              "
+            >
+              Em Goiânia,
+              <span className="block text-[#315b75]">
+                junto à indústria e à formação.
+              </span>
+            </h2>
+
+            <p
+              className="
+                mt-6
+                max-w-[560px]
+                text-[14px]
+                font-medium
+                leading-[1.88]
+                text-[#557284]
+              "
+            >
+              O Centro de Excelência em Metrologia está instalado na Faculdade
+              SENAI Ítalo Bologna, em Goiânia. Inaugurado em novembro de 2024,
+              foi o primeiro Centro de Excelência em Metrologia SENAI ZEISS do
+              Brasil, resultado da parceria entre o SENAI e a Carl Zeiss para
+              aproximar metrologia de precisão, qualificação profissional e as
+              necessidades da indústria.
+            </p>
+
+            <div
+              className="
+                mt-8
+                border-l-2
+                border-[#65b8ee]
+                pl-5
+              "
+            >
+              <p
+                className="
+                  text-[10px]
+                  font-bold
+                  uppercase
+                  tracking-[0.14em]
+                  text-[#6c8797]
+                "
+              >
+                Centro de Excelência em Metrologia
+              </p>
+
+              <p
+                className="
+                  mt-2
+                  max-w-[470px]
+                  text-[14px]
+                  font-semibold
+                  leading-[1.7]
+                  text-[#12364e]
+                "
+              >
+                R. Armogaste José da Silveira, 612
+                <br />
+                St. Centro Oeste, Goiânia - GO
+                <br />
+                74560-550
+              </p>
+            </div>
+
+            <p
+              className="
+                mt-5
+                max-w-[500px]
+                text-[11.5px]
+                leading-[1.7]
+                text-[#78909d]
+              "
+            >
+              Clique no mapa para abrir a localização no Google Maps.
+            </p>
+          </motion.div>
+        </div>
+      </Container>
+    </section>
+  );
+}
 
 function CapabilitiesSection() {
   return (
