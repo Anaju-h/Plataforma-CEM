@@ -1,29 +1,18 @@
-const services = [
-  {
-    value: "inspection",
-    label: "Inspeção dimensional",
-    description:
-      "Dimensões, geometrias, tolerâncias e conformidade.",
-  },
-  {
-    value: "scanning",
-    label: "Digitalização 3D",
-    description:
-      "Captura tridimensional da geometria da peça.",
-  },
-  {
-    value: "reverse",
-    label: "Engenharia reversa",
-    description:
-      "Reconstrução e desenvolvimento de modelos digitais.",
-  },
-  {
-    value: "internal",
-    label: "Análise interna",
-    description:
-      "Investigação de características internas.",
-  },
-];
+import {
+  getService,
+  normalizeServiceId,
+  technicalServiceOrder,
+} from "../../data/serviceCatalog";
+
+const services = technicalServiceOrder.map((serviceId) => {
+  const service = getService(serviceId);
+
+  return {
+    value: service.id,
+    label: service.name,
+    description: service.description,
+  };
+});
 
 export function PieceCard({
   piece,
@@ -32,13 +21,25 @@ export function PieceCard({
   onChange,
   onDelete,
 }) {
-  function toggleService(service) {
-    const exists = piece.services.includes(service);
+  const selectedServices = Array.from(
+    new Set(
+      (piece.services ?? [])
+        .map(normalizeServiceId)
+        .filter(Boolean),
+    ),
+  );
+
+  function hasService(serviceId) {
+    return selectedServices.includes(serviceId);
+  }
+
+  function toggleService(serviceId) {
+    const exists = hasService(serviceId);
 
     onChange(piece.id, {
       services: exists
-        ? piece.services.filter((item) => item !== service)
-        : [...piece.services, service],
+        ? selectedServices.filter((item) => item !== serviceId)
+        : [...selectedServices, serviceId],
     });
   }
 
@@ -197,7 +198,7 @@ export function PieceCard({
         >
           <div className="grid gap-3 sm:grid-cols-2">
             {services.map((service) => {
-              const active = piece.services.includes(service.value);
+              const active = hasService(service.value);
 
               return (
                 <button
@@ -250,14 +251,14 @@ export function PieceCard({
           </div>
         </FormSection>
 
-        {piece.services.length > 0 && (
+        {selectedServices.length > 0 && (
           <FormSection
             title="Detalhes dos serviços"
             description="As perguntas abaixo são exibidas de acordo com os serviços selecionados."
           >
             <div className="space-y-4">
-              {piece.services.includes("inspection") && (
-                <OptionPanel title="Inspeção dimensional">
+              {hasService("dimensional") && (
+                <OptionPanel title="Metrologia e inspeção dimensional">
                   <CheckboxGroup
                     label="O que precisa ser avaliado?"
                     options={[
@@ -278,8 +279,8 @@ export function PieceCard({
                 </OptionPanel>
               )}
 
-              {piece.services.includes("scanning") && (
-                <OptionPanel title="Digitalização 3D">
+              {hasService("scan") && (
+                <OptionPanel title="Escaneamento e digitalização 3D">
                   <CheckboxGroup
                     label="Qual é o objetivo da digitalização?"
                     options={[
@@ -299,8 +300,8 @@ export function PieceCard({
                 </OptionPanel>
               )}
 
-              {piece.services.includes("reverse") && (
-                <OptionPanel title="Engenharia reversa">
+              {hasService("reverse-engineering") && (
+                <OptionPanel title="Engenharia reversa e desenvolvimento">
                   <CheckboxGroup
                     label="Qual resultado você espera obter?"
                     options={[
@@ -320,8 +321,8 @@ export function PieceCard({
                 </OptionPanel>
               )}
 
-              {piece.services.includes("internal") && (
-                <OptionPanel title="Análise interna">
+              {hasService("internal") && (
+                <OptionPanel title="Tomografia industrial">
                   <CheckboxGroup
                     label="O que precisa ser investigado?"
                     options={[

@@ -20,7 +20,6 @@ import {
 } from "../../components/internal/StatusBadge";
 
 import {
-  requestOrigins,
   requestStatuses,
 } from "../../data/internal/requests";
 
@@ -28,6 +27,16 @@ import {
   getActiveRequests,
   isArchivedRequest,
 } from "../../services/requestService";
+
+import {
+  getServiceLabel as getCatalogServiceLabel,
+} from "../../data/serviceCatalog";
+
+const CANONICAL_ORIGINS = [
+  "Público",
+  "Cliente",
+  "Interno",
+];
 
 /* ============================================================
  * PÁGINA
@@ -85,28 +94,18 @@ export function RequestsPage() {
           ) => {
             const matchesSearch =
               !normalizedSearch ||
-              [
-                request.id,
-                request.company,
-                request.contact,
-                request.email,
-                request.service,
-                request.responsible,
-                request.channel,
-              ]
-                .filter(
-                  Boolean,
-                )
-                .some(
-                  (value) =>
-                    String(
-                      value,
-                    )
-                      .toLowerCase()
-                      .includes(
-                        normalizedSearch,
-                      ),
-                );
+              getRequestSearchValues(
+                request,
+              ).some(
+                (value) =>
+                  String(
+                    value,
+                  )
+                    .toLowerCase()
+                    .includes(
+                      normalizedSearch,
+                    ),
+              );
 
             const matchesStatus =
               status ===
@@ -179,9 +178,30 @@ export function RequestsPage() {
       ],
     );
 
+  const hasActiveFilters =
+    Boolean(
+      search.trim(),
+    ) ||
+    status !== "Todos" ||
+    origin !== "Todas";
+
   /* ==========================================================
    * AÇÕES
    * ========================================================== */
+
+  function handleResetFilters() {
+    setSearch(
+      "",
+    );
+
+    setStatus(
+      "Todos",
+    );
+
+    setOrigin(
+      "Todas",
+    );
+  }
 
   function handleNewRequest() {
     navigate(
@@ -217,7 +237,8 @@ export function RequestsPage() {
             onClick={
               handleNewRequest
             }
-            className="internal-card-title 
+            className="
+              internal-card-title
               inline-flex
               min-h-[44px]
               cursor-pointer
@@ -227,7 +248,6 @@ export function RequestsPage() {
               rounded-[13px]
               bg-[#12364e]
               px-5
-              
               font-semibold
               text-white
               shadow-[0_8px_20px_rgba(18,54,78,0.13)]
@@ -317,14 +337,27 @@ export function RequestsPage() {
           onOriginChange={
             setOrigin
           }
-          statuses={
-            requestStatuses.filter(status => !isArchivedRequest({ status }))
+          statusOptions={
+            requestStatuses.filter(
+              (
+                statusOption,
+              ) =>
+                !isArchivedRequest({
+                  status:
+                    statusOption,
+                }),
+            )
           }
-          origins={
+          originOptions={
             getAvailableOrigins(
-              requestOrigins,
               requests,
             )
+          }
+          hasActiveFilters={
+            hasActiveFilters
+          }
+          onReset={
+            handleResetFilters
           }
         />
       </div>
@@ -496,7 +529,8 @@ export function RequestsPage() {
                             request.id,
                           );
                         }}
-                        className="internal-card-title 
+                        className="
+                          internal-card-title
                           cursor-pointer
                           rounded-[10px]
                           border
@@ -504,7 +538,6 @@ export function RequestsPage() {
                           bg-white
                           px-3
                           py-2
-                          
                           font-semibold
                           text-[#3e6d86]
                           transition
@@ -645,14 +678,14 @@ export function RequestsPage() {
               onClick={
                 handleNewRequest
               }
-              className="internal-card-title 
+              className="
+                internal-card-title
                 mt-5
                 cursor-pointer
                 rounded-[11px]
                 bg-[#12364e]
                 px-4
                 py-2.5
-                
                 font-semibold
                 text-white
                 transition
@@ -708,13 +741,11 @@ function TableHeader({
 }) {
   return (
     <th
-      className={`internal-eyebrow 
+      className={`internal-eyebrow
         px-5
         py-3.5
-        
         font-semibold
         uppercase
-        
         text-[#526d7c]
 
         ${
@@ -745,9 +776,9 @@ function OriginBadge({
     origin ===
     "Interno";
 
-  const isConfigurator =
+  const isPublic =
     origin ===
-    "Configurador";
+    "Público";
 
   const isCustomer =
     origin ===
@@ -762,7 +793,7 @@ function OriginBadge({
     classes =
       "border-[#a9cadb] bg-[#e5f1f6] text-[#315f79]";
   } else if (
-    isConfigurator
+    isPublic
   ) {
     classes =
       "border-[#b8d3e4] bg-[#edf5fa] text-[#356f9f]";
@@ -776,13 +807,12 @@ function OriginBadge({
   return (
     <div className="flex flex-col items-start gap-1.5">
       <span
-        className={`internal-card-title 
+        className={`internal-card-title
           inline-flex
           rounded-full
           border
           px-2.5
           py-1
-          
           font-semibold
           ${classes}
         `}
@@ -790,14 +820,11 @@ function OriginBadge({
         {origin}
       </span>
 
-      {isInternal &&
-        request.channel && (
-          <span className="internal-help-text pl-1 text-[#526d7c]">
-            {
-              request.channel
-            }
-          </span>
-        )}
+      {request.channel && (
+        <span className="internal-help-text pl-1 text-[#526d7c]">
+          {request.channel}
+        </span>
+      )}
     </div>
   );
 }
@@ -835,7 +862,9 @@ function getServiceLabel(
     request.service !==
       "Não definido"
   ) {
-    return request.service;
+    return getCatalogServiceLabel(
+      request.service,
+    );
   }
 
   if (
@@ -849,10 +878,14 @@ function getServiceLabel(
       request.services.length ===
       1
     ) {
-      return request.services[0];
+      return getCatalogServiceLabel(
+        request.services[0],
+      );
     }
 
-    return `${request.services[0]} +${request.services.length - 1}`;
+    return `${getCatalogServiceLabel(
+      request.services[0],
+    )} +${request.services.length - 1}`;
   }
 
   return "Serviço não definido";
@@ -875,45 +908,84 @@ function formatParts(
   }`;
 }
 
-function getAvailableOrigins(
-  configuredOrigins,
-  requests,
+function getRequestSearchValues(
+  request,
 ) {
-  const origins =
-    new Set(
-      Array.isArray(
-        configuredOrigins,
-      )
-        ? configuredOrigins
-        : [
-            "Todas",
-          ],
+  const serviceValues = [
+    request.service,
+
+    ...(Array.isArray(
+      request.services,
+    )
+      ? request.services
+      : []),
+  ].filter(
+    Boolean,
+  );
+
+  const serviceLabels =
+    serviceValues.map(
+      (service) =>
+        getCatalogServiceLabel(
+          service,
+        ),
     );
 
-  origins.add(
-    "Todas",
+  return [
+    request.id,
+    request.company,
+    request.contact,
+    request.email,
+    request.phone,
+    request.responsible,
+    request.origin,
+    request.channel,
+    request.objective,
+    request.requestNeedId,
+    request.requestNeed?.name,
+    ...serviceValues,
+    ...serviceLabels,
+  ].filter(
+    Boolean,
   );
+}
 
-  requests.forEach(
-    (request) => {
-      if (
-        request.origin
-      ) {
-        origins.add(
-          request.origin,
-        );
-      }
-    },
-  );
+function getAvailableOrigins(
+  requests,
+) {
+  const availableOrigins =
+    new Set(
+      requests
+        .map(
+          (request) =>
+            request.origin,
+        )
+        .filter(
+          Boolean,
+        ),
+    );
+
+  const ordered =
+    CANONICAL_ORIGINS.filter(
+      (origin) =>
+        availableOrigins.has(
+          origin,
+        ),
+    );
+
+  const additional =
+    Array.from(
+      availableOrigins,
+    ).filter(
+      (origin) =>
+        !CANONICAL_ORIGINS.includes(
+          origin,
+        ),
+    );
 
   return [
     "Todas",
-    ...Array.from(
-      origins,
-    ).filter(
-      (item) =>
-        item !==
-        "Todas",
-    ),
+    ...ordered,
+    ...additional,
   ];
 }

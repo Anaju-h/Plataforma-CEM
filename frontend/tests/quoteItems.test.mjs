@@ -184,8 +184,7 @@ test("todos os ORCs demo renderizam, preservam valores e continuam compatíveis 
   assert.deepEqual(items.validateQuoteItem(legacy.items[0]), []);
   assert.match(renderQuote(legacy.id), /6.800,00/);
   assert.doesNotMatch(renderQuote(legacy.id), /45,33/);
-  const result = projects.createProjectFromQuote("ORC-0012");
-  assert.equal(result.project.quoteId, "ORC-0012");
+  assert.throws(() => projects.createProjectFromQuote("ORC-0012"), /proposta aceita/);
   assert.equal(quotes.getRuntimeQuoteById("ORC-0012").proposedValue, 1500);
 });
 

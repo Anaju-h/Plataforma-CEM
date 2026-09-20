@@ -1,3 +1,5 @@
+import { getCustomerAcceptedProposals } from "../proposalService";
+import { getRuntimeProjectById } from "../projectService";
 const customer = {
   id: "CUS-001",
   company: {
@@ -42,27 +44,6 @@ const requests = [
     status: "Concluída",
     description:
       "Levantamento geométrico para reconstrução digital do componente.",
-  },
-];
-
-const quotes = [
-  {
-    id: "ORC-2026-018",
-    requestId: "SOL-2026-036",
-    service: "Digitalização 3D",
-    createdAt: "05/09/2026",
-    validUntil: "20/09/2026",
-    status: "Aguardando resposta",
-    value: 2850,
-  },
-  {
-    id: "ORC-2026-011",
-    requestId: "SOL-2026-029",
-    service: "Engenharia reversa",
-    createdAt: "16/08/2026",
-    validUntil: "31/08/2026",
-    status: "Aceito",
-    value: 4720,
   },
 ];
 
@@ -139,11 +120,19 @@ export function getCustomerRequests() {
 }
 
 export function getCustomerQuotes() {
-  return simulateRequest(quotes);
+  return simulateRequest(getCustomerAcceptedProposals(customer.company.name));
 }
 
 export function getCustomerProjects() {
-  return simulateRequest(projects);
+  const acceptedProjects = getCustomerAcceptedProposals(customer.company.name).flatMap(quote => {
+    const project = getRuntimeProjectById(quote.projectId);
+    if (!project) return [];
+    const tasks = project.tasks ?? [];
+    return [{ id: project.id, quoteId: quote.id, source: project.source, service: quote.document.snapshot.items.map(item => item.name).join(", "),
+      part: "Conforme proposta aceita", startedAt: project.createdAt, estimatedDelivery: project.deadline, status: project.status,
+      progress: tasks.length ? Math.round(tasks.filter(task => task.completed).length / tasks.length * 100) : 0 }];
+  });
+  return simulateRequest([...acceptedProjects, ...projects]);
 }
 
 export function getCustomerDocuments() {

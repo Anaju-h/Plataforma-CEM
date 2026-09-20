@@ -1,6 +1,7 @@
 import {
   projects,
 } from "../data/internal/projects";
+import { getProposalByQuoteId, validateProposalForProject } from "./proposalService";
 
 import {
   getMachineCostKnowledge,
@@ -98,6 +99,9 @@ export function getProjectByQuoteId(
 export function createProjectFromQuote(
   quoteId,
 ) {
+  const validation = validateProposalForProject(quoteId);
+  if (!validation.valid) throw new Error(validation.problems.join(" "));
+  const proposal = getProposalByQuoteId(quoteId);
   const quote =
     getRuntimeQuoteById(
       quoteId,
@@ -173,6 +177,8 @@ export function createProjectFromQuote(
     "Administrador";
 
   const project = {
+    acceptedProposalId: proposal.id,
+    acceptedProposalVersion: proposal.acceptedVersion,
     source: quote.source ?? "demo",
     id:
       projectId,

@@ -1,4 +1,6 @@
+import { captureRequestPieces, getQuotePieces } from "./quotePieceService";
 import { validationResult, validateRequestForQuote } from "./workflowValidation";
+import { getAcceptedProposalVersion } from "./proposalService";
 import { getGeneralSettings } from "./administrationService";
 export { validateRequestForQuote } from "./workflowValidation";
 import { getCommercialReference } from "./pricingService";
@@ -12,6 +14,10 @@ import {
 import {
   quotes,
 } from "../data/internal/quotes";
+
+import {
+  getService,
+} from "../data/serviceCatalog";
 
 import {
   initialCommercialReference,
@@ -30,7 +36,14 @@ const EDITABLE_STATUSES = [
 ];
 
 export function isQuoteEditable(quote) {
-  return Boolean(quote && EDITABLE_STATUSES.includes(quote.status) && !quote.convertedToProject && !quote.projectId);
+  return Boolean(
+    quote &&
+      EDITABLE_STATUSES.includes(
+        quote.status,
+      ) &&
+      !quote.convertedToProject &&
+      !quote.projectId,
+  );
 }
 
 const CLOSED_STATUSES = [
@@ -90,11 +103,35 @@ export function getQuoteByRequestId(
   );
 }
 
-export function isArchivedQuote(quote) {
-  return Boolean(quote.convertedToProject || quote.projectId || ["Recusado", "Cancelado"].includes(quote.status));
+export function isArchivedQuote(
+  quote,
+) {
+  return Boolean(
+    quote.convertedToProject ||
+      quote.projectId ||
+      [
+        "Recusado",
+        "Cancelado",
+      ].includes(
+        quote.status,
+      ),
+  );
 }
-export function getActiveQuotes() { return getRuntimeQuotes().filter(quote => !isArchivedQuote(quote)); }
-export function getArchivedQuotes() { return getRuntimeQuotes().filter(isArchivedQuote); }
+
+export function getActiveQuotes() {
+  return getRuntimeQuotes().filter(
+    (quote) =>
+      !isArchivedQuote(
+        quote,
+      ),
+  );
+}
+
+export function getArchivedQuotes() {
+  return getRuntimeQuotes().filter(
+    isArchivedQuote,
+  );
+}
 
 export function getOpenRuntimeQuotes() {
   return runtimeQuotes.filter(
@@ -195,30 +232,180 @@ export function updateRuntimeQuote(
     );
   }
 
-  if (Object.hasOwn(patch, "items")) {
-    if (!isQuoteEditable(quote)) {
-      throw new Error("Os itens só podem ser alterados durante a elaboração.");
-    }
-    if (!Array.isArray(patch.items)) throw new Error("Composição do orçamento inválida.");
-    const ids = new Set();
-    const items = patch.items.map(item => {
-      if (!item.id || ids.has(item.id)) throw new Error("Cada item deve ter um identificador único.");
-      ids.add(item.id);
-      const original = quote.items?.find(existing => existing.id === item.id);
-      const normalized = normalizeQuoteItem(item, original ?? { ...item, isDemoCompatibility: false });
-      return normalized;
-    });
-    patch = { ...patch, items: Object.freeze(items) };
-  }
-  const nextItems = patch.items ?? quote.items;
-  if (Array.isArray(nextItems)) patch = { ...patch, ...calculateQuoteItemTotals(nextItems) };
-  if (patch.status === "Em revisão") {
-    const validation = validateQuoteForReview({ ...quote, ...patch, status: quote.status });
-    if (!validation.valid) throw new Error(`Antes da revisão, preencha: ${validation.problems.join(", ")}.`);
+  if (
+    getAcceptedProposalVersion(
+      quoteId,
+    ) &&
+    Object.keys(
+      patch,
+    ).some(
+      (key) =>
+        ![
+          "projectId",
+          "convertedToProject",
+        ].includes(
+          key,
+        ),
+    )
+  ) {
+    throw new Error(
+      "Orçamento bloqueado após o aceite da proposta.",
+    );
   }
 
-  const updatedAt =
-    formatCurrentDate();
+  if (
+    Object.hasOwn(
+      patch,
+      "items",
+    )
+  ) {
+    if (
+      !isQuoteEditable(
+        quote,
+      )
+    ) {
+      throw new Error(
+        "Os itens só podem ser alterados durante a elaboração.",
+      );
+    }
+
+    if (
+      !Array.isArray(
+        patch.items,
+      )
+    ) {
+      throw new Error(
+        "Composição do orçamento inválida.",
+      );
+    }
+
+    const ids =
+      new Set();
+
+    const items =
+      patch.items.map(
+        (item) => {
+          if (
+            !item.id ||
+            ids.has(
+              item.id,
+            )
+          ) {
+            throw new Error(
+              "Cada item deve ter um identificador único.",
+            );
+          }
+
+          ids.add(
+            item.id,
+          );
+
+          const original =
+            quote.items?.find(
+              (existing) =>
+                existing.id ===
+                item.id,
+            );
+
+          const pieces =
+            getQuotePieces(
+              quote,
+            );
+
+          if (
+            item.requestPieceId &&
+            !pieces.some(
+              (piece) =>
+                piece.id ===
+                item.requestPieceId,
+            ) &&
+            item.requestPieceId !==
+              original?.requestPieceId
+          ) {
+            throw new Error(
+              "Selecione uma peça existente na solicitação.",
+            );
+          }
+
+          if (
+            !original &&
+            pieces.length &&
+            !item.requestPieceId &&
+            getService(
+              item.serviceId,
+            )?.pieceBased !==
+              false
+          ) {
+            throw new Error(
+              "Vincule o novo serviço técnico a uma peça da solicitação.",
+            );
+          }
+
+          const normalized =
+            normalizeQuoteItem(
+              item,
+              original ?? {
+                ...item,
+                isDemoCompatibility:
+                  false,
+              },
+            );
+
+          return normalized;
+        },
+      );
+
+    patch = {
+      ...patch,
+
+      items:
+        Object.freeze(
+          items,
+        ),
+    };
+  }
+
+  const nextItems =
+    patch.items ??
+    quote.items;
+
+  if (
+    Array.isArray(
+      nextItems,
+    )
+  ) {
+    patch = {
+      ...patch,
+
+      ...calculateQuoteItemTotals(
+        nextItems,
+      ),
+    };
+  }
+
+  if (
+    patch.status ===
+    "Em revisão"
+  ) {
+    const validation =
+      validateQuoteForReview({
+        ...quote,
+        ...patch,
+
+        status:
+          quote.status,
+      });
+
+    if (
+      !validation.valid
+    ) {
+      throw new Error(
+        `Antes da revisão, preencha: ${validation.problems.join(
+          ", ",
+        )}.`,
+      );
+    }
+  }
 
   runtimeQuotes =
     runtimeQuotes.map(
@@ -230,7 +417,15 @@ export function updateRuntimeQuote(
 
               ...patch,
 
-              updatedAt,
+              updatedAt:
+                formatCurrentDate(),
+
+              modifiedAt:
+                new Date().toISOString(),
+
+              revision:
+                (item.revision ??
+                  0) + 1,
             }
           : item,
     );
@@ -239,7 +434,6 @@ export function updateRuntimeQuote(
     quoteId,
   );
 }
-
 /*
  * Mantemos este contrato porque arquivos antigos podem
  * continuar utilizando-o.
@@ -261,18 +455,152 @@ export function updateRuntimeQuoteStatus(
  * VALIDAÇÃO PARA REVISÃO
  * ============================================================ */
 
-export function validateQuoteForReview(quote) {
-  if (!quote) return validationResult([{ code: "quote.missing", field: "id", message: "Orçamento não encontrado." }]);
-  const issues = Array.isArray(quote.items) ? [...getQuoteItemsValidation(quote.items).issues] : [];
-  const add = (field, message) => issues.push({ code: "quote." + field, field, message });
-  if (!isQuoteEditable(quote)) add("status", "Este orçamento não pode ser enviado para revisão neste estado.");
-  if (!normalizeText(quote.scope)) add("scope", "Informe o escopo técnico.");
-  if (!normalizeText(quote.machineId)) add("machineId", "Selecione a tecnologia de referência.");
-  if (!normalizeText(quote.estimateJustification)) add("estimateJustification", "Informe a justificativa técnica da estimativa.");
-  const numericFields = [["deadlineDays", "Informe um prazo de execução maior que zero."], ["validityDays", "Informe uma validade da proposta maior que zero."]];
-  if (!Array.isArray(quote.items)) numericFields.push(["billableHours", "Informe as horas cotadas."], ["hourlyRate", "Informe o valor/hora."], ["proposedValue", "Informe o valor da proposta."]);
-  for (const [field, message] of numericFields) if (!Number.isFinite(Number(quote[field])) || Number(quote[field]) <= 0) add(field, message);
-  return validationResult(issues);
+export function validateQuoteForReview(
+  quote,
+) {
+  if (!quote) {
+    return validationResult([
+      {
+        code:
+          "quote.missing",
+
+        field:
+          "id",
+
+        message:
+          "Orçamento não encontrado.",
+      },
+    ]);
+  }
+
+  const issues =
+    Array.isArray(
+      quote.items,
+    )
+      ? [
+          ...getQuoteItemsValidation(
+            quote.items,
+          ).issues,
+        ]
+      : [];
+
+  const add = (
+    field,
+    message,
+  ) =>
+    issues.push({
+      code:
+        "quote." +
+        field,
+
+      field,
+
+      message,
+    });
+
+  if (
+    !isQuoteEditable(
+      quote,
+    )
+  ) {
+    add(
+      "status",
+      "Este orçamento não pode ser enviado para revisão neste estado.",
+    );
+  }
+
+  if (
+    !normalizeText(
+      quote.scope,
+    )
+  ) {
+    add(
+      "scope",
+      "Informe o escopo técnico.",
+    );
+  }
+
+  if (
+    !normalizeText(
+      quote.machineId,
+    )
+  ) {
+    add(
+      "machineId",
+      "Selecione a tecnologia de referência.",
+    );
+  }
+
+  if (
+    !normalizeText(
+      quote.estimateJustification,
+    )
+  ) {
+    add(
+      "estimateJustification",
+      "Informe a justificativa técnica da estimativa.",
+    );
+  }
+
+  const numericFields = [
+    [
+      "deadlineDays",
+      "Informe um prazo de execução maior que zero.",
+    ],
+
+    [
+      "validityDays",
+      "Informe uma validade da proposta maior que zero.",
+    ],
+  ];
+
+  if (
+    !Array.isArray(
+      quote.items,
+    )
+  ) {
+    numericFields.push(
+      [
+        "billableHours",
+        "Informe as horas cotadas.",
+      ],
+
+      [
+        "hourlyRate",
+        "Informe o valor/hora.",
+      ],
+
+      [
+        "proposedValue",
+        "Informe o valor da proposta.",
+      ],
+    );
+  }
+
+  for (const [
+    field,
+    message,
+  ] of numericFields) {
+    if (
+      !Number.isFinite(
+        Number(
+          quote[field],
+        ),
+      ) ||
+      Number(
+        quote[field],
+      ) <= 0
+    ) {
+      add(
+        field,
+        message,
+      );
+    }
+  }
+
+  return validationResult(
+    issues,
+  );
 }
 
 /* ============================================================
@@ -427,11 +755,15 @@ export function returnQuoteToEditing(
   }
 
   if (
-    quote.status !==
-    "Em revisão"
+    ![
+      "Em revisão",
+      "Aprovado internamente",
+    ].includes(
+      quote.status,
+    )
   ) {
     throw new Error(
-      "Somente orçamentos em revisão podem retornar para elaboração.",
+      "Somente orçamentos em revisão ou aprovados internamente podem retornar para elaboração.",
     );
   }
 
@@ -456,7 +788,6 @@ export function returnQuoteToEditing(
 /* ============================================================
  * MARCAR PROPOSTA COMO ENVIADA
  * ============================================================ */
-
 export function markQuoteAsSent(
   quoteId,
   actor = DEFAULT_ACTOR,
@@ -512,54 +843,9 @@ export function markQuoteAsSent(
  * ACEITE DO CLIENTE
  * ============================================================ */
 
-export function acceptRuntimeQuote(
-  quoteId,
-  actor = DEFAULT_ACTOR,
-) {
-  const quote =
-    getRuntimeQuoteById(
-      quoteId,
-    );
-
-  if (!quote) {
-    throw new Error(
-      "Orçamento não encontrado.",
-    );
-  }
-
-  if (
-    quote.status !==
-    "Enviado"
-  ) {
-    throw new Error(
-      "Somente propostas enviadas podem receber aceite.",
-    );
-  }
-
-  const now =
-    new Date();
-
-  return updateQuoteWithHistory(
-    quoteId,
-    {
-      status:
-        "Aceito",
-
-      acceptedAt:
-        now.toISOString(),
-
-      acceptedRegisteredBy:
-        actor,
-    },
-    {
-      action:
-        "Aceite do cliente registrado",
-
-      actor,
-
-      description:
-        "O cliente aceitou a proposta comercial.",
-    },
+export function acceptRuntimeQuote() {
+  throw new Error(
+    "Registre o aceite de uma versão gerada no Proposal Builder.",
   );
 }
 
@@ -752,29 +1038,354 @@ export function recordQuoteEvent(
 /* ============================================================
  * CRIAÇÃO A PARTIR DE SOLICITAÇÃO
  * ============================================================ */
+function createItemsFromRequest(
+  request,
+  reference,
+) {
+  const pieces =
+    Array.isArray(
+      request.piecesData,
+    )
+      ? request.piecesData
+      : [];
 
-function createItemsFromRequest(request, reference) {
-  const pieces = Array.isArray(request.piecesData) ? request.piecesData : [];
-  const items = pieces.filter(piece => normalizeText(piece.name)).flatMap(piece => {
-    const services = piece.services?.length ? piece.services : [null];
-    return services.map(value => {
-      const service = getQuoteItemService(value);
-      return createQuoteItem({
-        name: `${piece.name}${value ? ` — ${service?.name ?? value}` : ""}`,
-        serviceId: service?.id ?? null,
-        requestPieceId: piece.id ?? null,
-        // Recomendações não são uma escolha confirmada de equipamento.
-        machineId: piece.machineId ?? null,
-      }, reference);
-    });
-  });
-  if (items.length) return items;
-  const services = request.services?.length ? request.services : [request.service];
-  return services.filter(value => getQuoteItemService(value)).map(value => {
-    const service = getQuoteItemService(value);
-    return createQuoteItem({ name: service.name, serviceId: service.id }, reference);
-  });
+  const items = [];
+  const createdKeys =
+    new Set();
+
+  /*
+   * ==========================================================
+   * SERVIÇOS DA SOLICITAÇÃO
+   * ==========================================================
+   *
+   * Aqui reunimos:
+   *
+   * request.service
+   * +
+   * request.services[]
+   *
+   * Sempre convertendo aliases antigos para os IDs atuais.
+   */
+
+  const requestServiceIds =
+    Array.from(
+      new Set(
+        [
+          request.service,
+
+          ...(Array.isArray(
+            request.services,
+          )
+            ? request.services
+            : []),
+        ]
+          .map(
+            (value) =>
+              getQuoteItemService(
+                value,
+              )?.id,
+          )
+          .filter(
+            Boolean,
+          ),
+      ),
+    );
+
+  /*
+   * Serviços técnicos são associados às peças.
+   *
+   * Serviços diretos NÃO dependem de uma peça:
+   *
+   * - failure-analysis
+   * - asset-structure
+   * - digital-library
+   * - maintenance
+   * - training
+   */
+
+  const requestTechnicalServices =
+    requestServiceIds.filter(
+      (serviceId) =>
+        getService(
+          serviceId,
+        )?.pieceBased !==
+        false,
+    );
+
+  const requestDirectServices =
+    requestServiceIds.filter(
+      (serviceId) =>
+        getService(
+          serviceId,
+        )?.pieceBased ===
+        false,
+    );
+
+  /*
+   * ==========================================================
+   * 1. ITENS TÉCNICOS VINCULADOS ÀS PEÇAS
+   * ==========================================================
+   */
+
+  pieces
+    .filter(
+      (piece) =>
+        normalizeText(
+          piece.name,
+        ),
+    )
+    .forEach(
+      (
+        piece,
+        pieceIndex,
+      ) => {
+        const explicitPieceServices =
+          Array.isArray(
+            piece.services,
+          )
+            ? Array.from(
+                new Set(
+                  piece.services
+                    .map(
+                      (value) =>
+                        getQuoteItemService(
+                          value,
+                        )?.id,
+                    )
+                    .filter(
+                      Boolean,
+                    ),
+                ),
+              )
+            : [];
+
+        /*
+         * Quando a peça possui serviços próprios, eles são a
+         * fonte principal.
+         *
+         * Se não possuir, usamos os serviços técnicos gerais
+         * da SOL como fallback de compatibilidade.
+         *
+         * Isso ajuda registros antigos sem perder a regra
+         * correta para as novas solicitações.
+         */
+        const pieceServiceIds =
+          explicitPieceServices.length
+            ? explicitPieceServices
+            : requestTechnicalServices;
+
+        pieceServiceIds.forEach(
+          (serviceId) => {
+            const service =
+              getQuoteItemService(
+                serviceId,
+              );
+
+            const serviceDefinition =
+              getService(
+                serviceId,
+              );
+
+            /*
+             * Serviço direto nunca deve virar item vinculado
+             * à peça.
+             */
+            if (
+              !service ||
+              serviceDefinition
+                ?.pieceBased ===
+                false
+            ) {
+              return;
+            }
+
+            const pieceId =
+              piece.id ||
+              `piece-${pieceIndex + 1}`;
+
+            const key =
+              `piece:${pieceId}:${service.id}`;
+
+            if (
+              createdKeys.has(
+                key,
+              )
+            ) {
+              return;
+            }
+
+            createdKeys.add(
+              key,
+            );
+
+            items.push(
+              createQuoteItem(
+                {
+                  name:
+                    `${piece.name} — ${service.name}`,
+
+                  serviceId:
+                    service.id,
+
+                  requestPieceId:
+                    piece.id ??
+                    null,
+
+                  /*
+                   * Uma recomendação automática não equivale
+                   * a uma escolha técnica confirmada.
+                   *
+                   * Só usamos machineId se a peça realmente
+                   * possuir esse dado persistido.
+                   */
+                  machineId:
+                    piece.machineId ??
+                    null,
+                },
+                reference,
+              ),
+            );
+          },
+        );
+      },
+    );
+
+  /*
+   * ==========================================================
+   * 2. SERVIÇOS DIRETOS
+   * ==========================================================
+   *
+   * Eles entram UMA única vez no orçamento, mesmo que exista
+   * uma ou mais peças auxiliares na solicitação.
+   *
+   * Exemplo:
+   *
+   * Análise de falhas
+   * +
+   * peça com Tomografia
+   *
+   * ORC:
+   *
+   * 1. Análise de falhas
+   * 2. Peça X — Tomografia industrial
+   */
+
+  requestDirectServices.forEach(
+    (serviceId) => {
+      const service =
+        getQuoteItemService(
+          serviceId,
+        );
+
+      if (!service) {
+        return;
+      }
+
+      const key =
+        `direct:${service.id}`;
+
+      if (
+        createdKeys.has(
+          key,
+        )
+      ) {
+        return;
+      }
+
+      createdKeys.add(
+        key,
+      );
+
+      items.push(
+        createQuoteItem(
+          {
+            name:
+              service.name,
+
+            serviceId:
+              service.id,
+
+            requestPieceId:
+              null,
+
+            machineId:
+              null,
+          },
+          reference,
+        ),
+      );
+    },
+  );
+
+  /*
+   * ==========================================================
+   * 3. COMPATIBILIDADE COM SOLICITAÇÕES ANTIGAS
+   * ==========================================================
+   *
+   * Alguns mocks antigos possuem serviço técnico, mas não
+   * possuem piecesData.
+   *
+   * Nesse caso ainda precisamos gerar um item para permitir
+   * que o orçamento antigo continue funcionando.
+   */
+
+  if (
+    items.length ===
+      0 &&
+    requestServiceIds.length >
+      0
+  ) {
+    requestServiceIds.forEach(
+      (serviceId) => {
+        const service =
+          getQuoteItemService(
+            serviceId,
+          );
+
+        if (!service) {
+          return;
+        }
+
+        const key =
+          `legacy:${service.id}`;
+
+        if (
+          createdKeys.has(
+            key,
+          )
+        ) {
+          return;
+        }
+
+        createdKeys.add(
+          key,
+        );
+
+        items.push(
+          createQuoteItem(
+            {
+              name:
+                service.name,
+
+              serviceId:
+                service.id,
+
+              requestPieceId:
+                null,
+            },
+            reference,
+          ),
+        );
+      },
+    );
+  }
+
+  return items;
 }
+
+/* ============================================================
+ * CRIAR ORÇAMENTO A PARTIR DA SOL
+ * ============================================================ */
 
 export function createQuoteFromRequest(
   request,
@@ -804,17 +1415,107 @@ export function createQuoteFromRequest(
     };
   }
 
-  const validation = validateRequestForQuote(request);
-  if (!validation.isValid) throw new Error(validation.problems.join(" "));
+  const validation =
+    validateRequestForQuote(
+      request,
+    );
 
-  const commercialRateReference = Object.freeze(getCommercialReference());
-  const defaults = getGeneralSettings();
+  if (
+    !validation.isValid
+  ) {
+    throw new Error(
+      validation.problems.join(
+        " ",
+      ),
+    );
+  }
+
+  const commercialRateReference =
+    Object.freeze(
+      getCommercialReference(),
+    );
+
+  const defaults =
+    getGeneralSettings();
 
   const quoteId =
     generateNextQuoteId();
 
   const today =
     formatCurrentDate();
+
+  /*
+   * ==========================================================
+   * SERVIÇO PRINCIPAL
+   * ==========================================================
+   *
+   * A SOL guarda IDs canônicos.
+   *
+   * O orçamento preserva:
+   *
+   * serviceId -> contrato interno
+   * service   -> nome legível para a interface
+   */
+
+  const primaryService =
+    getQuoteItemService(
+      request.service,
+    ) ||
+    (Array.isArray(
+      request.services,
+    )
+      ? request.services
+          .map(
+            getQuoteItemService,
+          )
+          .find(
+            Boolean,
+          )
+      : null);
+
+  const serviceId =
+    primaryService?.id ??
+    null;
+
+  const service =
+    primaryService?.name ||
+    normalizeText(
+      request.service,
+    ) ||
+    "Serviço";
+
+  const services =
+    Array.from(
+      new Set(
+        [
+          request.service,
+
+          ...(Array.isArray(
+            request.services,
+          )
+            ? request.services
+            : []),
+        ]
+          .map(
+            (value) =>
+              getQuoteItemService(
+                value,
+              )?.id,
+          )
+          .filter(
+            Boolean,
+          ),
+      ),
+    );
+
+  /*
+   * ==========================================================
+   * EQUIPAMENTO PRELIMINAR
+   * ==========================================================
+   *
+   * Continua sendo apenas referência.
+   * A escolha final permanece responsabilidade técnica.
+   */
 
   const firstRecommendedMachine =
     request.piecesData
@@ -840,20 +1541,49 @@ export function createQuoteFromRequest(
       ? defaults.defaultResponsible
       : request.responsible;
 
-  const service =
-    normalizeText(
-      request.service,
-    ) ||
-    "Serviço";
+  /*
+   * Criação feita antes do objeto do orçamento para garantir
+   * que todos os totais sejam calculados sobre exatamente a
+   * mesma composição.
+   */
+  const items =
+    Object.freeze(
+      createItemsFromRequest(
+        request,
+        commercialRateReference,
+      ),
+    );
 
   const quote = {
     id:
       quoteId,
 
-    items: Object.freeze(createItemsFromRequest(request, commercialRateReference)),
+    items,
+
+    /*
+     * Snapshot das peças originais.
+     *
+     * O orçamento não depende de futuras alterações na SOL.
+     */
+    requestPieces:
+      captureRequestPieces(
+        request,
+      ),
 
     requestId:
       request.id,
+
+    /*
+     * Preservamos também a necessidade que originou a SOL.
+     *
+     * Isso será útil quando público, cliente e área interna
+     * estiverem interligados definitivamente.
+     */
+    requestNeedId:
+      request.requestNeedId ??
+      request.project
+        ?.requestNeedId ??
+      null,
 
     source:
       request.source ===
@@ -893,18 +1623,21 @@ export function createQuoteFromRequest(
 
     responsible,
 
+    /*
+     * Nome legível.
+     */
     service,
 
-    services:
-      Array.isArray(
-        request.services,
-      )
-        ? [
-            ...request.services,
-          ]
-        : [
-            service,
-          ],
+    /*
+     * ID estável.
+     */
+    serviceId,
+
+    /*
+     * Todos os serviços permanecem disponíveis para
+     * rastreabilidade.
+     */
+    services,
 
     machineId,
 
@@ -995,7 +1728,12 @@ export function createQuoteFromRequest(
     ],
   };
 
-  Object.assign(quote, calculateQuoteItemTotals(quote.items));
+  Object.assign(
+    quote,
+    calculateQuoteItemTotals(
+      quote.items,
+    ),
+  );
 
   runtimeQuotes = [
     quote,
@@ -1026,7 +1764,6 @@ export function resetRuntimeQuotes() {
 /* ============================================================
  * NORMALIZAÇÃO DOS MOCKS
  * ============================================================ */
-
 function normalizeQuote(
   rawQuote,
 ) {
@@ -1034,25 +1771,226 @@ function normalizeQuote(
     ...rawQuote,
   };
 
-  // Os mocks não possuem composição histórica. Preservamos o original para
-  // rastreabilidade; somente horas explicitamente registradas são migradas.
-  const reference = quote.commercialRateReference ?? initialCommercialReference;
-  const items = Array.isArray(quote.items)
-    ? quote.items.map(item => normalizeQuoteItem(item))
-    : [createQuoteItem({
-        id: `${quote.id}-ITEM-DEMO`,
-        name: `${quote.service || "Orçamento anterior"} — compatibilidade demo`,
-        description: "Item demo: horas ausentes permanecem desconhecidas; valor histórico preservado separadamente.",
-        serviceId: getQuoteItemService(quote.service)?.id ?? null,
-        machineId: quote.machineId,
-        technicalHours: quote.technicalHours > 0 ? quote.technicalHours : null,
-        quotedHours: quote.billableHours > 0 ? quote.billableHours : null,
-        hourlyRate: quote.hourlyRate ?? reference.hourlyRate,
-        isDemoCompatibility: true,
-      }, reference)];
+  /*
+   * ==========================================================
+   * REFERÊNCIA COMERCIAL
+   * ==========================================================
+   */
+
+  const reference =
+    quote.commercialRateReference ??
+    initialCommercialReference;
+
+  /*
+   * ==========================================================
+   * SERVIÇOS
+   * ==========================================================
+   *
+   * Registros antigos podem possuir apenas:
+   *
+   * service: "Inspeção dimensional"
+   *
+   * Novos registros passam a possuir também:
+   *
+   * serviceId: "dimensional"
+   * services: ["dimensional", ...]
+   *
+   * Todos são normalizados aqui para o catálogo atual.
+   */
+
+  const serviceCandidates = [
+    quote.serviceId,
+
+    quote.service,
+
+    ...(Array.isArray(
+      quote.services,
+    )
+      ? quote.services
+      : []),
+
+    ...(Array.isArray(
+      quote.items,
+    )
+      ? quote.items.map(
+          (item) =>
+            item.serviceId,
+        )
+      : []),
+  ];
+
+  const normalizedServices =
+    Array.from(
+      new Set(
+        serviceCandidates
+          .map(
+            (value) =>
+              getQuoteItemService(
+                value,
+              )?.id,
+          )
+          .filter(
+            Boolean,
+          ),
+      ),
+    );
+
+  const primaryServiceId =
+    getQuoteItemService(
+      quote.serviceId,
+    )?.id ??
+    getQuoteItemService(
+      quote.service,
+    )?.id ??
+    normalizedServices[0] ??
+    null;
+
+  const primaryService =
+    primaryServiceId
+      ? getQuoteItemService(
+          primaryServiceId,
+        )
+      : null;
+
+  /*
+   * ==========================================================
+   * ITENS
+   * ==========================================================
+   *
+   * Orçamentos antigos não possuíam composição por itens.
+   *
+   * Nesses casos preservamos o valor histórico e criamos
+   * somente um item de compatibilidade demo.
+   */
+
+  const items =
+    Array.isArray(
+      quote.items,
+    ) &&
+    quote.items.length
+      ? quote.items.map(
+          (item) =>
+            normalizeQuoteItem(
+              item,
+            ),
+        )
+      : [
+          createQuoteItem(
+            {
+              id:
+                `${quote.id}-ITEM-DEMO`,
+
+              name:
+                `${
+                  primaryService
+                    ?.name ||
+                  quote.service ||
+                  "Orçamento anterior"
+                } — compatibilidade demo`,
+
+              description:
+                "Item demo: horas ausentes permanecem desconhecidas; valor histórico preservado separadamente.",
+
+              serviceId:
+                primaryServiceId,
+
+              machineId:
+                quote.machineId,
+
+              technicalHours:
+                quote.technicalHours >
+                0
+                  ? quote.technicalHours
+                  : null,
+
+              quotedHours:
+                quote.billableHours >
+                0
+                  ? quote.billableHours
+                  : null,
+
+              hourlyRate:
+                quote.hourlyRate ??
+                reference.hourlyRate,
+
+              isDemoCompatibility:
+                true,
+            },
+            reference,
+          ),
+        ];
+
+  /*
+   * Os próprios itens também podem revelar serviços que não
+   * estavam explicitamente registrados no ORC antigo.
+   */
+
+  const itemServices =
+    items
+      .map(
+        (item) =>
+          getQuoteItemService(
+            item.serviceId,
+          )?.id,
+      )
+      .filter(
+        Boolean,
+      );
+
+  const allServices =
+    Array.from(
+      new Set([
+        ...normalizedServices,
+        ...itemServices,
+      ]),
+    );
+
+  if (
+    primaryServiceId &&
+    !allServices.includes(
+      primaryServiceId,
+    )
+  ) {
+    allServices.unshift(
+      primaryServiceId,
+    );
+  }
 
   return {
     ...quote,
+
+    /* ========================================================
+     * IDENTIFICAÇÃO DO SERVIÇO
+     * ======================================================== */
+
+    serviceId:
+      primaryServiceId,
+
+    /*
+     * `service` permanece legível para compatibilidade das telas
+     * antigas. IDs nunca são exibidos diretamente ao usuário.
+     */
+    service:
+      primaryService
+        ?.name ||
+      normalizeText(
+        quote.service,
+      ) ||
+      "Serviço",
+
+    services:
+      allServices,
+
+    /*
+     * Pode não existir em ORCs antigos.
+     */
+    requestNeedId:
+      quote.requestNeedId ??
+      null,
+
+    /* ========================================================
+     * ORIGEM
+     * ======================================================== */
 
     source:
       quote.source ===
@@ -1072,6 +2010,10 @@ function normalizeQuote(
       quote.requestChannel ??
       "",
 
+    /* ========================================================
+     * ESCOPO E ELABORAÇÃO
+     * ======================================================== */
+
     scope:
       quote.scope ??
       "",
@@ -1087,6 +2029,10 @@ function normalizeQuote(
     machineId:
       quote.machineId ??
       null,
+
+    /* ========================================================
+     * VALORES LEGADOS
+     * ======================================================== */
 
     technicalHours:
       quote.technicalHours ??
@@ -1115,6 +2061,10 @@ function normalizeQuote(
     validityDays:
       quote.validityDays ??
       15,
+
+    /* ========================================================
+     * VERSÕES / APROVAÇÕES
+     * ======================================================== */
 
     estimateVersions:
       Array.isArray(
@@ -1161,15 +2111,47 @@ function normalizeQuote(
       quote.projectId ??
       null,
 
-    commercialRateReference: Object.freeze({ ...reference }),
-    legacyEstimate: quote.legacyEstimate ?? Object.freeze({
-      technicalHours: quote.technicalHours,
-      billableHours: quote.billableHours,
-      hourlyRate: quote.hourlyRate,
-      proposedValue: quote.proposedValue,
-    }),
-    items: Object.freeze(items),
-    ...calculateQuoteItemTotals(items),
+    /* ========================================================
+     * REFERÊNCIA COMERCIAL
+     * ======================================================== */
+
+    commercialRateReference:
+      Object.freeze({
+        ...reference,
+      }),
+
+    /*
+     * Snapshot dos valores existentes antes da composição
+     * detalhada por itens.
+     */
+    legacyEstimate:
+      quote.legacyEstimate ??
+      Object.freeze({
+        technicalHours:
+          quote.technicalHours,
+
+        billableHours:
+          quote.billableHours,
+
+        hourlyRate:
+          quote.hourlyRate,
+
+        proposedValue:
+          quote.proposedValue,
+      }),
+
+    /*
+     * A composição passa a ser a fonte de verdade dos totais
+     * dos novos orçamentos.
+     */
+    items:
+      Object.freeze(
+        items,
+      ),
+
+    ...calculateQuoteItemTotals(
+      items,
+    ),
 
     history:
       Array.isArray(
@@ -1194,12 +2176,29 @@ function createEstimateVersion(
     new Date();
 
   return {
-    items: Object.freeze((quote.items ?? []).map(item => normalizeQuoteItem(item))),
-    totalTechnicalHours: quote.totalTechnicalHours,
-    totalQuotedHours: quote.totalQuotedHours,
+    items:
+      Object.freeze(
+        (
+          quote.items ??
+          []
+        ).map(
+          (item) =>
+            normalizeQuoteItem(
+              item,
+            ),
+        ),
+      ),
+
+    totalTechnicalHours:
+      quote.totalTechnicalHours,
+
+    totalQuotedHours:
+      quote.totalQuotedHours,
+
     id:
       `EST-${String(
-        (quote.estimateVersions
+        (quote
+          .estimateVersions
           ?.length ??
           0) + 1,
       ).padStart(
@@ -1213,12 +2212,33 @@ function createEstimateVersion(
     capturedBy:
       actor,
 
+    /*
+     * Preservamos também a classificação dos serviços dentro
+     * da versão para rastreabilidade da estimativa.
+     */
+    serviceId:
+      quote.serviceId ??
+      null,
+
+    services:
+      Array.isArray(
+        quote.services,
+      )
+        ? [
+            ...quote.services,
+          ]
+        : [],
+
     machineId:
       quote.machineId,
 
-    technicalHours: quote.technicalHours ?? null,
+    technicalHours:
+      quote.technicalHours ??
+      null,
 
-    billableHours: quote.billableHours ?? null,
+    billableHours:
+      quote.billableHours ??
+      null,
 
     hourlyRate:
       toNumber(
@@ -1251,7 +2271,6 @@ function createEstimateVersion(
       ),
   };
 }
-
 /* ============================================================
  * ATUALIZAÇÃO + HISTÓRICO
  * ============================================================ */
@@ -1269,6 +2288,19 @@ function updateQuoteWithHistory(
   if (!quote) {
     throw new Error(
       "Orçamento não encontrado.",
+    );
+  }
+
+  if (
+    getAcceptedProposalVersion(
+      quoteId,
+    ) &&
+    Object.keys(
+      patch,
+    ).length
+  ) {
+    throw new Error(
+      "Orçamento bloqueado após o aceite da proposta.",
     );
   }
 
@@ -1314,6 +2346,13 @@ function updateQuoteWithHistory(
               updatedAt:
                 event.date,
 
+              modifiedAt:
+                now.toISOString(),
+
+              revision:
+                (item.revision ??
+                  0) + 1,
+
               history: [
                 ...(item.history ??
                   []),
@@ -1348,9 +2387,7 @@ function generateNextQuoteId() {
             /^ORC-(\d+)$/i,
           );
 
-        if (
-          !match
-        ) {
+        if (!match) {
           return largest;
         }
 

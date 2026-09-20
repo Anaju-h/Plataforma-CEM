@@ -1,4 +1,5 @@
 import { InternalAccountPage } from "../pages/internal/InternalAccountPage";
+import { ProposalBuilderPage } from "../pages/internal/ProposalBuilderPage";
 import {
   Navigate,
   Route,
@@ -252,6 +253,7 @@ export function AppRoutes() {
         <Route element={<ProtectedRoute />}>
           <Route element={<InternalLayout />}>
             <Route path="/portal/conta" element={<InternalAccountPage />} />
+            <Route path="/portal/orcamentos/:quoteId/proposta" element={<ProposalBuilderPage />} />
             <Route path="/portal/historico" element={<OperationalHistoryPage />} />
             <Route
               path="/portal"

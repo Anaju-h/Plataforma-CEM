@@ -51,14 +51,16 @@ export function ProjectStep({
   onChange,
 }) {
   function handleFiles(event) {
-    const files = Array.from(event.target.files ?? []);
+    const files = Array.from(
+      event.target.files ?? [],
+    );
 
     if (files.length === 0) {
       return;
     }
 
     onChange("generalFiles", [
-      ...data.generalFiles,
+      ...(data.generalFiles ?? []),
       ...files,
     ]);
 
@@ -68,8 +70,12 @@ export function ProjectStep({
   function removeFile(index) {
     onChange(
       "generalFiles",
-      data.generalFiles.filter(
-        (_, currentIndex) => currentIndex !== index,
+      (
+        data.generalFiles ??
+        []
+      ).filter(
+        (_, currentIndex) =>
+          currentIndex !== index,
       ),
     );
   }
@@ -101,7 +107,10 @@ export function ProjectStep({
         description="Descreva brevemente o que você pretende alcançar com este projeto."
       >
         <textarea
-          value={data.objective}
+          value={
+            data.objective ??
+            ""
+          }
           onChange={(event) =>
             onChange(
               "objective",
@@ -119,61 +128,67 @@ export function ProjectStep({
         description="Indique o nível de prioridade comercial ou operacional do projeto."
       >
         <div className="grid gap-3 sm:grid-cols-3">
-          {urgencyOptions.map((option) => {
-            const active = data.urgency === option.value;
+          {urgencyOptions.map(
+            (option) => {
+              const active =
+                data.urgency ===
+                option.value;
 
-            return (
-              <button
-                key={option.value}
-                type="button"
-                onClick={() =>
-                  onChange(
-                    "urgency",
-                    option.value,
-                  )
-                }
-                className={`
-                  cursor-pointer rounded-[16px]
-                  border p-4 text-left
-                  transition-all duration-200
-                  ${
-                    active
-                      ? "border-[#77aacf] bg-[#edf6fb]"
-                      : "border-[#dbe4e9] bg-white hover:border-[#adc5d3] hover:bg-[#fafcfd]"
+              return (
+                <button
+                  key={
+                    option.value
                   }
-                `}
-              >
-                <div className="flex items-start gap-3">
-                  <span
-                    className={`
-                      mt-0.5 flex h-5 w-5 shrink-0
-                      items-center justify-center
-                      rounded-full border
-                      ${
-                        active
-                          ? "border-[#356f9f] bg-[#356f9f]"
-                          : "border-[#bdcbd4] bg-white"
-                      }
-                    `}
-                  >
-                    {active && (
-                      <span className="h-1.5 w-1.5 rounded-full bg-white" />
-                    )}
-                  </span>
+                  type="button"
+                  onClick={() =>
+                    onChange(
+                      "urgency",
+                      option.value,
+                    )
+                  }
+                  className={`
+                    cursor-pointer rounded-[16px]
+                    border p-4 text-left
+                    transition-all duration-200
+                    ${
+                      active
+                        ? "border-[#77aacf] bg-[#edf6fb]"
+                        : "border-[#dbe4e9] bg-white hover:border-[#adc5d3] hover:bg-[#fafcfd]"
+                    }
+                  `}
+                >
+                  <div className="flex items-start gap-3">
+                    <span
+                      className={`
+                        mt-0.5 flex h-5 w-5 shrink-0
+                        items-center justify-center
+                        rounded-full border
+                        ${
+                          active
+                            ? "border-[#356f9f] bg-[#356f9f]"
+                            : "border-[#bdcbd4] bg-white"
+                        }
+                      `}
+                    >
+                      {active && (
+                        <span className="h-1.5 w-1.5 rounded-full bg-white" />
+                      )}
+                    </span>
 
-                  <div>
-                    <p className="text-sm font-semibold text-[#0b2340]">
-                      {option.title}
-                    </p>
+                    <div>
+                      <p className="text-sm font-semibold text-[#0b2340]">
+                        {option.title}
+                      </p>
 
-                    <p className="mt-1 text-xs leading-5 text-[#71838f]">
-                      {option.description}
-                    </p>
+                      <p className="mt-1 text-xs leading-5 text-[#71838f]">
+                        {option.description}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              </button>
-            );
-          })}
+                </button>
+              );
+            },
+          )}
         </div>
       </FormSection>
 
@@ -182,70 +197,79 @@ export function ProjectStep({
         description="Indique a expectativa de prazo para execução ou retorno."
       >
         <div className="grid gap-3 sm:grid-cols-2">
-          {deadlineOptions.map((option) => {
-            const active =
-              data.deadlineType === option.value;
+          {deadlineOptions.map(
+            (option) => {
+              const active =
+                data.deadlineType ===
+                option.value;
 
-            return (
-              <button
-                key={option.value}
-                type="button"
-                onClick={() =>
-                  onChange(
-                    "deadlineType",
-                    option.value,
-                  )
-                }
-                className={`
-                  cursor-pointer rounded-[16px]
-                  border p-4 text-left
-                  transition-all duration-200
-                  ${
-                    active
-                      ? "border-[#77aacf] bg-[#edf6fb]"
-                      : "border-[#dbe4e9] bg-white hover:border-[#adc5d3] hover:bg-[#fafcfd]"
+              return (
+                <button
+                  key={
+                    option.value
                   }
-                `}
-              >
-                <div className="flex items-start gap-3">
-                  <span
-                    className={`
-                      mt-0.5 flex h-5 w-5 shrink-0
-                      items-center justify-center
-                      rounded-full border
-                      ${
-                        active
-                          ? "border-[#356f9f] bg-[#356f9f]"
-                          : "border-[#bdcbd4] bg-white"
-                      }
-                    `}
-                  >
-                    {active && (
-                      <span className="h-1.5 w-1.5 rounded-full bg-white" />
-                    )}
-                  </span>
+                  type="button"
+                  onClick={() =>
+                    onChange(
+                      "deadlineType",
+                      option.value,
+                    )
+                  }
+                  className={`
+                    cursor-pointer rounded-[16px]
+                    border p-4 text-left
+                    transition-all duration-200
+                    ${
+                      active
+                        ? "border-[#77aacf] bg-[#edf6fb]"
+                        : "border-[#dbe4e9] bg-white hover:border-[#adc5d3] hover:bg-[#fafcfd]"
+                    }
+                  `}
+                >
+                  <div className="flex items-start gap-3">
+                    <span
+                      className={`
+                        mt-0.5 flex h-5 w-5 shrink-0
+                        items-center justify-center
+                        rounded-full border
+                        ${
+                          active
+                            ? "border-[#356f9f] bg-[#356f9f]"
+                            : "border-[#bdcbd4] bg-white"
+                        }
+                      `}
+                    >
+                      {active && (
+                        <span className="h-1.5 w-1.5 rounded-full bg-white" />
+                      )}
+                    </span>
 
-                  <div>
-                    <p className="text-sm font-semibold text-[#0b2340]">
-                      {option.title}
-                    </p>
+                    <div>
+                      <p className="text-sm font-semibold text-[#0b2340]">
+                        {option.title}
+                      </p>
 
-                    <p className="mt-1 text-xs leading-5 text-[#71838f]">
-                      {option.description}
-                    </p>
+                      <p className="mt-1 text-xs leading-5 text-[#71838f]">
+                        {option.description}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              </button>
-            );
-          })}
+                </button>
+              );
+            },
+          )}
         </div>
 
-        {data.deadlineType === "specificDate" && (
+        {data.deadlineType ===
+          "specificDate" && (
           <div className="mt-5 max-w-sm">
             <Field label="Data necessária">
               <input
                 type="date"
-                value={data.specificDate}
+                value={
+                  data.specificDate ??
+                  ""
+                }
                 onChange={(event) =>
                   onChange(
                     "specificDate",
@@ -264,7 +288,10 @@ export function ProjectStep({
         description="Inclua informações adicionais que ajudem nossa equipe a compreender o contexto do projeto."
       >
         <textarea
-          value={data.observations}
+          value={
+            data.observations ??
+            ""
+          }
           onChange={(event) =>
             onChange(
               "observations",
@@ -298,7 +325,9 @@ export function ProjectStep({
             type="file"
             multiple
             className="hidden"
-            onChange={handleFiles}
+            onChange={
+              handleFiles
+            }
             accept=".pdf,.stl,.step,.stp,.iges,.igs,.dwg,.jpg,.jpeg,.png,.webp"
           />
 
@@ -311,32 +340,47 @@ export function ProjectStep({
           </p>
         </label>
 
-        {data.generalFiles.length > 0 && (
+        {(data.generalFiles ?? [])
+          .length > 0 && (
           <div className="mt-4 space-y-2">
-            {data.generalFiles.map((file, index) => (
-              <div
-                key={`${file.name}-${index}`}
-                className="flex items-center justify-between gap-4 rounded-[12px] border border-[#dce5ea] bg-white px-4 py-3"
-              >
-                <div className="min-w-0">
-                  <p className="truncate text-sm font-medium text-[#0b2340]">
-                    {file.name}
-                  </p>
-
-                  <p className="mt-0.5 text-[10px] uppercase tracking-[0.06em] text-[#84949e]">
-                    {formatFileSize(file.size)}
-                  </p>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={() => removeFile(index)}
-                  className="cursor-pointer text-xs font-medium text-[#8a5555] transition-colors hover:text-[#6d3030]"
+            {(
+              data.generalFiles ??
+              []
+            ).map(
+              (
+                file,
+                index,
+              ) => (
+                <div
+                  key={`${file.name}-${index}`}
+                  className="flex items-center justify-between gap-4 rounded-[12px] border border-[#dce5ea] bg-white px-4 py-3"
                 >
-                  Remover
-                </button>
-              </div>
-            ))}
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-medium text-[#0b2340]">
+                      {file.name}
+                    </p>
+
+                    <p className="mt-0.5 text-[10px] uppercase tracking-[0.06em] text-[#84949e]">
+                      {formatFileSize(
+                        file.size,
+                      )}
+                    </p>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() =>
+                      removeFile(
+                        index,
+                      )
+                    }
+                    className="cursor-pointer text-xs font-medium text-[#8a5555] transition-colors hover:text-[#6d3030]"
+                  >
+                    Remover
+                  </button>
+                </div>
+              ),
+            )}
           </div>
         )}
       </FormSection>
@@ -386,11 +430,19 @@ function formatFileSize(bytes) {
     return `${bytes} B`;
   }
 
-  if (bytes < 1024 * 1024) {
-    return `${(bytes / 1024).toFixed(1)} KB`;
+  if (
+    bytes <
+    1024 * 1024
+  ) {
+    return `${(
+      bytes / 1024
+    ).toFixed(1)} KB`;
   }
 
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+  return `${(
+    bytes /
+    (1024 * 1024)
+  ).toFixed(1)} MB`;
 }
 
 const inputClasses = `

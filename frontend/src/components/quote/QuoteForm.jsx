@@ -31,6 +31,10 @@ import {
   validateContactData,
 } from "../../utils/contactValidation";
 
+import {
+  getRequestNeed,
+} from "../../data/requestNeeds";
+
 /* ============================================================
  * DADOS INICIAIS
  * ============================================================ */
@@ -43,6 +47,7 @@ const initialContactData = {
 };
 
 const initialProjectData = {
+  requestNeedId: "",
   objective: "",
   urgency: "normal",
   deadlineType: "noUrgency",
@@ -222,6 +227,26 @@ export function QuoteForm({
     ...initialProjectData,
   });
 
+  const [
+    includePiecesForDirectRequest,
+    setIncludePiecesForDirectRequest,
+  ] = useState(false);
+
+  const selectedRequestNeed = getRequestNeed(
+    projectData.requestNeedId,
+  );
+
+  const isDirectRequest =
+    selectedRequestNeed?.flow === "direct-request";
+
+  const shouldIncludePieces =
+    !isDirectRequest || includePiecesForDirectRequest;
+
+  const effectivePieces = useMemo(
+    () => (shouldIncludePieces ? pieces : []),
+    [pieces, shouldIncludePieces],
+  );
+
   /* ==========================================================
    * RESUMOS
    * ========================================================== */
@@ -229,7 +254,7 @@ export function QuoteForm({
   const totalUnits =
     useMemo(
       () =>
-        pieces.reduce(
+        effectivePieces.reduce(
           (
             total,
             piece,
@@ -242,19 +267,19 @@ export function QuoteForm({
           0,
         ),
       [
-        pieces,
+        effectivePieces,
       ],
     );
 
   const externalCount =
     useMemo(
       () =>
-        pieces.filter(
+        effectivePieces.filter(
           (piece) =>
             piece.externalService,
         ).length,
       [
-        pieces,
+        effectivePieces,
       ],
     );
 
@@ -415,6 +440,13 @@ export function QuoteForm({
       return;
     }
 
+    if (
+      currentStep === pieceStep &&
+      !projectData.requestNeedId
+    ) {
+      return;
+    }
+
     const nextStep =
       Math.min(
         currentStep + 1,
@@ -566,10 +598,10 @@ export function QuoteForm({
             ? {
                 ...internalData,
               }
-            : null,
+                          : null,
 
         pieces:
-          pieces.map(
+          effectivePieces.map(
             (piece) => ({
               ...piece,
             }),
@@ -620,9 +652,6 @@ export function QuoteForm({
 
       {isCustomerMode && (
         <CustomerIdentity
-          customer={
-            customer
-          }
           contactData={
             contactData
           }
@@ -748,6 +777,21 @@ export function QuoteForm({
               onDelete={
                 handleDeletePiece
               }
+              requestNeedId={
+                projectData.requestNeedId
+              }
+              onRequestNeedChange={(requestNeedId) =>
+                handleProjectChange(
+                  "requestNeedId",
+                  requestNeedId,
+                )
+              }
+              includePiecesForDirectRequest={
+                includePiecesForDirectRequest
+              }
+              onIncludePiecesForDirectRequestChange={
+                setIncludePiecesForDirectRequest
+              }
               stepNumber={
                 isCustomerMode
                   ? "01"
@@ -792,7 +836,7 @@ export function QuoteForm({
                   contactData
                 }
                 pieces={
-                  pieces
+                  effectivePieces
                 }
                 project={
                   projectData
@@ -880,6 +924,10 @@ export function QuoteForm({
                 onClick={
                   handleNext
                 }
+                disabled={
+                  currentStep === pieceStep &&
+                  !projectData.requestNeedId
+                }
                 className="
                   cursor-pointer
                   rounded-[12px]
@@ -894,6 +942,10 @@ export function QuoteForm({
                   hover:-translate-y-[1px]
                   hover:bg-[#0d2d41]
                   hover:shadow-[0_8px_20px_rgba(11,35,64,0.16)]
+                  disabled:cursor-not-allowed
+                  disabled:opacity-45
+                  disabled:hover:translate-y-0
+                  disabled:hover:shadow-none
                 "
               >
                 Continuar
@@ -974,8 +1026,20 @@ export function QuoteForm({
             />
 
             <SummaryItem
+              label="Necessidade principal"
+              value={
+                selectedRequestNeed?.name ||
+                "Não informada"
+              }
+            />
+
+            <SummaryItem
               label="Tipos de peça"
-              value={`${pieces.length}`}
+              value={
+                effectivePieces.length > 0
+                  ? `${effectivePieces.length}`
+                  : "Não se aplica"
+              }
             />
 
             <SummaryItem
@@ -1018,15 +1082,15 @@ export function QuoteForm({
             />
           </div>
 
-          {currentStep >=
-            pieceStep && (
+          {currentStep >= pieceStep &&
+            effectivePieces.length > 0 && (
             <div className="mt-7 border-t border-[#c9dbe3]/74 pt-5">
               <p className="text-[10px] font-medium uppercase tracking-[0.1em] text-[#718895]">
                 Itens
               </p>
 
               <div className="mt-3 space-y-3">
-                {pieces.map(
+                {effectivePieces.map(
                   (
                     piece,
                     index,
@@ -1133,8 +1197,7 @@ function InternalIdentity() {
             <p className="text-[13px] font-semibold text-[#173f57]">
               Registro interno
             </p>
-
-            <span className="rounded-full border border-[#9fc5d7]/60 bg-white/60 px-2.5 py-1 text-[9px] font-semibold uppercase tracking-[0.09em] text-[#4c7890]">
+                        <span className="rounded-full border border-[#9fc5d7]/60 bg-white/60 px-2.5 py-1 text-[9px] font-semibold uppercase tracking-[0.09em] text-[#4c7890]">
               Equipe do laboratório
             </span>
           </div>
@@ -1356,7 +1419,6 @@ function InternalReviewSummary({
  * ============================================================ */
 
 function CustomerIdentity({
-  customer,
   contactData,
 }) {
   return (
@@ -1432,7 +1494,7 @@ function CustomerIdentity({
 const customerSteps = [
   {
     number: 1,
-    label: "Peças",
+    label: "Necessidade",
   },
 
   {

@@ -1,3 +1,5 @@
+import { getQuotePieces } from "../../services/quotePieceService";
+import { getProposalByQuoteId, getAcceptedProposalVersion } from "../../services/proposalService";
 import "../../styles/internalWorkspace.css";
 import { ValidationFeedback, FieldIssue } from "../../components/internal/ValidationFeedback";
 import {
@@ -26,14 +28,11 @@ import {
 } from "../../components/internal/RequestDetailSection";
 
 import {
-  acceptRuntimeQuote,
   approveQuoteInternally,
   cancelRuntimeQuote,
   getQuoteKnowledgeSupport,
   getRuntimeQuoteById,
-  markQuoteAsSent,
   recordQuoteEvent,
-  rejectRuntimeQuote,
   returnQuoteToEditing,
   sendQuoteToReview,
   updateRuntimeQuote,
@@ -170,13 +169,6 @@ export function QuoteDetailPage() {
     setFeedback,
   ] = useState(
     null,
-  );
-
-  const [
-    showProposal,
-    setShowProposal,
-  ] = useState(
-    false,
   );
 
   const [
@@ -406,96 +398,7 @@ export function QuoteDetailPage() {
   }
 
   function handleGenerateProposal() {
-    setShowProposal(
-      true,
-    );
-  }
-
-  function handleMarkAsSent() {
-    try {
-      const updatedQuote =
-        markQuoteAsSent(
-          quote.id,
-          currentUser,
-        );
-
-      setQuote(
-        updatedQuote,
-      );
-
-      setShowProposal(
-        false,
-      );
-
-      showFeedback(
-        "Proposta marcada como enviada ao cliente.",
-        "success",
-      );
-    } catch (
-      error
-    ) {
-      showFeedback(
-        error.message,
-        "error",
-      );
-    }
-  }
-
-  function handleAccept() {
-    try {
-      const updatedQuote =
-        acceptRuntimeQuote(
-          quote.id,
-          currentUser,
-        );
-
-      setQuote(
-        updatedQuote,
-      );
-
-      closeConfirmation();
-
-      showFeedback(
-        "Aceite do cliente registrado.",
-        "success",
-      );
-    } catch (
-      error
-    ) {
-      showFeedback(
-        error.message,
-        "error",
-      );
-    }
-  }
-
-  function handleReject() {
-    try {
-      const updatedQuote =
-        rejectRuntimeQuote(
-          quote.id,
-          currentUser,
-          confirmationReason,
-        );
-
-      setQuote(
-        updatedQuote,
-      );
-
-      closeConfirmation();
-
-      showFeedback(
-        "Recusa do cliente registrada.",
-        "success",
-      );
-    } catch (
-      error
-    ) {
-      showFeedback(
-        error.message,
-        "error",
-      );
-    }
+    navigate(`/portal/orcamentos/${quote.id}/proposta`);
   }
 
   function handleCancel() {
@@ -755,7 +658,7 @@ export function QuoteDetailPage() {
             </RequestDetailSection>
           
 
-            <QuoteItemsEditor legacyEstimate={quote.legacyEstimate} items={items} onChange={setItems} isEditable={isEditable} machines={machines} />
+            <QuoteItemsEditor pieces={getQuotePieces(quote)} legacyEstimate={quote.legacyEstimate} items={items} onChange={setItems} isEditable={isEditable} machines={machines} />
           
 
             <RequestDetailSection title="Condições comerciais" description="Informações comerciais do orçamento.">
@@ -805,53 +708,12 @@ export function QuoteDetailPage() {
 
             <RequestDetailSection title="Etapa atual" description={quote.status}>
                 <div>
-                  <QuoteWorkflowActions quote={quote} linkedProject={linkedProject} reviewValidation={reviewValidation} onSendToReview={handleSendToReview} onApprove={handleApprove} onReturnToEditing={handleReturnToEditing} onGenerateProposal={handleGenerateProposal} onAccept={() => openConfirmation("accept")} onReject={() => openConfirmation("reject")} onProject={handleProjectAction} />
+                  <QuoteWorkflowActions quote={quote} linkedProject={linkedProject} reviewValidation={reviewValidation} onSendToReview={handleSendToReview} onApprove={handleApprove} onReturnToEditing={handleReturnToEditing} onGenerateProposal={handleGenerateProposal} onProject={handleProjectAction} />
                   {!["Aceito", "Recusado", "Cancelado"].includes(quote.status) && <button type="button" onClick={() => openConfirmation("cancel")} className="internal-help-text mt-3 w-full text-[#9a5947]">Cancelar orçamento</button>}
                 </div>
             </RequestDetailSection>
           </aside></div>
       </div>
-
-      {showProposal && (
-        <ProposalPreviewModal
-          quote={
-            quote
-          }
-          scope={
-            scope
-          }
-          hourlyRate={toNumber(
-            hourlyRate,
-          )}
-          billableHours={toNumber(
-            billableHours,
-          )}
-          total={
-            commercialTotal
-          }
-          deadlineDays={
-            deadlineDays
-          }
-          validityDays={
-            validityDays
-          }
-          commercialNotes={
-            commercialNotes
-          }
-          allowMarkAsSent={
-            quote.status ===
-            "Aprovado internamente"
-          }
-          onMarkAsSent={
-            handleMarkAsSent
-          }
-          onClose={() =>
-            setShowProposal(
-              false,
-            )
-          }
-        />
-      )}
 
       {showProjectConfirmation && (
         <ProjectCreationModal
@@ -865,47 +727,6 @@ export function QuoteDetailPage() {
           }
           onConfirm={
             handleConfirmProjectCreation
-          }
-        />
-      )}
-
-      {confirmationAction ===
-        "accept" && (
-        <ConfirmationModal
-          eyebrow="Retorno do cliente"
-          title={`Registrar aceite de ${quote.id}?`}
-          description="Depois do aceite, este orçamento poderá originar um projeto."
-          confirmLabel="Confirmar aceite"
-          onCancel={
-            closeConfirmation
-          }
-          onConfirm={
-            handleAccept
-          }
-        />
-      )}
-
-      {confirmationAction ===
-        "reject" && (
-        <ConfirmationModal
-          eyebrow="Retorno do cliente"
-          title={`Registrar recusa de ${quote.id}?`}
-          description="O orçamento será encerrado como recusado. O motivo ficará registrado no histórico comercial."
-          confirmLabel="Confirmar recusa"
-          danger
-          reasonLabel="Motivo da recusa"
-          reason={
-            confirmationReason
-          }
-          onReasonChange={
-            setConfirmationReason
-          }
-          reasonRequired
-          onCancel={
-            closeConfirmation
-          }
-          onConfirm={
-            handleReject
           }
         />
       )}
@@ -953,151 +774,21 @@ function KnowledgeAssistantPanel({ knowledge, onOpenKnowledge }) {
   </RequestDetailSection>;
 }
 
-function QuoteWorkflowActions({
-  reviewValidation,
-  quote,
-  linkedProject,
-  onSendToReview,
-  onApprove,
-  onReturnToEditing,
-  onGenerateProposal,
-  onAccept,
-  onReject,
-  onProject,
-}) {
-  if (
-    quote.status ===
-      "Rascunho" ||
-    quote.status ===
-      "Em elaboração"
-  ) {
-    return (
-      <PrimaryButton
-        disabled={!reviewValidation.isValid}
-        onClick={
-          onSendToReview
-        }
-      >
-        Enviar para revisão
-      </PrimaryButton>
-    );
-  }
-
-  if (
-    quote.status ===
-    "Em revisão"
-  ) {
-    return (
-      <>
-        <PrimaryButton
-          onClick={
-            onApprove
-          }
-        >
-          Aprovar internamente
-        </PrimaryButton>
-
-        <SecondaryButton
-          onClick={
-            onReturnToEditing
-          }
-        >
-          Solicitar ajustes
-        </SecondaryButton>
-      </>
-    );
-  }
-
-  if (
-    quote.status ===
-    "Aprovado internamente"
-  ) {
-    return (
-      <PrimaryButton
-        onClick={
-          onGenerateProposal
-        }
-      >
-        Gerar proposta
-      </PrimaryButton>
-    );
-  }
-
-  if (
-    quote.status ===
-    "Enviado"
-  ) {
-    return (
-      <>
-        <p className="mb-3 internal-help-text font-semibold uppercase tracking-[0.1em] text-[#5681a0]">
-          Retorno do cliente
-        </p>
-
-        <PrimaryButton
-          onClick={
-            onAccept
-          }
-        >
-          Registrar aceite
-        </PrimaryButton>
-
-        <button
-          type="button"
-          onClick={
-            onReject
-          }
-          className="mt-2 w-full rounded-[11px] border border-[#dfc7c0] bg-white px-4 py-3 internal-help-text font-semibold uppercase tracking-[0.08em] text-[#9a5947]"
-        >
-          Registrar recusa
-        </button>
-
-        <SecondaryButton
-          onClick={
-            onGenerateProposal
-          }
-        >
-          Visualizar proposta
-        </SecondaryButton>
-      </>
-    );
-  }
-
-  if (
-    quote.status ===
-    "Aceito"
-  ) {
-    return (
-      <PrimaryButton
-        onClick={
-          onProject
-        }
-      >
-        {linkedProject
-          ? `Abrir ${linkedProject.id}`
-          : "Criar projeto"}
-      </PrimaryButton>
-    );
-  }
-
-  if (
-    quote.status ===
-    "Recusado"
-  ) {
-    return (
-      <ClosedMessage text="Negociação encerrada após recusa do cliente." />
-    );
-  }
-
-  if (
-    quote.status ===
-    "Cancelado"
-  ) {
-    return (
-      <ClosedMessage text="Orçamento cancelado." />
-    );
-  }
-
-  return null;
+function QuoteWorkflowActions({ reviewValidation, quote, linkedProject, onSendToReview, onApprove, onReturnToEditing, onGenerateProposal, onProject }) {
+  const proposal = getProposalByQuoteId(quote.id);
+  const accepted = getAcceptedProposalVersion(quote.id);
+  const latest = proposal?.versions.at(-1);
+  const stale = latest && latest.sourceQuoteRevision !== (quote.revision ?? 0);
+  return <>
+    {["Rascunho", "Em elaboração"].includes(quote.status) && <PrimaryButton disabled={!reviewValidation.isValid} onClick={onSendToReview}>Enviar para revisão</PrimaryButton>}
+    {stale && <p className="internal-help-text my-3 text-[#806b3d]">PROPOSTA EMITIDA · V{latest.version} foi emitida com uma versão anterior deste orçamento. Alterações atuais não modificam a proposta já emitida. Para apresentar os novos dados, crie uma nova versão.</p>}
+    {!accepted && quote.status === "Aprovado internamente" && <SecondaryButton onClick={onReturnToEditing}>Ajustar orçamento</SecondaryButton>}
+    {quote.status === "Em revisão" && <><PrimaryButton onClick={onApprove}>Aprovar internamente</PrimaryButton><SecondaryButton onClick={onReturnToEditing}>Solicitar ajustes</SecondaryButton></>}
+    {(proposal || quote.status === "Aprovado internamente") && <PrimaryButton onClick={onGenerateProposal}>{proposal ? "ABRIR PROPOSTA" : "MONTAR PROPOSTA"}</PrimaryButton>}
+    {linkedProject ? <PrimaryButton onClick={onProject}>Abrir {linkedProject.id}</PrimaryButton> : accepted ? <><p>Proposta aceita • {proposal.id} • V{accepted.version}</p><PrimaryButton onClick={onProject}>Criar projeto</PrimaryButton></> : <p className="internal-help-text mt-4">Projeto ainda não disponível. A criação será liberada após o registro do aceite de uma versão da proposta comercial.</p>}
+    {quote.status === "Recusado" && <ClosedMessage text="Negociação encerrada após recusa do cliente." />}
+    {quote.status === "Cancelado" && <ClosedMessage text="Orçamento cancelado." />}
+  </>;
 }
 
 function PrimaryButton({
@@ -1397,201 +1088,6 @@ function ProjectCreationModal({
 }
 
 /* ============================================================
- * PROPOSTA
- * ============================================================ */
-
-function ProposalPreviewModal({
-  quote,
-  scope,
-  hourlyRate,
-  billableHours,
-  total,
-  deadlineDays,
-  validityDays,
-  commercialNotes,
-  allowMarkAsSent,
-  onMarkAsSent,
-  onClose,
-}) {
-  return (
-    <div className="fixed inset-0 z-[100] overflow-y-auto bg-[#071a2b]/55 px-4 py-8 backdrop-blur-[3px]">
-      <div className="mx-auto w-full max-w-[850px] overflow-hidden rounded-[26px] border border-white/30 bg-white shadow-[0_35px_100px_rgba(7,26,43,0.25)]">
-        <div className="flex items-center justify-between border-b border-[#dce5ea] bg-[#f6f9fb] px-6 py-5 sm:px-8">
-          <div>
-            <p className="internal-help-text font-semibold uppercase tracking-[0.14em] text-[#5681a0]">
-              Prévia
-            </p>
-
-            <h2 className="mt-1 text-lg font-semibold text-[#17394f]">
-              Proposta comercial
-            </h2>
-          </div>
-
-          <button
-            type="button"
-            onClick={
-              onClose
-            }
-            className="flex h-9 w-9 items-center justify-center rounded-full border border-[#d0dce3] bg-white text-sm text-[#607989]"
-          >
-            ×
-          </button>
-        </div>
-
-        <div className="px-6 py-7 sm:px-9 sm:py-9">
-          <div className="border-b border-[#dbe4e9] pb-6">
-            <p className="internal-field-label font-semibold uppercase tracking-[0.14em] text-[#356f9f]">
-              Centro de Excelência em Metrologia
-            </p>
-
-            <h3 className="mt-4 text-2xl font-semibold tracking-[-0.035em] text-[#0b2340]">
-              Proposta {
-                quote.id
-              }
-            </h3>
-          </div>
-
-          <div className="grid gap-6 border-b border-[#e0e7eb] py-6 sm:grid-cols-2">
-            <PreviewInfo
-              label="Cliente"
-              value={
-                quote.company
-              }
-            />
-
-            <PreviewInfo
-              label="Contato"
-              value={
-                quote.contact
-              }
-            />
-
-            <PreviewInfo
-              label="Serviço"
-              value={
-                quote.service
-              }
-            />
-
-            <PreviewInfo
-              label="Validade"
-              value={
-                validityDays
-                  ? `${validityDays} dias`
-                  : "A definir"
-              }
-            />
-          </div>
-
-          <div className="border-b border-[#e0e7eb] py-6">
-            <p className="internal-help-text font-semibold uppercase tracking-[0.12em] text-[#718895]">
-              Escopo
-            </p>
-
-            <p className="mt-3 whitespace-pre-line text-sm leading-7 text-[#405f73]">
-              {scope ||
-                "Escopo técnico a definir."}
-            </p>
-          </div>
-
-          <div className="border-b border-[#e0e7eb] py-6">
-            <p className="internal-help-text font-semibold uppercase tracking-[0.12em] text-[#718895]">
-              Investimento
-            </p>
-
-            <div className="mt-4 grid gap-3 sm:grid-cols-3">
-              <PreviewInfo
-                label="Horas"
-                value={`${formatNumber(
-                  billableHours,
-                )} h`}
-              />
-
-              <PreviewInfo
-                label="Valor/hora médio ponderado"
-                value={
-                  formatCurrency(
-                    hourlyRate,
-                  )
-                }
-              />
-
-              <PreviewInfo
-                label="Valor total"
-                value={
-                  total > 0
-                    ? formatCurrency(
-                        total,
-                      )
-                    : "A definir"
-                }
-              />
-            </div>
-          </div>
-
-          <div className="grid gap-6 border-b border-[#e0e7eb] py-6 sm:grid-cols-2">
-            <PreviewInfo
-              label="Prazo de execução"
-              value={
-                deadlineDays
-                  ? `${deadlineDays} dias`
-                  : "A definir"
-              }
-            />
-
-            <PreviewInfo
-              label="Validade da proposta"
-              value={
-                validityDays
-                  ? `${validityDays} dias`
-                  : "A definir"
-              }
-            />
-          </div>
-
-          <div className="pt-6">
-            <p className="internal-help-text font-semibold uppercase tracking-[0.12em] text-[#718895]">
-              Condições e observações
-            </p>
-
-            <p className="mt-3 whitespace-pre-line text-sm leading-7 text-[#405f73]">
-              {commercialNotes ||
-                "Nenhuma observação comercial adicional informada."}
-            </p>
-          </div>
-        </div>
-
-        <div className="flex flex-col-reverse gap-2 border-t border-[#dce5ea] bg-[#f6f9fb] px-6 py-5 sm:flex-row sm:justify-end">
-          <button
-            type="button"
-            onClick={
-              onClose
-            }
-            className="rounded-[11px] border border-[#cedae1] bg-white px-5 py-3 internal-field-label font-semibold uppercase tracking-[0.08em] text-[#607989]"
-          >
-            {allowMarkAsSent
-              ? "Voltar"
-              : "Fechar"}
-          </button>
-
-          {allowMarkAsSent && (
-            <button
-              type="button"
-              onClick={
-                onMarkAsSent
-              }
-              className="rounded-[11px] bg-[#096ab2] px-5 py-3 internal-field-label font-semibold uppercase tracking-[0.08em] text-white"
-            >
-              Marcar como enviada
-            </button>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/* ============================================================
  * HISTÓRICO
  * ============================================================ */
 
@@ -1793,23 +1289,6 @@ function ControlInfo({
       </p>
 
       <p className="mt-1 text-xs font-semibold text-[#476579]">
-        {value}
-      </p>
-    </div>
-  );
-}
-
-function PreviewInfo({
-  label,
-  value,
-}) {
-  return (
-    <div>
-      <p className="internal-help-text font-semibold uppercase tracking-[0.11em] text-[#718895]">
-        {label}
-      </p>
-
-      <p className="mt-2 text-sm font-semibold text-[#31566d]">
         {value}
       </p>
     </div>

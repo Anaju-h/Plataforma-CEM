@@ -1,16 +1,25 @@
 import { calculateCommercialTotal, getCommercialReference } from "./pricingService";
 import { validationResult } from "./workflowValidation";
+import {
+  getServiceLabel,
+  normalizeServiceId,
+  SERVICE_OPTIONS,
+} from "../data/serviceCatalog";
 
-// IDs já utilizados pelo configurador. A SOL demo também aceita os rótulos.
-export const quoteItemServices = [
-  { id: "inspection", name: "Inspeção dimensional" },
-  { id: "scanning", name: "Digitalização 3D" },
-  { id: "reverse", name: "Engenharia reversa" },
-  { id: "internal", name: "Análise interna" },
-];
+export const quoteItemServices = SERVICE_OPTIONS.map((service) => ({
+  id: service.value,
+  name: service.label,
+}));
 
 export function getQuoteItemService(value) {
-  return quoteItemServices.find(service => service.id === value || service.name === value);
+  const serviceId = normalizeServiceId(value);
+
+  return quoteItemServices.find(
+    (service) =>
+      service.id === serviceId ||
+      service.name === value ||
+      service.name === getServiceLabel(serviceId),
+  );
 }
 
 const text = value => typeof value === "string" ? value.trim() : "";
@@ -36,9 +45,11 @@ export function normalizeQuoteItem(item, original = item) {
     id: original.id,
     name: text(item.name),
     description: text(item.description),
-    serviceId: text(item.serviceId) || null,
+    serviceId: text(item.serviceId)
+      ? normalizeServiceId(item.serviceId)
+      : null,
     machineId: text(item.machineId) || null,
-    requestPieceId: original.requestPieceId ?? null,
+    requestPieceId: item.requestPieceId ?? null,
     technicalHours: number(item.technicalHours),
     quotedHours: number(item.quotedHours),
     commercialRateReference: number(original.commercialRateReference),

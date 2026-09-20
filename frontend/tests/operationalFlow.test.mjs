@@ -1,3 +1,5 @@
+import { testPdfDestination } from "./proposalTestAssets.mjs";
+import { installProposalAssetFetch } from "./proposalTestAssets.mjs";
 import assert from "node:assert/strict";
 import { before, after, test } from "node:test";
 import { createServer } from "vite";
@@ -6,11 +8,13 @@ import { renderToString } from "react-dom/server";
 import { MemoryRouter, Routes, Route } from "react-router-dom";
 
 let server, requests, quotes, projects, items, history, QuoteDetailPage, RequestDetailPage, OperationalHistoryPage;
-let RequestsPage, QuotesPage, ProjectsPage;
+let RequestsPage, QuotesPage, ProjectsPage, proposals, restoreFetch;
 before(async () => {
+  restoreFetch = installProposalAssetFetch();
   server = await createServer({ server: { middlewareMode: true, watch: null, hmr: false, ws: false }, appType: "custom" });
   requests = await server.ssrLoadModule("/src/services/requestService.js");
   quotes = await server.ssrLoadModule("/src/services/quoteService.js");
+  proposals = await server.ssrLoadModule("/src/services/proposalService.js");
   projects = await server.ssrLoadModule("/src/services/projectService.js");
   items = await server.ssrLoadModule("/src/services/quoteItemService.js");
   history = await server.ssrLoadModule("/src/services/operationalHistoryService.js");
@@ -21,7 +25,7 @@ before(async () => {
   ({ QuotesPage } = await server.ssrLoadModule("/src/pages/internal/QuotesPage.jsx"));
   ({ ProjectsPage } = await server.ssrLoadModule("/src/pages/internal/ProjectsPage.jsx"));
 });
-after(async () => { await server?.close(); });
+after(async () => { restoreFetch?.(); await server?.close(); });
 
 function render(Page, path, url) {
   return renderToString(createElement(MemoryRouter, { initialEntries: [url] }, createElement(Routes, null,
@@ -29,7 +33,7 @@ function render(Page, path, url) {
 }
 function quoteHTML(id) { return render(QuoteDetailPage, "/portal/orcamentos/:quoteId", `/portal/orcamentos/${id}`); }
 
-test("SOL → ORC → revisão → PRJ preserva vínculos e move registros entre ativo e histórico", () => {
+test("SOL → ORC → revisão → PRJ preserva vínculos e move registros entre ativo e histórico", async () => {
   const created = requests.createRuntimeRequest({ contact: { company: "Teste de fluxo", name: "Responsável" }, pieces: [{ id: "P1", name: "Peça", quantity: 1, services: ["inspection"] }] });
   const request = requests.updateRuntimeRequest(created.id, { status: "Apta para orçamento" });
   assert.ok(request);
@@ -49,7 +53,7 @@ test("SOL → ORC → revisão → PRJ preserva vínculos e move registros entre
   assert.match(html, /Pendências para revisão/);
   assert.match(html, /<button[^>]*disabled=""[^>]*>Enviar para revisão<\/button>/);
   const saved = quotes.updateRuntimeQuote(quote.id, { scope: "Inspecionar peça", machineId: "prismo", deadlineDays: 10, validityDays: 15,
-    estimateJustification: "Preparação e medição", items: [items.createQuoteItem({ name: "Medição", quotedHours: 20, hourlyRate: 180 })] });
+    estimateJustification: "Preparação e medição", items: [items.createQuoteItem({ name: "Medição", requestPieceId: "P1", quotedHours: 20, hourlyRate: 180 })] });
   assert.equal(quotes.validateQuoteForReview(saved).isValid, true);
   assert.equal(saved.proposedValue, 3600);
   html = quoteHTML(quote.id);
@@ -65,8 +69,9 @@ test("SOL → ORC → revisão → PRJ preserva vínculos e move registros entre
   assert.equal(quotes.sendQuoteToReview(quote.id).status, "Em revisão");
   assert.throws(() => quotes.sendQuoteToReview(quote.id));
   quotes.approveQuoteInternally(quote.id);
-  quotes.markQuoteAsSent(quote.id);
-  quotes.acceptRuntimeQuote(quote.id);
+  proposals.openProposal(quote.id);
+  await proposals.generateProposalVersion(quote.id, "Administrador", testPdfDestination);
+  proposals.registerProposalResult(quote.id, 1, { type: "accepted", date: "2026-09-16", actor: "Administrador" });
   assert.ok(quotes.getActiveQuotes().some(record => record.id === quote.id), "Aceito ainda aguarda criação do projeto");
   const { project } = projects.createProjectFromQuote(quote.id);
   assert.equal(project.quoteId, quote.id);

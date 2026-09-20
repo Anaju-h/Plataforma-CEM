@@ -1,9 +1,5 @@
-const serviceLabels = {
-  inspection: "Inspeção dimensional",
-  scanning: "Digitalização 3D",
-  reverse: "Engenharia reversa",
-  internal: "Análise interna",
-};
+import { getRequestNeed } from "../../data/requestNeeds";
+import { getServiceLabel } from "../../data/serviceCatalog";
 
 export function ReviewStep({
   contact,
@@ -17,6 +13,8 @@ export function ReviewStep({
     (total, piece) => total + piece.quantity,
     0,
   );
+
+  const selectedNeed = getRequestNeed(project.requestNeedId);
 
   return (
     <div>
@@ -41,8 +39,8 @@ export function ReviewStep({
 
       <div className="mt-7 grid gap-3 sm:grid-cols-3">
         <SummaryCard
-          label="Tipos de peça"
-          value={`${pieces.length}`}
+          label="Peças vinculadas"
+          value={pieces.length > 0 ? `${pieces.length}` : "Não se aplica"}
         />
 
         <SummaryCard
@@ -84,21 +82,23 @@ export function ReviewStep({
         </div>
       </ReviewSection>
 
-      <ReviewSection
-        number="02"
-        title="Peças do projeto"
-        onEdit={onEditPieces}
-      >
-        <div className="space-y-4">
-          {pieces.map((piece, index) => (
-            <PieceReviewCard
-              key={piece.id}
-              piece={piece}
-              index={index}
-            />
-          ))}
-        </div>
-      </ReviewSection>
+      {pieces.length > 0 && (
+        <ReviewSection
+          number="02"
+          title="Peças do projeto"
+          onEdit={onEditPieces}
+        >
+          <div className="space-y-4">
+            {pieces.map((piece, index) => (
+              <PieceReviewCard
+                key={piece.id}
+                piece={piece}
+                index={index}
+              />
+            ))}
+          </div>
+        </ReviewSection>
+      )}
 
       <ReviewSection
         number="03"
@@ -106,6 +106,11 @@ export function ReviewStep({
         onEdit={onEditProject}
       >
         <div className="grid gap-5 sm:grid-cols-2">
+          <ReviewItem
+            label="Necessidade principal"
+            value={selectedNeed?.name || "Não informada"}
+          />
+
           <ReviewItem
             label="Prioridade"
             value={getUrgencyLabel(project.urgency)}
@@ -231,14 +236,14 @@ function PieceReviewCard({
           Serviços
         </p>
 
-        {piece.services.length > 0 ? (
+        {(piece.services ?? []).length > 0 ? (
           <div className="mt-3 flex flex-wrap gap-2">
             {piece.services.map((service) => (
               <span
                 key={service}
                 className="rounded-full border border-[#d0e1ea] bg-white px-3 py-2 text-xs font-medium text-[#356f9f]"
               >
-                {serviceLabels[service]}
+                {getServiceLabel(service)}
               </span>
             ))}
           </div>

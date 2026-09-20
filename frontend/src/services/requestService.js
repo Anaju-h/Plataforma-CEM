@@ -1,5 +1,10 @@
 import { validateRequestForQuote } from "./workflowValidation";
 import {
+  getRequestNeed,
+  getRequestNeedServices,
+} from "../data/requestNeeds";
+import { normalizeServiceId } from "../data/serviceCatalog";
+import {
   requests as baseRequests,
 } from "../data/internal/requests";
 
@@ -68,9 +73,31 @@ export function getRuntimeRequestById(
     : null;
 }
 
-export function isArchivedRequest(request) { return Boolean(request.linkedQuoteId || CLOSED_STATUSES.includes(request.status)); }
-export function getActiveRequests() { return getRuntimeRequests().filter(request => !isArchivedRequest(request)); }
-export function getArchivedRequests() { return getRuntimeRequests().filter(isArchivedRequest); }
+export function isArchivedRequest(
+  request,
+) {
+  return Boolean(
+    request.linkedQuoteId ||
+      CLOSED_STATUSES.includes(
+        request.status,
+      ),
+  );
+}
+
+export function getActiveRequests() {
+  return getRuntimeRequests().filter(
+    (request) =>
+      !isArchivedRequest(
+        request,
+      ),
+  );
+}
+
+export function getArchivedRequests() {
+  return getRuntimeRequests().filter(
+    isArchivedRequest,
+  );
+}
 
 export function getOpenRuntimeRequests() {
   return runtimeRequests
@@ -118,19 +145,85 @@ export function createRuntimeRequest(
   const requestId =
     createNextRequestId();
 
-  const services =
-    Array.from(
-      new Set(
-        pieces.flatMap(
-          (piece) =>
-            Array.isArray(
-              piece.services,
-            )
-              ? piece.services
-              : [],
-        ),
+  const requestNeedId =
+    normalizeText(
+      project.requestNeedId,
+    );
+
+  const requestNeed =
+    getRequestNeed(
+      requestNeedId,
+    );
+
+  /*
+   * Serviço originado pela necessidade principal.
+   *
+   * Isso é essencial para solicitações diretas como:
+   * - análise de falhas
+   * - gestão de ativos
+   * - biblioteca digital
+   * - manutenção
+   * - treinamento
+   *
+   * Esses serviços podem existir mesmo quando nenhuma peça
+   * é cadastrada.
+   */
+  const requestNeedServices =
+    normalizeServiceArray(
+      getRequestNeedServices(
+        requestNeedId,
       ),
     );
+
+  /*
+   * Serviços técnicos vinculados às peças.
+   */
+  const pieceServices =
+    normalizeServiceArray(
+      pieces.flatMap(
+        (piece) =>
+          Array.isArray(
+            piece.services,
+          )
+            ? piece.services
+            : [],
+      ),
+    );
+
+  /*
+   * A SOL preserva tanto o serviço principal da necessidade
+   * quanto eventuais serviços técnicos complementares.
+   *
+   * Exemplo:
+   *
+   * Análise de falhas
+   * + Tomografia industrial
+   */
+  const services =
+    Array.from(
+      new Set([
+        ...requestNeedServices,
+        ...pieceServices,
+      ]),
+    );
+
+  /*
+   * A necessidade principal tem prioridade.
+   *
+   * Portanto:
+   *
+   * Análise de falhas + Tomografia
+   *
+   * service = failure-analysis
+   * services = [
+   *   failure-analysis,
+   *   internal
+   * ]
+   */
+  const primaryService =
+    requestNeedServices[0] ||
+    pieceServices[0] ||
+    "Não definido";
 
   const totalParts =
     pieces.reduce(
@@ -219,9 +312,32 @@ export function createRuntimeRequest(
         contact.phone,
       ),
 
+    /*
+     * Preserva a necessidade escolhida no formulário.
+     *
+     * Isso será importante também quando fizermos a
+     * interligação definitiva com público/cliente/API.
+     */
+    requestNeedId:
+      requestNeedId ||
+      null,
+
+    requestNeed:
+      requestNeed
+        ? {
+            id:
+              requestNeed.id,
+
+            name:
+              requestNeed.name,
+
+            flow:
+              requestNeed.flow,
+          }
+        : null,
+
     service:
-      services[0] ||
-      "Não definido",
+      primaryService,
 
     services,
 
@@ -288,6 +404,10 @@ export function createRuntimeRequest(
     },
 
     project: {
+      requestNeedId:
+        requestNeedId ||
+        "",
+
       urgency:
         project.urgency ||
         "normal",
@@ -347,6 +467,9 @@ export function createRuntimeRequest(
       updatedBy:
         null,
 
+      complexity:
+        "",
+
       technicalSummary:
         "",
 
@@ -357,8 +480,10 @@ export function createRuntimeRequest(
         "",
 
       recommendedService:
-        services[0] ||
-        "",
+        primaryService ===
+        "Não definido"
+          ? ""
+          : primaryService,
 
       recommendedEquipment:
         "",
@@ -650,7 +775,6 @@ export function resumeRequestAnalysis(
     request,
   );
 }
-
 /* ============================================================
  * SALVAR ANÁLISE TÉCNICA
  * ============================================================ */
@@ -672,47 +796,145 @@ export function saveRequestTechnicalAnalysis(
   const now =
     new Date();
 
-  request.analysis = {
+  const currentAnalysis = {
     ...createDefaultAnalysis(
       request,
     ),
     ...request.analysis,
+  };
 
-    technicalSummary:
-      normalizeText(
-        analysisData
-          .technicalSummary,
-      ),
+  /*
+   * Compatibilidade entre os nomes utilizados pela tela
+   * RequestDetailPage e o contrato interno do service.
+   *
+   * Tela:
+   * service
+   * technology
+   * technicalResponsible
+   * summary
+   *
+   * Service:
+   * recommendedService
+   * recommendedEquipment
+   * responsible
+   * technicalSummary
+   */
 
-    pendingInformation:
-      normalizeText(
-        analysisData
-          .pendingInformation,
-      ),
+  const recommendedService =
+    normalizeServiceId(
+      analysisData
+        .recommendedService ??
+        analysisData.service ??
+        currentAnalysis
+          .recommendedService ??
+        request.service,
+    );
 
-    decisionReason:
-      normalizeText(
-        analysisData
-          .decisionReason,
-      ),
-
-    recommendedService:
-      normalizeText(
-        analysisData
-          .recommendedService,
-      ),
-
-    recommendedEquipment:
-      normalizeText(
-        analysisData
+  const recommendedEquipment =
+    normalizeText(
+      analysisData
+        .recommendedEquipment ??
+        analysisData.technology ??
+        currentAnalysis
           .recommendedEquipment,
-      ),
+    );
 
-    knowledgeTags:
-      normalizeStringArray(
+  const responsible =
+    normalizeText(
+      analysisData
+        .responsible ??
         analysisData
+          .technicalResponsible ??
+        currentAnalysis
+          .responsible,
+    ) ||
+    actor;
+
+  const complexity =
+    normalizeText(
+      analysisData
+        .complexity ??
+        currentAnalysis
+          .complexity,
+    );
+
+  const technicalSummary =
+    normalizeText(
+      analysisData
+        .technicalSummary ??
+        analysisData.summary ??
+        currentAnalysis
+          .technicalSummary,
+    );
+
+  const pendingInformation =
+    normalizeText(
+      analysisData
+        .pendingInformation ??
+        currentAnalysis
+          .pendingInformation,
+    );
+
+  const decisionReason =
+    normalizeText(
+      analysisData
+        .decisionReason ??
+        currentAnalysis
+          .decisionReason,
+    );
+
+  const knowledgeTags =
+    normalizeStringArray(
+      analysisData
+        .knowledgeTags ??
+        currentAnalysis
           .knowledgeTags,
-      ),
+    );
+
+  /*
+   * Se o técnico confirmar/ajustar o serviço principal,
+   * mantemos essa classificação também no nível da SOL.
+   *
+   * Os outros serviços já existentes não são apagados.
+   */
+  if (
+    recommendedService
+  ) {
+    request.service =
+      recommendedService;
+
+    request.services =
+      normalizeServiceArray([
+        recommendedService,
+        ...(Array.isArray(
+          request.services,
+        )
+          ? request.services
+          : []),
+      ]);
+  }
+
+  request.responsible =
+    responsible;
+
+  request.analysis = {
+    ...currentAnalysis,
+
+    complexity,
+
+    technicalSummary,
+
+    pendingInformation,
+
+    decisionReason,
+
+    recommendedService,
+
+    recommendedEquipment,
+
+    responsible,
+
+    knowledgeTags,
 
     updatedAt:
       now.toISOString(),
@@ -810,6 +1032,7 @@ export function finishRequestAnalysis(
     normalizeText(
       payload
         .technicalSummary ??
+        payload.summary ??
         currentAnalysis
           .technicalSummary,
     );
@@ -828,6 +1051,52 @@ export function finishRequestAnalysis(
         .decisionReason ??
         currentAnalysis
           .decisionReason,
+    );
+
+  const recommendedService =
+    normalizeServiceId(
+      payload
+        .recommendedService ??
+        payload.service ??
+        currentAnalysis
+          .recommendedService ??
+        request.service,
+    );
+
+  const recommendedEquipment =
+    normalizeText(
+      payload
+        .recommendedEquipment ??
+        payload.technology ??
+        currentAnalysis
+          .recommendedEquipment,
+    );
+
+  const responsible =
+    normalizeText(
+      payload
+        .responsible ??
+        payload
+          .technicalResponsible ??
+        currentAnalysis
+          .responsible,
+    ) ||
+    actor;
+
+  const complexity =
+    normalizeText(
+      payload
+        .complexity ??
+        currentAnalysis
+          .complexity,
+    );
+
+  const knowledgeTags =
+    normalizeStringArray(
+      payload
+        .knowledgeTags ??
+        currentAnalysis
+          .knowledgeTags,
     );
 
   if (
@@ -867,12 +1136,33 @@ export function finishRequestAnalysis(
     );
 
   request.responsible =
-    currentAnalysis
-      .responsible ||
-    actor;
+    responsible;
+
+  /*
+   * Mantém a classificação técnica validada sincronizada
+   * com a SOL que seguirá para orçamento.
+   */
+  if (
+    recommendedService
+  ) {
+    request.service =
+      recommendedService;
+
+    request.services =
+      normalizeServiceArray([
+        recommendedService,
+        ...(Array.isArray(
+          request.services,
+        )
+          ? request.services
+          : []),
+      ]);
+  }
 
   request.analysis = {
     ...currentAnalysis,
+
+    complexity,
 
     technicalSummary,
 
@@ -880,29 +1170,13 @@ export function finishRequestAnalysis(
 
     decisionReason,
 
-    recommendedService:
-      normalizeText(
-        payload
-          .recommendedService ??
-          currentAnalysis
-            .recommendedService,
-      ),
+    recommendedService,
 
-    recommendedEquipment:
-      normalizeText(
-        payload
-          .recommendedEquipment ??
-          currentAnalysis
-            .recommendedEquipment,
-      ),
+    recommendedEquipment,
 
-    knowledgeTags:
-      normalizeStringArray(
-        payload
-          .knowledgeTags ??
-          currentAnalysis
-            .knowledgeTags,
-      ),
+    responsible,
+
+    knowledgeTags,
 
     result,
 
@@ -1124,8 +1398,20 @@ export function markRequestAsConverted(
     );
   }
 
-  const validation = validateRequestForQuote(request);
-  if (!validation.isValid) throw new Error(validation.problems.join(" "));
+  const validation =
+    validateRequestForQuote(
+      request,
+    );
+
+  if (
+    !validation.isValid
+  ) {
+    throw new Error(
+      validation.problems.join(
+        " ",
+      ),
+    );
+  }
 
   const normalizedQuoteId =
     normalizeText(
@@ -1213,7 +1499,6 @@ export function resetRuntimeRequests() {
 
   return getRuntimeRequests();
 }
-
 /* ============================================================
  * NORMALIZAÇÃO DOS MOCKS EXISTENTES
  * ============================================================ */
@@ -1256,6 +1541,99 @@ function normalizeRequest(
       request,
     );
 
+  /*
+   * Compatibilidade com registros novos e antigos.
+   *
+   * Novos registros armazenam requestNeedId diretamente.
+   * Caso ele esteja apenas dentro de project, também é aceito.
+   */
+  const requestNeedId =
+    normalizeText(
+      request.requestNeedId ??
+        request.project
+          ?.requestNeedId,
+    );
+
+  const requestNeed =
+    getRequestNeed(
+      requestNeedId,
+    );
+
+  /*
+   * Serviços relacionados à necessidade principal.
+   */
+  const requestNeedServices =
+    normalizeServiceArray(
+      getRequestNeedServices(
+        requestNeedId,
+      ),
+    );
+
+  /*
+   * Serviços já existentes no registro.
+   *
+   * Aqui entram também os aliases antigos, por exemplo:
+   *
+   * "Inspeção dimensional"
+   *      ↓
+   * dimensional
+   */
+  const existingServices =
+    normalizeServices(
+      request,
+    );
+
+  let normalizedServices =
+    normalizeServiceArray([
+      ...requestNeedServices,
+      ...existingServices,
+    ]);
+
+  /*
+   * Define o serviço principal.
+   *
+   * Quando existe uma necessidade principal, ela tem prioridade.
+   * Nos mocks antigos, utiliza o service já existente.
+   */
+  const explicitService =
+    normalizeServiceId(
+      request.service,
+    );
+
+  const primaryService =
+    requestNeedServices[0] ||
+    explicitService ||
+    normalizedServices[0] ||
+    "Não definido";
+
+  /*
+   * Garante que o serviço principal também esteja presente
+   * no conjunto geral de serviços.
+   */
+  if (
+    primaryService &&
+    primaryService !==
+      "Não definido"
+  ) {
+    normalizedServices =
+      normalizeServiceArray([
+        primaryService,
+        ...normalizedServices,
+      ]);
+  }
+
+  const normalizedProject = {
+    ...(request.project &&
+    typeof request.project ===
+      "object"
+      ? request.project
+      : {}),
+
+    requestNeedId:
+      requestNeedId ||
+      "",
+  };
+
   return {
     ...request,
 
@@ -1296,16 +1674,39 @@ function normalizeRequest(
         request.phone,
       ),
 
+    /*
+     * Necessidade principal.
+     */
+    requestNeedId:
+      requestNeedId ||
+      null,
+
+    requestNeed:
+      requestNeed
+        ? {
+            id:
+              requestNeed.id,
+
+            name:
+              requestNeed.name,
+
+            flow:
+              requestNeed.flow,
+          }
+        : request.requestNeed &&
+            typeof request.requestNeed ===
+              "object"
+          ? request.requestNeed
+          : null,
+
+    /*
+     * IDs de serviço sempre normalizados para o catálogo atual.
+     */
     service:
-      normalizeText(
-        request.service,
-      ) ||
-      "Não definido",
+      primaryService,
 
     services:
-      normalizeServices(
-        request,
-      ),
+      normalizedServices,
 
     status:
       normalizeText(
@@ -1346,6 +1747,25 @@ function normalizeRequest(
         request.internalNotes,
       ),
 
+    project:
+      normalizedProject,
+
+    piecesData:
+      Array.isArray(
+        request.piecesData,
+      )
+        ? request.piecesData.map(
+            normalizeRequestPiece,
+          )
+        : [],
+
+    attachments:
+      Array.isArray(
+        request.attachments,
+      )
+        ? request.attachments
+        : [],
+
     linkedQuoteId:
       linkedQuoteId ||
       null,
@@ -1359,9 +1779,15 @@ function normalizeRequest(
       null,
 
     analysis:
-      normalizeAnalysis(
-        request,
-      ),
+      normalizeAnalysis({
+        ...request,
+
+        service:
+          primaryService,
+
+        services:
+          normalizedServices,
+      }),
 
     history:
       Array.isArray(
@@ -1371,6 +1797,10 @@ function normalizeRequest(
         : [],
   };
 }
+
+/* ============================================================
+ * NORMALIZAÇÃO DA ORIGEM
+ * ============================================================ */
 
 function normalizeSource(
   source,
@@ -1382,7 +1812,7 @@ function normalizeSource(
 
   if (
     normalized ===
-      "real"
+    "real"
   ) {
     return "real";
   }
@@ -1420,8 +1850,9 @@ function normalizeOrigin(
 
   /*
    * Os mocks antigos utilizavam Configurador/Formulário
-   * como origem. Conceitualmente esses valores representam
-   * canais da área pública.
+   * como origem.
+   *
+   * Conceitualmente eles representam canais da área pública.
    */
   return "Público";
 }
@@ -1480,32 +1911,123 @@ function normalizeChannel(
   return "Formulário público";
 }
 
+/* ============================================================
+ * NORMALIZAÇÃO DOS SERVIÇOS
+ * ============================================================ */
+
 function normalizeServices(
   request,
 ) {
+  const values = [];
+
   if (
     Array.isArray(
       request.services,
-    ) &&
-    request.services.length >
-      0
+    )
   ) {
-    return normalizeStringArray(
-      request.services,
+    values.push(
+      ...request.services,
     );
   }
 
-  const service =
-    normalizeText(
+  if (
+    request.service
+  ) {
+    values.push(
       request.service,
     );
+  }
 
-  return service
-    ? [
-        service,
-      ]
-    : [];
+  /*
+   * Mocks e registros intermediários podem ter os serviços
+   * apenas dentro das peças.
+   */
+  if (
+    Array.isArray(
+      request.piecesData,
+    )
+  ) {
+    request.piecesData.forEach(
+      (piece) => {
+        if (
+          Array.isArray(
+            piece?.services,
+          )
+        ) {
+          values.push(
+            ...piece.services,
+          );
+        }
+      },
+    );
+  }
+
+  return normalizeServiceArray(
+    values,
+  );
 }
+
+/* ============================================================
+ * NORMALIZAÇÃO DAS PEÇAS
+ * ============================================================ */
+
+function normalizeRequestPiece(
+  piece,
+) {
+  if (
+    !piece ||
+    typeof piece !==
+      "object"
+  ) {
+    return piece;
+  }
+
+  return {
+    ...piece,
+
+    services:
+      normalizeServiceArray(
+        piece.services,
+      ),
+
+    requirements:
+      piece.requirements &&
+      typeof piece.requirements ===
+        "object"
+        ? {
+            ...piece.requirements,
+
+            inspectionOptions:
+              normalizeStringArray(
+                piece.requirements
+                  .inspectionOptions,
+              ),
+
+            scanningOptions:
+              normalizeStringArray(
+                piece.requirements
+                  .scanningOptions,
+              ),
+
+            reverseOptions:
+              normalizeStringArray(
+                piece.requirements
+                  .reverseOptions,
+              ),
+
+            internalOptions:
+              normalizeStringArray(
+                piece.requirements
+                  .internalOptions,
+              ),
+          }
+        : {},
+  };
+}
+
+/* ============================================================
+ * NORMALIZAÇÃO DA ANÁLISE
+ * ============================================================ */
 
 function normalizeAnalysis(
   request,
@@ -1578,10 +2100,16 @@ function normalizeAnalysis(
       ) ||
       "Não atribuído",
 
+    complexity:
+      normalizeText(
+        current.complexity,
+      ),
+
     technicalSummary:
       normalizeText(
         current
-          .technicalSummary,
+          .technicalSummary ??
+          current.summary,
       ),
 
     pendingInformation:
@@ -1597,18 +2125,20 @@ function normalizeAnalysis(
       ),
 
     recommendedService:
-      normalizeText(
+      normalizeServiceId(
         current
-          .recommendedService,
-      ) ||
-      request.services?.[0] ||
-      request.service ||
-      "",
+          .recommendedService ??
+          current.service ??
+          request.services?.[0] ??
+          request.service ??
+          "",
+      ),
 
     recommendedEquipment:
       normalizeText(
         current
-          .recommendedEquipment,
+          .recommendedEquipment ??
+          current.technology,
       ) ||
       getConfiguratorEquipment(
         request,
@@ -1632,6 +2162,10 @@ function getConfiguratorEquipment(
   );
 }
 
+/* ============================================================
+ * ORÇAMENTO VINCULADO — COMPATIBILIDADE COM MOCKS
+ * ============================================================ */
+
 function inferLinkedQuoteId(
   request,
 ) {
@@ -1645,6 +2179,7 @@ function inferLinkedQuoteId(
   const searchableText = [
     request.internalNotes,
     request.comments,
+
     ...(Array.isArray(
       request.history,
     )
@@ -1672,7 +2207,6 @@ function inferLinkedQuoteId(
     ? match[0].toUpperCase()
     : "";
 }
-
 /* ============================================================
  * HELPERS — SOLICITAÇÃO
  * ============================================================ */
@@ -1752,6 +2286,9 @@ function createDefaultAnalysis(
     updatedBy:
       null,
 
+    complexity:
+      "",
+
     technicalSummary:
       "",
 
@@ -1762,9 +2299,11 @@ function createDefaultAnalysis(
       "",
 
     recommendedService:
-      request?.services?.[0] ||
-      request?.service ||
-      "",
+      normalizeServiceId(
+        request?.services?.[0] ??
+          request?.service ??
+          "",
+      ),
 
     recommendedEquipment:
       "",
@@ -2057,8 +2596,14 @@ function mapFormPieceToRequestPiece(
         piece,
       ),
 
+    /*
+     * Serviços da peça também passam pelo catálogo único.
+     *
+     * Isso evita persistir aliases antigos como:
+     * "Inspeção dimensional" ou "Tomografia".
+     */
     services:
-      normalizeStringArray(
+      normalizeServiceArray(
         piece.services,
       ),
 
@@ -2106,6 +2651,7 @@ function mapFormPieceToRequestPiece(
     },
 
     recommendation:
+      piece.recommendation ??
       null,
   };
 }
@@ -2263,6 +2809,40 @@ function mapUrgencyToPriority(
     default:
       return "Normal";
   }
+}
+
+/* ============================================================
+ * HELPERS — SERVIÇOS
+ * ============================================================ */
+
+function normalizeServiceArray(
+  values,
+) {
+  if (
+    !Array.isArray(
+      values,
+    )
+  ) {
+    return [];
+  }
+
+  const normalized =
+    values
+      .map(
+        normalizeServiceId,
+      )
+      .map(
+        normalizeText,
+      )
+      .filter(
+        Boolean,
+      );
+
+  return Array.from(
+    new Set(
+      normalized,
+    ),
+  );
 }
 
 /* ============================================================

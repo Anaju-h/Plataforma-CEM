@@ -11,51 +11,59 @@ import { ScrollReveal } from "../components/ui/ScrollReveal";
 const services = [
   {
     number: "01",
-    title: "Medição dimensional",
-    eyebrow: "Precisão dimensional",
+    title: "Metrologia e inspeção",
+    eyebrow: "Precisão ZEISS",
     description:
-      "Medição e avaliação de características dimensionais e geométricas de peças e componentes.",
-    href: "#medicao-dimensional",
+      "Metrologia avançada, inspeção dimensional e comparação entre modelo CAD e peça física.",
+    href: "#metrologia-inspecao",
   },
   {
     number: "02",
-    title: "Inspeção óptica",
-    eyebrow: "Medição sem contato",
-    description:
-      "Avaliação de características visíveis com recursos ópticos, ampliando as possibilidades de inspeção de peças e detalhes.",
-    href: "#inspecao-optica",
-  },
-  {
-    number: "03",
     title: "Digitalização 3D",
     eyebrow: "Captura digital",
     description:
-      "Aquisição da geometria de peças e superfícies para análise, comparação e documentação digital.",
+      "Escaneamento e digitalização de peças para análise, documentação e aplicações em impressão 3D.",
     href: "#digitalizacao-3d",
   },
   {
-    number: "04",
-    title: "Engenharia reversa",
-    eyebrow: "Reconstrução digital",
+    number: "03",
+    title: "Engenharia e desenvolvimento",
+    eyebrow: "Reconstrução CAD",
     description:
-      "Transformação de informações da peça física em dados aplicáveis ao desenvolvimento CAD.",
-    href: "#engenharia-reversa",
+      "Engenharia reversa, reconstrução de modelos CAD, nacionalização e desenvolvimento de componentes.",
+    href: "#engenharia-desenvolvimento",
+  },
+  {
+    number: "04",
+    title: "Tomografia industrial",
+    eyebrow: "Inspeção não destrutiva",
+    description:
+      "Inspeção interna por raios X para investigar estruturas, falhas, quebras e anomalias.",
+    href: "#tomografia-industrial",
   },
   {
     number: "05",
-    title: "Inspeção interna",
-    eyebrow: "Além da superfície",
+    title: "Confiabilidade e gestão técnica",
+    eyebrow: "Ativos e manutenção",
     description:
-      "Investigação de estruturas e características internas por meio de tecnologias de inspeção.",
-    href: "#inspecao-interna",
+      "Mapas de desgaste, árvores de equipamentos, peças críticas, biblioteca digital e planos técnicos.",
+    href: "#confiabilidade-gestao",
+  },
+  {
+    number: "06",
+    title: "Treinamentos técnicos",
+    eyebrow: "Capacitação",
+    description:
+      "Treinamentos em manutenção, metrologia, engenharia reversa, lubrificação e análise de falhas.",
+    href: "#treinamentos",
   },
 ];
 
 const dimensionalApplications = [
-  "Verificação dimensional",
-  "Geometrias e tolerâncias",
-  "Comparação com especificações",
-  "Controle de qualidade",
+  "Inspeção dimensional e geométrica",
+  "Tolerâncias e requisitos GD&T",
+  "Comparação com desenho, especificação ou CAD",
+  "Controle e validação de componentes",
 ];
 
 const dimensionalTechnologies = [
@@ -68,7 +76,7 @@ const opticalApplications = [
   "Características visíveis e de pequenas dimensões",
   "Contornos, bordas e geometrias acessíveis opticamente",
   "Componentes delicados ou sensíveis ao contato",
-  "Complemento à medição por apalpação",
+  "Complemento à medição tátil e à análise dimensional",
 ];
 
 const opticalTechnologies = [
@@ -78,49 +86,71 @@ const opticalTechnologies = [
 ];
 
 const scanningApplications = [
-  "Comparação peça × CAD",
-  "Documentação de geometria",
-  "Superfícies complexas",
-  "Geração de dados 3D",
+  "Comparação entre CAD e peça física",
+  "Documentação e biblioteca digital de componentes",
+  "Superfícies e geometrias complexas",
+  "Base para engenharia reversa e impressão 3D",
 ];
 
 const reverseApplications = [
-  "Reconstrução de componentes",
-  "Ausência de desenho técnico",
-  "Desenvolvimento de modelos CAD",
-  "Documentação digital",
+  "Engenharia reversa e reconstrução CAD",
+  "Nacionalização de componentes",
+  "Desenvolvimento e atualização de peças",
+  "Documentação técnica e modelos digitais",
 ];
 
 const internalApplications = [
-  "Estruturas internas",
-  "Características não acessíveis",
-  "Cavidades",
-  "Montagens",
-  "Análise interna de componentes",
+  "Estruturas e geometrias internas",
+  "Cavidades e regiões não acessíveis externamente",
+  "Montagens e posicionamento de componentes",
+  "Falhas, quebras e anomalias internas",
+  "Inspeção não destrutiva",
 ];
 
-const integratedSolutions = [
+const reliabilitySolutions = [
   {
     number: "01",
-    from: "Digitalização 3D",
-    to: "Engenharia reversa",
+    from: "Análise de falhas",
+    to: "Mapas de desgaste",
     description:
-      "A geometria capturada pode servir como base para reconstrução e desenvolvimento digital.",
+      "Investigação de quebras, anomalias e padrões de desgaste para apoiar decisões técnicas e manutenção.",
   },
   {
     number: "02",
-    from: "Engenharia reversa",
-    to: "Medição dimensional",
+    from: "Árvores de equipamentos",
+    to: "Peças críticas",
     description:
-      "Dados reconstruídos podem apoiar novas análises e verificações dimensionais.",
+      "Estruturação hierárquica dos ativos e identificação dos componentes que exigem maior atenção.",
   },
   {
     number: "03",
-    from: "Inspeção interna",
-    to: "Análise dimensional",
+    from: "Componentes digitalizados",
+    to: "Biblioteca digital",
     description:
-      "Informações internas e externas podem ser combinadas de acordo com a necessidade do projeto.",
+      "Organização de modelos e informações técnicas para apoiar um almoxarifado virtual de componentes.",
   },
+  {
+    number: "04",
+    from: "Dados técnicos",
+    to: "Plano de manutenção",
+    description:
+      "Informações estruturadas podem apoiar a elaboração e revisão de planos de manutenção dos ativos.",
+  },
+  {
+    number: "05",
+    from: "Condição do ativo",
+    to: "Plano de lubrificação",
+    description:
+      "A organização das informações de componentes e aplicação apoia planos de lubrificação mais consistentes.",
+  },
+];
+
+const trainingAreas = [
+  "Manutenção",
+  "Metrologia",
+  "Engenharia reversa",
+  "Lubrificação",
+  "Análise de falhas",
 ];
 
 export function ServicosPage() {
@@ -141,7 +171,8 @@ export function ServicosPage() {
       <InternalInspectionSection />
 
       <div className="relative bg-[linear-gradient(180deg,#ffffff_0%,#f7fafb_12%,#edf4f7_36%,#e1edf2_62%,#eef5f8_86%,#ffffff_100%)]">
-        <IntegratedSection />
+        <ReliabilitySection />
+        <TrainingSection />
       </div>
 
       <GuidanceSection />
@@ -188,9 +219,9 @@ function ServicesHero() {
             </h1>
 
             <p className="mt-6 max-w-[585px] text-[14px] leading-7 text-[#607583] sm:text-[15px]">
-              Soluções em metrologia, digitalização e inspeção para
-              apoiar diferentes etapas de desenvolvimento, análise e
-              controle de peças e componentes.
+              Estrutura tecnológica e equipe especializada para apoiar
+              metrologia, digitalização, engenharia, confiabilidade,
+              manutenção e capacitação técnica.
             </p>
           </ScrollReveal>
 
@@ -308,16 +339,16 @@ function ServicesOverview() {
           </div>
 
           <h2 className="mt-4 max-w-[650px] text-[2.2rem] font-semibold leading-[1.04] tracking-[-0.045em] text-[#071f2d] sm:text-[2.8rem]">
-            Cinco caminhos.
+            Um portfólio integrado.
             <br />
 
             <span className="text-[#356f9f]">
-              Diferentes possibilidades.
+              Da medição à confiabilidade.
             </span>
           </h2>
         </ScrollReveal>
 
-        <div className="mt-7 grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+        <div className="mt-7 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {services.map((service, index) => (
             <ServiceOverviewCard
               key={service.number}
@@ -393,7 +424,7 @@ function ServiceOverviewCard({
 function DimensionalSection() {
   return (
     <section
-      id="medicao-dimensional"
+      id="metrologia-inspecao"
       className="scroll-mt-24 pb-8 pt-8 sm:pb-10 sm:pt-9 lg:pb-10 lg:pt-10"
     >
       <Container>
@@ -404,9 +435,9 @@ function DimensionalSection() {
           >
             <ServiceHeading
               number="01"
-              eyebrow="Precisão dimensional"
-              title="Medição dimensional"
-              description="Medição e avaliação de características dimensionais e geométricas de peças e componentes para verificar sua conformidade com desenhos, especificações e requisitos técnicos."
+              eyebrow="Metrologia avançada ZEISS"
+              title="Inspeção dimensional"
+              description="Metrologia avançada aplicada à avaliação dimensional e geométrica de peças e componentes, com recursos táteis e ópticos para verificar conformidade com desenhos, modelos CAD, tolerâncias e requisitos técnicos."
             />
 
             <div className="mt-6 grid gap-3 sm:grid-cols-2">
@@ -456,7 +487,7 @@ function OpticalInspectionSection() {
               src="/videos/services/oinspect.mp4"
               eyebrow="Medição óptica multissensor"
               title="Detalhes visíveis avaliados sem depender apenas do contato."
-              number="02"
+              number="01B"
             />
           </ScrollReveal>
 
@@ -466,10 +497,10 @@ function OpticalInspectionSection() {
             className="order-1 lg:order-2"
           >
             <ServiceHeading
-              number="02"
+              number="01B"
               eyebrow="Medição sem contato"
-              title="Inspeção óptica"
-              description="Avaliação de características dimensionais e geométricas por recursos ópticos do ZEISS O-INSPECT, ampliando as possibilidades de inspeção em detalhes visíveis, componentes delicados e regiões adequadas à medição sem contato."
+              title="Medição óptica e multissensor"
+              description="Recursos ópticos do ZEISS O-INSPECT complementam a metrologia dimensional em contornos, detalhes visíveis, componentes delicados e regiões adequadas à medição sem contato."
               compact
             />
 
@@ -510,7 +541,7 @@ function ScanningSection() {
               src="/videos/services/digitalizacao-3d.mp4"
               eyebrow="Captura da geometria"
               title="Da superfície física ao ambiente digital."
-              number="03"
+              number="02"
             />
           </ScrollReveal>
 
@@ -520,10 +551,10 @@ function ScanningSection() {
             className="order-1 lg:order-2 lg:-mt-2"
           >
             <ServiceHeading
-              number="03"
+              number="02"
               eyebrow="Captura digital"
-              title="Digitalização 3D"
-              description="Captura da geometria de peças e componentes para criação de representações digitais que podem apoiar análises, comparações e outras etapas do projeto."
+              title="Escaneamento e digitalização 3D"
+              description="Captura da geometria de peças e componentes para comparação com CAD, documentação digital, engenharia reversa, criação de bibliotecas técnicas e aplicações relacionadas à impressão 3D."
               compact
             />
 
@@ -540,12 +571,12 @@ function ScanningSection() {
 
                 <ProcessStep
                   number="02"
-                  label="Captura 3D"
+                  label="Escaneamento"
                 />
 
                 <ProcessStep
                   number="03"
-                  label="Modelo digital"
+                  label="Dado 3D"
                 />
               </div>
             </div>
@@ -767,7 +798,7 @@ function ServiceAction({
 function ReverseEngineeringSection() {
   return (
     <section
-      id="engenharia-reversa"
+      id="engenharia-desenvolvimento"
       className="relative scroll-mt-24 overflow-hidden pb-8 pt-5 sm:pb-9 sm:pt-6 lg:pb-10 lg:pt-6"
     >
       <div
@@ -794,24 +825,28 @@ function ReverseEngineeringSection() {
             <div>
               <div className="flex items-center gap-4">
                 <span className="text-[11px] font-semibold tracking-[0.15em] text-[#356f9f]">
-                  04
+                  03
                 </span>
 
                 <div className="h-px w-10 bg-[#65b8ee]" />
               </div>
 
               <p className="mt-4 text-[10px] font-semibold uppercase tracking-[0.13em] text-[#5687ad]">
-                Reconstrução digital
+                Engenharia e desenvolvimento
               </p>
 
               <h2 className="mt-2 text-[2.45rem] font-semibold leading-[1.02] tracking-[-0.045em] text-[#071f2d] sm:text-[3.1rem]">
                 Engenharia reversa
+                <br />
+                <span className="text-[#356f9f]">
+                  e desenvolvimento
+                </span>
               </h2>
 
               <p className="mt-4 max-w-[580px] text-[14px] leading-7 text-[#455f6f] sm:text-[15px]">
-                Transformação das informações obtidas de uma peça
-                física em dados digitais que podem apoiar reconstrução,
-                documentação e desenvolvimento de modelos CAD.
+                Transformação das informações obtidas de uma peça física em
+                modelos e dados digitais para reconstrução CAD, documentação,
+                nacionalização e desenvolvimento de componentes.
               </p>
             </div>
 
@@ -890,12 +925,12 @@ function ReverseEngineeringSection() {
                       </p>
 
                       <p className="mt-2 max-w-[420px] text-[18px] font-semibold leading-snug tracking-[-0.02em] text-white">
-                        Da peça física à reconstrução digital.
+                        Da peça física ao modelo CAD e ao desenvolvimento.
                       </p>
                     </div>
 
                     <span className="text-[11px] font-semibold tracking-[0.14em] text-white/45">
-                      04
+                      03
                     </span>
                   </div>
                 </div>
@@ -963,7 +998,7 @@ function ReverseProcessStep({
 function InternalInspectionSection() {
   return (
     <section
-      id="inspecao-interna"
+      id="tomografia-industrial"
       className="relative scroll-mt-24 overflow-hidden bg-[linear-gradient(180deg,#173e54_0%,#0f3348_16%,#082a3e_34%,#071f2d_54%,#0a293b_72%,#31596d_88%,#7f9eac_95%,#dce8ed_99%,#ffffff_100%)] pb-20 pt-10 sm:pb-22 sm:pt-11 lg:pb-24 lg:pt-12"
     >
       <div
@@ -985,22 +1020,24 @@ function InternalInspectionSection() {
             <div>
               <div className="flex items-center gap-4">
                 <span className="text-[11px] font-semibold tracking-[0.15em] text-[#9dd1ef]">
-                  05
+                  04
                 </span>
 
                 <div className="h-px w-10 bg-[#65b8ee]" />
               </div>
 
               <p className="mt-4 text-[10px] font-semibold uppercase tracking-[0.13em] text-[#9dd1ef]">
-                Além da superfície
+                Inspeção não destrutiva
               </p>
 
               <h2 className="mt-2 text-[2.45rem] font-semibold leading-[1.02] tracking-[-0.045em] text-white sm:text-[3.1rem]">
-                Inspeção interna
+                Tomografia industrial
               </h2>
 
               <p className="mt-4 max-w-[580px] text-[14px] leading-7 text-white/62 sm:text-[15px]">
-                Investigação de estruturas e características internas que não podem ser avaliadas somente pela superfície da peça.
+                Inspeção interna não destrutiva por raios X para investigar
+                estruturas, montagens, falhas, quebras e anomalias que não
+                podem ser avaliadas somente pela superfície da peça.
               </p>
             </div>
 
@@ -1030,8 +1067,8 @@ function InternalInspectionSection() {
             <ServiceMedia
               src="/videos/services/inspecao.mp4"
               eyebrow="Inspeção por raios X"
-              title="O interior da peça também pode revelar informações importantes."
-              number="05"
+              title="Estruturas internas reveladas sem destruir o componente."
+              number="04"
             />
           </ScrollReveal>
         </div>
@@ -1068,9 +1105,12 @@ function DarkInfoCard({
   );
 }
 
-function IntegratedSection() {
+function ReliabilitySection() {
   return (
-    <section className="relative pb-10 pt-7 sm:pb-11 sm:pt-8 lg:pb-12 lg:pt-9">
+    <section
+      id="confiabilidade-gestao"
+      className="relative pb-10 pt-7 sm:pb-11 sm:pt-8 lg:pb-12 lg:pt-9"
+    >
       <Container>
         <div className="grid gap-8 lg:grid-cols-[0.84fr_1.16fr] lg:items-center lg:gap-14">
           <ScrollReveal
@@ -1079,30 +1119,30 @@ function IntegratedSection() {
           >
             <div className="flex items-center gap-4">
               <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#356f9f]">
-                Solução integrada
+                Confiabilidade e gestão técnica
               </p>
 
               <div className="h-px w-10 bg-[#65b8ee]" />
             </div>
 
             <h2 className="mt-4 max-w-[620px] text-[2.35rem] font-semibold leading-[1.03] tracking-[-0.045em] text-[#071f2d] sm:text-[3rem]">
-              Um desafio pode exigir
+              Informação técnica
               <br />
 
               <span className="text-[#356f9f]">
-                mais de uma tecnologia.
+                que continua gerando valor.
               </span>
             </h2>
 
             <p className="mt-5 max-w-[555px] text-[14px] leading-7 text-[#607583] sm:text-[15px]">
-              As tecnologias podem ser combinadas de acordo com o
-              objetivo, a geometria da peça e as informações necessárias
-              para cada projeto.
+              Os dados obtidos em inspeções, digitalizações e análises podem
+              apoiar decisões de confiabilidade, organização de ativos,
+              identificação de peças críticas e planejamento de manutenção.
             </p>
           </ScrollReveal>
 
           <div className="space-y-3">
-            {integratedSolutions.map((solution, index) => (
+            {reliabilitySolutions.map((solution, index) => (
               <IntegratedRow
                 key={solution.number}
                 solution={solution}
@@ -1175,6 +1215,85 @@ function IntegratedRow({
     </motion.div>
   );
 }
+function TrainingSection() {
+  return (
+    <section
+      id="treinamentos"
+      className="relative pb-12 pt-4 sm:pb-14 sm:pt-6 lg:pb-16 lg:pt-7"
+    >
+      <Container>
+        <ScrollReveal
+          direction="up"
+          distance={30}
+        >
+          <div className="rounded-[28px] border border-white/72 bg-white/48 p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.92),0_14px_38px_rgba(7,31,45,0.04)] backdrop-blur-[20px] sm:p-7 lg:p-8">
+            <div className="grid gap-7 lg:grid-cols-[0.88fr_1.12fr] lg:items-center lg:gap-12">
+              <div>
+                <div className="flex items-center gap-4">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#356f9f]">
+                    Capacitação
+                  </p>
+
+                  <div className="h-px w-10 bg-[#65b8ee]" />
+                </div>
+
+                <h2 className="mt-4 max-w-[610px] text-[2.25rem] font-semibold leading-[1.03] tracking-[-0.045em] text-[#071f2d] sm:text-[2.85rem]">
+                  Treinamentos técnicos
+                  <br />
+
+                  <span className="text-[#356f9f]">
+                    conectados à prática industrial.
+                  </span>
+                </h2>
+
+                <p className="mt-5 max-w-[560px] text-[14px] leading-7 text-[#607583] sm:text-[15px]">
+                  Capacitações voltadas ao desenvolvimento técnico de equipes
+                  em temas relacionados à manutenção, metrologia, engenharia
+                  reversa, lubrificação e análise de falhas.
+                </p>
+              </div>
+
+              <div className="grid gap-3 sm:grid-cols-2">
+                {trainingAreas.map((area, index) => (
+                  <motion.div
+                    key={area}
+                    initial={{
+                      opacity: 0,
+                      y: 12,
+                    }}
+                    whileInView={{
+                      opacity: 1,
+                      y: 0,
+                    }}
+                    viewport={{
+                      once: true,
+                      amount: 0.25,
+                    }}
+                    transition={{
+                      duration: 0.4,
+                      delay: index * 0.05,
+                      ease: [0.22, 1, 0.36, 1],
+                    }}
+                    className="flex items-center gap-3 rounded-[16px] border border-white/75 bg-white/52 px-4 py-4"
+                  >
+                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#12364e]/[0.07] text-[9px] font-semibold text-[#356f9f]">
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
+
+                    <p className="text-[12px] font-semibold text-[#315d75]">
+                      {area}
+                    </p>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </ScrollReveal>
+      </Container>
+    </section>
+  );
+}
+
 function GuidanceSection() {
   return (
     <section className="relative overflow-hidden bg-[linear-gradient(180deg,#ffffff_0%,#f8fbfc_9%,#edf4f7_26%,#dcebf1_48%,#c7dde6_66%,#a7c4d0_79%,#789aa9_89%,#496f82_95%,#264e63_98%,#173e54_100%)] pb-[78px] pt-9 sm:pb-[88px] sm:pt-11 lg:pb-[96px] lg:pt-12">

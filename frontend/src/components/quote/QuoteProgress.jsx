@@ -5,7 +5,7 @@ const steps = [
   },
   {
     number: 2,
-    label: "Peças",
+    label: "Necessidade",
   },
   {
     number: 3,
