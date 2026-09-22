@@ -1,6 +1,7 @@
 import {
   useMemo,
   useState,
+  useEffect,
 } from "react";
 
 import {
@@ -23,10 +24,7 @@ import {
   requestStatuses,
 } from "../../data/internal/requests";
 
-import {
-  getActiveRequests,
-  isArchivedRequest,
-} from "../../services/requestService";
+import { getActiveRequests } from "../../services/requestService";
 
 import {
   getServiceLabel as getCatalogServiceLabel,
@@ -73,8 +71,21 @@ export function RequestsPage() {
    *
    * Depois, requestService poderá consumir a API.
    */
-  const requests =
-    getActiveRequests();
+  const [requests, setRequests] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
+  const [reloadKey, setReloadKey] = useState(0);
+  useEffect(() => {
+    let active = true;
+    getActiveRequests().then((items) => {
+      if (active) setRequests(items);
+    }).catch((error) => {
+      if (active) setLoadError(error.message);
+    }).finally(() => {
+      if (active) setLoading(false);
+    });
+    return () => { active = false; };
+  }, [reloadKey]);
 
   /* ==========================================================
    * FILTROS
@@ -223,6 +234,8 @@ export function RequestsPage() {
 
   return (
     <div className="mx-auto w-full max-w-[1500px]">
+      {loading && <p role="status">Carregando solicitações...</p>}
+      {loadError && <div role="alert" className="text-red-700">{loadError} <button type="button" className="underline" onClick={() => { setLoading(true); setLoadError(""); setReloadKey((value) => value + 1); }}>Tentar novamente</button></div>}
       {/* =====================================================
           CABEÇALHO
       ===================================================== */}
@@ -337,17 +350,7 @@ export function RequestsPage() {
           onOriginChange={
             setOrigin
           }
-          statusOptions={
-            requestStatuses.filter(
-              (
-                statusOption,
-              ) =>
-                !isArchivedRequest({
-                  status:
-                    statusOption,
-                }),
-            )
-          }
+          statusOptions={requestStatuses}
           originOptions={
             getAvailableOrigins(
               requests,

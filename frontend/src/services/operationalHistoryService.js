@@ -1,13 +1,13 @@
-import { getArchivedRequests } from "./requestService";
+﻿import { getArchivedRequests } from "./requestService";
 import { getArchivedQuotes } from "./quoteService";
 import { getArchivedProjects } from "./projectService";
 
 // Adaptadores de consulta: os registros continuam nos repositórios de origem.
 // Novos tipos (propostas e registros de serviço) poderão adicionar adaptadores.
 const sources = [
-  { type: "Solicitação", read: getArchivedRequests, route: "solicitacoes", next: record => record.linkedQuoteId },
-  { type: "Orçamento", read: getArchivedQuotes, route: "orcamentos", next: record => record.projectId },
-  { type: "Projeto", read: getArchivedProjects, route: "projetos", next: () => null },
+  { type: "Solicitação", read: async () => await getArchivedRequests(), route: "solicitacoes", next: record => record.linkedQuoteId },
+  { type: "Orçamento", read: async () => getArchivedQuotes(), route: "orcamentos", next: record => record.projectId },
+  { type: "Projeto", read: async () => getArchivedProjects(), route: "projetos", next: () => null },
 ];
 
 export function historyDate(value) {
@@ -18,9 +18,10 @@ export function historyDate(value) {
   return match ? `${match[3]}-${match[2]}-${match[1]}` : null;
 }
 
-export function getOperationalHistory({ search = "", type = "", status = "", from = "", to = "" } = {}) {
+export async function getOperationalHistory({ search = "", type = "", status = "", from = "", to = "" } = {}) {
   const query = search.trim().toLocaleLowerCase("pt-BR");
-  return sources.flatMap(source => source.read().map(record => ({
+  const records = await Promise.all(sources.map(async source => ({ source, records: await source.read() })));
+  return records.flatMap(({ source, records }) => records.map(record => ({
     record, type: source.type, path: `/portal/${source.route}/${record.id}`,
     nextId: source.next(record), date: historyDate(record.updatedAt ?? record.createdAt),
   }))).filter(entry => {
@@ -30,3 +31,4 @@ export function getOperationalHistory({ search = "", type = "", status = "", fro
       && (!query || [record.id, record.company, record.service, record.quoteId, record.requestId, entry.nextId].some(value => String(value ?? "").toLocaleLowerCase("pt-BR").includes(query)));
   }).sort((a, b) => (b.date ?? "").localeCompare(a.date ?? "") || b.record.id.localeCompare(a.record.id));
 }
+

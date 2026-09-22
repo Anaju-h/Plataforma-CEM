@@ -1,8 +1,11 @@
-import { Container } from "../components/layout/Container";
+﻿import { Container } from "../components/layout/Container";
 import { QuoteForm } from "../components/quote/QuoteForm";
 import { ScrollReveal } from "../components/ui/ScrollReveal";
+import { createRequest } from "../services/requestService";
+import { useState } from "react";
 
 export function OrcamentoPage() {
+  const [created, setCreated] = useState(null);
   return (
     <main className="min-h-screen overflow-hidden bg-white">
       <div className="relative bg-[linear-gradient(180deg,#ffffff_0%,#f8fbfc_18%,#eef5f8_46%,#e5f0f4_70%,#f5f9fb_90%,#ffffff_100%)]">
@@ -19,7 +22,7 @@ export function OrcamentoPage() {
             className="pointer-events-none absolute -right-40 bottom-[8%] h-[420px] w-[420px] rounded-full bg-[#12364e]/[0.045] blur-[130px]"
           />
 
-          <QuoteForm />
+          {created ? <p role="status" className="mx-auto max-w-3xl rounded-xl bg-white p-8 text-center text-[#17394f]">Solicitação {created.id} recebida. Nossa equipe entrará em contato.</p> : <QuoteForm onSubmit={async (form) => setCreated(await createRequest(form, "Público"))} />}
         </div>
       </div>
     </main>
@@ -98,3 +101,4 @@ function HeroTag({ label }) {
     </div>
   );
 }
+

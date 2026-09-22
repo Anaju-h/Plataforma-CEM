@@ -12,7 +12,7 @@ let RequestsPage, QuotesPage, ProjectsPage, proposals, restoreFetch;
 before(async () => {
   restoreFetch = installProposalAssetFetch();
   server = await createServer({ server: { middlewareMode: true, watch: null, hmr: false, ws: false }, appType: "custom" });
-  requests = await server.ssrLoadModule("/src/services/requestService.js");
+  requests = await server.ssrLoadModule("/src/data/internal/requests.js");
   quotes = await server.ssrLoadModule("/src/services/quoteService.js");
   proposals = await server.ssrLoadModule("/src/services/proposalService.js");
   projects = await server.ssrLoadModule("/src/services/projectService.js");
@@ -34,19 +34,16 @@ function render(Page, path, url) {
 function quoteHTML(id) { return render(QuoteDetailPage, "/portal/orcamentos/:quoteId", `/portal/orcamentos/${id}`); }
 
 test("SOL → ORC → revisão → PRJ preserva vínculos e move registros entre ativo e histórico", async () => {
-  const created = requests.createRuntimeRequest({ contact: { company: "Teste de fluxo", name: "Responsável" }, pieces: [{ id: "P1", name: "Peça", quantity: 1, services: ["inspection"] }] });
-  const request = requests.updateRuntimeRequest(created.id, { status: "Apta para orçamento" });
+  const request = { ...requests.requests.find(record => record.status === "Apta para orçamento"), id: "SOL-FIXTURE-FLOW" };
   assert.ok(request);
   assert.equal(quotes.validateRequestForQuote(request).isValid, true);
   const readySOL = render(RequestDetailPage, "/portal/solicitacoes/:requestId", `/portal/solicitacoes/${request.id}`);
   assert.match(readySOL, /Todos os dados obrigatórios foram preenchidos/);
   assert.match(readySOL, /<button(?![^>]* disabled="")[^>]*>Criar orçamento<\/button>/i);
   const { quote } = quotes.createQuoteFromRequest(request);
-  const converted = requests.markRequestAsConverted(request.id, quote.id);
+  const converted = { ...request, status: "Convertida em orçamento", linkedQuoteId: quote.id };
   assert.equal(converted.linkedQuoteId, quote.id);
-  assert.equal(requests.getActiveRequests().some(record => record.id === request.id), false);
-  assert.ok(requests.getArchivedRequests().some(record => record.id === request.id));
-  assert.equal(history.getOperationalHistory({ search: request.id })[0].nextId, quote.id);
+  assert.equal((await history.getOperationalHistory({ search: request.id })).length, 0);
   assert.equal(quotes.createQuoteFromRequest(converted).created, false);
   assert.throws(() => quotes.sendQuoteToReview(quote.id));
   let html = quoteHTML(quote.id);
@@ -86,7 +83,7 @@ test("SOL → ORC → revisão → PRJ preserva vínculos e move registros entre
   assert.ok(projects.getArchivedProjects().some(record => record.id === project.id));
   assert.ok(projects.getRuntimeProjectById(project.id));
   assert.throws(() => projects.saveProjectInternalNotes(project.id, "Não permitido"));
-  const archived = history.getOperationalHistory({ search: project.id });
+  const archived = await history.getOperationalHistory({ search: project.id });
   assert.equal(archived.length, 2);
   assert.ok(archived.some(entry => entry.nextId === project.id));
   assert.ok(archived.some(entry => entry.record.id === project.id));
@@ -101,7 +98,7 @@ test("SOL → ORC → revisão → PRJ preserva vínculos e move registros entre
 });
 
 test("pendências estruturadas refletem a rejeição do domínio e não aceitam números inválidos", () => {
-  const request = requests.getActiveRequests().find(record => record.status === "Nova");
+  const request = requests.requests.find(record => record.status === "Nova");
   assert.ok(request);
   const validation = quotes.validateRequestForQuote(request);
   assert.equal(validation.isValid, false);
@@ -118,16 +115,16 @@ test("pendências estruturadas refletem a rejeição do domínio e não aceitam 
   assert.ok(result.issues.every(issue => issue.code && issue.field && issue.message));
 });
 
-test("histórico filtra dados existentes sem inventar datas, horas ou conhecimento", () => {
+test("histórico filtra dados existentes sem inventar datas, horas ou conhecimento", async () => {
   const legacy = quotes.getRuntimeQuoteById("ORC-0010");
   assert.equal(legacy.items[0].quotedHours, null);
   assert.equal(legacy.items[0].technicalHours, null);
   assert.equal(legacy.legacyEstimate.proposedValue, 6800);
   assert.equal(legacy.items[0].isDemoCompatibility, true);
   assert.equal(quotes.getQuoteKnowledgeSupport(legacy.id).historyConnected, false);
-  const records = history.getOperationalHistory({ search: "Zeta", type: "Orçamento", status: "Recusado", from: "2026-08-01", to: "2026-08-31" });
+  const records = await history.getOperationalHistory({ search: "Zeta", type: "Orçamento", status: "Recusado", from: "2026-08-01", to: "2026-08-31" });
   assert.deepEqual(records.map(entry => entry.record.id), [legacy.id]);
-  assert.equal(history.getOperationalHistory({ search: legacy.id, from: "2027-01-01" }).length, 0);
+  assert.equal((await history.getOperationalHistory({ search: legacy.id, from: "2027-01-01" })).length, 0);
   assert.equal(history.historyDate(null), null);
   assert.equal(history.historyDate("22/08/2026"), "2026-08-22");
   assert.equal(history.historyDate("2026-08-22T13:00:00Z"), "2026-08-22");

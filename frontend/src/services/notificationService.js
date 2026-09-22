@@ -31,11 +31,11 @@ let readNotificationIds =
  * ============================================================
  */
 
-export function getNotifications(
+export async function getNotifications(
   currentUser = "Administrador",
 ) {
   const work =
-    getCurrentUserWork(
+    await getCurrentUserWork(
       currentUser,
     );
 
@@ -101,12 +101,12 @@ export function getNotifications(
  * ============================================================
  */
 
-export function getUnreadNotificationCount(
+export async function getUnreadNotificationCount(
   currentUser = "Administrador",
 ) {
-  return getNotifications(
+  return (await getNotifications(
     currentUser,
-  ).filter(
+  )).filter(
     (notification) =>
       !notification.read,
   ).length;
@@ -126,11 +126,11 @@ export function markNotificationAsRead(
   );
 }
 
-export function markAllNotificationsAsRead(
+export async function markAllNotificationsAsRead(
   currentUser = "Administrador",
 ) {
   const notifications =
-    getNotifications(
+    await getNotifications(
       currentUser,
     );
 

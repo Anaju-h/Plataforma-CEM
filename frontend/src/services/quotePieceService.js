@@ -1,4 +1,4 @@
-import { getRuntimeRequestById } from "./requestService";
+import { getRequestById as getDemoRequestById } from "../data/internal/requests";
 import { calculateQuoteItemTotals } from "./quoteItemService";
 
 // Identidade vem exclusivamente da SOL. Quantidade é informativa.
@@ -8,7 +8,7 @@ export function captureRequestPieces(request) {
   })));
 }
 export function getQuotePieces(quote) {
-  return quote.requestPieces ?? captureRequestPieces(getRuntimeRequestById(quote.requestId));
+  return quote.requestPieces ?? captureRequestPieces(getDemoRequestById(quote.requestId));
 }
 export function groupQuoteItems(items = [], pieces = []) {
   const groups = pieces.map(piece => ({ piece, items: items.filter(item => item.requestPieceId === piece.id) }));

@@ -4,10 +4,10 @@ import { getRuntimeProjects, isArchivedProject } from "./projectService";
 import { getRuntimeQuotes, isArchivedQuote } from "./quoteService";
 import { getActiveRequests } from "./requestService";
 
-export function getTeamOverview() {
+export async function getTeamOverview() {
   const projects = getRuntimeProjects();
   const quotes = getRuntimeQuotes();
-  const requests = getActiveRequests();
+  const requests = await getActiveRequests();
   const members = getCurrentTeamMembers().map(member => {
     const assigned = record => record.responsibleId ? record.responsibleId === member.id : record.responsible === getUserAssignmentName(member.id);
     const assignedProjects = projects.filter(assigned);

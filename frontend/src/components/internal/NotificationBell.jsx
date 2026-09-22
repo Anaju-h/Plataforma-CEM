@@ -36,12 +36,7 @@ export function NotificationBell() {
   const [
     notifications,
     setNotifications,
-  ] = useState(
-    () =>
-      getNotifications(
-        currentUser,
-      ),
-  );
+  ] = useState([]);
 
   useEffect(() => {
     refreshNotifications();
@@ -135,12 +130,12 @@ export function NotificationBell() {
         !notification.read,
     ).length;
 
-  function refreshNotifications() {
-    setNotifications(
-      getNotifications(
-        currentUser,
-      ),
-    );
+  async function refreshNotifications() {
+    try {
+      setNotifications(await getNotifications(currentUser));
+    } catch {
+      setNotifications([]);
+    }
   }
 
   function togglePanel() {

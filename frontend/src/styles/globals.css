@@ -129,6 +129,59 @@ button {
   border: 0;
 }
 
+/*
+ * Campos de texto mantêm a seta normal do mouse.
+ *
+ * Isso evita que o cursor nativo em formato "I" fique branco/invisível
+ * em determinados estados do navegador/Windows.
+ *
+ * O caret de digitação continua visível e escuro ao clicar no campo.
+ */
+input:not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="checkbox"]):not([type="radio"]),
+textarea {
+  cursor: default !important;
+  caret-color: var(--color-text-primary);
+}
+
+button,
+select,
+input[type="button"],
+input[type="submit"],
+input[type="reset"],
+input[type="checkbox"],
+input[type="radio"] {
+  cursor: pointer;
+}
+
+:is(button, select, input, textarea):disabled {
+  cursor: not-allowed !important;
+}
+
+/* Keep native scroll areas legible on light form surfaces, including hover. */
+html {
+  scrollbar-color: #7895a6 #e8eff3;
+  scrollbar-width: thin;
+}
+
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+*::-webkit-scrollbar-track {
+  background: #e8eff3;
+}
+
+*::-webkit-scrollbar-thumb {
+  border: 2px solid #e8eff3;
+  border-radius: 999px;
+  background: #7895a6;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: #52778c;
+}
+
 img,
 svg {
   display: block;

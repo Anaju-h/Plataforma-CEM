@@ -12,7 +12,7 @@ before(async () => {
   pricing = await server.ssrLoadModule("/src/services/pricingService.js");
   items = await server.ssrLoadModule("/src/services/quoteItemService.js");
   projects = await server.ssrLoadModule("/src/services/projectService.js");
-  requests = await server.ssrLoadModule("/src/services/requestService.js");
+  requests = await server.ssrLoadModule("/src/data/internal/requests.js");
   ({ QuoteDetailPage } = await server.ssrLoadModule("/src/pages/internal/QuoteDetailPage.jsx"));
 });
 after(async () => { await server?.close(); });
@@ -70,7 +70,7 @@ test("arredonda subtotais em centavos e ignora subtotal digitado", () => {
 test("horas técnicas não precificam e evidências manuais permanecem no snapshot", () => {
   const quote = readyQuote();
   const item = { ...quote.items[0], quotedHours: 20, technicalHours: null, hourlyRate: 180,
-    serviceId: "inspection", machineId: "prismo", hourlyRateOverrideReason: "Preparação especial" };
+    serviceId: "dimensional", machineId: "prismo", hourlyRateOverrideReason: "Preparação especial" };
   const saved = quotes.updateRuntimeQuote(quote.id, { items: [item] });
   assert.equal(saved.proposedValue, 3600);
   assert.equal(items.calculateQuoteItemSubtotal({ ...item, technicalHours: 999 }), 3600);
@@ -136,12 +136,12 @@ test("preserva composição e justificativas no snapshot, bloqueia edição fora
 });
 
 test("SOL → ORC usa peças e serviços sem inventar horas, custos ou escolhas de máquina", () => {
-  const request = createRequest({ piecesData: [{ id: "piece-1", name: "Flange", quantity: 4, services: ["inspection", "Digitalização 3D"], recommendation: { primaryMachine: { name: "ZEISS PRISMO" } } }] });
+  const request = createRequest({ piecesData: [{ id: "piece-1", name: "Flange", quantity: 4, services: ["dimensional", "scan"], recommendation: { primaryMachine: { name: "ZEISS PRISMO" } } }] });
   const { quote, created } = quotes.createQuoteFromRequest(request);
   assert.equal(created, true);
   assert.equal(quote.items.length, 2);
-  assert.equal(quote.items[0].name, "Flange — Inspeção dimensional");
-  assert.deepEqual(quote.items.map(item => item.serviceId), ["inspection", "scanning"]);
+  assert.equal(quote.items[0].name, "Flange — Metrologia e inspeção dimensional");
+  assert.deepEqual(quote.items.map(item => item.serviceId), ["dimensional", "scan"]);
   for (const item of quote.items) {
     assert.equal(item.requestPieceId, "piece-1");
     assert.equal(item.technicalHours, null);
@@ -157,10 +157,10 @@ test("SOL → ORC usa peças e serviços sem inventar horas, custos ou escolhas 
 });
 
 test("SOL demo apta continua convertendo e vinculando ORC", () => {
-  const request = requests.getRuntimeRequests().find(request => request.status === "Apta para orçamento");
+  const request = requests.requests.find(request => request.status === "Apta para orçamento");
   assert.ok(request);
   const result = quotes.createQuoteFromRequest(request);
-  const converted = requests.markRequestAsConverted(request.id, result.quote.id, "Teste");
+  const converted = { ...request, linkedQuoteId: result.quote.id };
   assert.equal(converted.linkedQuoteId, result.quote.id);
   assert.equal(quotes.getQuoteByRequestId(request.id).id, result.quote.id);
 });

@@ -1,6 +1,6 @@
-import "../../styles/internalWorkspace.css";
+﻿import "../../styles/internalWorkspace.css";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import {
   useNavigate,
@@ -21,21 +21,15 @@ import {
 } from "../../components/internal/StatusBadge";
 
 import {
-  createQuoteFromRequest,
   getQuoteByRequestId,
   validateRequestForQuote,
 } from "../../services/quoteService";
 
 import {
-  cancelRuntimeRequest,
-  finishRequestAnalysis,
-  getRuntimeRequestById,
   isArchivedRequest,
-  markRequestAsConverted,
-  resumeRequestAnalysis,
-  saveRequestInternalNotes,
-  saveRequestTechnicalAnalysis,
-  startRequestAnalysis,
+  getRequestById, startRequestAnalysis, resumeRequestAnalysis,
+  saveRequestTechnicalAnalysis, finishRequestAnalysis, saveRequestInternalNotes,
+  cancelRequest,
 } from "../../services/requestService";
 
 import {
@@ -43,9 +37,6 @@ import {
   normalizeServiceId,
   SERVICE_OPTIONS,
 } from "../../utils/serviceLabels";
-
-const currentUser =
-  "Administrador";
 
 export function RequestDetailPage() {
   const navigate =
@@ -58,15 +49,14 @@ export function RequestDetailPage() {
   const [
     request,
     setRequest,
-  ] = useState(() =>
-    getRuntimeRequestById(
-      requestId,
-    ),
-  );
+  ] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
+  const [reloadKey, setReloadKey] = useState(0);
+  const [busy, setBusy] = useState(false);
 
   const [
     existingQuote,
-    setExistingQuote,
   ] = useState(() =>
     getQuoteByRequestId(
       requestId,
@@ -89,6 +79,18 @@ export function RequestDetailPage() {
       request,
     ),
   );
+  useEffect(() => {
+    let active = true;
+    getRequestById(requestId).then((item) => {
+      if (active) {
+        setRequest(item);
+        setInternalNotes(item.internalNotes || "");
+        setTechnicalAnalysis(createAnalysisForm(item));
+      }
+    }).catch((error) => { if (active) setLoadError(error.message); })
+      .finally(() => { if (active) setLoading(false); });
+    return () => { active = false; };
+  }, [requestId, reloadKey]);
 
   const [
     feedback,
@@ -124,6 +126,8 @@ export function RequestDetailPage() {
    */
 
   if (!request) {
+    if (loading) return <p role="status">Carregando solicitação...</p>;
+    if (loadError) return <p role="alert">{loadError} <button type="button" className="underline" onClick={() => { setLoading(true); setLoadError(""); setReloadKey((value) => value + 1); }}>Tentar novamente</button></p>;
     return (
       <div className="mx-auto max-w-[1500px]">
         <button
@@ -168,7 +172,6 @@ export function RequestDetailPage() {
     [
       "Em análise",
       "Aguardando informações",
-      "Apta para orçamento",
     ].includes(
       request.status,
     );
@@ -179,13 +182,12 @@ export function RequestDetailPage() {
    * ============================================================
    */
 
-  function handleStartAnalysis() {
+  async function handleStartAnalysis() {
+    if (busy) return;
+    setBusy(true);
     try {
       const updated =
-        startRequestAnalysis(
-          request.id,
-          currentUser,
-        );
+        await startRequestAnalysis(request.id);
 
       syncRequest(
         updated,
@@ -200,6 +202,7 @@ export function RequestDetailPage() {
         "error",
       );
     }
+    finally { setBusy(false); }
   }
 
   /*
@@ -208,13 +211,12 @@ export function RequestDetailPage() {
    * ============================================================
    */
 
-  function handleResumeAnalysis() {
+  async function handleResumeAnalysis() {
+    if (busy) return;
+    setBusy(true);
     try {
       const updated =
-        resumeRequestAnalysis(
-          request.id,
-          currentUser,
-        );
+        await resumeRequestAnalysis(request.id);
 
       syncRequest(
         updated,
@@ -229,6 +231,7 @@ export function RequestDetailPage() {
         "error",
       );
     }
+    finally { setBusy(false); }
   }
 
   /*
@@ -237,13 +240,14 @@ export function RequestDetailPage() {
    * ============================================================
    */
 
-  function handleSaveTechnicalAnalysis() {
+  async function handleSaveTechnicalAnalysis() {
+    if (busy) return;
+    setBusy(true);
     try {
       const updated =
-        saveRequestTechnicalAnalysis(
+        await saveRequestTechnicalAnalysis(
           request.id,
           technicalAnalysis,
-          currentUser,
         );
 
       syncRequest(
@@ -259,6 +263,7 @@ export function RequestDetailPage() {
         "error",
       );
     }
+    finally { setBusy(false); }
   }
 
   /*
@@ -267,18 +272,19 @@ export function RequestDetailPage() {
    * ============================================================
    */
 
-  function handleFinishAnalysis(
+  async function handleFinishAnalysis(
     resultData,
   ) {
+    if (busy) return;
+    setBusy(true);
     try {
       const updated =
-        finishRequestAnalysis(
+        await finishRequestAnalysis(
           request.id,
           {
             ...technicalAnalysis,
             ...resultData,
           },
-          currentUser,
         );
 
       syncRequest(
@@ -298,6 +304,7 @@ export function RequestDetailPage() {
         "error",
       );
     }
+    finally { setBusy(false); }
   }
 
   /*
@@ -307,6 +314,10 @@ export function RequestDetailPage() {
    */
 
   function handleQuoteAction() {
+    if (request.source === "real") {
+      showFeedback("A criação de orçamento para solicitações persistentes estará disponível na próxima etapa.", "error");
+      return;
+    }
     if (existingQuote) {
       navigate(
         `/portal/orcamentos/${existingQuote.id}`,
@@ -334,34 +345,16 @@ export function RequestDetailPage() {
   }
 
   function handleConfirmQuoteCreation() {
+    if (request.source === "real") {
+      setShowQuoteConfirmation(false);
+      showFeedback("A criação de orçamento para solicitações persistentes estará disponível na próxima etapa.", "error");
+      return;
+    }
     try {
-      const result =
-        createQuoteFromRequest(
-          request,
-        );
-
-      const updatedRequest =
-        markRequestAsConverted(
-          request.id,
-          result.quote.id,
-          currentUser,
-        );
-
-      syncRequest(
-        updatedRequest,
-      );
-
-      setExistingQuote(
-        result.quote,
-      );
-
       setShowQuoteConfirmation(
         false,
       );
-
-      navigate(
-        `/portal/orcamentos/${result.quote.id}`,
-      );
+      showFeedback("A criação de orçamento para solicitações persistentes estará disponível na próxima etapa.", "error");
     } catch (error) {
       setShowQuoteConfirmation(
         false,
@@ -380,13 +373,14 @@ export function RequestDetailPage() {
    * ============================================================
    */
 
-  function handleSaveNotes() {
+  async function handleSaveNotes() {
+    if (busy) return;
+    setBusy(true);
     try {
       const updated =
-        saveRequestInternalNotes(
+        await saveRequestInternalNotes(
           request.id,
           internalNotes,
-          currentUser,
         );
 
       syncRequest(
@@ -407,6 +401,7 @@ export function RequestDetailPage() {
         "error",
       );
     }
+    finally { setBusy(false); }
   }
 
   /*
@@ -415,15 +410,16 @@ export function RequestDetailPage() {
    * ============================================================
    */
 
-  function handleCancelRequest(
+  async function handleCancelRequest(
     reason,
   ) {
+    if (busy) return;
+    setBusy(true);
     try {
       const updated =
-        cancelRuntimeRequest(
+        await cancelRequest(
           request.id,
           reason,
-          currentUser,
         );
 
       syncRequest(
@@ -447,6 +443,7 @@ export function RequestDetailPage() {
         "error",
       );
     }
+    finally { setBusy(false); }
   }
 
   /*
@@ -3133,3 +3130,4 @@ function createAnalysisForm(
       "",
   };
 }
+

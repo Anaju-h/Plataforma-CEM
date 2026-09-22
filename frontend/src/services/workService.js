@@ -12,7 +12,7 @@ import {
 } from "./quoteService";
 
 import {
-  getRuntimeRequests,
+  getRequests,
 } from "./requestService";
 
 /*
@@ -38,11 +38,11 @@ import {
  * ============================================================
  */
 
-export function getCurrentUserWork(
+export async function getCurrentUserWork(
   currentUser = "Administrador",
 ) {
   const requests =
-    getRuntimeRequests();
+    await getRequests();
 
   const quotes =
     getRuntimeQuotes();

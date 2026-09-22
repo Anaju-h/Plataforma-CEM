@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { InternalPageHeader } from "../../components/internal/InternalPageHeader";
 import { getOperationalHistory } from "../../services/operationalHistoryService";
@@ -8,12 +8,21 @@ const fieldClass = "internal-field-value mt-2 h-11 min-w-0 w-full rounded-[12px]
 export function OperationalHistoryPage() {
 
   const [filters, setFilters] = useState({ search: "", type: "", status: "", from: "", to: "" });
-  const all = getOperationalHistory();
-  const entries = getOperationalHistory(filters);
+  const [all, setAll] = useState([]);
+  const [entries, setEntries] = useState([]);
+  const [loadError, setLoadError] = useState("");
+  useEffect(() => {
+    let active = true;
+    Promise.all([getOperationalHistory(), getOperationalHistory(filters)])
+      .then(([allItems, filteredItems]) => { if (active) { setAll(allItems); setEntries(filteredItems); } })
+      .catch((error) => { if (active) setLoadError(error.message); });
+    return () => { active = false; };
+  }, [filters]);
   const statuses = [...new Set(all.filter(entry => !filters.type || entry.type === filters.type).map(entry => entry.record.status))];
   const change = (field, value) => setFilters(previous => ({ ...previous, [field]: value, ...(field === "type" ? { status: "" } : {}) }));
   
   return <div className="mx-auto max-w-[1500px]">
+    {loadError && <p role="alert">{loadError}</p>}
     <InternalPageHeader eyebrow="Operação" title="Histórico" description="Consulta de solicitações, orçamentos e projetos encerrados." />
     <div className="mt-6 grid gap-3 rounded-[20px] border border-[#d1dde4] bg-white/80 p-5 md:grid-cols-2 xl:grid-cols-[minmax(0,1.5fr)_minmax(0,1.1fr)_minmax(0,1.1fr)_minmax(0,1fr)_minmax(0,1fr)]">
       <label className="internal-field-label flex min-w-0 flex-col justify-end text-[#607989] md:col-span-2 xl:col-span-1"><span className="flex min-h-9 items-end">BUSCA</span><input type="search" value={filters.search} onChange={event => change("search", event.target.value)} className={fieldClass} /></label>

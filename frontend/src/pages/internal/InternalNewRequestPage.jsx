@@ -10,19 +10,17 @@ import {
   InternalPageHeader,
 } from "../../components/internal/InternalPageHeader";
 
-import {
-  createRuntimeRequest,
-} from "../../services/requestService";
+import { createRequest } from "../../services/requestService";
 
 export function InternalNewRequestPage() {
   const navigate =
     useNavigate();
 
-  function handleSubmit(
+  async function handleSubmit(
     formData,
   ) {
     const request =
-      createRuntimeRequest(
+      await createRequest(
         {
           contact:
             formData.contact,
@@ -36,7 +34,7 @@ export function InternalNewRequestPage() {
           internal:
             formData.internal,
         },
-        "Administrador",
+        "Interno",
       );
 
     navigate(

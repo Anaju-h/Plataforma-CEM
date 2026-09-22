@@ -1,6 +1,6 @@
 import {
-  useMemo,
   useState,
+  useEffect,
 } from "react";
 
 import {
@@ -16,7 +16,7 @@ import {
 } from "../../components/internal/ProjectStatusBadge";
 
 import {
-  getRuntimeRequests,
+  getRequests,
 } from "../../services/requestService";
 
 import {
@@ -38,14 +38,14 @@ export function MyWorkPage() {
   const navigate =
     useNavigate();
 
-  const data =
-    useMemo(
-      () =>
-        buildWorkData(
-          currentUser,
-        ),
-      [],
-    );
+  const [data, setData] = useState(null);
+  const [loadError, setLoadError] = useState("");
+  useEffect(() => {
+    let active = true;
+    buildWorkData(currentUser).then((value) => { if (active) setData(value); })
+      .catch((error) => { if (active) setLoadError(error.message); });
+    return () => { active = false; };
+  }, []);
 
   const [
     attentionFilter,
@@ -53,6 +53,9 @@ export function MyWorkPage() {
   ] = useState(
     "all",
   );
+
+  if (loadError) return <p role="alert">{loadError}</p>;
+  if (!data) return <p role="status">Carregando trabalho...</p>;
 
   const visibleAttention =
     data.work.attentionItems.filter(
@@ -486,11 +489,11 @@ export function MyWorkPage() {
  * DADOS
  * ============================================================ */
 
-function buildWorkData(
+async function buildWorkData(
   currentUser,
 ) {
   const requests =
-    getRuntimeRequests();
+    await getRequests();
 
   const quotes =
     getRuntimeQuotes();
@@ -499,7 +502,7 @@ function buildWorkData(
     getRuntimeProjects();
 
   const work =
-    getCurrentUserWork(
+    await getCurrentUserWork(
       currentUser,
     );
 

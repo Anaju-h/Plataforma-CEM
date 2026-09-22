@@ -1,5 +1,6 @@
 import { useCurrentUser } from "../../hooks/useCurrentUser";
 import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { InternalPageHeader } from "../../components/internal/InternalPageHeader";
 import { getTeamOverview } from "../../services/teamService";
 
@@ -7,7 +8,16 @@ const permissions = { dashboard: "Visão geral", requests: "Solicitações", quo
 
 export function TeamPage() {
   useCurrentUser();
-  const overview = getTeamOverview();
+  const [overview, setOverview] = useState(null);
+  const [loadError, setLoadError] = useState("");
+  useEffect(() => {
+    let active = true;
+    getTeamOverview().then((value) => { if (active) setOverview(value); })
+      .catch((error) => { if (active) setLoadError(error.message); });
+    return () => { active = false; };
+  }, []);
+  if (loadError) return <p role="alert">{loadError}</p>;
+  if (!overview) return <p role="status">Carregando equipe...</p>;
   const { members } = overview;
   const activeMembers = members.filter(member => member.status === "Ativo");
   return <div className="mx-auto max-w-[1500px]">
