@@ -1,5 +1,6 @@
 import {
   useState,
+  useEffect,
 } from "react";
 
 import {
@@ -20,9 +21,7 @@ import {
   RequestInfoItem,
 } from "../../components/internal/RequestDetailSection";
 
-import {
-  getRuntimeQuoteById,
-} from "../../services/quoteService";
+import { ApiState } from "../../components/internal/ApiState";
 
 import {
   completeRuntimeProject,
@@ -48,26 +47,20 @@ export function ProjectDetailPage() {
     projectId,
   } = useParams();
 
-  const initialProject =
-    getRuntimeProjectById(
-      projectId,
-    );
-
-  const [
-    project,
-    setProject,
-  ] = useState(
-    initialProject,
-  );
-
-  const [
-    internalNotes,
-    setInternalNotes,
-  ] = useState(
-    initialProject
-      ?.internalNotes ??
-      "",
-  );
+  const [project, setProject] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [retry, setRetry] = useState(0);
+  const [busy, setBusy] = useState(false);
+  const [internalNotes, setInternalNotes] = useState("");
+  useEffect(() => {
+    let active = true;
+    getRuntimeProjectById(projectId).then(value => {
+      if (active) { setProject(value); setInternalNotes(value.internalNotes ?? ""); }
+    }).catch(reason => { if (active) setError(reason.message); })
+      .finally(() => { if (active) setLoading(false); });
+    return () => { active = false; };
+  }, [projectId, retry]);
 
   const [
     feedback,
@@ -78,6 +71,8 @@ export function ProjectDetailPage() {
     confirmationAction,
     setConfirmationAction,
   ] = useState(null);
+
+  if (loading || error) return <ApiState title={projectId} loading="Carregando projeto..." error={error} onRetry={() => { setLoading(true); setError(""); setRetry(value => value + 1); }} />;
 
   if (!project) {
     return (
@@ -103,10 +98,7 @@ export function ProjectDetailPage() {
     );
   }
 
-  const quote =
-    getRuntimeQuoteById(
-      project.quoteId,
-    );
+  const quote = project.quote;
 
   const completedCount =
     project.tasks.filter(
@@ -125,9 +117,11 @@ export function ProjectDetailPage() {
 
   const isCompleted = isArchivedProject(project);
 
-  function toggleTask(
+  async function toggleTask(
     taskId,
   ) {
+    if (busy) return;
+    setBusy(true);
     try {
       const task =
         project.tasks.find(
@@ -141,8 +135,8 @@ export function ProjectDetailPage() {
       }
 
       const updatedProject =
-        updateProjectTask(
-          project.id,
+        await updateProjectTask(
+          project,
           taskId,
           !task.completed,
           currentUser,
@@ -155,14 +149,16 @@ export function ProjectDetailPage() {
       showFeedback(
         error.message,
       );
-    }
+    } finally { setBusy(false); }
   }
 
-  function handleSaveNotes() {
+  async function handleSaveNotes() {
+    if (busy) return;
+    setBusy(true);
     try {
       const updatedProject =
-        saveProjectInternalNotes(
-          project.id,
+        await saveProjectInternalNotes(
+          project,
           internalNotes,
           currentUser,
         );
@@ -184,14 +180,16 @@ export function ProjectDetailPage() {
       showFeedback(
         error.message,
       );
-    }
+    } finally { setBusy(false); }
   }
 
-  function handleStartPreparation() {
+  async function handleStartPreparation() {
+    if (busy) return;
+    setBusy(true);
     try {
       const updatedProject =
-        startProjectPreparation(
-          project.id,
+        await startProjectPreparation(
+          project,
           currentUser,
         );
 
@@ -206,14 +204,16 @@ export function ProjectDetailPage() {
       showFeedback(
         error.message,
       );
-    }
+    } finally { setBusy(false); }
   }
 
-  function handleStartExecution() {
+  async function handleStartExecution() {
+    if (busy) return;
+    setBusy(true);
     try {
       const updatedProject =
-        startProjectExecution(
-          project.id,
+        await startProjectExecution(
+          project,
           currentUser,
         );
 
@@ -228,14 +228,16 @@ export function ProjectDetailPage() {
       showFeedback(
         error.message,
       );
-    }
+    } finally { setBusy(false); }
   }
 
-  function handleSendToReview() {
+  async function handleSendToReview() {
+    if (busy) return;
+    setBusy(true);
     try {
       const updatedProject =
-        sendProjectToReview(
-          project.id,
+        await sendProjectToReview(
+          project,
           currentUser,
         );
 
@@ -250,14 +252,16 @@ export function ProjectDetailPage() {
       showFeedback(
         error.message,
       );
-    }
+    } finally { setBusy(false); }
   }
 
-  function handleReturnToExecution() {
+  async function handleReturnToExecution() {
+    if (busy) return;
+    setBusy(true);
     try {
       const updatedProject =
-        returnProjectToExecution(
-          project.id,
+        await returnProjectToExecution(
+          project,
           currentUser,
         );
 
@@ -272,14 +276,16 @@ export function ProjectDetailPage() {
       showFeedback(
         error.message,
       );
-    }
+    } finally { setBusy(false); }
   }
 
-  function handleCompleteProject() {
+  async function handleCompleteProject() {
+    if (busy) return;
+    setBusy(true);
     try {
       const updatedProject =
-        completeRuntimeProject(
-          project.id,
+        await completeRuntimeProject(
+          project,
           currentUser,
         );
 
@@ -302,14 +308,16 @@ export function ProjectDetailPage() {
       showFeedback(
         error.message,
       );
-    }
+    } finally { setBusy(false); }
   }
 
-  function handleReopenProject() {
+  async function handleReopenProject() {
+    if (busy) return;
+    setBusy(true);
     try {
       const updatedProject =
-        reopenRuntimeProject(
-          project.id,
+        await reopenRuntimeProject(
+          project,
           currentUser,
         );
 
@@ -332,7 +340,7 @@ export function ProjectDetailPage() {
       showFeedback(
         error.message,
       );
-    }
+    } finally { setBusy(false); }
   }
 
   function showFeedback(
@@ -352,6 +360,7 @@ export function ProjectDetailPage() {
 
   return (
     <>
+      <fieldset disabled={busy} className="m-0 min-w-0 border-0 p-0">
       <div className="mx-auto max-w-[1500px]">
         <button
           type="button"
@@ -934,6 +943,7 @@ export function ProjectDetailPage() {
           }
         />
       )}
+      </fieldset>
     </>
   );
 }

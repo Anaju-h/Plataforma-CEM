@@ -1,6 +1,9 @@
 ﻿import "../../styles/internalWorkspace.css";
 
 import { useEffect, useState } from "react";
+import { validateRequestAnalysis } from "../../services/workflowValidation";
+import { ValidationFeedback, FieldIssue } from "../../components/internal/ValidationFeedback";
+import { ApiState } from "../../components/internal/ApiState";
 
 import {
   useNavigate,
@@ -21,7 +24,7 @@ import {
 } from "../../components/internal/StatusBadge";
 
 import {
-  getQuoteByRequestId,
+  createQuoteFromRequest,
   validateRequestForQuote,
 } from "../../services/quoteService";
 
@@ -39,12 +42,14 @@ import {
 } from "../../utils/serviceLabels";
 
 export function RequestDetailPage() {
+  const { requestId } = useParams();
+  return <RequestDetail key={requestId} requestId={requestId} />;
+}
+
+function RequestDetail({ requestId }) {
   const navigate =
     useNavigate();
 
-  const {
-    requestId,
-  } = useParams();
 
   const [
     request,
@@ -55,13 +60,7 @@ export function RequestDetailPage() {
   const [reloadKey, setReloadKey] = useState(0);
   const [busy, setBusy] = useState(false);
 
-  const [
-    existingQuote,
-  ] = useState(() =>
-    getQuoteByRequestId(
-      requestId,
-    ),
-  );
+  const existingQuote = request?.linkedQuoteId ? { id: request.linkedQuoteId } : null;
 
   const [
     internalNotes,
@@ -126,8 +125,7 @@ export function RequestDetailPage() {
    */
 
   if (!request) {
-    if (loading) return <p role="status">Carregando solicitação...</p>;
-    if (loadError) return <p role="alert">{loadError} <button type="button" className="underline" onClick={() => { setLoading(true); setLoadError(""); setReloadKey((value) => value + 1); }}>Tentar novamente</button></p>;
+    if (loading || loadError) return <ApiState title={requestId} loading="Carregando solicitação..." error={loadError} onRetry={() => { setLoading(true); setLoadError(""); setReloadKey((value) => value + 1); }} />;
     return (
       <div className="mx-auto max-w-[1500px]">
         <button
@@ -175,6 +173,8 @@ export function RequestDetailPage() {
     ].includes(
       request.status,
     );
+
+  const analysisValidation = validateRequestAnalysis(technicalAnalysis);
 
   /*
    * ============================================================
@@ -276,6 +276,8 @@ export function RequestDetailPage() {
     resultData,
   ) {
     if (busy) return;
+    const validation = validateRequestAnalysis({ ...technicalAnalysis, ...resultData }, resultData.result);
+    if (!validation.isValid) { showFeedback(validation.problems.join(" "), "error"); return; }
     setBusy(true);
     try {
       const updated =
@@ -314,10 +316,6 @@ export function RequestDetailPage() {
    */
 
   function handleQuoteAction() {
-    if (request.source === "real") {
-      showFeedback("A criação de orçamento para solicitações persistentes estará disponível na próxima etapa.", "error");
-      return;
-    }
     if (existingQuote) {
       navigate(
         `/portal/orcamentos/${existingQuote.id}`,
@@ -344,27 +342,17 @@ export function RequestDetailPage() {
     );
   }
 
-  function handleConfirmQuoteCreation() {
-    if (request.source === "real") {
-      setShowQuoteConfirmation(false);
-      showFeedback("A criação de orçamento para solicitações persistentes estará disponível na próxima etapa.", "error");
-      return;
-    }
+  async function handleConfirmQuoteCreation() {
+    if (busy) return;
+    setBusy(true);
     try {
-      setShowQuoteConfirmation(
-        false,
-      );
-      showFeedback("A criação de orçamento para solicitações persistentes estará disponível na próxima etapa.", "error");
-    } catch (error) {
-      setShowQuoteConfirmation(
-        false,
-      );
-
-      showFeedback(
-        error.message,
-        "error",
-      );
-    }
+      const quote = await createQuoteFromRequest(request);
+      const updated = await getRequestById(request.id);
+      syncRequest(updated);
+      setShowQuoteConfirmation(false);
+      navigate('/portal/orcamentos/' + quote.id);
+    } catch (error) { showFeedback(error.message, "error"); }
+    finally { setBusy(false); }
   }
 
   /*
@@ -519,11 +507,6 @@ export function RequestDetailPage() {
           }
           action={
             <div className="flex flex-wrap items-center gap-2">
-              {request.source ===
-                "demo" && (
-                <DemoBadge />
-              )}
-
               <StatusBadge
                 status={
                   request.status
@@ -798,6 +781,7 @@ export function RequestDetailPage() {
                 analysisEditable ? (
                   <button
                     type="button"
+                    disabled={busy}
                     onClick={
                       handleSaveTechnicalAnalysis
                     }
@@ -820,9 +804,10 @@ export function RequestDetailPage() {
                   setTechnicalAnalysis
                 }
                 disabled={
-                  !analysisEditable
+                  !analysisEditable || busy
                 }
               />
+              {analysisEditable && <div className="mt-5"><ValidationFeedback validation={analysisValidation} title="Pendências para concluir a análise" /></div>}
 
               <div className="mt-6 rounded-[15px] border border-[#cbdde6] bg-[#f1f7fa] p-4">
                 <p className="internal-field-label">
@@ -1026,6 +1011,8 @@ export function RequestDetailPage() {
 
               <div className="mt-6 border-t border-[#c8dbe4] pt-5">
                 <RequestPrimaryAction
+                  busy={busy}
+                  analysisValid={analysisValidation.isValid}
                   request={
                     request
                   }
@@ -1051,6 +1038,7 @@ export function RequestDetailPage() {
                 {!closed && (
                   <button
                     type="button"
+                    disabled={busy}
                     onClick={() =>
                       setShowCancelConfirmation(
                         true,
@@ -1133,6 +1121,7 @@ export function RequestDetailPage() {
               </p>
 
               <textarea
+                disabled={closed || busy}
                 value={
                   internalNotes
                 }
@@ -1157,7 +1146,7 @@ export function RequestDetailPage() {
                   handleSaveNotes
                 }
                 disabled={
-                  closed
+                  closed || busy
                 }
                 className="
                   internal-secondary-button
@@ -1266,6 +1255,8 @@ export function RequestDetailPage() {
 
       {showAnalysisModal && (
         <AnalysisResultModal
+          busy={busy}
+          error={feedbackType === "error" ? feedback : ""}
           request={
             request
           }
@@ -1289,6 +1280,8 @@ export function RequestDetailPage() {
 
       {showQuoteConfirmation && (
         <ConfirmationModal
+          busy={busy}
+          error={feedbackType === "error" ? feedback : ""}
           eyebrow="Criar orçamento"
           title="Gerar orçamento a partir desta solicitação?"
           description="Os dados já registrados serão utilizados como base para o novo orçamento. A necessidade principal, os serviços e as peças vinculadas serão preservados no registro comercial."
@@ -1310,6 +1303,8 @@ export function RequestDetailPage() {
 
       {showCancelConfirmation && (
         <CancelRequestModal
+          busy={busy}
+          error={feedbackType === "error" ? feedback : ""}
           onClose={() =>
             setShowCancelConfirmation(
               false,
@@ -1377,6 +1372,7 @@ function TechnicalAnalysisForm({
   onChange,
   disabled,
 }) {
+  const validation = validateRequestAnalysis(value);
   function updateField(
     field,
     fieldValue,
@@ -1526,10 +1522,15 @@ function TechnicalAnalysisForm({
 
       <div className="md:col-span-2">
         <AnalysisField
-          label="Resumo técnico"
+          label="Resumo técnico *"
           help="Registre os principais pontos identificados na análise da solicitação."
         >
           <textarea
+            id="analysis-summary"
+            aria-label="Resumo técnico"
+            required
+            aria-invalid={!disabled && !validation.isValid}
+            aria-describedby="analysis-summary-issue"
             value={
               value.summary
             }
@@ -1548,6 +1549,7 @@ function TechnicalAnalysisForm({
             placeholder="Descreva a interpretação técnica da necessidade..."
             className="internal-input w-full resize-y"
           />
+          {!disabled && <span id="analysis-summary-issue"><FieldIssue issues={validation.issues} field="summary" /></span>}
         </AnalysisField>
       </div>
 
@@ -1611,6 +1613,8 @@ function AnalysisField({
  */
 
 function RequestPrimaryAction({
+  busy,
+  analysisValid,
   request,
   existingQuote,
   onStartAnalysis,
@@ -1628,6 +1632,7 @@ function RequestPrimaryAction({
         onClick={
           onStartAnalysis
         }
+        disabled={busy}
         className="internal-primary-button w-full px-4 py-2.5"
       >
         Iniciar análise
@@ -1650,6 +1655,7 @@ function RequestPrimaryAction({
             onClick={
               onResumeAnalysis
             }
+            disabled={busy}
             className="internal-secondary-button w-full px-4 py-2.5"
           >
             Retomar análise
@@ -1661,6 +1667,7 @@ function RequestPrimaryAction({
           onClick={
             onFinishAnalysis
           }
+          disabled={busy || !analysisValid || request.status !== "Em análise"}
           className="internal-primary-button w-full px-4 py-2.5"
         >
           Concluir análise
@@ -1680,6 +1687,7 @@ function RequestPrimaryAction({
         onClick={
           onQuoteAction
         }
+        disabled={busy}
         className="internal-primary-button w-full px-4 py-2.5"
       >
         {existingQuote
@@ -2438,6 +2446,8 @@ function TechnicalPoint({
  */
 
 function AnalysisResultModal({
+  busy,
+  error,
   request,
   analysis,
   onClose,
@@ -2501,7 +2511,10 @@ function AnalysisResultModal({
     },
   ];
 
+  const validation = validateRequestAnalysis({ ...analysis, pendingInformation, decisionReason }, result);
+
   function handleConfirm() {
+    if (busy || !validation.isValid) return;
     onConfirm({
       result,
 
@@ -2555,6 +2568,7 @@ function AnalysisResultModal({
                   option.value
                 }
                 type="button"
+                disabled={busy}
                 onClick={() =>
                   setResult(
                     option.value,
@@ -2620,10 +2634,14 @@ function AnalysisResultModal({
         "waiting-information" && (
         <div className="mt-5">
           <label className="internal-field-label">
-            Informações pendentes
+            Informações pendentes *
           </label>
 
           <textarea
+            aria-label="Informações pendentes"
+            required
+            disabled={busy}
+            aria-invalid={validation.issues.some(issue => issue.field === "pendingInformation")}
             rows={4}
             value={
               pendingInformation
@@ -2645,10 +2663,14 @@ function AnalysisResultModal({
         "rejected" && (
         <div className="mt-5">
           <label className="internal-field-label">
-            Motivo técnico da recusa
+            Motivo técnico da recusa *
           </label>
 
           <textarea
+            aria-label="Motivo técnico da recusa"
+            required
+            disabled={busy}
+            aria-invalid={validation.issues.some(issue => issue.field === "decisionReason")}
             rows={4}
             value={
               decisionReason
@@ -2666,7 +2688,11 @@ function AnalysisResultModal({
         </div>
       )}
 
+      <div className="mt-5"><ValidationFeedback validation={validation} title="Requisitos do resultado" /></div>
+      {error && <p role="alert" className="mt-3 text-[#9a5947]">{error}</p>}
       <ModalActions
+        busy={busy}
+        confirmDisabled={!validation.isValid}
         cancelLabel="Voltar"
         confirmLabel="Confirmar resultado"
         onCancel={
@@ -2687,6 +2713,8 @@ function AnalysisResultModal({
  */
 
 function ConfirmationModal({
+  busy,
+  error,
   eyebrow,
   title,
   description,
@@ -2709,8 +2737,10 @@ function ConfirmationModal({
       <p className="mt-3 internal-help-text leading-6">
         {description}
       </p>
+      {error && <p role="alert" className="mt-3 text-[#9a5947]">{error}</p>}
 
       <ModalActions
+        busy={busy}
         cancelLabel="Cancelar"
         confirmLabel={
           confirmLabel
@@ -2733,6 +2763,8 @@ function ConfirmationModal({
  */
 
 function CancelRequestModal({
+  busy,
+  error,
   onClose,
   onConfirm,
 }) {
@@ -2764,6 +2796,9 @@ function CancelRequestModal({
         </label>
 
         <textarea
+          aria-label="Motivo do cancelamento"
+          required
+          disabled={busy}
           rows={4}
           value={
             reason
@@ -2781,6 +2816,8 @@ function CancelRequestModal({
       </div>
 
       <ModalActions
+        busy={busy}
+        confirmDisabled={!reason.trim()}
         cancelLabel="Voltar"
         confirmLabel="Cancelar solicitação"
         danger
@@ -2793,6 +2830,7 @@ function CancelRequestModal({
           )
         }
       />
+      {error && <p role="alert" className="mt-3 text-[#9a5947]">{error}</p>}
     </ModalShell>
   );
 }
@@ -2810,6 +2848,8 @@ function ModalShell({
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[#071f2d]/45 px-4 py-8 backdrop-blur-[2px]">
       <div
+        role="dialog"
+        aria-modal="true"
         className={`
           w-full
           ${maxWidth}
@@ -2829,6 +2869,8 @@ function ModalShell({
 }
 
 function ModalActions({
+  busy = false,
+  confirmDisabled = false,
   cancelLabel,
   confirmLabel,
   onCancel,
@@ -2842,6 +2884,7 @@ function ModalActions({
         onClick={
           onCancel
         }
+        disabled={busy}
         className="internal-secondary-button px-5 py-3"
       >
         {cancelLabel}
@@ -2852,6 +2895,7 @@ function ModalActions({
         onClick={
           onConfirm
         }
+        disabled={busy || confirmDisabled}
         className={`
           rounded-[11px]
           px-5
@@ -2870,7 +2914,7 @@ function ModalActions({
           }
         `}
       >
-        {confirmLabel}
+        {busy ? "Salvando..." : confirmLabel}
       </button>
     </div>
   );
@@ -2891,14 +2935,6 @@ function EmptyBlock({
         {text}
       </p>
     </div>
-  );
-}
-
-function DemoBadge() {
-  return (
-    <span className="rounded-full border border-[#d4d1e8] bg-[#f4f3fa] px-3 py-1.5 text-[9px] font-semibold uppercase tracking-[0.08em] text-[#69668d]">
-      Demonstração
-    </span>
   );
 }
 

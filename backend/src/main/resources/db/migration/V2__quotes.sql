@@ -1,0 +1,122 @@
+CREATE SEQUENCE quote_code_seq AS BIGINT START WITH 1 INCREMENT BY 1;
+CREATE TABLE lab_quote (
+  id UNIQUEIDENTIFIER NOT NULL PRIMARY KEY,
+  quote_code NVARCHAR(40),
+  company NVARCHAR(250),
+  contact NVARCHAR(250),
+  email NVARCHAR(320),
+  phone NVARCHAR(60),
+  request_need_id NVARCHAR(80),
+  request_origin NVARCHAR(40),
+  request_channel NVARCHAR(120),
+  status NVARCHAR(60),
+  priority NVARCHAR(40),
+  responsible NVARCHAR(200),
+  service_id NVARCHAR(80),
+  machine_id NVARCHAR(250),
+  scope NVARCHAR(MAX),
+  objective NVARCHAR(MAX),
+  comments NVARCHAR(MAX),
+  internal_notes NVARCHAR(MAX),
+  technical_summary NVARCHAR(MAX),
+  complexity NVARCHAR(100),
+  estimate_justification NVARCHAR(MAX),
+  commercial_notes NVARCHAR(MAX),
+  deadline_days INT,
+  validity_days INT,
+  internal_cost DECIMAL(19,4),
+  created_at DATETIME2,
+  updated_at DATETIME2,
+  revision BIGINT NOT NULL,
+  request_id UNIQUEIDENTIFIER NOT NULL UNIQUE REFERENCES lab_request(id),
+  CONSTRAINT UQ_quote_code UNIQUE(quote_code),
+  CONSTRAINT CK_quote_status CHECK(status IN(N'Rascunho',N'Em elaboração',N'Em revisão',N'Aprovado internamente',N'Enviado',N'Aceito',N'Recusado',N'Cancelado'))
+);
+CREATE TABLE quote_piece (
+  id UNIQUEIDENTIFIER NOT NULL PRIMARY KEY,
+  client_id NVARCHAR(100),
+  name NVARCHAR(250),
+  quantity INT NOT NULL,
+  material NVARCHAR(250),
+  dimensions NVARCHAR(250),
+  location NVARCHAR(500),
+  type NVARCHAR(100),
+  requirements_json NVARCHAR(MAX),
+  recommendation_json NVARCHAR(MAX),
+  position INT NOT NULL,
+  quote_id UNIQUEIDENTIFIER NOT NULL REFERENCES lab_quote(id),
+  CONSTRAINT UQ_quote_piece_client UNIQUE(quote_id,client_id),
+  CONSTRAINT CK_quote_piece_quantity CHECK(quantity>0)
+);
+CREATE TABLE quote_item (
+  id UNIQUEIDENTIFIER NOT NULL PRIMARY KEY,
+  client_id NVARCHAR(100),
+  name NVARCHAR(500),
+  description NVARCHAR(MAX),
+  service_id NVARCHAR(80),
+  machine_id NVARCHAR(250),
+  request_piece_id NVARCHAR(100),
+  technical_hours DECIMAL(19,4),
+  quoted_hours DECIMAL(19,4),
+  hourly_rate DECIMAL(19,4),
+  hourly_rate_override_reason NVARCHAR(MAX),
+  commercial_rate_reference DECIMAL(19,4),
+  commercial_reference_id NVARCHAR(100),
+  commercial_reference_effective_from NVARCHAR(100),
+  reference_captured_at NVARCHAR(100),
+  position INT NOT NULL,
+  quote_id UNIQUEIDENTIFIER NOT NULL REFERENCES lab_quote(id),
+  CONSTRAINT UQ_quote_item_client UNIQUE(quote_id,client_id),
+  CONSTRAINT FK_quote_item_piece FOREIGN KEY(quote_id,request_piece_id) REFERENCES quote_piece(quote_id,client_id),
+  CONSTRAINT CK_quote_item_values CHECK((technical_hours IS NULL OR technical_hours>=0) AND (quoted_hours IS NULL OR quoted_hours>=0) AND hourly_rate>0 AND commercial_rate_reference>0)
+);
+CREATE TABLE quote_history (
+  id UNIQUEIDENTIFIER NOT NULL PRIMARY KEY,
+  occurred_at DATETIME2,
+  action NVARCHAR(120),
+  actor NVARCHAR(200),
+  description NVARCHAR(MAX),
+  quote_id UNIQUEIDENTIFIER NOT NULL REFERENCES lab_quote(id)
+);
+CREATE TABLE quote_proposal (
+  id UNIQUEIDENTIFIER NOT NULL PRIMARY KEY,
+  revision BIGINT NOT NULL,
+  has_draft BIT NOT NULL,
+  sections_json NVARCHAR(MAX),
+  investment_display NVARCHAR(40),
+  selected_media_json NVARCHAR(MAX),
+  scope NVARCHAR(MAX),
+  technology NVARCHAR(MAX),
+  deadline NVARCHAR(MAX),
+  validity NVARCHAR(MAX),
+  terms NVARCHAR(MAX),
+  notes NVARCHAR(MAX),
+  updated_at DATETIME2,
+  accepted_version INT,
+  quote_id UNIQUEIDENTIFIER NOT NULL UNIQUE REFERENCES lab_quote(id)
+);
+CREATE TABLE quote_proposal_version (
+  id UNIQUEIDENTIFIER NOT NULL PRIMARY KEY,
+  number INT NOT NULL,
+  status NVARCHAR(40),
+  created_at DATETIME2,
+  created_by NVARCHAR(200),
+  source_quote_revision BIGINT NOT NULL,
+  snapshot_json NVARCHAR(MAX),
+  sections_json NVARCHAR(MAX),
+  selected_media_json NVARCHAR(MAX),
+  investment_display NVARCHAR(40),
+  pdf_file_name NVARCHAR(250),
+  pdf_json NVARCHAR(MAX),
+  result_type NVARCHAR(40),
+  result_date NVARCHAR(10),
+  result_note NVARCHAR(MAX),
+  result_actor NVARCHAR(200),
+  result_registered_at DATETIME2,
+  proposal_id UNIQUEIDENTIFIER NOT NULL REFERENCES quote_proposal(id),
+  CONSTRAINT UQ_proposal_version UNIQUE(proposal_id,number)
+);
+CREATE TABLE quote_service (quote_id UNIQUEIDENTIFIER NOT NULL REFERENCES lab_quote(id),service_id VARCHAR(80) NOT NULL,PRIMARY KEY(quote_id,service_id));
+CREATE TABLE quote_piece_service (piece_id UNIQUEIDENTIFIER NOT NULL REFERENCES quote_piece(id),service_id VARCHAR(80) NOT NULL,PRIMARY KEY(piece_id,service_id));
+CREATE INDEX IX_quote_created ON lab_quote(created_at DESC);
+CREATE INDEX IX_quote_history ON quote_history(quote_id,occurred_at);

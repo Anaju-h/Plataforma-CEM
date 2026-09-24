@@ -241,7 +241,7 @@ function OverviewTab({
         <MetricCard
           eyebrow="Última atualização"
           value={
-            commercialReference.updatedAt ?? "Configuração inicial demo"
+            commercialReference.updatedAt ?? "Configuração inicial"
           }
           description="Referência comercial vigente."
         />
@@ -640,7 +640,7 @@ function CommercialReferenceTab({
                 label="Responsável"
                 value={
                   reference.changedBy ??
-                  "Não informado (demo)"
+                  "Não informado"
                 }
               />
 

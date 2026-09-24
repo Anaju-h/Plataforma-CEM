@@ -24,7 +24,7 @@ import {
   requestStatuses,
 } from "../../data/internal/requests";
 
-import { getActiveRequests } from "../../services/requestService";
+import { getActiveRequests, isArchivedRequest } from "../../services/requestService";
 
 import {
   getServiceLabel as getCatalogServiceLabel,
@@ -350,7 +350,7 @@ export function RequestsPage() {
           onOriginChange={
             setOrigin
           }
-          statusOptions={requestStatuses}
+          statusOptions={requestStatuses.filter(status => !isArchivedRequest({ status }))}
           originOptions={
             getAvailableOrigins(
               requests,
@@ -660,7 +660,7 @@ export function RequestsPage() {
 
         {/* VAZIO */}
 
-        {filteredRequests.length ===
+        {!loading && !loadError && filteredRequests.length ===
           0 && (
           <div className="px-6 py-16 text-center">
             <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-[14px] bg-[#edf5f8] text-[20px] text-[#5f879c]">

@@ -10,9 +10,9 @@ let server, quotes, proposals, projects, commercial, pdfService, items, restoreF
 before(async () => {
   restoreFetch = installProposalAssetFetch();
   server = await createServer({ server: { middlewareMode: true, watch: null, hmr: false, ws: false }, appType: "custom" });
-  quotes = await server.ssrLoadModule("/src/services/quoteService.js");
-  proposals = await server.ssrLoadModule("/src/services/proposalService.js");
-  projects = await server.ssrLoadModule("/src/services/projectService.js");
+  quotes = await server.ssrLoadModule("/src/services/demoQuoteService.js");
+  proposals = await server.ssrLoadModule("/src/services/demoProposalService.js");
+  projects = await server.ssrLoadModule("/src/services/demoProjectService.js");
   commercial = await server.ssrLoadModule("/src/services/commercialProposalService.js");
   pdfService = await server.ssrLoadModule("/src/services/proposalPdfService.jsx");
   items = await server.ssrLoadModule("/src/services/quoteItemService.js");
@@ -173,20 +173,20 @@ test("conteúdo excessivo bloqueia geração sem consumir número ou apagar draf
   assert.throws(() => pdfService.validateOnePageLayout({ children: [] }), /validar/);
 });
 
-test("UI mostra proposta só após aprovação; sem aceite não oferece Criar projeto", async () => {
+test("a rota real aguarda API e não utiliza propostas de demonstração", async () => {
   const { QuoteDetailPage } = await server.ssrLoadModule("/src/pages/internal/QuoteDetailPage.jsx");
   const render = id => renderToString(createElement(MemoryRouter, { initialEntries: [`/portal/orcamentos/${id}`] }, createElement(Routes, null,
     createElement(Route, { path: "/portal/orcamentos/:quoteId", element: createElement(QuoteDetailPage) }))));
   const { quote } = quotes.createQuoteFromRequest({ id: `SOL-UI-${++sequence}`, status: "Apta para orçamento", service: "Inspeção dimensional" });
   assert.doesNotMatch(render(quote.id), /MONTAR PROPOSTA|ABRIR PROPOSTA|>Criar projeto</);
   const ready = approved();
-  assert.match(render(ready.id), /MONTAR PROPOSTA/);
+  assert.match(render(ready.id), /Carregando orçamento/);
   proposals.openProposal(ready.id);
-  assert.match(render(ready.id), /ABRIR PROPOSTA/);
+  assert.doesNotMatch(render(ready.id), /ABRIR PROPOSTA/);
   assert.doesNotMatch(render(ready.id), />Criar projeto</);
   await proposals.generateProposalVersion(ready.id, "Administrador", testPdfDestination);
   proposals.registerProposalResult(ready.id, 1, result("accepted"));
-  assert.match(render(ready.id), />Criar projeto</);
+  assert.doesNotMatch(render(ready.id), />Criar projeto</);
 });
 
 test("snapshot seleciona somente mídia autorizada e congela o conteúdo", () => {

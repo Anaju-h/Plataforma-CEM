@@ -1,5 +1,9 @@
+import { getQuoteEquipmentRequirement, requiresQuoteEquipment } from "../../data/serviceCatalog";
+import { canCreateProject, createProjectFromQuote } from "../../services/projectService";
 import { getQuotePieces } from "../../services/quotePieceService";
-import { getProposalByQuoteId, getAcceptedProposalVersion } from "../../services/proposalService";
+import { getAcceptedProposalVersion } from "../../services/proposalService";
+import { useQuote } from "../../hooks/useQuote";
+import { ApiState } from "../../components/internal/ApiState";
 import "../../styles/internalWorkspace.css";
 import { ValidationFeedback, FieldIssue } from "../../components/internal/ValidationFeedback";
 import {
@@ -29,21 +33,17 @@ import {
 
 import {
   approveQuoteInternally,
-  cancelRuntimeQuote,
+  cancelQuote,
   getQuoteKnowledgeSupport,
-  getRuntimeQuoteById,
-  recordQuoteEvent,
+
+
   returnQuoteToEditing,
   sendQuoteToReview,
-  updateRuntimeQuote,
+  updateQuote,
   validateQuoteForReview,
   isQuoteEditable,
 } from "../../services/quoteService";
 
-import {
-  createProjectFromQuote,
-  getProjectByQuoteId,
-} from "../../services/projectService";
 
 import {
   buildPricingInsights,
@@ -60,18 +60,14 @@ const currentUser =
 const labelClasses = "internal-field-label font-semibold text-[#607989]";
 
 export function QuoteDetailPage() {
-  const navigate =
-    useNavigate();
-
-  const {
-    quoteId,
-  } = useParams();
-
-  const initialQuote =
-    getRuntimeQuoteById(
-      quoteId,
-    );
-
+  const { quoteId } = useParams();
+  const { quote, loading, error, retry } = useQuote(quoteId);
+  if (loading || error) return <ApiState title={quoteId} loading="Carregando orçamento..." error={error} onRetry={retry} />;
+  return <QuoteEditor key={quoteId} initialQuote={quote} />;
+}
+function QuoteEditor({ initialQuote }) {
+  const navigate = useNavigate();
+  const [busy, setBusy] = useState(false);
   const commercialReference =
     getCommercialReference();
 
@@ -85,16 +81,20 @@ export function QuoteDetailPage() {
     initialQuote,
   );
 
-  const [
-    linkedProject,
-    setLinkedProject,
-  ] = useState(() =>
-    initialQuote
-      ? getProjectByQuoteId(
-          initialQuote.id,
-        )
-      : null,
-  );
+  const linkedProject = quote.projectId ? { id: quote.projectId } : null;
+
+  async function handleCreateProject() {
+    if (busy) return;
+    if (linkedProject) { navigate(`/portal/projetos/${linkedProject.id}`); return; }
+    if (!canCreateProject(quote)) return;
+    setBusy(true);
+    try {
+      const project = await createProjectFromQuote(quote);
+      setQuote(value => ({ ...value, projectId: project.id, convertedToProject: true }));
+      navigate(`/portal/projetos/${project.id}`);
+    } catch (error) { showFeedback(error.message, "error"); }
+    finally { setBusy(false); }
+  }
 
   const [
     scope,
@@ -171,12 +171,7 @@ export function QuoteDetailPage() {
     null,
   );
 
-  const [
-    showProjectConfirmation,
-    setShowProjectConfirmation,
-  ] = useState(
-    false,
-  );
+
 
   const [
     confirmationAction,
@@ -234,12 +229,14 @@ export function QuoteDetailPage() {
     );
 
   const isEditable = isQuoteEditable(quote);
+  const equipmentRequired = requiresQuoteEquipment({ ...quote, items });
+  const equipmentNotApplicable = getQuoteEquipmentRequirement({ ...quote, items }) === "NOT_APPLICABLE";
 
   const reviewValidation = validateQuoteForReview({ ...quote, items, scope, machineId, deadlineDays, validityDays, estimateJustification });
   const fieldIssue = field => isEditable && <FieldIssue issues={reviewValidation.issues} field={field} />;
   const invalid = field => isEditable && reviewValidation.issues.some(issue => issue.field === field);
 
-  function saveQuote(
+  async function saveQuote(
     showMessage = true,
   ) {
     if (
@@ -248,9 +245,10 @@ export function QuoteDetailPage() {
       return quote;
     }
 
+    if (equipmentRequired && !machineId) throw new Error("Selecione a tecnologia de referência obrigatória.");
     const updatedQuote =
-      updateRuntimeQuote(
-        quote.id,
+      await updateQuote(
+        quote,
         {
           items,
           scope:
@@ -315,15 +313,17 @@ export function QuoteDetailPage() {
     return updatedQuote;
   }
 
-  function handleSendToReview() {
+  async function handleSendToReview() {
+    if (busy) return;
+    setBusy(true);
     try {
-      saveQuote(
+      const saved = await saveQuote(
         false,
       );
 
       const updatedQuote =
-        sendQuoteToReview(
-          quote.id,
+        await sendQuoteToReview(
+          saved,
           currentUser,
         );
 
@@ -342,14 +342,16 @@ export function QuoteDetailPage() {
         error.message,
         "error",
       );
-    }
+    } finally { setBusy(false); }
   }
 
-  function handleApprove() {
+  async function handleApprove() {
+    if (busy) return;
+    setBusy(true);
     try {
       const updatedQuote =
-        approveQuoteInternally(
-          quote.id,
+        await approveQuoteInternally(
+          quote,
           currentUser,
         );
 
@@ -368,14 +370,16 @@ export function QuoteDetailPage() {
         error.message,
         "error",
       );
-    }
+    } finally { setBusy(false); }
   }
 
-  function handleReturnToEditing() {
+  async function handleReturnToEditing() {
+    if (busy) return;
+    setBusy(true);
     try {
       const updatedQuote =
-        returnQuoteToEditing(
-          quote.id,
+        await returnQuoteToEditing(
+          quote,
           currentUser,
         );
 
@@ -394,18 +398,20 @@ export function QuoteDetailPage() {
         error.message,
         "error",
       );
-    }
+    } finally { setBusy(false); }
   }
 
   function handleGenerateProposal() {
     navigate(`/portal/orcamentos/${quote.id}/proposta`);
   }
 
-  function handleCancel() {
+  async function handleCancel() {
+    if (busy) return;
+    setBusy(true);
     try {
       const updatedQuote =
-        cancelRuntimeQuote(
-          quote.id,
+        await cancelQuote(
+          quote,
           currentUser,
           confirmationReason,
         );
@@ -427,7 +433,7 @@ export function QuoteDetailPage() {
         error.message,
         "error",
       );
-    }
+    } finally { setBusy(false); }
   }
 
   function openConfirmation(
@@ -450,84 +456,6 @@ export function QuoteDetailPage() {
     setConfirmationReason(
       "",
     );
-  }
-
-  function handleProjectAction() {
-    if (
-      linkedProject
-    ) {
-      navigate(
-        `/portal/projetos/${linkedProject.id}`,
-      );
-
-      return;
-    }
-
-    if (
-      quote.status !==
-      "Aceito"
-    ) {
-      return;
-    }
-
-    setShowProjectConfirmation(
-      true,
-    );
-  }
-
-  function handleConfirmProjectCreation() {
-    try {
-      const result =
-        createProjectFromQuote(
-          quote.id,
-        );
-
-      recordQuoteEvent(
-        quote.id,
-        {
-          action:
-            "Projeto criado",
-
-          actor:
-            currentUser,
-
-          description:
-            `O orçamento aceito originou o projeto ${result.project.id}.`,
-        },
-      );
-
-      const updatedQuote =
-        getRuntimeQuoteById(
-          quote.id,
-        );
-
-      setQuote(
-        updatedQuote,
-      );
-
-      setLinkedProject(
-        result.project,
-      );
-
-      setShowProjectConfirmation(
-        false,
-      );
-
-      navigate(
-        `/portal/projetos/${result.project.id}`,
-      );
-    } catch (
-      error
-    ) {
-      setShowProjectConfirmation(
-        false,
-      );
-
-      showFeedback(
-        error.message,
-        "error",
-      );
-    }
   }
 
   function showFeedback(
@@ -572,11 +500,6 @@ export function QuoteDetailPage() {
           description={quote.service || "Orçamento vinculado à solicitação."}
           action={
             <div className="flex flex-wrap items-center gap-2">
-              <SourceBadge
-                source={
-                  quote.source
-                }
-              />
 
               <QuoteStatusBadge
                 status={
@@ -587,9 +510,13 @@ export function QuoteDetailPage() {
               {isEditable && (
                 <button
                   type="button"
-                  onClick={() => {
-                    try { saveQuote(); }
+                  disabled={busy}
+                  onClick={async () => {
+                    if (busy) return;
+                    setBusy(true);
+                    try { await saveQuote(); }
                     catch (error) { showFeedback(error.message, "error"); }
+                    finally { setBusy(false); }
                   }}
                   className="rounded-[12px] bg-[#12364e] px-5 py-3 internal-field-label font-semibold uppercase tracking-[0.1em] text-white transition hover:bg-[#0d2d41]"
                 >
@@ -608,18 +535,6 @@ export function QuoteDetailPage() {
           />
         )}
 
-        {quote.source !==
-          "real" && (
-          <div className="mt-5 rounded-[14px] border border-[#ded1b3] bg-[#faf5e9] px-4 py-3">
-            <p className="internal-body leading-5 text-[#806b3d]">
-              <strong className="font-semibold">
-                Base de demonstração.
-              </strong>{" "}
-              Este orçamento pode ser usado para validar o fluxo da interface, mas não deve alimentar os indicadores nem o aprendizado da futura base real.
-            </p>
-          </div>
-        )}
-
         {!isEditable &&
           ![
             "Aceito",
@@ -635,7 +550,7 @@ export function QuoteDetailPage() {
             </div>
           )}
 
-        <div className="internal-workspace-columns mt-6 grid items-start gap-6 xl:grid-cols-[minmax(0,1.6fr)_minmax(320px,0.85fr)]"><div className="flex min-w-0 flex-col gap-5">
+        <fieldset disabled={busy} className="internal-workspace-columns mt-6 grid min-w-0 items-start gap-6 border-0 p-0 xl:grid-cols-[minmax(0,1.6fr)_minmax(320px,0.85fr)]"><div className="flex min-w-0 flex-col gap-5">
             <RequestDetailSection title="Dados e escopo do orçamento" description="* Obrigatório para revisão. Informações técnicas permanecem internas.">
               <div className="mb-4 grid gap-3 sm:grid-cols-2">
                 <RequestInfoItem label="Serviço" value={quote.service} />
@@ -645,9 +560,9 @@ export function QuoteDetailPage() {
                 <textarea value={scope} disabled={!isEditable} onChange={event => setScope(event.target.value)} rows={3} aria-invalid={invalid("scope")} className={getTextareaClasses(!isEditable)} />
                 {fieldIssue("scope")}
               </label>
-              <div className="mt-4 grid items-start gap-4 2xl:grid-cols-2"><label className="block"><span className={labelClasses}>Tecnologia de referência *</span>
-                <select value={machineId} disabled={!isEditable} aria-invalid={invalid("machineId")} onChange={event => setMachineId(event.target.value)} className={getInputClasses(!isEditable) + " mt-2"}>
-                  <option value="">Selecionar tecnologia</option>{machines.map(machine => <option key={machine.id} value={machine.id}>{machine.name}{machine.local ? "" : " · Outra unidade"}</option>)}
+              <div className="mt-4 grid items-start gap-4 2xl:grid-cols-2"><label className="block"><span className={labelClasses}>Tecnologia de referência{equipmentRequired ? " *" : ""}</span>
+                <select value={machineId} disabled={!isEditable || equipmentNotApplicable} aria-invalid={invalid("machineId")} onChange={event => setMachineId(event.target.value)} className={getInputClasses(!isEditable) + " mt-2"}>
+                  <option value="">{equipmentRequired ? "Selecionar tecnologia" : equipmentNotApplicable ? "Não se aplica" : "Sem equipamento específico / Não se aplica"}</option>{machines.map(machine => <option key={machine.id} value={machine.id}>{machine.name}{machine.local ? "" : " · Outra unidade"}</option>)}
                 </select>{fieldIssue("machineId")}
               </label>
               <label className="block"><span className={labelClasses}>Justificativa técnica da estimativa *</span>
@@ -672,7 +587,7 @@ export function QuoteDetailPage() {
               {isEditable ? <ValidationFeedback validation={reviewValidation} title="Pendências para revisão" /> : <p className="internal-help-text text-[#607989]">{linkedProject ? "Orçamento convertido em " + linkedProject.id + ". O registro permanece disponível no Histórico." : "Os dados desta etapa são preservados para consulta e rastreabilidade."}</p>}
             </RequestDetailSection>
             <RequestDetailSection title="Histórico do orçamento" description="Movimentações do processo e registros da estimativa enviada para revisão.">
-              <p className="internal-help-text mb-4 text-[#607989]">{quote.estimateVersions?.length ?? 0} envio(s) registrado(s) para revisão.</p>
+              <p className="internal-help-text mb-4 text-[#607989]">{quote.history?.filter(item => item.action === "Status: Em revisão").length ?? 0} envio(s) registrado(s) para revisão.</p>
               {quote.history?.length ? quote.history.map((item, index) => <QuoteHistoryItem key={item.id ?? index} item={item} last={index === quote.history.length - 1} />) : <EmptyBlock text="Nenhuma movimentação registrada." />}
               <button type="button" className="internal-help-text mt-3 font-semibold text-[#096ab2]" onClick={() => navigate("/portal/historico")}>Consultar histórico operacional →</button>
             </RequestDetailSection>
@@ -708,28 +623,12 @@ export function QuoteDetailPage() {
 
             <RequestDetailSection title="Etapa atual" description={quote.status}>
                 <div>
-                  <QuoteWorkflowActions quote={quote} linkedProject={linkedProject} reviewValidation={reviewValidation} onSendToReview={handleSendToReview} onApprove={handleApprove} onReturnToEditing={handleReturnToEditing} onGenerateProposal={handleGenerateProposal} onProject={handleProjectAction} />
+                  <QuoteWorkflowActions quote={quote} linkedProject={linkedProject} reviewValidation={reviewValidation} onSendToReview={handleSendToReview} onApprove={handleApprove} onReturnToEditing={handleReturnToEditing} onGenerateProposal={handleGenerateProposal} onCreateProject={handleCreateProject} busy={busy} />
                   {!["Aceito", "Recusado", "Cancelado"].includes(quote.status) && <button type="button" onClick={() => openConfirmation("cancel")} className="internal-help-text mt-3 w-full text-[#9a5947]">Cancelar orçamento</button>}
                 </div>
             </RequestDetailSection>
-          </aside></div>
+          </aside></fieldset>
       </div>
-
-      {showProjectConfirmation && (
-        <ProjectCreationModal
-          quote={
-            quote
-          }
-          onCancel={() =>
-            setShowProjectConfirmation(
-              false,
-            )
-          }
-          onConfirm={
-            handleConfirmProjectCreation
-          }
-        />
-      )}
 
       {confirmationAction ===
         "cancel" && (
@@ -769,26 +668,27 @@ function KnowledgeAssistantPanel({ knowledge, onOpenKnowledge }) {
     <p className="internal-body text-[#31566d]">Ainda não há casos reais comparáveis suficientes.</p>
     <p className="internal-help-text mt-3 text-[#607989]">Registros formalizados permitirão consultar:</p>
     <ul className="internal-help-text mt-2 list-disc space-y-1 pl-5 text-[#607989]"><li>Casos semelhantes e horas históricas</li><li>Desvios entre cotado e realizado</li><li>Referências comerciais e lições relevantes</li></ul>
-    {knowledge.isDemo && <p className="internal-help-text mt-3 text-[#806b3d]">Este ORC demo não alimenta o conhecimento real.</p>}
     <button type="button" onClick={onOpenKnowledge} className="internal-help-text mt-4 font-semibold text-[#096ab2]">Gestão do conhecimento →</button>
   </RequestDetailSection>;
 }
 
-function QuoteWorkflowActions({ reviewValidation, quote, linkedProject, onSendToReview, onApprove, onReturnToEditing, onGenerateProposal, onProject }) {
-  const proposal = getProposalByQuoteId(quote.id);
-  const accepted = getAcceptedProposalVersion(quote.id);
+export function QuoteWorkflowActions({ reviewValidation, quote, linkedProject, onCreateProject, busy, onSendToReview, onApprove, onReturnToEditing, onGenerateProposal }) {
+  const proposal = quote.proposal;
+  const accepted = getAcceptedProposalVersion(proposal);
   const latest = proposal?.versions.at(-1);
   const stale = latest && latest.sourceQuoteRevision !== (quote.revision ?? 0);
-  return <>
+  return <fieldset disabled={busy} className="min-w-0 border-0 p-0">
     {["Rascunho", "Em elaboração"].includes(quote.status) && <PrimaryButton disabled={!reviewValidation.isValid} onClick={onSendToReview}>Enviar para revisão</PrimaryButton>}
     {stale && <p className="internal-help-text my-3 text-[#806b3d]">PROPOSTA EMITIDA · V{latest.version} foi emitida com uma versão anterior deste orçamento. Alterações atuais não modificam a proposta já emitida. Para apresentar os novos dados, crie uma nova versão.</p>}
     {!accepted && quote.status === "Aprovado internamente" && <SecondaryButton onClick={onReturnToEditing}>Ajustar orçamento</SecondaryButton>}
     {quote.status === "Em revisão" && <><PrimaryButton onClick={onApprove}>Aprovar internamente</PrimaryButton><SecondaryButton onClick={onReturnToEditing}>Solicitar ajustes</SecondaryButton></>}
     {(proposal || quote.status === "Aprovado internamente") && <PrimaryButton onClick={onGenerateProposal}>{proposal ? "ABRIR PROPOSTA" : "MONTAR PROPOSTA"}</PrimaryButton>}
-    {linkedProject ? <PrimaryButton onClick={onProject}>Abrir {linkedProject.id}</PrimaryButton> : accepted ? <><p>Proposta aceita • {proposal.id} • V{accepted.version}</p><PrimaryButton onClick={onProject}>Criar projeto</PrimaryButton></> : <p className="internal-help-text mt-4">Projeto ainda não disponível. A criação será liberada após o registro do aceite de uma versão da proposta comercial.</p>}
+    {accepted && <p>Proposta aceita • {proposal.id} • V{accepted.version}.</p>}
+    {(linkedProject || canCreateProject(quote)) && <PrimaryButton onClick={onCreateProject}>{linkedProject ? `Abrir projeto ${linkedProject.id}` : "Criar projeto"}</PrimaryButton>}
     {quote.status === "Recusado" && <ClosedMessage text="Negociação encerrada após recusa do cliente." />}
     {quote.status === "Cancelado" && <ClosedMessage text="Orçamento cancelado." />}
-  </>;
+    {busy && <p role="status" className="internal-help-text mt-3">Salvando orçamento...</p>}
+  </fieldset>;
 }
 
 function PrimaryButton({
@@ -1017,79 +917,6 @@ function ConfirmationModal({
  * PROJETO
  * ============================================================ */
 
-function ProjectCreationModal({
-  quote,
-  onCancel,
-  onConfirm,
-}) {
-  return (
-    <div className="fixed inset-0 z-[110] flex items-center justify-center bg-[#071a2b]/50 px-4 backdrop-blur-[3px]">
-      <div className="w-full max-w-[500px] rounded-[24px] border border-white/30 bg-white p-6 shadow-[0_35px_100px_rgba(7,26,43,0.25)] sm:p-7">
-        <p className="internal-help-text font-semibold uppercase tracking-[0.14em] text-[#5681a0]">
-          Iniciar execução
-        </p>
-
-        <h2 className="mt-2 text-xl font-semibold tracking-[-0.03em] text-[#17394f]">
-          Criar projeto a partir do orçamento aceito?
-        </h2>
-
-        <p className="mt-3 text-sm leading-6 text-[#708795]">
-          O orçamento{" "}
-          <strong className="font-semibold text-[#31566d]">
-            {
-              quote.id
-            }
-          </strong>{" "}
-          será utilizado como origem comercial do projeto de{" "}
-          <strong className="font-semibold text-[#31566d]">
-            {
-              quote.service
-            }
-          </strong>
-          .
-        </p>
-
-        <div className="mt-5 rounded-[14px] border border-[#d7e4ea] bg-[#f5f9fb] p-4">
-          <p className="text-xs font-semibold text-[#31566d]">
-            {
-              quote.company
-            }
-          </p>
-
-          <p className="mt-1 internal-field-label leading-5 text-[#7c909b]">
-            A estimativa deste orçamento deverá ser preservada para futura comparação com a execução real.
-          </p>
-        </div>
-
-        <div className="mt-6 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
-          <button
-            type="button"
-            onClick={
-              onCancel
-            }
-            className="rounded-[11px] border border-[#d0dce3] bg-white px-5 py-3 internal-field-label font-semibold uppercase tracking-[0.08em] text-[#607989]"
-          >
-            Cancelar
-          </button>
-
-          <button
-            type="button"
-            onClick={
-              onConfirm
-            }
-            className="rounded-[11px] bg-[#096ab2] px-5 py-3 internal-field-label font-semibold uppercase tracking-[0.08em] text-white"
-          >
-            Criar projeto
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/* ============================================================
- * HISTÓRICO
- * ============================================================ */
 
 function QuoteHistoryItem({
   item,
@@ -1145,38 +972,6 @@ function QuoteHistoryItem({
  * COMPONENTES MENORES
  * ============================================================ */
 
-function SourceBadge({
-  source,
-}) {
-  const real =
-    source ===
-    "real";
-
-  return (
-    <span
-      className={`
-        rounded-full
-        border
-        px-2.5
-        py-1
-        text-[8px]
-        font-semibold
-        uppercase
-        tracking-[0.08em]
-
-        ${
-          real
-            ? "border-[#bdd8c7] bg-[#edf7f1] text-[#4c7b5e]"
-            : "border-[#d7caa9] bg-[#f8f2e5] text-[#876e36]"
-        }
-      `}
-    >
-      {real
-        ? "Base real"
-        : "Demonstração"}
-    </span>
-  );
-}
 
 function PricingInsight({
   insight,

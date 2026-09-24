@@ -1,7 +1,9 @@
+import { getEquipmentLabel, getEquipmentRequirement } from "../data/serviceCatalog";
 import { getQuotePieces, groupQuoteItems } from "./quotePieceService";
 import { getQuoteItemService } from "./quoteItemService";
 import { getMachineCostKnowledge } from "../data/internal/pricingKnowledge";
 const text = value => typeof value === "string" ? value : "";
+const equipmentName = machineId => getMachineCostKnowledge(machineId)?.name || machineId;
 function commercialServiceName(item, piece) {
   const service = getQuoteItemService(item.serviceId);
   // Retira somente o prefixo gerado pelo fluxo antigo; nomes manuais são preservados.
@@ -34,7 +36,7 @@ export function createCommercialDraft(quote, previous) {
     sections: Object.fromEntries(Object.keys(proposalSections).map(key => [key, previous?.sections?.[key] ?? !["photos", "files", "technology"].includes(key)])),
     investmentDisplay: previous?.investmentDisplay ?? "hours",
     selectedMedia: previous?.selectedMedia ?? [],
-    content: { scope: text(quote.scope), technology: text(quote.commercialTechnology) || text(getMachineCostKnowledge(quote.machineId)?.name), deadline: `${quote.deadlineDays ?? "—"} dias`, validity: `${quote.validityDays ?? "—"} dias`, terms: text(quote.commercialTerms), notes: text(quote.commercialNotes) },
+    content: { scope: text(quote.scope), technology: text(quote.commercialTechnology) || getEquipmentLabel(quote.serviceId, equipmentName(quote.machineId)), deadline: `${quote.deadlineDays ?? "—"} dias`, validity: `${quote.validityDays ?? "—"} dias`, terms: text(quote.commercialTerms), notes: text(quote.commercialNotes) },
     updatedAt: new Date().toISOString(),
   };
 }
@@ -50,7 +52,7 @@ export function buildCommercialProposalSnapshot(quote, draft = createCommercialD
       name: commercialServiceName(item, group.piece),
       subtotal: Number(item.subtotal) || 0,
       ...(detailed ? { quotedHours: item.quotedHours } : {}),
-      ...(draft.sections.technology && getMachineCostKnowledge(item.machineId)?.name ? { equipment: getMachineCostKnowledge(item.machineId).name } : {}),
+      ...(draft.sections.technology ? { equipment: getEquipmentLabel(item.serviceId, equipmentName(item.machineId || (getEquipmentRequirement(item.serviceId) === "REQUIRED" ? quote.machineId : null))) } : {}),
     })),
     subtotal: group.subtotal,
   })) : [];

@@ -9,3 +9,15 @@ export function validateRequestForQuote(request) {
   if (request?.linkedQuoteId) issues.push({ code: "request.converted", field: "linkedQuoteId", message: `A solicitação já está vinculada a ${request.linkedQuoteId}.` });
   return validationResult(issues);
 }
+
+export function validateRequestAnalysis(analysis, result = "quote-ready") {
+  const issues = [];
+  const required = (field, value, message) => {
+    if (!String(value ?? "").trim()) issues.push({ code: `analysis.${field}`, field, message });
+  };
+  required("summary", analysis.technicalSummary ?? analysis.summary, "Preencha o resumo técnico antes de concluir a análise.");
+  if (result === "waiting-information") required("pendingInformation", analysis.pendingInformation, "Informe quais informações ainda precisam ser recebidas.");
+  if (result === "rejected") required("decisionReason", analysis.decisionReason, "Informe o motivo técnico da recusa.");
+  if (!["quote-ready", "waiting-information", "rejected"].includes(result)) issues.push({ code: "analysis.result", field: "result", message: "Informe o resultado da análise." });
+  return validationResult(issues);
+}

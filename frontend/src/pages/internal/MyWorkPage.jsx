@@ -2,6 +2,7 @@ import {
   useState,
   useEffect,
 } from "react";
+import { ApiState } from "../../components/internal/ApiState";
 
 import {
   useNavigate,
@@ -20,7 +21,8 @@ import {
 } from "../../services/requestService";
 
 import {
-  getRuntimeQuotes,
+  getAllQuotes,
+  isArchivedQuote,
 } from "../../services/quoteService";
 
 import {
@@ -40,12 +42,13 @@ export function MyWorkPage() {
 
   const [data, setData] = useState(null);
   const [loadError, setLoadError] = useState("");
+  const [retry, setRetry] = useState(0);
   useEffect(() => {
     let active = true;
     buildWorkData(currentUser).then((value) => { if (active) setData(value); })
       .catch((error) => { if (active) setLoadError(error.message); });
     return () => { active = false; };
-  }, []);
+  }, [retry]);
 
   const [
     attentionFilter,
@@ -54,8 +57,7 @@ export function MyWorkPage() {
     "all",
   );
 
-  if (loadError) return <p role="alert">{loadError}</p>;
-  if (!data) return <p role="status">Carregando trabalho...</p>;
+  if (loadError || !data) return <ApiState eyebrow="Visão geral" title="Meu trabalho" description="Acompanhe o fluxo do laboratório, suas responsabilidades e as situações que precisam de ação." loading="Carregando trabalho..." error={loadError} onRetry={() => { setLoadError(""); setRetry(value => value + 1); }} />;
 
   const visibleAttention =
     data.work.attentionItems.filter(
@@ -495,11 +497,10 @@ async function buildWorkData(
   const requests =
     await getRequests();
 
-  const quotes =
-    getRuntimeQuotes();
+  const quotes = await getAllQuotes();
 
   const projects =
-    getRuntimeProjects();
+    await getRuntimeProjects();
 
   const work =
     await getCurrentUserWork(
@@ -521,13 +522,7 @@ async function buildWorkData(
   const activeQuotes =
     quotes.filter(
       (quote) =>
-        ![
-          "Aceito",
-          "Recusado",
-          "Cancelado",
-        ].includes(
-          quote.status,
-        ),
+        !isArchivedQuote(quote),
     );
 
   const activeProjects =

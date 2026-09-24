@@ -10,8 +10,8 @@ before(async () => {
   ({ ProposalPreview: Preview } = await server.ssrLoadModule("/src/components/internal/proposal/ProposalPreview.jsx"));
   ({ ProposalConfigPanel: Panel } = await server.ssrLoadModule("/src/components/internal/proposal/ProposalConfigPanel.jsx"));
   layout = await server.ssrLoadModule("/src/components/internal/proposal/proposalDocumentLayout.js");
-  quotes = await server.ssrLoadModule("/src/services/quoteService.js");
-  proposals = await server.ssrLoadModule("/src/services/proposalService.js");
+  quotes = await server.ssrLoadModule("/src/services/demoQuoteService.js");
+  proposals = await server.ssrLoadModule("/src/services/demoProposalService.js");
   commercial = await server.ssrLoadModule("/src/services/commercialProposalService.js");
 });
 after(async () => { await server?.close(); });

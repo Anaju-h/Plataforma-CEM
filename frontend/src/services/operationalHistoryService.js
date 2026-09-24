@@ -6,7 +6,7 @@ import { getArchivedProjects } from "./projectService";
 // Novos tipos (propostas e registros de serviço) poderão adicionar adaptadores.
 const sources = [
   { type: "Solicitação", read: async () => await getArchivedRequests(), route: "solicitacoes", next: record => record.linkedQuoteId },
-  { type: "Orçamento", read: async () => getArchivedQuotes(), route: "orcamentos", next: record => record.projectId },
+  { type: "Orçamento", read: getArchivedQuotes, route: "orcamentos", next: record => record.projectId },
   { type: "Projeto", read: async () => getArchivedProjects(), route: "projetos", next: () => null },
 ];
 

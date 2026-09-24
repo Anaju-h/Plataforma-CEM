@@ -9,6 +9,9 @@ import java.util.List;
 @Path("/api/requests") @Produces(MediaType.APPLICATION_JSON)
 public class RequestResource {
   @Inject RequestService service;
+  @Inject br.org.senai.lab.service.QuoteService quotes;
+  @POST @Path("/{id}/quote") @Consumes(MediaType.APPLICATION_JSON)
+  public java.util.Map<String,Object> quote(@PathParam("id") String id,@Valid br.org.senai.lab.dto.QuoteDtos.Create dto){return quotes.create(id,dto);}
   @GET public List<Response> list(){return service.list();}
   @GET @Path("/{id}") public Response get(@PathParam("id") String id){return service.get(id);}
   @POST @Consumes(MediaType.APPLICATION_JSON) public jakarta.ws.rs.core.Response create(@Valid Create dto){Response r=service.create(dto);return jakarta.ws.rs.core.Response.status(201).entity(r).build();}

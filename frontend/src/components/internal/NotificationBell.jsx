@@ -165,8 +165,8 @@ export function NotificationBell() {
     );
   }
 
-  function handleMarkAllRead() {
-    markAllNotificationsAsRead(
+  async function handleMarkAllRead() {
+    await markAllNotificationsAsRead(
       currentUser,
     );
 

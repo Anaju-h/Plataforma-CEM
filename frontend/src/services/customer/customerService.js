@@ -1,5 +1,5 @@
-import { getCustomerAcceptedProposals } from "../proposalService";
-import { getRuntimeProjectById } from "../projectService";
+import { getCustomerAcceptedProposals } from "../demoProposalService";
+import { getRuntimeProjectById } from "../demoProjectService";
 const customer = {
   id: "CUS-001",
   company: {

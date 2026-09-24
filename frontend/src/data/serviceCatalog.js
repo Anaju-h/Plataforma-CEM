@@ -30,6 +30,7 @@ export const commercialServiceOrder = [
 export const serviceCatalog = {
   dimensional: {
     id: "dimensional",
+    equipmentRequirement: "REQUIRED",
     name: "Metrologia e inspeção dimensional",
     shortName: "Metrologia",
     userFacingTitle: "Conferir medidas, geometria ou tolerâncias",
@@ -45,6 +46,7 @@ export const serviceCatalog = {
 
   scan: {
     id: "scan",
+    equipmentRequirement: "REQUIRED",
     name: "Escaneamento e digitalização 3D",
     shortName: "Digitalização",
     userFacingTitle: "Digitalizar ou comparar uma peça em 3D",
@@ -60,6 +62,7 @@ export const serviceCatalog = {
 
   "reverse-engineering": {
     id: "reverse-engineering",
+    equipmentRequirement: "OPTIONAL",
     name: "Engenharia reversa e desenvolvimento",
     shortName: "Engenharia reversa",
     userFacingTitle: "Reconstruir, desenvolver ou nacionalizar um componente",
@@ -75,6 +78,7 @@ export const serviceCatalog = {
 
   internal: {
     id: "internal",
+    equipmentRequirement: "REQUIRED",
     name: "Tomografia industrial",
     shortName: "Tomografia",
     userFacingTitle: "Investigar o interior da peça",
@@ -90,6 +94,7 @@ export const serviceCatalog = {
 
   "failure-analysis": {
     id: "failure-analysis",
+    equipmentRequirement: "OPTIONAL",
     name: "Análise de falhas, quebras, anomalias ou desgaste",
     shortName: "Análise de falhas",
     description:
@@ -102,6 +107,7 @@ export const serviceCatalog = {
 
   "asset-structure": {
     id: "asset-structure",
+    equipmentRequirement: "NOT_APPLICABLE",
     name: "Gestão técnica de ativos e peças críticas",
     shortName: "Gestão de ativos",
     description:
@@ -114,6 +120,7 @@ export const serviceCatalog = {
 
   "digital-library": {
     id: "digital-library",
+    equipmentRequirement: "OPTIONAL",
     name: "Biblioteca digital e almoxarifado virtual",
     shortName: "Biblioteca digital",
     description:
@@ -126,6 +133,7 @@ export const serviceCatalog = {
 
   maintenance: {
     id: "maintenance",
+    equipmentRequirement: "OPTIONAL",
     name: "Planos de manutenção e lubrificação",
     shortName: "Manutenção e lubrificação",
     description:
@@ -138,6 +146,7 @@ export const serviceCatalog = {
 
   training: {
     id: "training",
+    equipmentRequirement: "OPTIONAL",
     name: "Treinamento técnico",
     shortName: "Treinamento",
     description:
@@ -261,4 +270,21 @@ function normalizeKey(value) {
     .replace(/[^a-z0-9-]+/g, " ")
     .replace(/\s+/g, " ")
     .trim();
+}
+export function getEquipmentRequirement(serviceId) {
+  return getService(serviceId)?.equipmentRequirement ?? "REQUIRED";
+}
+export function getEquipmentLabel(serviceId, machineName) {
+  return machineName || (getEquipmentRequirement(serviceId) === "NOT_APPLICABLE"
+    ? "Não se aplica" : getEquipmentRequirement(serviceId) === "OPTIONAL"
+      ? "Sem equipamento específico" : "Tecnologia a definir");
+}
+export function requiresQuoteEquipment(quote) {
+  return getQuoteEquipmentRequirement(quote) === "REQUIRED";
+}
+export function getQuoteEquipmentRequirement(quote) {
+  const requirements = [quote.serviceId, ...(quote.services ?? []), ...(quote.items ?? []).map(item => item.serviceId)]
+    .filter(Boolean).map(getEquipmentRequirement);
+  if (!requirements.length || requirements.includes("REQUIRED")) return "REQUIRED";
+  return requirements.includes("OPTIONAL") ? "OPTIONAL" : "NOT_APPLICABLE";
 }

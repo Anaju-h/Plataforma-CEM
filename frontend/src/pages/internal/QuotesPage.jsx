@@ -1,7 +1,9 @@
 import {
   useMemo,
+  useEffect,
   useState,
 } from "react";
+import { ApiState } from "../../components/internal/ApiState";
 
 import {
   useNavigate,
@@ -22,8 +24,9 @@ import {
 import {
   getActiveQuotes,
   isArchivedQuote,
+  quoteStatuses,
 } from "../../services/quoteService";
-import { quoteStatuses } from "../../data/internal/quotes";
+
 
 
 export function QuotesPage() {
@@ -42,8 +45,17 @@ export function QuotesPage() {
     "Todos",
   );
 
-  const runtimeQuotes =
-    getActiveQuotes();
+  const [quotes, setQuotes] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [retry, setRetry] = useState(0);
+  useEffect(() => {
+    let active = true;
+    getActiveQuotes().then(data => { if (active) setQuotes(data); })
+      .catch(cause => { if (active) setError(cause.message); })
+      .finally(() => { if (active) setLoading(false); });
+    return () => { active = false; };
+  }, [retry]);
 
   const filteredQuotes =
     useMemo(
@@ -53,7 +65,7 @@ export function QuotesPage() {
             .trim()
             .toLowerCase();
 
-        return runtimeQuotes.filter(
+        return quotes.filter(
           (
             quote,
           ) => {
@@ -97,7 +109,7 @@ export function QuotesPage() {
         );
       },
       [
-        runtimeQuotes,
+        quotes,
         search,
         status,
       ],
@@ -107,7 +119,7 @@ export function QuotesPage() {
     useMemo(
       () => {
         const active =
-          runtimeQuotes;
+          quotes;
 
         return {
           active:
@@ -139,7 +151,7 @@ export function QuotesPage() {
             ).length,
 
           accepted:
-            runtimeQuotes.filter(
+            quotes.filter(
               (quote) =>
                 quote.status ===
                 "Aceito",
@@ -147,7 +159,7 @@ export function QuotesPage() {
         };
       },
       [
-        runtimeQuotes,
+        quotes,
       ],
     );
 
@@ -157,6 +169,7 @@ export function QuotesPage() {
     );
   }
 
+  if (loading || error) return <ApiState eyebrow="Operação" title="Orçamentos" description="Elabore, revise e acompanhe propostas geradas a partir de solicitações tecnicamente aprovadas." loading="Carregando orçamentos..." error={error} onRetry={() => { setError(""); setLoading(true); setRetry(value => value + 1); }} />;
   return (
     <div className="mx-auto w-full max-w-[1500px]">
       <InternalPageHeader
@@ -233,7 +246,7 @@ export function QuotesPage() {
           value={
             summary.accepted
           }
-          description="Podem virar projeto"
+          description="Aceite registrado"
         />
       </div>
 
@@ -391,12 +404,6 @@ function QuoteRow({
               quote.id
             }
           </p>
-
-          <SourceBadge
-            source={
-              quote.source
-            }
-          />
         </div>
 
         <p className="internal-help-text mt-1 text-[#526d7c]">
@@ -490,38 +497,6 @@ function SummaryCard({
   );
 }
 
-function SourceBadge({
-  source,
-}) {
-  const isReal =
-    source ===
-    "real";
-
-  return (
-    <span
-      className={`internal-eyebrow 
-        rounded-full
-        border
-        px-2
-        py-0.5
-        
-        font-semibold
-        uppercase
-        
-
-        ${
-          isReal
-            ? "border-[#bdd8c7] bg-[#edf7f1] text-[#4c7b5e]"
-            : "border-[#d7caa9] bg-[#f8f2e5] text-[#876e36]"
-        }
-      `}
-    >
-      {isReal
-        ? "Real"
-        : "Demo"}
-    </span>
-  );
-}
 
 function formatCurrency(
   value,

@@ -1,4 +1,6 @@
+import { ApiState } from "../../components/internal/ApiState";
 import {
+  useEffect,
   useMemo,
   useState,
 } from "react";
@@ -38,8 +40,17 @@ export function ProjectsPage() {
     setStatus,
   ] = useState("Todos");
 
-  const runtimeProjects =
-    getActiveProjects();
+  const [runtimeProjects, setProjects] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [retry, setRetry] = useState(0);
+  useEffect(() => {
+    let active = true;
+    getActiveProjects().then(value => { if (active) setProjects(value); })
+      .catch(reason => { if (active) setError(reason.message); })
+      .finally(() => { if (active) setLoading(false); });
+    return () => { active = false; };
+  }, [retry]);
 
   const filteredProjects =
     useMemo(() => {
@@ -85,6 +96,7 @@ export function ProjectsPage() {
       status,
     ]);
 
+  if (loading || error) return <ApiState title="Projetos" loading="Carregando projetos..." error={error} onRetry={() => { setLoading(true); setError(""); setRetry(value => value + 1); }} />;
   return (
     <div className="mx-auto max-w-[1500px]">
       <InternalPageHeader

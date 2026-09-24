@@ -1,12 +1,12 @@
 import { futureAccessProfiles } from "../data/internal/team";
 import { getCurrentTeamMembers, getUserAssignmentName } from "./currentUserService";
 import { getRuntimeProjects, isArchivedProject } from "./projectService";
-import { getRuntimeQuotes, isArchivedQuote } from "./quoteService";
+import { getAllQuotes, isArchivedQuote } from "./quoteService";
 import { getActiveRequests } from "./requestService";
 
 export async function getTeamOverview() {
-  const projects = getRuntimeProjects();
-  const quotes = getRuntimeQuotes();
+  const projects = await getRuntimeProjects();
+  const quotes = await getAllQuotes();
   const requests = await getActiveRequests();
   const members = getCurrentTeamMembers().map(member => {
     const assigned = record => record.responsibleId ? record.responsibleId === member.id : record.responsible === getUserAssignmentName(member.id);

@@ -225,7 +225,6 @@ function KnowledgeCard({
           </p>
         </div>
 
-        <span className="internal-help-text text-[#806b3d]">Referência demo · uso interno</span>
       <KnowledgeStatusBadge
           status={
             item.status

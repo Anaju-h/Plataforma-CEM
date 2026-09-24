@@ -1,0 +1,42 @@
+package br.org.senai.lab.entity;
+import jakarta.persistence.*;
+import java.time.LocalDateTime;
+import java.math.BigDecimal;
+import java.util.*;
+@Entity @Table(name="lab_quote")
+public class QuoteEntity {
+  @Id public UUID id;
+  @Column(name="quote_code",length=40) public String quoteCode;
+  @Column(name="company",length=250) public String company;
+  @Column(name="contact",length=250) public String contact;
+  @Column(name="email",length=320) public String email;
+  @Column(name="phone",length=60) public String phone;
+  @Column(name="request_need_id",length=80) public String requestNeedId;
+  @Column(name="request_origin",length=40) public String requestOrigin;
+  @Column(name="request_channel",length=120) public String requestChannel;
+  @Column(name="status",length=60) public String status;
+  @Column(name="priority",length=40) public String priority;
+  @Column(name="responsible",length=200) public String responsible;
+  @Column(name="service_id",length=80) public String serviceId;
+  @Column(name="machine_id",length=250) public String machineId;
+  @Column(name="scope",columnDefinition="nvarchar(max)") public String scope;
+  @Column(name="objective",columnDefinition="nvarchar(max)") public String objective;
+  @Column(name="comments",columnDefinition="nvarchar(max)") public String comments;
+  @Column(name="internal_notes",columnDefinition="nvarchar(max)") public String internalNotes;
+  @Column(name="technical_summary",columnDefinition="nvarchar(max)") public String technicalSummary;
+  @Column(name="complexity",length=100) public String complexity;
+  @Column(name="estimate_justification",columnDefinition="nvarchar(max)") public String estimateJustification;
+  @Column(name="commercial_notes",columnDefinition="nvarchar(max)") public String commercialNotes;
+  @Column(name="deadline_days") public Integer deadlineDays;
+  @Column(name="validity_days") public Integer validityDays;
+  @Column(name="internal_cost",precision=19,scale=4) public BigDecimal internalCost;
+  @Column(name="created_at") public LocalDateTime createdAt;
+  @Column(name="updated_at") public LocalDateTime updatedAt;
+  @Column(name="revision") public long revision;
+  @ManyToOne(fetch=FetchType.LAZY) @JoinColumn(name="request_id",nullable=false) public RequestEntity request;
+  @ElementCollection @CollectionTable(name="quote_service",joinColumns=@JoinColumn(name="quote_id")) @Column(name="service_id") public Set<String> services=new LinkedHashSet<>();
+  @OneToMany(mappedBy="quote",cascade=CascadeType.ALL,orphanRemoval=true) @OrderBy("position ASC") public List<QuotePieceEntity> pieces=new ArrayList<>();
+  @OneToMany(mappedBy="quote",cascade=CascadeType.ALL,orphanRemoval=true) @OrderBy("position ASC") public List<QuoteItemEntity> items=new ArrayList<>();
+  @OneToMany(mappedBy="quote",cascade=CascadeType.ALL) @OrderBy("occurredAt ASC") public List<QuoteHistoryEntity> history=new ArrayList<>();
+  @OneToOne(mappedBy="quote",cascade=CascadeType.ALL) public QuoteProposalEntity proposal;
+}

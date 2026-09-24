@@ -38,7 +38,7 @@ export function CommercialRateSettings({ onSaved } = {}) {
         Itens existentes mantêm a referência capturada. O responsável pode escolher valores acima ou abaixo dela, com justificativa opcional.
       </p>
       <p className="internal-help-text mt-2 text-[#607989]">
-        Demo: alterações e histórico ficam em memória e são reiniciados ao recarregar a página.
+        Alterações e histórico ficam em memória e são reiniciados ao recarregar a página.
       </p>
       <form onSubmit={save} className="mt-4 flex flex-wrap items-end gap-3">
         <label className="internal-field-label text-[#31566d]">

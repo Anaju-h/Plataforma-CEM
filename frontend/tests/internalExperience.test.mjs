@@ -9,7 +9,7 @@ let server, administration, quotes, knowledge, TeamPage, AdministrationPage, Kno
 before(async () => {
   server = await createServer({ server: { middlewareMode: true, watch: null, hmr: false, ws: false }, appType: "custom" });
   administration = await server.ssrLoadModule("/src/services/administrationService.js");
-  quotes = await server.ssrLoadModule("/src/services/quoteService.js");
+  quotes = await server.ssrLoadModule("/src/services/demoQuoteService.js");
   knowledge = await server.ssrLoadModule("/src/data/internal/knowledge.js");
   ({ TeamPage } = await server.ssrLoadModule("/src/pages/internal/TeamPage.jsx"));
   ({ AdministrationPage } = await server.ssrLoadModule("/src/pages/internal/AdministrationPage.jsx"));
@@ -21,8 +21,7 @@ const render = Page => renderToString(createElement(MemoryRouter, null, createEl
 
 test("Equipe e Administração apresentam somente o perfil e controles existentes", () => {
   const team = render(TeamPage);
-  assert.match(team, /Administrador/);
-  assert.match(team, /Acessar meu trabalho/);
+  assert.match(team, /Carregando equipe/);
   assert.doesNotMatch(team, /Adicionar membro|Editar|Perfis futuros|Perfis previstos|em validação|A definir/i);
   const admin = render(AdministrationPage);
   assert.match(admin, /Salvar padrões/);
@@ -66,7 +65,7 @@ test("Conhecimento mantém apenas a referência econômica identificada, sem cat
   assert.equal(item.lastReview, null);
   const html = render(KnowledgePage);
   assert.match(html, /Referência de custos por equipamento/);
-  assert.match(html, /Referência demo/);
+  assert.doesNotMatch(html, /Referência demo/);
   assert.doesNotMatch(html, /Novo conteúdo|Quando considerar o ZEISS O-INSPECT|software|Diferenças iniciais entre ATOS/);
 });
 
@@ -76,6 +75,7 @@ test("Histórico conserva os filtros e acesso aos registros sem o aviso redundan
   assert.match(html, /Tipo de registro/);
   assert.match(html, /Status final/);
   assert.equal((html.match(/type="date"/g) ?? []).length, 2);
-  assert.match(html, /Visualizar/);
+  assert.match(html, /Carregando histórico/);
+  assert.doesNotMatch(html, /Nenhum registro encontrado/);
   assert.doesNotMatch(html, /Fila ativa/);
 });

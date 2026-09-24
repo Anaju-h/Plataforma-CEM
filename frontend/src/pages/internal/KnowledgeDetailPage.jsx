@@ -91,7 +91,6 @@ export function KnowledgeDetailPage() {
               />
             </div>
 
-            {item.isDemo && <p className="internal-help-text mt-4 text-[#806b3d]">Referência demo · uso interno. Não é um caso de serviço formalizado e não alimenta recomendações reais.</p>}
             <p className="mt-5 max-w-3xl text-sm leading-7 text-[#667f8f]">
               {item.summary}
             </p>

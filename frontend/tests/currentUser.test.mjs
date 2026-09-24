@@ -6,16 +6,18 @@ import { renderToString } from "react-dom/server";
 import { MemoryRouter } from "react-router-dom";
 
 let server, users, team;
+const originalFetch = globalThis.fetch;
 before(async () => {
+  globalThis.fetch = async () => Response.json([]);
   server = await createServer({ server: { middlewareMode: true, watch: null, hmr: false, ws: false }, appType: "custom" });
   users = await server.ssrLoadModule("/src/services/currentUserService.js");
   team = await server.ssrLoadModule("/src/services/teamService.js");
 });
-after(async () => { await server?.close(); });
+after(async () => { globalThis.fetch = originalFetch; await server?.close(); });
 
 test("editar conta notifica consumidores sem alterar perfil ou atribuições", async () => {
   const original = users.getCurrentUser();
-  const workload = team.getTeamOverview().members[0].workload;
+  const workload = (await team.getTeamOverview()).members[0].workload;
   let updates = 0;
   const unsubscribe = users.subscribeCurrentUser(() => updates++);
   try {
@@ -32,7 +34,7 @@ test("editar conta notifica consumidores sem alterar perfil ou atribuições", a
     assert.equal(updates, 1);
     assert.equal(users.updateCurrentUser(saved), saved);
     assert.equal(updates, 1);
-    assert.deepEqual(team.getTeamOverview().members[0].workload, workload);
+    assert.deepEqual((await team.getTeamOverview()).members[0].workload, workload);
     assert.equal(users.getCurrentTeamMembers()[0], saved);
     for (const [path, exported] of [
       ["components/internal/InternalHeader", "InternalHeader"],
@@ -42,6 +44,7 @@ test("editar conta notifica consumidores sem alterar perfil ou atribuições", a
     ]) {
       const module = await server.ssrLoadModule(`/src/${path}.jsx`);
       const html = renderToString(createElement(MemoryRouter, null, createElement(module[exported])));
+      if (exported === "TeamPage") { assert.match(html, /Carregando equipe/); continue; }
       assert.match(html, /Ana Teste/, path);
       if (exported === "InternalSidebar") assert.match(html, /aria-label="Minha Conta"/);
       else if (exported !== "InternalAccountPage") assert.match(html, /href="\/portal\/conta"/);

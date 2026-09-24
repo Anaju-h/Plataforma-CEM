@@ -7,8 +7,8 @@ import {
 } from "./projectService";
 
 import {
-  getQuoteByRequestId,
-  getRuntimeQuotes,
+  getAllQuotes,
+  isArchivedQuote,
 } from "./quoteService";
 
 import {
@@ -44,11 +44,10 @@ export async function getCurrentUserWork(
   const requests =
     await getRequests();
 
-  const quotes =
-    getRuntimeQuotes();
+  const quotes = await getAllQuotes();
 
   const projects =
-    getRuntimeProjects();
+    await getRuntimeProjects();
 
   const rules =
     getAttentionRules();
@@ -100,13 +99,7 @@ export async function getCurrentUserWork(
   const activeQuotes =
     assignedQuotes.filter(
       (quote) =>
-        ![
-          "Aceito",
-          "Recusado",
-          "Cancelado",
-        ].includes(
-          quote.status,
-        ),
+        !isArchivedQuote(quote),
     );
 
   /*
@@ -240,10 +233,7 @@ function buildRequestAttentionItems(
         request.status ===
         "Apta para orçamento"
       ) {
-        const existingQuote =
-          getQuoteByRequestId(
-            request.id,
-          );
+        const existingQuote = request.linkedQuoteId;
 
         if (existingQuote) {
           return [];

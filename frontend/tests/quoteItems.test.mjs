@@ -8,10 +8,10 @@ import { MemoryRouter, Routes, Route } from "react-router-dom";
 let server, quotes, pricing, items, projects, requests, QuoteDetailPage;
 before(async () => {
   server = await createServer({ server: { middlewareMode: true, watch: null, hmr: false, ws: false }, appType: "custom" });
-  quotes = await server.ssrLoadModule("/src/services/quoteService.js");
+  quotes = await server.ssrLoadModule("/src/services/demoQuoteService.js");
   pricing = await server.ssrLoadModule("/src/services/pricingService.js");
   items = await server.ssrLoadModule("/src/services/quoteItemService.js");
-  projects = await server.ssrLoadModule("/src/services/projectService.js");
+  projects = await server.ssrLoadModule("/src/services/demoProjectService.js");
   requests = await server.ssrLoadModule("/src/data/internal/requests.js");
   ({ QuoteDetailPage } = await server.ssrLoadModule("/src/pages/internal/QuoteDetailPage.jsx"));
 });
@@ -153,7 +153,7 @@ test("SOL → ORC usa peças e serviços sem inventar horas, custos ou escolhas 
   assert.equal(quotes.createQuoteFromRequest(request).created, false);
   assert.throws(() => quotes.createQuoteFromRequest(createRequest({ id: "SOL-INAPTA", status: "Nova" })), /apta/);
   assert.equal(quotes.createQuoteFromRequest(createRequest({ id: "SOL-EMPTY", service: "" })).quote.items.length, 0);
-  assert.match(renderQuote(quote.id), /Composição do orçamento/);
+  assert.match(renderQuote(quote.id), /Carregando orçamento/);
 });
 
 test("SOL demo apta continua convertendo e vinculando ORC", () => {
@@ -165,14 +165,14 @@ test("SOL demo apta continua convertendo e vinculando ORC", () => {
   assert.equal(quotes.getQuoteByRequestId(request.id).id, result.quote.id);
 });
 
-test("todos os ORCs demo renderizam, preservam valores e continuam compatíveis com Projetos", () => {
+test("ORCs demo preservam valores para Projetos e não preenchem a rota real", () => {
   const expected = { "ORC-0012": 1500, "ORC-0013": 0, "ORC-0011": 3450, "ORC-0010": 0 };
   for (const quote of quotes.getRuntimeQuotes()) {
     assert.equal(quote.proposedValue, expected[quote.id]);
     assert.equal(quote.items[0].isDemoCompatibility, true);
     assert.equal(quote.source, "demo");
-    assert.match(renderQuote(quote.id), /Composição do orçamento/);
-    assert.match(renderQuote(quote.id), /compatibilidade demo/);
+    assert.match(renderQuote(quote.id), /Carregando orçamento/);
+    assert.doesNotMatch(renderQuote(quote.id), /compatibilidade demo/);
   }
   const legacy = quotes.getRuntimeQuoteById("ORC-0010");
   assert.equal(legacy.legacyEstimate.billableHours, 0);
@@ -182,7 +182,7 @@ test("todos os ORCs demo renderizam, preservam valores e continuam compatíveis 
   assert.equal(legacy.items[0].quotedHours, null);
   assert.equal(legacy.items[0].technicalHours, null);
   assert.deepEqual(items.validateQuoteItem(legacy.items[0]), []);
-  assert.match(renderQuote(legacy.id), /6.800,00/);
+  assert.doesNotMatch(renderQuote(legacy.id), /6.800,00/);
   assert.doesNotMatch(renderQuote(legacy.id), /45,33/);
   assert.throws(() => projects.createProjectFromQuote("ORC-0012"), /proposta aceita/);
   assert.equal(quotes.getRuntimeQuoteById("ORC-0012").proposedValue, 1500);

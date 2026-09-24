@@ -1,4 +1,11 @@
 import { proposalSections } from "../../../services/commercialProposalService";
+import { useState } from "react";
+
+function CommercialNote({ value, disabled, onSave, onPreview }) {
+  const [text, setText] = useState(value ?? "");
+  return <textarea id="proposal-commercial-note" aria-label="Observação no documento" rows={2} readOnly={disabled} value={text} placeholder="Observação destinada ao cliente"
+    onChange={event => { setText(event.target.value); onPreview?.(event.target.value); }} onBlur={event => { if (event.currentTarget.value !== (value ?? "")) onSave(event.currentTarget.value); }} />;
+}
 
 function Choice({ label, summary, selected, disabled, onClick, radio = false }) {
   return <button type="button" role={radio ? "radio" : "checkbox"} aria-checked={selected} disabled={disabled} onClick={onClick} className={"proposal-choice" + (selected ? " is-selected" : "")}>
@@ -8,7 +15,7 @@ function Choice({ label, summary, selected, disabled, onClick, radio = false }) 
   </button>;
 }
 
-export function ProposalConfigPanel({ configuration, media, disabled, onSave, readOnly = false, overflow }) {
+export function ProposalConfigPanel({ configuration, media, disabled, onSave, onNotePreview, readOnly = false, overflow }) {
   const { sections, content, investmentDisplay, selectedMedia } = configuration;
   const labels = { items: "Serviços", notes: "Observação comercial", files: "Arquivos / referências" };
   const options = [
@@ -25,7 +32,7 @@ export function ProposalConfigPanel({ configuration, media, disabled, onSave, re
         const available = isMedia ? media.filter(item => item.type === (key === "photos" ? "photo" : "file")) : [];
         return <div key={key}>
           <Choice label={labels[key] ?? originalLabel} summary={["deadline", "validity"].includes(key) ? content[key] : null} selected={sections[key]} disabled={disabled} onClick={() => onSave({ sections: { ...sections, [key]: !sections[key] } })} />
-          {sections[key] && key === "notes" && <div className="proposal-note"><textarea id="proposal-commercial-note" aria-label="Observação no documento" rows={2} readOnly={disabled} value={content.notes} placeholder="Observação destinada ao cliente" onChange={event => onSave({ content: { ...content, notes: event.target.value } })} /></div>}
+          {sections[key] && key === "notes" && <div className="proposal-note"><CommercialNote key={content.notes} value={content.notes} disabled={disabled} onPreview={onNotePreview} onSave={notes => onSave({ content: { ...content, notes } })} /></div>}
           {sections[key] && isMedia && available.length > 0 && <div className="proposal-media-options">{available.map(item => <Choice key={item.id} label={item.name} selected={selectedMedia.includes(item.id)} disabled={disabled} onClick={() => onSave({ selectedMedia: selectedMedia.includes(item.id) ? selectedMedia.filter(id => id !== item.id) : [...selectedMedia, item.id] })} />)}</div>}
         </div>;
       })}

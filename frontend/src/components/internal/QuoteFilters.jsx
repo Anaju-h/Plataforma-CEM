@@ -1,6 +1,6 @@
 import {
   quoteStatuses,
-} from "../../data/internal/quotes";
+} from "../../services/quoteService";
 
 export function QuoteFilters({
   search,

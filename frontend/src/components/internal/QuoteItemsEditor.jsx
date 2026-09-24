@@ -1,3 +1,4 @@
+import { getEquipmentRequirement } from "../../data/serviceCatalog";
 import { groupQuoteItems } from "../../services/quotePieceService";
 import { RequestDetailSection } from "./RequestDetailSection";
 import { FieldIssue } from "./ValidationFeedback";
@@ -52,6 +53,7 @@ export function QuoteItemsEditor({
           ? {
               ...item,
               [field]: value,
+              ...(field === "serviceId" && getEquipmentRequirement(value) === "NOT_APPLICABLE" ? { machineId: null } : {}),
             }
           : item,
       ),
@@ -146,13 +148,6 @@ export function QuoteItemsEditor({
                     Serviço {index + 1}
                   </legend>
 
-                  {item.isDemoCompatibility && (
-                    <p className="internal-help-text mb-3 text-[#806b3d]">
-                      Compatibilidade demo: horas desconhecidas permanecem não
-                      informadas. Dados demo não alimentam recomendações reais.
-                    </p>
-                  )}
-
                   {!group.piece && pieces.length > 0 && (
                     <label className="internal-field-label text-[#607989]">
                       Peça vinculada
@@ -240,7 +235,7 @@ export function QuoteItemsEditor({
                         }
                       >
                         <option value="">
-                          Não definido / não se aplica
+                          {getEquipmentRequirement(item.serviceId) === "NOT_APPLICABLE" ? "Não se aplica" : getEquipmentRequirement(item.serviceId) === "REQUIRED" ? "Usar tecnologia de referência" : "Sem equipamento específico / Não se aplica"}
                         </option>
 
                         {quoteItemServices.map(service => (
@@ -260,6 +255,7 @@ export function QuoteItemsEditor({
                       <select
                         className={inputClass}
                         value={item.machineId ?? ""}
+                        disabled={getEquipmentRequirement(item.serviceId) === "NOT_APPLICABLE"}
                         onChange={event =>
                           change(
                             item.id,
@@ -366,7 +362,7 @@ export function QuoteItemsEditor({
                         <textarea
                           rows={2}
                           className={inputClass}
-                          value={item.description}
+                          value={item.description ?? ""}
                           onChange={event =>
                             change(
                               item.id,
@@ -430,7 +426,7 @@ export function QuoteItemsEditor({
                         <textarea
                           rows={2}
                           className={inputClass}
-                          value={item.hourlyRateOverrideReason}
+                          value={item.hourlyRateOverrideReason ?? ""}
                           onChange={event =>
                             change(
                               item.id,
