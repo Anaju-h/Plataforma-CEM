@@ -1,3 +1,7 @@
+import { Link } from "react-router-dom";
+import { PublicRequestCreated } from "../quote/PublicRequestCreated";
+import { submitConfiguratorRequest } from "../../services/requestApi";
+import { buildConfiguratorRequest } from "./configuratorSubmission";
 import {
   useEffect,
   useMemo,
@@ -151,6 +155,9 @@ export function Configurator() {
     submitted,
     setSubmitted,
   ] = useState(false);
+
+  const [created, setCreated] = useState(null);
+  const [submitError, setSubmitError] = useState("");
 
   const contentRef =
     useRef(null);
@@ -514,19 +521,25 @@ export function Configurator() {
       true,
     );
 
+    setSubmitError("");
+
     try {
-      await new Promise(
-        (
-          resolve,
-        ) =>
-          window.setTimeout(
-            resolve,
-            500,
+      const result =
+        await submitConfiguratorRequest(
+          buildConfiguratorRequest(
+            state,
+            recommendation,
           ),
-      );
+        );
+
+      setCreated(result);
 
       setSubmitted(
         true,
+      );
+    } catch (error) {
+      setSubmitError(
+        error.message,
       );
     } finally {
       setSubmitting(
@@ -540,6 +553,8 @@ export function Configurator() {
       createConfiguratorState(),
     );
 
+    setCreated(null);
+
     setSubmitted(
       false,
     );
@@ -548,6 +563,18 @@ export function Configurator() {
   /* ==========================================================
    * SUCESSO
    * ========================================================== */
+
+  if (
+    submitted &&
+    created?.kind === "public"
+  ) {
+    return (
+      <section className="relative min-h-screen bg-transparent pb-20 pt-10 sm:pt-12">
+        <ConfiguratorPageBackground />
+        <PublicRequestCreated created={created} />
+      </section>
+    );
+  }
 
   if (
     submitted
@@ -562,25 +589,31 @@ export function Configurator() {
               ✓
             </div>
 
-            <p className="mt-6 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#56809a]">
-              Configuração concluída
+            <p className="mt-6 text-[12px] font-semibold uppercase tracking-[0.14em] text-[#56809a]">
+              Configuração enviada · {created?.id}
             </p>
 
             <h2 className="mt-3 text-[32px] font-semibold tracking-[-0.04em] text-[#071f2d] sm:text-[36px]">
               Projeto preparado para análise.
             </h2>
 
-            <p className="mx-auto mt-4 max-w-[620px] text-[13px] leading-6 text-[#667d8b]">
-              As informações do configurador foram organizadas para apoiar a
-              avaliação da equipe técnica do Centro.
+            <p className="mx-auto mt-4 max-w-[620px] text-[14px] leading-6 text-[#667d8b]">
+              A solicitação {created?.id} foi registrada com a configuração técnica completa. A equipe do
+              Centro fará a análise e você acompanha tudo pela área do cliente.
             </p>
+
+            {created?.kind === "customer" && (
+              <Link to={`/cliente/solicitacoes/${created.id}`} className="mt-6 inline-block rounded-[12px] bg-[#0057b8] px-6 py-3 text-[13px] font-semibold text-white transition-colors hover:bg-[#004a9d]">
+                Acompanhar solicitação →
+              </Link>
+            )}
 
             <button
               type="button"
               onClick={
                 restart
               }
-              className="mt-7 rounded-[12px] border border-[#9fbccc] bg-[#e3eef4]/82 px-6 py-3 text-[12px] font-semibold text-[#3d708e] transition-all hover:border-[#79a9c2] hover:bg-[#d9eaf2]"
+              className="mt-7 rounded-[12px] border border-[#9fbccc] bg-[#e3eef4]/82 px-6 py-3 text-[13px] font-semibold text-[#3d708e] transition-all hover:border-[#79a9c2] hover:bg-[#d9eaf2]"
             >
               Nova configuração
             </button>
@@ -621,6 +654,9 @@ export function Configurator() {
         submitting={
           submitting
         }
+        submitError={
+          submitError
+        }
         onBack={
           goBack
         }
@@ -645,7 +681,7 @@ export function Configurator() {
           <div className="grid gap-5 lg:grid-cols-[0.78fr_1.22fr] lg:items-end lg:gap-10">
             <div>
               <div className="flex items-center gap-3">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#356f9f]">
+                <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-[#356f9f]">
                   Experiência guiada
                 </p>
 
@@ -656,7 +692,7 @@ export function Configurator() {
                 Configure seu projeto.
               </h1>
 
-              <p className="mt-2.5 max-w-[600px] text-[13px] leading-6 text-[#617887] sm:text-[14px]">
+              <p className="mt-2.5 max-w-[600px] text-[14px] leading-6 text-[#617887] sm:text-[15px]">
                 Explore as possibilidades, descreva sua aplicação e construa
                 uma orientação técnica inicial junto com o Centro.
               </p>
@@ -870,7 +906,7 @@ export function Configurator() {
                       onClick={
                         goBack
                       }
-                      className="flex h-[48px] min-w-[112px] items-center justify-center gap-2 rounded-[11px] border border-white/78 bg-white/42 px-4 text-[11px] font-semibold text-[#607b89] transition-all hover:border-[#abc4d0] hover:bg-white/68 hover:text-[#12364e] disabled:cursor-not-allowed disabled:opacity-30 sm:min-w-[128px]"
+                      className="flex h-[48px] min-w-[112px] items-center justify-center gap-2 rounded-[11px] border border-white/78 bg-white/42 px-4 text-[12px] font-semibold text-[#607b89] transition-all hover:border-[#abc4d0] hover:bg-white/68 hover:text-[#12364e] disabled:cursor-not-allowed disabled:opacity-30 sm:min-w-[128px]"
                     >
                       ← Voltar
                     </button>
@@ -885,7 +921,7 @@ export function Configurator() {
                       onClick={
                         goNext
                       }
-                      className="group flex h-[48px] flex-1 items-center justify-center gap-3 rounded-[11px] bg-[#12364e] px-5 text-[12px] font-semibold text-white transition-all duration-300 hover:-translate-y-[1px] hover:bg-[#0d2d41] hover:shadow-[0_12px_25px_rgba(18,54,78,0.15)] disabled:cursor-not-allowed disabled:translate-y-0 disabled:bg-[#d5dfe5] disabled:text-[#8e9da6] disabled:shadow-none"
+                      className="group flex h-[48px] flex-1 items-center justify-center gap-3 rounded-[11px] bg-[#12364e] px-5 text-[13px] font-semibold text-white transition-all duration-300 hover:-translate-y-[1px] hover:bg-[#0d2d41] hover:shadow-[0_12px_25px_rgba(18,54,78,0.15)] disabled:cursor-not-allowed disabled:translate-y-0 disabled:bg-[#d5dfe5] disabled:text-[#8e9da6] disabled:shadow-none"
                     >
                       {state.currentStep ===
                       7
@@ -901,7 +937,7 @@ export function Configurator() {
                   {!canContinueCurrentStep(
                     state,
                   ) && (
-                    <p className="mt-2.5 text-center text-[11px] leading-5 text-[#83949e]">
+                    <p className="mt-2.5 text-center text-[12px] leading-5 text-[#83949e]">
                       {getValidationMessage(
                         state,
                       )}
@@ -929,6 +965,7 @@ function FinalStepLayout({
   onStateChange,
   onSubmit,
   submitting,
+  submitError,
   onBack,
 }) {
   return (
@@ -939,7 +976,7 @@ function FinalStepLayout({
         <div className="mx-auto max-w-[1520px] px-5 sm:px-8 lg:px-10">
           <div className="grid gap-4 lg:grid-cols-[0.72fr_1.28fr] lg:items-end lg:gap-10">
             <div>
-              <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#356f9f]">
+              <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-[#356f9f]">
                 Resultado
               </p>
 
@@ -947,7 +984,7 @@ function FinalStepLayout({
                 Sua configuração.
               </h1>
 
-              <p className="mt-2 max-w-[520px] text-[12px] leading-5 text-[#667d8b]">
+              <p className="mt-2 max-w-[520px] text-[13px] leading-5 text-[#667d8b]">
                 Uma orientação inicial construída a partir das informações
                 fornecidas.
               </p>
@@ -1004,7 +1041,7 @@ function FinalStepLayout({
               onClick={
                 onBack
               }
-              className="rounded-[10px] border border-white/78 bg-white/36 px-4 py-2.5 text-[11px] font-semibold text-[#66818f] transition-all hover:border-[#aec5d1] hover:bg-white/64 hover:text-[#12364e]"
+              className="rounded-[10px] border border-white/78 bg-white/36 px-4 py-2.5 text-[12px] font-semibold text-[#66818f] transition-all hover:border-[#aec5d1] hover:bg-white/64 hover:text-[#12364e]"
             >
               ← Voltar e revisar
             </button>
@@ -1023,6 +1060,9 @@ function FinalStepLayout({
               }
               onSubmit={
                 onSubmit
+              }
+              submitError={
+                submitError
               }
               submitting={
                 submitting
@@ -1073,7 +1113,7 @@ function FinalSummary({
   return (
     <div className="flex h-full flex-col rounded-[26px] border border-white/74 bg-white/42 p-6 shadow-[0_24px_70px_rgba(31,68,92,0.09)] backdrop-blur-[18px] sm:p-7">
       <div className="flex items-center gap-3">
-        <span className="rounded-full border border-[#9fc3d5]/74 bg-[#e2eff5]/82 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-[#4c7890]">
+        <span className="rounded-full border border-[#9fc3d5]/74 bg-[#e2eff5]/82 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.12em] text-[#4c7890]">
           Resultado
         </span>
 
@@ -1084,7 +1124,7 @@ function FinalSummary({
         Sua orientação inicial está pronta.
       </h2>
 
-      <p className="mt-3 text-[12px] leading-6 text-[#667f8d]">
+      <p className="mt-3 text-[13px] leading-6 text-[#667f8d]">
         O configurador organizou as informações fornecidas e identificou
         tecnologias com maior aderência ao cenário descrito. A definição final
         continua sujeita à validação da equipe técnica.
@@ -1123,7 +1163,7 @@ function FinalSummary({
       </div>
 
       <div className="mt-4 rounded-[16px] border border-[#bdd3df]/70 bg-[#e8f2f6]/62 p-4">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.11em] text-[#628397]">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.11em] text-[#628397]">
           Tecnologia priorizada
         </p>
 
@@ -1145,20 +1185,20 @@ function FinalSummary({
                     className="flex items-center justify-between gap-4 rounded-[12px] border border-white/72 bg-white/42 px-3.5 py-3"
                   >
                     <div>
-                      <p className="text-[13px] font-semibold text-[#31566d]">
+                      <p className="text-[14px] font-semibold text-[#31566d]">
                         {
                           technology.machineName
                         }
                       </p>
 
-                      <p className="mt-0.5 text-[11px] text-[#7a909b]">
+                      <p className="mt-0.5 text-[12px] text-[#7a909b]">
                         {
                           technology.serviceName
                         }
                       </p>
                     </div>
 
-                    <span className="shrink-0 rounded-full border border-[#acd0e0]/76 bg-[#edf6fa]/72 px-2.5 py-1.5 text-[10px] font-semibold text-[#4e7890]">
+                    <span className="shrink-0 rounded-full border border-[#acd0e0]/76 bg-[#edf6fa]/72 px-2.5 py-1.5 text-[11px] font-semibold text-[#4e7890]">
                       Maior aderência
                     </span>
                   </div>
@@ -1166,14 +1206,14 @@ function FinalSummary({
               )}
           </div>
         ) : (
-          <p className="mt-2 text-[12px] leading-5 text-[#718895]">
+          <p className="mt-2 text-[13px] leading-5 text-[#718895]">
             A tecnologia continuará sendo avaliada pela equipe técnica.
           </p>
         )}
       </div>
 
       <div className="mt-4 rounded-[16px] border border-white/70 bg-white/30 p-4">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.11em] text-[#6b8796]">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.11em] text-[#6b8796]">
           Por que essa orientação apareceu?
         </p>
 
@@ -1191,7 +1231,7 @@ function FinalSummary({
                 >
                   <span className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-[#65b8ee]" />
 
-                  <p className="text-[11px] leading-5 text-[#6f8592]">
+                  <p className="text-[12px] leading-5 text-[#6f8592]">
                     {
                       insight
                     }
@@ -1201,7 +1241,7 @@ function FinalSummary({
             )}
           </div>
         ) : (
-          <p className="mt-2 text-[11px] leading-5 text-[#748b97]">
+          <p className="mt-2 text-[12px] leading-5 text-[#748b97]">
             A recomendação considera os serviços escolhidos, características da
             peça, porte, localização e requisitos técnicos informados ao longo
             do configurador.
@@ -1210,18 +1250,18 @@ function FinalSummary({
       </div>
 
       <div className="mt-4 flex-1 rounded-[16px] border border-[#b3cedb]/74 bg-[#e5f0f5]/68 p-4">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.11em] text-[#5d8094]">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.11em] text-[#5d8094]">
           Orientação técnica
         </p>
 
-        <p className="mt-2 text-[12px] leading-6 text-[#315f79]">
+        <p className="mt-2 text-[13px] leading-6 text-[#315f79]">
           {
             recommendation.summary
           }
         </p>
 
         <div className="mt-3 border-t border-[#bdd4df]/64 pt-3">
-          <p className="text-[11px] leading-5 text-[#728a96]">
+          <p className="text-[12px] leading-5 text-[#728a96]">
             Esta orientação não substitui a análise técnica do Centro. A equipe
             poderá combinar tecnologias ou ajustar a estratégia conforme os
             arquivos e requisitos do projeto.
@@ -1246,7 +1286,7 @@ function ResultMetric({
         {value}
       </p>
 
-      <p className="mt-2 text-[10px] font-semibold uppercase tracking-[0.09em] text-[#768f9c]">
+      <p className="mt-2 text-[11px] font-semibold uppercase tracking-[0.09em] text-[#768f9c]">
         {label}
       </p>
     </div>

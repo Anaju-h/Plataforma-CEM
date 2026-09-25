@@ -1,4 +1,6 @@
-﻿import "../../styles/internalWorkspace.css";
+import { ConfiguratorConfigSection } from "../../components/internal/ConfiguratorConfigSection";
+import { DemoBadge } from "../../components/internal/DemoBadge";
+import "../../styles/internalWorkspace.css";
 
 import { useEffect, useState } from "react";
 import { validateRequestAnalysis } from "../../services/workflowValidation";
@@ -135,7 +137,7 @@ function RequestDetail({ requestId }) {
               "/portal/solicitacoes",
             )
           }
-          className="text-[12px] font-semibold text-[#356f9f]"
+          className="text-[13px] font-semibold text-[#356f9f]"
         >
           ← Voltar para solicitações
         </button>
@@ -506,7 +508,7 @@ function RequestDetail({ requestId }) {
             request.objective
           }
           action={
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">{request.source === "demo" && <DemoBadge />}
               <StatusBadge
                 status={
                   request.status
@@ -683,6 +685,8 @@ function RequestDetail({ requestId }) {
                 </div>
               )}
             </RequestDetailSection>
+
+            <ConfiguratorConfigSection configuration={request.configuration} />
 
             {/* ===============================================
                             02 — PEÇAS
@@ -1052,7 +1056,7 @@ function RequestDetail({ requestId }) {
                       bg-white
                       px-4
                       py-2.5
-                      text-[10px]
+                      text-[11px]
                       font-semibold
                       uppercase
                       tracking-[0.06em]
@@ -1093,7 +1097,7 @@ function RequestDetail({ requestId }) {
                   }
                   className="
                     mt-4
-                    text-[11px]
+                    text-[12px]
                     font-semibold
                     uppercase
                     tracking-[0.07em]
@@ -1345,7 +1349,7 @@ function FeedbackBanner({
         border
         px-4
         py-3
-        text-[12px]
+        text-[13px]
         font-medium
         leading-5
 
@@ -1936,7 +1940,7 @@ function PieceCard({
               requirements.surroundingAccess ||
               requirements.locationNotes) && (
               <div>
-                <p className="text-[11px] font-semibold uppercase tracking-[0.07em] text-[#477187]">
+                <p className="text-[12px] font-semibold uppercase tracking-[0.07em] text-[#477187]">
                   Condições de atendimento
                 </p>
 
@@ -2042,7 +2046,7 @@ function RequirementGroup({
 
   return (
     <div>
-      <p className="text-[11px] font-semibold uppercase tracking-[0.07em] text-[#477187]">
+      <p className="text-[12px] font-semibold uppercase tracking-[0.07em] text-[#477187]">
         {title}
       </p>
 
@@ -2203,14 +2207,14 @@ function RecommendationCard({
                     className="flex items-center justify-between rounded-[11px] border border-[#d4e2e9] bg-white/75 px-3 py-2.5"
                   >
                     <div>
-                      <p className="text-[12px] font-semibold text-[#3b5d71]">
+                      <p className="text-[13px] font-semibold text-[#3b5d71]">
                         {
                           alternative.name
                         }
                       </p>
 
                       {alternative.match && (
-                        <p className="mt-0.5 text-[10px] text-[#617987]">
+                        <p className="mt-0.5 text-[11px] text-[#617987]">
                           {
                             alternative.match
                           }
@@ -2220,7 +2224,7 @@ function RecommendationCard({
 
                     {alternative.score !==
                       undefined && (
-                      <span className="text-[12px] font-semibold text-[#5681a0]">
+                      <span className="text-[13px] font-semibold text-[#5681a0]">
                         {
                           alternative.score
                         }
@@ -2297,16 +2301,16 @@ function FileCard({
         hover:bg-white
       "
     >
-      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] border border-[#ccdde6] bg-white text-[13px] text-[#5681a0]">
+      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] border border-[#ccdde6] bg-white text-[14px] text-[#5681a0]">
         ↓
       </span>
 
       <div className="min-w-0">
-        <p className="truncate text-[12px] font-semibold text-[#31566d]">
+        <p className="truncate text-[13px] font-semibold text-[#31566d]">
           {file.name}
         </p>
 
-        <p className="mt-1 text-[10px] uppercase tracking-[0.05em] text-[#617987]">
+        <p className="mt-1 text-[11px] uppercase tracking-[0.05em] text-[#617987]">
           {file.type ||
             "Arquivo"}
 
@@ -2335,19 +2339,19 @@ function HistoryItem({
         <div className="absolute left-[15px] top-8 h-[calc(100%-20px)] w-px bg-[#d5e2e8]" />
       )}
 
-      <div className="relative z-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[#bfd5e1] bg-[#edf6fa] text-[9px] text-[#5681a0]">
+      <div className="relative z-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[#bfd5e1] bg-[#edf6fa] text-[11px] text-[#5681a0]">
         ✓
       </div>
 
       <div className="pt-0.5">
         <div className="flex flex-wrap items-center gap-2">
-          <p className="text-[12px] font-semibold text-[#31566d]">
+          <p className="text-[13px] font-semibold text-[#31566d]">
             {item.action}
           </p>
 
           {(item.date ||
             item.time) && (
-            <span className="text-[9px] text-[#8c9ba4]">
+            <span className="text-[11px] text-[#8c9ba4]">
               {item.date}
 
               {item.date &&
@@ -2361,14 +2365,14 @@ function HistoryItem({
         </div>
 
         {item.actor && (
-          <p className="mt-1 text-[10px] font-medium text-[#708795]">
+          <p className="mt-1 text-[11px] font-medium text-[#708795]">
             por{" "}
             {item.actor}
           </p>
         )}
 
         {item.description && (
-          <p className="mt-2 text-[12px] leading-5 text-[#768b97]">
+          <p className="mt-2 text-[13px] leading-5 text-[#768b97]">
             {item.description}
           </p>
         )}
@@ -2393,7 +2397,7 @@ function SideInfo({
         {label}
       </p>
 
-      <p className="mt-1.5 text-[14px] font-semibold text-[#31566d]">
+      <p className="mt-1.5 text-[15px] font-semibold text-[#31566d]">
         {value ||
           "A definir"}
       </p>
@@ -2424,7 +2428,7 @@ function TechnicalPoint({
           justify-center
           rounded-full
           bg-[#dcecf5]
-          text-[9px]
+          text-[11px]
           font-semibold
           text-[#397392]
         "
@@ -2432,7 +2436,7 @@ function TechnicalPoint({
         {symbol}
       </span>
 
-      <p className="text-[11px] leading-5 text-[#647d8b]">
+      <p className="text-[12px] leading-5 text-[#647d8b]">
         {text}
       </p>
     </div>
@@ -2615,11 +2619,11 @@ function AnalysisResultModal({
                   </span>
 
                   <div>
-                    <p className="text-[13px] font-semibold text-[#31566d]">
+                    <p className="text-[14px] font-semibold text-[#31566d]">
                       {option.title}
                     </p>
 
-                    <p className="mt-1 text-[11px] leading-5 text-[#617987]">
+                    <p className="mt-1 text-[12px] leading-5 text-[#617987]">
                       {option.description}
                     </p>
                   </div>
@@ -2900,7 +2904,7 @@ function ModalActions({
           rounded-[11px]
           px-5
           py-3
-          text-[10px]
+          text-[11px]
           font-semibold
           uppercase
           tracking-[0.07em]

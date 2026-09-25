@@ -21,5 +21,6 @@ public interface RequestMapper {
   @Mapping(target="customerJson",ignore=true) @Mapping(target="projectJson",ignore=true) @Mapping(target="attachmentsJson",ignore=true)
   @Mapping(target="cancellationReason",ignore=true) @Mapping(target="cancelledAt",ignore=true) @Mapping(target="cancelledBy",ignore=true)
   @Mapping(target="version",ignore=true)
+  @Mapping(target="customerCompanyId",ignore=true) @Mapping(target="customerUserId",ignore=true) @Mapping(target="claimTokenHash",ignore=true) @Mapping(target="configurationJson",ignore=true)
   RequestEntity fromCreate(RequestDtos.Create dto);
 }

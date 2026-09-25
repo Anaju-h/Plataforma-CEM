@@ -61,11 +61,11 @@ function ContactChannel({ type, label, enabled, value }) {
   const content = (
     <>
       <div>
-        <p className="text-[12px] font-semibold text-[#071f2d]">
+        <p className="text-[13px] font-semibold text-[#071f2d]">
           {label}
         </p>
 
-        <p className="mt-1 text-[10px] text-[#8b959c]">
+        <p className="mt-1 text-[11px] text-[#8b959c]">
           {enabled && value ? value : "Canal em definição"}
         </p>
       </div>
@@ -278,7 +278,7 @@ export function CustomerContactModal({ open, onClose }) {
       >
         <div className="flex items-start justify-between gap-6 border-b border-[#e6ebee] px-6 py-5 sm:px-7">
           <div>
-            <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[#0057b8]">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#0057b8]">
               Atendimento
             </p>
 
@@ -289,7 +289,7 @@ export function CustomerContactModal({ open, onClose }) {
               Falar com o laboratório
             </h2>
 
-            <p className="mt-2 max-w-[520px] text-[12px] leading-5 text-[#76818a]">
+            <p className="mt-2 max-w-[520px] text-[13px] leading-5 text-[#76818a]">
               Utilize um canal oficial disponível ou envie uma mensagem
               relacionada ao seu atendimento.
             </p>
@@ -317,11 +317,11 @@ export function CustomerContactModal({ open, onClose }) {
 
         <div className="px-6 py-6 sm:px-7">
           <section>
-            <h3 className="text-[12px] font-semibold text-[#071f2d]">
+            <h3 className="text-[13px] font-semibold text-[#071f2d]">
               Canais de atendimento
             </h3>
 
-            <p className="mt-1 text-[11px] text-[#8a959d]">
+            <p className="mt-1 text-[12px] text-[#8a959d]">
               Os canais oficiais serão disponibilizados após validação pelo
               laboratório.
             </p>
@@ -353,7 +353,7 @@ export function CustomerContactModal({ open, onClose }) {
           <div className="my-7 flex items-center gap-4">
             <div className="h-px flex-1 bg-[#e6ebee]" />
 
-            <span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[#a1abb1]">
+            <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[#a1abb1]">
               Mensagem
             </span>
 
@@ -363,7 +363,7 @@ export function CustomerContactModal({ open, onClose }) {
           <form onSubmit={handleSubmit}>
             <div className="grid gap-4 sm:grid-cols-2">
               <label>
-                <span className="text-[11px] font-semibold text-[#4d5a63]">
+                <span className="text-[12px] font-semibold text-[#4d5a63]">
                   Assunto
                 </span>
 
@@ -376,7 +376,7 @@ export function CustomerContactModal({ open, onClose }) {
                     border border-[#d8e0e4]
                     bg-white
                     px-3
-                    text-[12px] text-[#34424b]
+                    text-[13px] text-[#34424b]
                     outline-none
                     transition-colors
                     focus:border-[#65b8ee]
@@ -395,7 +395,7 @@ export function CustomerContactModal({ open, onClose }) {
 
               {showReference ? (
                 <label>
-                  <span className="text-[11px] font-semibold text-[#4d5a63]">
+                  <span className="text-[12px] font-semibold text-[#4d5a63]">
                     Referência
                     <span className="ml-1 font-normal text-[#9aa3aa]">
                       (opcional)
@@ -411,7 +411,7 @@ export function CustomerContactModal({ open, onClose }) {
                       border border-[#d8e0e4]
                       bg-white
                       px-3
-                      text-[12px] text-[#34424b]
+                      text-[13px] text-[#34424b]
                       outline-none
                       transition-colors
                       focus:border-[#65b8ee]
@@ -437,7 +437,7 @@ export function CustomerContactModal({ open, onClose }) {
             </div>
 
             <label className="mt-5 block">
-              <span className="text-[11px] font-semibold text-[#4d5a63]">
+              <span className="text-[12px] font-semibold text-[#4d5a63]">
                 Mensagem
               </span>
 
@@ -455,7 +455,7 @@ export function CustomerContactModal({ open, onClose }) {
                   border border-[#d8e0e4]
                   bg-white
                   px-4 py-3
-                  text-[12px] leading-5
+                  text-[13px] leading-5
                   text-[#34424b]
                   outline-none
                   transition-colors
@@ -467,7 +467,7 @@ export function CustomerContactModal({ open, onClose }) {
 
             {feedback && (
               <div className="mt-4 rounded-[9px] border border-[#dce5e9] bg-[#f6f9fa] px-4 py-3">
-                <p className="text-[11px] leading-5 text-[#65717a]">
+                <p className="text-[12px] leading-5 text-[#65717a]">
                   {feedback}
                 </p>
               </div>
@@ -482,7 +482,7 @@ export function CustomerContactModal({ open, onClose }) {
                   rounded-[9px]
                   border border-[#d8e0e4]
                   px-5
-                  text-[12px] font-semibold
+                  text-[13px] font-semibold
                   text-[#56636c]
                   transition-colors
                   hover:bg-[#f5f7f8]
@@ -499,7 +499,7 @@ export function CustomerContactModal({ open, onClose }) {
                   rounded-[9px]
                   bg-[#0057b8]
                   px-5
-                  text-[12px] font-semibold
+                  text-[13px] font-semibold
                   text-white
                   transition-colors
                   hover:bg-[#004a9d]

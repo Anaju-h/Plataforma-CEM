@@ -1,7 +1,8 @@
 ﻿import { Container } from "../components/layout/Container";
 import { QuoteForm } from "../components/quote/QuoteForm";
 import { ScrollReveal } from "../components/ui/ScrollReveal";
-import { createRequest } from "../services/requestService";
+import { createPublicRequest } from "../services/requestApi";
+import { PublicRequestCreated } from "../components/quote/PublicRequestCreated";
 import { useState } from "react";
 
 export function OrcamentoPage() {
@@ -22,7 +23,7 @@ export function OrcamentoPage() {
             className="pointer-events-none absolute -right-40 bottom-[8%] h-[420px] w-[420px] rounded-full bg-[#12364e]/[0.045] blur-[130px]"
           />
 
-          {created ? <p role="status" className="mx-auto max-w-3xl rounded-xl bg-white p-8 text-center text-[#17394f]">Solicitação {created.id} recebida. Nossa equipe entrará em contato.</p> : <QuoteForm onSubmit={async (form) => setCreated(await createRequest(form, "Público"))} />}
+          {created ? <PublicRequestCreated created={created} /> : <QuoteForm onSubmit={async (form) => setCreated(await createPublicRequest(form))} />}
         </div>
       </div>
     </main>
@@ -54,7 +55,7 @@ function QuoteHero() {
             distance={32}
           >
             <div className="flex items-center gap-4">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#356f9f]">
+              <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-[#356f9f]">
                 Solicitação rápida
               </p>
 
@@ -75,7 +76,7 @@ function QuoteHero() {
             distance={30}
           >
             <div className="max-w-[590px] lg:pb-1">
-              <p className="text-[14px] leading-7 text-[#607583] sm:text-[15px]">
+              <p className="text-[15px] leading-7 text-[#607583] sm:text-[15px]">
                 Envie as principais informações da sua necessidade para
                 que o Centro possa realizar uma avaliação inicial do
                 projeto.
@@ -96,7 +97,7 @@ function QuoteHero() {
 
 function HeroTag({ label }) {
   return (
-    <div className="rounded-full border border-white/80 bg-white/48 px-4 py-2 text-[9px] font-semibold uppercase tracking-[0.12em] text-[#5687ad] shadow-[inset_0_1px_0_rgba(255,255,255,0.94),0_6px_18px_rgba(7,31,45,0.025)] backdrop-blur-[16px]">
+    <div className="rounded-full border border-white/80 bg-white/48 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-[#5687ad] shadow-[inset_0_1px_0_rgba(255,255,255,0.94),0_6px_18px_rgba(7,31,45,0.025)] backdrop-blur-[16px]">
       {label}
     </div>
   );

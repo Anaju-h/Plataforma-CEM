@@ -1,8 +1,13 @@
+import { getCurrentUser } from "../../services/currentUserService";
 import {
   useState,
   useEffect,
 } from "react";
 import { ApiState } from "../../components/internal/ApiState";
+import { useCurrentUser } from "../../hooks/useCurrentUser";
+import { hasRole } from "../../services/authApi";
+import { MyTasksView } from "./work/MyTasksView";
+import { TeamTasksStrip } from "./work/TeamTasksStrip";
 
 import {
   useNavigate,
@@ -33,10 +38,15 @@ import {
   getCurrentUserWork,
 } from "../../services/workService";
 
-const currentUser =
-  "Administrador";
 
+/** Administrador vê o fluxo completo; os demais perfis veem somente as tarefas delegadas. */
 export function MyWorkPage() {
+  const user = useCurrentUser();
+  if (!hasRole(user, "ADMIN")) return <MyTasksView user={user} />;
+  return <AdminWorkPage />;
+}
+
+function AdminWorkPage() {
   const navigate =
     useNavigate();
 
@@ -45,7 +55,7 @@ export function MyWorkPage() {
   const [retry, setRetry] = useState(0);
   useEffect(() => {
     let active = true;
-    buildWorkData(currentUser).then((value) => { if (active) setData(value); })
+    buildWorkData(getCurrentUser().name).then((value) => { if (active) setData(value); })
       .catch((error) => { if (active) setLoadError(error.message); });
     return () => { active = false; };
   }, [retry]);
@@ -83,6 +93,8 @@ export function MyWorkPage() {
         title="Meu trabalho"
         description="Acompanhe o fluxo do laboratório, suas responsabilidades e as situações que precisam de ação."
       />
+
+      <TeamTasksStrip />
 
       {/* =====================================================
           INDICADORES

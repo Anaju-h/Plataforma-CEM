@@ -28,3 +28,14 @@ export function updateCurrentUser({ name, email }) {
   listeners.forEach(listener => listener());
   return currentUser;
 }
+
+// Sessão autenticada: nome, e-mail e perfil vêm do backend (/api/auth/me).
+// O id operacional é preservado para não renomear atribuições/históricos existentes.
+export function setSessionUser(user) {
+  if (!user) return currentUser;
+  const words = String(user.name || "").trim().split(/\s+/).filter(Boolean);
+  const initials = (words.length > 1 ? words[0][0] + words.at(-1)[0] : String(user.name || "US").slice(0, 2)).toUpperCase();
+  currentUser = Object.freeze({ ...currentUser, sessionId: user.id, name: user.name, email: user.email, role: user.role, accessProfile: ({ CONSULTA: "Consulta", TECNICO: "Técnico", VALIDADOR: "Validador", ADMIN: "Administrador" })[user.role] || user.role, initials });
+  listeners.forEach(listener => listener());
+  return currentUser;
+}

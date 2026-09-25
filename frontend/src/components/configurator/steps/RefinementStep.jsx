@@ -73,7 +73,7 @@ export function RefinementStep({
       ===================================================== */}
 
       <div>
-        <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[#6d8795]">
+        <p className="text-[12px] font-semibold uppercase tracking-[0.12em] text-[#6d8795]">
           Refinamento
         </p>
 
@@ -81,7 +81,7 @@ export function RefinementStep({
           Vamos confirmar os últimos pontos.
         </h2>
 
-        <p className="mt-3 max-w-[680px] text-[13px] leading-6 text-[#6f8592]">
+        <p className="mt-3 max-w-[680px] text-[14px] leading-6 text-[#6f8592]">
           O configurador já possui uma visão inicial da aplicação.
           Agora aparecem somente informações que ainda podem melhorar
           a orientação técnica.
@@ -113,11 +113,11 @@ export function RefinementStep({
 
           <div className="mt-5 flex items-end justify-between gap-4">
             <div>
-              <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-[#718a98]">
+              <p className="text-[12px] font-semibold uppercase tracking-[0.1em] text-[#718a98]">
                 Pontos de refinamento
               </p>
 
-              <p className="mt-1.5 text-[12px] leading-5 text-[#8799a2]">
+              <p className="mt-1.5 text-[13px] leading-5 text-[#8799a2]">
                 {questions.length ===
                 1
                   ? "Há 1 informação que ainda pode melhorar a orientação."
@@ -125,7 +125,7 @@ export function RefinementStep({
               </p>
             </div>
 
-            <span className="shrink-0 rounded-full border border-white/76 bg-white/36 px-3 py-1.5 text-[11px] font-semibold text-[#688494]">
+            <span className="shrink-0 rounded-full border border-white/76 bg-white/36 px-3 py-1.5 text-[12px] font-semibold text-[#688494]">
               {safeIndex +
                 1}{" "}
               /{" "}
@@ -215,7 +215,7 @@ function DefinitionCard({
     <section className="mt-5 rounded-[17px] border border-[#b9d0dc]/68 bg-[#e8f2f6]/54 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] backdrop-blur-[14px]">
       <div className="flex items-end justify-between gap-4">
         <div>
-          <p className="text-[10px] font-semibold uppercase tracking-[0.11em] text-[#698796]">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.11em] text-[#698796]">
             Definição atual do projeto
           </p>
 
@@ -233,7 +233,7 @@ function DefinitionCard({
             }
           </span>
 
-          <span className="ml-0.5 text-[12px] font-semibold text-[#7690a0]">
+          <span className="ml-0.5 text-[13px] font-semibold text-[#7690a0]">
             %
           </span>
         </div>
@@ -251,7 +251,7 @@ function DefinitionCard({
         />
       </div>
 
-      <p className="mt-3 max-w-[590px] text-[11px] leading-5 text-[#7d919c]">
+      <p className="mt-3 max-w-[590px] text-[12px] leading-5 text-[#7d919c]">
         Este indicador mostra quanto já conhecemos sobre a aplicação.
         Ele não representa aprovação metrológica nem uma definição final
         de equipamento.
@@ -268,16 +268,16 @@ function CompleteState() {
   return (
     <section className="mt-5 rounded-[17px] border border-[#b9d0c1]/74 bg-[#edf5f0]/66 p-4.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)]">
       <div className="flex items-start gap-3.5">
-        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[#aac9b6] bg-white/64 text-[13px] font-semibold text-[#4c7960]">
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[#aac9b6] bg-white/64 text-[14px] font-semibold text-[#4c7960]">
           ✓
         </span>
 
         <div>
-          <p className="text-[14px] font-semibold text-[#365f49]">
+          <p className="text-[15px] font-semibold text-[#365f49]">
             Sua configuração já possui boa definição.
           </p>
 
-          <p className="mt-1.5 max-w-[610px] text-[11px] leading-5 text-[#6f897b]">
+          <p className="mt-1.5 max-w-[610px] text-[12px] leading-5 text-[#6f897b]">
             Não identificamos outra pergunta essencial neste momento.
             A equipe técnica continuará responsável pela validação final
             da solução.
@@ -321,12 +321,12 @@ function RefinementQuestionCard({
 
       <div className="flex flex-wrap items-center gap-2">
         {service && (
-          <span className="rounded-full border border-[#aac7d6]/72 bg-[#e4eff4]/76 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.08em] text-[#537a90]">
+          <span className="rounded-full border border-[#aac7d6]/72 bg-[#e4eff4]/76 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-[#537a90]">
             {service.name}
           </span>
         )}
 
-        <span className="rounded-full border border-white/78 bg-white/48 px-3 py-1.5 text-[10px] font-medium text-[#78909d]">
+        <span className="rounded-full border border-white/78 bg-white/48 px-3 py-1.5 text-[11px] font-medium text-[#78909d]">
           {piece.name?.trim() ||
             "Componente"}
         </span>
@@ -341,7 +341,7 @@ function RefinementQuestionCard({
           {question.title}
         </h3>
 
-        <p className="mt-1.5 max-w-[640px] text-[12px] leading-5 text-[#7b909b]">
+        <p className="mt-1.5 max-w-[640px] text-[13px] leading-5 text-[#7b909b]">
           {
             question.explanation
           }
@@ -640,7 +640,7 @@ function ToleranceRefinement({
         <div className="sm:col-span-2">
           <div className="rounded-[13px] border border-[#bdd3df]/68 bg-[#e8f2f6]/54 p-3.5">
             <label className="block max-w-[240px]">
-              <span className="mb-1.5 block text-[10px] font-semibold uppercase tracking-[0.08em] text-[#6c8797]">
+              <span className="mb-1.5 block text-[11px] font-semibold uppercase tracking-[0.08em] text-[#6c8797]">
                 Menor tolerância
               </span>
 
@@ -663,10 +663,10 @@ function ToleranceRefinement({
                     )
                   }
                   placeholder="0,010"
-                  className="h-11 w-full rounded-[11px] border border-white/82 bg-white/50 px-3 pr-11 text-[13px] font-semibold text-[#31566d] outline-none transition-all placeholder:font-normal placeholder:text-[#a2afb6] focus:border-[#92b6c8] focus:bg-white/76 focus:ring-2 focus:ring-[#65b8ee]/10"
+                  className="h-11 w-full rounded-[11px] border border-white/82 bg-white/50 px-3 pr-11 text-[14px] font-semibold text-[#31566d] outline-none transition-all placeholder:font-normal placeholder:text-[#a2afb6] focus:border-[#92b6c8] focus:bg-white/76 focus:ring-2 focus:ring-[#65b8ee]/10"
                 />
 
-                <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-semibold text-[#8296a1]">
+                <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[11px] font-semibold text-[#8296a1]">
                   mm
                 </span>
               </div>
@@ -997,7 +997,7 @@ function Choice({
         px-3.5
         py-3
         text-left
-        text-[12px]
+        text-[13px]
         font-semibold
         leading-5
         transition-all
@@ -1042,7 +1042,7 @@ function Choice({
           justify-center
           rounded-full
           border
-          text-[10px]
+          text-[11px]
           transition-all
 
           ${
@@ -1080,7 +1080,7 @@ function QuestionNavigation({
         onClick={
           onPrevious
         }
-        className="rounded-[10px] border border-white/80 bg-white/40 px-3.5 py-2 text-[11px] font-semibold text-[#708995] transition-all hover:border-[#b1c8d3] hover:bg-white/66 disabled:cursor-not-allowed disabled:opacity-30"
+        className="rounded-[10px] border border-white/80 bg-white/40 px-3.5 py-2 text-[12px] font-semibold text-[#708995] transition-all hover:border-[#b1c8d3] hover:bg-white/66 disabled:cursor-not-allowed disabled:opacity-30"
       >
         ← Anterior
       </button>
@@ -1128,7 +1128,7 @@ function QuestionNavigation({
         onClick={
           onNext
         }
-        className="rounded-[10px] border border-[#a9c6d5]/76 bg-[#e1eef4]/74 px-3.5 py-2 text-[11px] font-semibold text-[#52778c] transition-all hover:border-[#88b3c8] hover:bg-[#d7e9f1] disabled:cursor-not-allowed disabled:opacity-30"
+        className="rounded-[10px] border border-[#a9c6d5]/76 bg-[#e1eef4]/74 px-3.5 py-2 text-[12px] font-semibold text-[#52778c] transition-all hover:border-[#88b3c8] hover:bg-[#d7e9f1] disabled:cursor-not-allowed disabled:opacity-30"
       >
         Próximo →
       </button>

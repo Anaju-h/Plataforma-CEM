@@ -37,12 +37,17 @@ const pageInformation = {
 
   "/portal/conhecimento": {
     eyebrow: "Conhecimento",
-    title: "Base de conhecimento",
+    title: "Gestão do Conhecimento",
   },
 
   "/portal/equipamentos-custos": {
     eyebrow: "Conhecimento",
     title: "Equipamentos e custos",
+  },
+
+  "/portal/tarefas": {
+    eyebrow: "Gestão",
+    title: "Quadro de tarefas",
   },
 
   "/portal/equipe": {
@@ -184,7 +189,7 @@ export function InternalHeader({
           <div className="min-w-0">
             <p
               className="
-                text-[12px]
+                text-[13px]
                 font-semibold
                 uppercase
                 tracking-[0.15em]
@@ -281,19 +286,19 @@ export function InternalHeader({
                 justify-center
                 rounded-[10px]
                 bg-[linear-gradient(135deg,#173f58_0%,#0d3046_100%)]
-                text-[11px]
+                text-[12px]
                 font-semibold
                 text-white
               "
             >{user.initials}</div>
 
             <div className="hidden pr-1 xl:block">
-              <p className="text-[12px] font-semibold text-[#17384d]">{user.name}</p>
+              <p className="text-[13px] font-semibold text-[#17384d]">{user.name}</p>
 
               <p
                 className="
                   mt-0.5
-                  text-[12px]
+                  text-[13px]
                   font-medium
                   uppercase
                   tracking-[0.06em]
@@ -363,7 +368,7 @@ function resolveCurrentPage(
   ) {
     return {
       eyebrow: "Conhecimento",
-      title: "Base de conhecimento",
+      title: "Gestão do Conhecimento",
     };
   }
 

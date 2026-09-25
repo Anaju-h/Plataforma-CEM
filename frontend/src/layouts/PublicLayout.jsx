@@ -11,6 +11,8 @@ import {
   Header,
 } from "../components/layout/Header";
 
+import { AutoTranslate } from "../i18n/AutoTranslate";
+
 export function PublicLayout() {
   const location =
     useLocation();
@@ -31,6 +33,7 @@ export function PublicLayout() {
         }
       `}
     >
+      <AutoTranslate>
       <Header />
 
       <main
@@ -46,6 +49,7 @@ export function PublicLayout() {
       </main>
 
       <Footer />
+      </AutoTranslate>
     </div>
   );
 }

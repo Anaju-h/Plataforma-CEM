@@ -22,6 +22,7 @@ export function RequestStep({
   onStateChange,
   onSubmit,
   submitting = false,
+  submitError = "",
   expanded = false,
 }) {
   const inputRef =
@@ -114,7 +115,7 @@ export function RequestStep({
       ===================================================== */}
 
       <div>
-        <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[#6d8795]">
+        <p className="text-[12px] font-semibold uppercase tracking-[0.12em] text-[#6d8795]">
           Solicitação
         </p>
 
@@ -122,7 +123,7 @@ export function RequestStep({
           Transforme a orientação em uma solicitação.
         </h2>
 
-        <p className="mt-3 max-w-[760px] text-[13px] leading-6 text-[#6f8592]">
+        <p className="mt-3 max-w-[760px] text-[14px] leading-6 text-[#6f8592]">
           Revise o que entendemos do projeto, informe seus dados e envie
           materiais que possam ajudar a equipe técnica na avaliação.
         </p>
@@ -135,11 +136,11 @@ export function RequestStep({
       <section className="mt-5 rounded-[18px] border border-[#b9d0dc]/70 bg-[#e7f1f5]/58 p-4.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] backdrop-blur-[14px]">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.11em] text-[#628294]">
+            <p className="text-[12px] font-semibold uppercase tracking-[0.11em] text-[#628294]">
               O que entendemos do projeto
             </p>
 
-            <p className="mt-2 max-w-[820px] text-[13px] font-medium leading-6 text-[#31566d]">
+            <p className="mt-2 max-w-[820px] text-[14px] font-medium leading-6 text-[#31566d]">
               {
                 recommendation.summary
               }
@@ -147,14 +148,14 @@ export function RequestStep({
           </div>
 
           <div className="shrink-0 self-start rounded-full border border-[#a9c4d2]/76 bg-white/58 px-3.5 py-2">
-            <span className="text-[12px] font-semibold text-[#3f718c]">
+            <span className="text-[13px] font-semibold text-[#3f718c]">
               {
                 recommendation.definitionScore
               }
               %
             </span>
 
-            <span className="ml-1 text-[10px] font-semibold uppercase tracking-[0.08em] text-[#8196a1]">
+            <span className="ml-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-[#8196a1]">
               definido
             </span>
           </div>
@@ -168,11 +169,11 @@ export function RequestStep({
       <section className="mt-5">
         <div className="flex items-end justify-between gap-4">
           <div>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.11em] text-[#6c8593]">
+            <p className="text-[12px] font-semibold uppercase tracking-[0.11em] text-[#6c8593]">
               Configuração preliminar
             </p>
 
-            <p className="mt-1.5 text-[12px] leading-5 text-[#84969f]">
+            <p className="mt-1.5 text-[13px] leading-5 text-[#84969f]">
               Tecnologias com maior aderência às informações fornecidas.
             </p>
           </div>
@@ -234,7 +235,7 @@ export function RequestStep({
             Seus dados
           </p>
 
-          <p className="mt-1.5 text-[12px] leading-5 text-[#7d919c]">
+          <p className="mt-1.5 text-[13px] leading-5 text-[#7d919c]">
             A equipe utilizará essas informações para dar continuidade à
             solicitação.
           </p>
@@ -374,7 +375,7 @@ export function RequestStep({
             Existe algo mais que a equipe deveria saber?
           </p>
 
-          <p className="mt-1.5 text-[12px] leading-5 text-[#7d919c]">
+          <p className="mt-1.5 text-[13px] leading-5 text-[#7d919c]">
             Inclua prazo, contexto, dificuldades, requisitos especiais ou
             qualquer informação importante que ainda não apareceu.
           </p>
@@ -399,7 +400,7 @@ export function RequestStep({
                 ? 7
                 : 5
             }
-            className="mt-4 w-full resize-y rounded-[14px] border border-white/82 bg-white/46 px-4 py-3.5 text-[13px] leading-6 text-[#31566d] outline-none transition-all placeholder:text-[#9caeb7] focus:border-[#8eb5c8] focus:bg-white/74 focus:ring-2 focus:ring-[#65b8ee]/10"
+            className="mt-4 w-full resize-y rounded-[14px] border border-white/82 bg-white/46 px-4 py-3.5 text-[14px] leading-6 text-[#31566d] outline-none transition-all placeholder:text-[#9caeb7] focus:border-[#8eb5c8] focus:bg-white/74 focus:ring-2 focus:ring-[#65b8ee]/10"
           />
 
           {recommendedFiles.length >
@@ -421,7 +422,7 @@ export function RequestStep({
             Arquivos do projeto
           </p>
 
-          <p className="mt-1.5 text-[12px] leading-5 text-[#7d919c]">
+          <p className="mt-1.5 text-[13px] leading-5 text-[#7d919c]">
             Fotos, desenhos, CADs e documentos podem ajudar na avaliação
             técnica.
           </p>
@@ -520,11 +521,11 @@ export function RequestStep({
               ↑
             </span>
 
-            <p className="mt-3 text-[13px] font-semibold text-[#456d82]">
+            <p className="mt-3 text-[14px] font-semibold text-[#456d82]">
               Arraste arquivos aqui
             </p>
 
-            <p className="mt-1 text-[11px] leading-5 text-[#82959f]">
+            <p className="mt-1 text-[12px] leading-5 text-[#82959f]">
               ou clique para selecionar
             </p>
           </button>
@@ -577,11 +578,11 @@ export function RequestStep({
           `}
         >
           <div className="max-w-[760px]">
-            <p className="text-[12px] font-semibold text-[#416b81]">
+            <p className="text-[13px] font-semibold text-[#416b81]">
               Orientação técnica preliminar
             </p>
 
-            <p className="mt-1.5 text-[11px] leading-5 text-[#728a96]">
+            <p className="mt-1.5 text-[12px] leading-5 text-[#728a96]">
               A configuração foi construída a partir das respostas fornecidas.
               A definição final da estratégia, tecnologias e condições de
               atendimento será validada pela equipe técnica do Centro.
@@ -607,7 +608,7 @@ export function RequestStep({
               rounded-[12px]
               bg-[#12364e]
               px-6
-              text-[12px]
+              text-[13px]
               font-semibold
               text-white
               transition-all
@@ -639,9 +640,15 @@ export function RequestStep({
           </button>
         </div>
 
+        {submitError && (
+          <div role="alert" className="border-t border-white/58 px-4.5 py-2.5">
+            <p className="text-[12.5px] leading-5 text-[#8f5544]">{submitError}</p>
+          </div>
+        )}
+
         {!canSubmit && (
           <div className="border-t border-white/58 px-4.5 py-2.5">
-            <p className="text-[11px] leading-5 text-[#82949e]">
+            <p className="text-[12px] leading-5 text-[#82949e]">
               Preencha nome, empresa, e-mail e telefone para liberar o envio.
             </p>
           </div>
@@ -664,7 +671,7 @@ function ProjectPieceCard({
     <div className="rounded-[17px] border border-white/76 bg-white/32 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] backdrop-blur-[14px]">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[#78909d]">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-[#78909d]">
             Peça{" "}
             {String(
               index + 1,
@@ -674,13 +681,13 @@ function ProjectPieceCard({
             )}
           </p>
 
-          <p className="mt-1.5 text-[14px] font-semibold text-[#31566d]">
+          <p className="mt-1.5 text-[15px] font-semibold text-[#31566d]">
             {piece?.name ||
               "Componente"}
           </p>
         </div>
 
-        <span className="rounded-full border border-white/74 bg-white/44 px-2.5 py-1.5 text-[10px] font-semibold text-[#718895]">
+        <span className="rounded-full border border-white/74 bg-white/44 px-2.5 py-1.5 text-[11px] font-semibold text-[#718895]">
           {
             recommendation.definitionScore
           }
@@ -713,12 +720,12 @@ function ProjectPieceCard({
                 className="flex flex-wrap items-center justify-between gap-3 rounded-[12px] border border-[#ccdce3]/72 bg-white/52 px-3.5 py-3"
               >
                 <div>
-                  <p className="text-[10px] font-semibold uppercase tracking-[0.08em] text-[#668596]">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#668596]">
                     {serviceData?.name ??
                       service.service}
                   </p>
 
-                  <p className="mt-1 text-[12px] font-semibold leading-5 text-[#31566d]">
+                  <p className="mt-1 text-[13px] font-semibold leading-5 text-[#31566d]">
                     {machine
                       ? machine.name
                       : "Tecnologia ainda em avaliação"}
@@ -751,7 +758,7 @@ function RecommendedFiles({
 }) {
   return (
     <div className="mt-4">
-      <p className="text-[11px] font-semibold uppercase tracking-[0.09em] text-[#728b98]">
+      <p className="text-[12px] font-semibold uppercase tracking-[0.09em] text-[#728b98]">
         Materiais que podem ajudar
       </p>
 
@@ -766,18 +773,18 @@ function RecommendedFiles({
               }
               className="flex items-start gap-3 rounded-[12px] border border-[#c2d5df]/64 bg-[#e7f1f5]/52 px-3 py-2.5"
             >
-              <span className="mt-[2px] flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-[#b5ceda] bg-white/68 text-[12px] font-semibold text-[#5b8297]">
+              <span className="mt-[2px] flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-[#b5ceda] bg-white/68 text-[13px] font-semibold text-[#5b8297]">
                 +
               </span>
 
               <div>
-                <p className="text-[12px] font-semibold text-[#416b81]">
+                <p className="text-[13px] font-semibold text-[#416b81]">
                   {
                     item.title
                   }
                 </p>
 
-                <p className="mt-0.5 text-[11px] leading-5 text-[#7c919c]">
+                <p className="mt-0.5 text-[12px] leading-5 text-[#7c919c]">
                   {
                     item.description
                   }
@@ -805,7 +812,7 @@ function InputField({
 }) {
   return (
     <label className="block">
-      <span className="text-[11px] font-semibold text-[#607d8c]">
+      <span className="text-[12px] font-semibold text-[#607d8c]">
         {label}
 
         {required && (
@@ -832,7 +839,7 @@ function InputField({
         placeholder={
           placeholder
         }
-        className="mt-2 h-[46px] w-full rounded-[11px] border border-white/82 bg-white/46 px-3.5 text-[13px] text-[#31566d] outline-none transition-all placeholder:text-[#9eafb7] focus:border-[#8eb5c8] focus:bg-white/74 focus:ring-2 focus:ring-[#65b8ee]/10"
+        className="mt-2 h-[46px] w-full rounded-[11px] border border-white/82 bg-white/46 px-3.5 text-[14px] text-[#31566d] outline-none transition-all placeholder:text-[#9eafb7] focus:border-[#8eb5c8] focus:bg-white/74 focus:ring-2 focus:ring-[#65b8ee]/10"
       />
     </label>
   );
@@ -849,13 +856,13 @@ function AttachmentCard({
   return (
     <div className="flex items-center justify-between gap-4 rounded-[12px] border border-[#ccdce3]/72 bg-white/56 px-3.5 py-3">
       <div className="min-w-0">
-        <p className="truncate text-[12px] font-semibold text-[#456d82]">
+        <p className="truncate text-[13px] font-semibold text-[#456d82]">
           {
             attachment.file.name
           }
         </p>
 
-        <p className="mt-0.5 text-[10px] font-medium uppercase tracking-[0.07em] text-[#8799a2]">
+        <p className="mt-0.5 text-[11px] font-medium uppercase tracking-[0.07em] text-[#8799a2]">
           {formatFileSize(
             attachment.file.size,
           )}
@@ -867,7 +874,7 @@ function AttachmentCard({
         onClick={
           onRemove
         }
-        className="shrink-0 rounded-[8px] border border-transparent px-2.5 py-1.5 text-[10px] font-semibold text-[#936e6e] transition-all hover:border-[#dec5c5] hover:bg-[#f7eeee]/64 hover:text-[#7c5555]"
+        className="shrink-0 rounded-[8px] border border-transparent px-2.5 py-1.5 text-[11px] font-semibold text-[#936e6e] transition-all hover:border-[#dec5c5] hover:bg-[#f7eeee]/64 hover:text-[#7c5555]"
       >
         Remover
       </button>
@@ -903,7 +910,7 @@ function MatchBadge({
   }[level];
 
   return (
-    <span className="rounded-full border border-[#b7ceda]/80 bg-[#e4eff4]/74 px-2.5 py-1.5 text-[10px] font-semibold text-[#52798e]">
+    <span className="rounded-full border border-[#b7ceda]/80 bg-[#e4eff4]/74 px-2.5 py-1.5 text-[11px] font-semibold text-[#52798e]">
       {label ??
         "Avaliar"}
     </span>

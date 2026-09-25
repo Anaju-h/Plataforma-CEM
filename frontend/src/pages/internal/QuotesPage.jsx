@@ -1,3 +1,4 @@
+import { DemoBadge } from "../../components/internal/DemoBadge";
 import {
   useMemo,
   useEffect,
@@ -447,11 +448,7 @@ function QuoteRow({
         </p>
       </div>
 
-      <QuoteStatusBadge
-        status={
-          quote.status
-        }
-      />
+      <span className="inline-flex flex-wrap items-center gap-2">{quote.demo && <DemoBadge />}<QuoteStatusBadge status={quote.status} /></span>
 
       <div>
         <p className="internal-card-title font-semibold text-[#31566d]">

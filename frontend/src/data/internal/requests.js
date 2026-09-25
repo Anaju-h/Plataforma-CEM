@@ -368,10 +368,13 @@ export const requestStatuses = [
   "Cancelada",
 ];
 
+// Origens reais gravadas pelo backend: site público, Configurador on-line, área do cliente e registro interno.
 export const requestOrigins = [
   "Todas",
+  "Público",
   "Configurador",
-  "Formulário",
+  "Cliente",
+  "Interno",
 ];
 
 export function getRequestById(requestId) {

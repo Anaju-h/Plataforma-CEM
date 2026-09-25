@@ -48,22 +48,25 @@ public class ProposalService {
     Map<String,Object> snapshot=snapshot(q,p);
     com.fasterxml.jackson.databind.JsonNode expected=json.valueToTree(snapshot), received=json.valueToTree(dto.snapshot());
     if(!expected.equals((a,b)->a.isNumber()&&b.isNumber()?a.decimalValue().compareTo(b.decimalValue()):a.equals(b)?0:1,received))throw conflict("Os dados comerciais mudaram. Atualize a prévia e gere novamente.");
-    var v=new QuoteProposalVersionEntity();v.id=UUID.randomUUID();v.proposal=p;v.number=p.versions.size()+1;v.status="generated";v.createdAt=now();v.createdBy=ACTOR;v.sourceQuoteRevision=q.revision;
+    var v=new QuoteProposalVersionEntity();v.id=UUID.randomUUID();v.proposal=p;v.number=p.versions.size()+1;v.status="generated";v.createdAt=now();v.createdBy=quotes.actor();v.sourceQuoteRevision=q.revision;
     v.snapshotJson=quotes.write(snapshot);v.sectionsJson=p.sectionsJson;v.selectedMediaJson=p.selectedMediaJson;v.investmentDisplay=p.investmentDisplay;
     v.pdfFileName=q.quoteCode.replace("ORC-","PROP-")+"_V"+v.number+".pdf";v.pdfJson=quotes.write(dto.pdf());
     p.versions.forEach(old->{if("generated".equals(old.status))old.status="superseded";});p.versions.add(v);p.hasDraft=false;p.updatedAt=now();p.revision++;
     quotes.event(q,"Proposta emitida","Versão V"+v.number+" preservada.");return response(p,quotes);
   }
   @Transactional public Map<String,Object> result(String id,int number,Result dto) {
+    return resultAs(id,number,dto,quotes.actor());
+  }
+  @Transactional public Map<String,Object> resultAs(String id,int number,Result dto,String actor) {
     var q=quotes.required(id,true);editable(q);var p=required(q);revision(p,dto.revision());
     var v=p.versions.stream().filter(item->item.number==number).findFirst().orElseThrow(()->bad("Versão não encontrada."));
     if(p.hasDraft||!"generated".equals(v.status))throw conflict("Selecione a versão vigente, sem rascunho aberto.");
     if(!Set.of("accepted","revision","rejected").contains(dto.type()))throw bad("Resultado inválido.");
     try {if(!LocalDate.parse(dto.date()).toString().equals(dto.date()))throw new IllegalArgumentException();}catch(Exception e){throw bad("Informe uma data válida.");}
     if("accepted".equals(dto.type())&&v.sourceQuoteRevision!=q.revision)throw conflict("O orçamento mudou. Gere nova versão antes do aceite.");
-    v.resultType=dto.type();v.resultDate=dto.date();v.resultNote=dto.note();v.resultActor=ACTOR;v.resultRegisteredAt=now();v.status="revision".equals(dto.type())?"superseded":dto.type();
+    v.resultType=dto.type();v.resultDate=dto.date();v.resultNote=dto.note();v.resultActor=actor;v.resultRegisteredAt=now();v.status="revision".equals(dto.type())?"superseded":dto.type();
     p.acceptedVersion="accepted".equals(dto.type())?v.number:null;p.revision++;p.updatedAt=now();
-    q.status=switch(dto.type()){case "accepted"->"Aceito";case "rejected"->"Recusado";default->"Em elaboração";};quotes.touch(q);quotes.event(q,"Resultado da proposta",q.status+": "+Objects.toString(dto.note(),""));return response(p,quotes);
+    q.status=switch(dto.type()){case "accepted"->"Aceito";case "rejected"->"Recusado";default->"Em elaboração";};quotes.touch(q);quotes.eventAs(q,"Resultado da proposta",q.status+": "+Objects.toString(dto.note(),""),actor);return response(p,quotes);
   }
   private QuoteProposalEntity required(QuoteEntity q){if(q.proposal==null)throw bad("Proposta não iniciada.");return q.proposal;}
   @SuppressWarnings("unchecked") Map<String,Object> snapshot(QuoteEntity q,QuoteProposalEntity p) {

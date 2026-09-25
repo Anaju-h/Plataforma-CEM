@@ -211,22 +211,16 @@ test("mudança do ORC exige nova versão antes do aceite; somente versão vigent
   assert.throws(() => proposals.registerProposalResult(quote.id, 1, result("accepted")), /vigente/);
 });
 
-test("Customer Portal usa o DTO aceito e inclui apenas o projeto vinculado", async () => {
+test("Customer Portal consulta propostas e projetos reais sem acessar demos", async () => {
   const customer = await server.ssrLoadModule("/src/services/customer/customerService.js");
-  const accepted = await customer.getCustomerQuotes();
-  assert.ok(accepted.length);
-  for (const quote of accepted) {
-    assert.equal(quote.status, "Aceito");
-    assert.equal(quote.document.snapshot.client.company, "ACME Indústria Ltda.");
-    assert.equal(Object.hasOwn(quote, "draft"), false);
-    assert.equal(Object.hasOwn(quote, "versions"), false);
-    assert.ok(!JSON.stringify(quote).includes("Nota privada"));
-  }
-  const linked = accepted.find(quote => quote.projectId);
-  assert.ok(linked);
-  const project = (await customer.getCustomerProjects()).find(item => item.id === linked.projectId);
-  assert.equal(project.quoteId, linked.id);
-  assert.equal(Object.hasOwn(project, "internalNotes"), false);
+  const original = globalThis.fetch;
+  const calls = [];
+  globalThis.fetch = async url => { calls.push(url); return new Response("[]", { status: 200 }); };
+  try {
+    assert.deepEqual(await customer.getCustomerQuotes(), []);
+    assert.deepEqual(await customer.getCustomerProjects(), []);
+    assert.deepEqual(calls, ["/api/customer/quotes", "/api/customer/projects"]);
+  } finally { globalThis.fetch = original; }
 });
 
 test("peças reais agrupam serviços; snapshot seguro; V1 imutável, V2 atual e aceite bloqueia ORC", async () => {

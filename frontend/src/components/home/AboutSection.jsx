@@ -104,8 +104,6 @@ export function AboutSection() {
               className="
                 relative
                 min-w-0
-                lg:-ml-3
-                xl:-ml-6
               "
             >
               <div
@@ -276,7 +274,7 @@ export function AboutSection() {
               >
                 <p
                   className="
-                    text-[10px]
+                    text-[11px]
                     font-bold
                     uppercase
                     tracking-[0.21em]
@@ -329,7 +327,7 @@ export function AboutSection() {
                 className="
                   mt-4
                   max-w-[545px]
-                  text-[14px]
+                  text-[15px]
                   font-medium
                   leading-[1.8]
                   text-[#49697c]
@@ -405,7 +403,7 @@ export function AboutSection() {
                     inline-flex
                     items-center
                     gap-3
-                    text-[11px]
+                    text-[12px]
                     font-semibold
                     text-[#12364e]
                     transition-colors
@@ -473,7 +471,7 @@ function Capability({ label }) {
 
       <p
         className="
-          text-[9px]
+          text-[11px]
           font-semibold
           leading-4
           text-[#345365]

@@ -491,11 +491,11 @@ function IntroBox({
         <span className="mt-[7px] h-2 w-2 shrink-0 rounded-full bg-[#65b8ee]" />
 
         <div>
-          <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[#5d8094]">
+          <p className="text-[12px] font-semibold uppercase tracking-[0.12em] text-[#5d8094]">
             {title}
           </p>
 
-          <p className="mt-2 text-[12px] leading-5 text-[#6f8592]">
+          <p className="mt-2 text-[13px] leading-5 text-[#6f8592]">
             {text}
           </p>
         </div>
@@ -538,7 +538,7 @@ function QuestionBlock({
             justify-center
             rounded-full
             border
-            text-[10px]
+            text-[11px]
             font-semibold
 
             ${
@@ -552,12 +552,12 @@ function QuestionBlock({
         </span>
 
         <div>
-          <p className="text-[14px] font-semibold leading-5 text-[#31566d]">
+          <p className="text-[15px] font-semibold leading-5 text-[#31566d]">
             {title}
           </p>
 
           {help && (
-            <p className="mt-1 text-[11px] leading-5 text-[#82949e]">
+            <p className="mt-1 text-[12px] leading-5 text-[#82949e]">
               {help}
             </p>
           )}
@@ -623,12 +623,12 @@ function ChoiceCard({
 
       <div className="flex items-start justify-between gap-3">
         <div>
-          <p className="text-[13px] font-semibold leading-5 text-[#31566d]">
+          <p className="text-[14px] font-semibold leading-5 text-[#31566d]">
             {title}
           </p>
 
           {description && (
-            <p className="mt-1 text-[11px] leading-5 text-[#7c909b]">
+            <p className="mt-1 text-[12px] leading-5 text-[#7c909b]">
               {description}
             </p>
           )}
@@ -645,7 +645,7 @@ function ChoiceCard({
             justify-center
             rounded-full
             border
-            text-[10px]
+            text-[11px]
             font-semibold
 
             ${

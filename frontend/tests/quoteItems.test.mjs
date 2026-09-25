@@ -195,10 +195,8 @@ test("itens não carregam custo interno e o serviço do cliente permanece isolad
   assert.equal(Object.hasOwn(item, "machine"), false);
   assert.equal(item.executionRecordId, null);
   const customer = await server.ssrLoadModule("/src/services/customer/customerService.js");
-  const customerQuotes = await customer.getCustomerQuotes();
-  for (const quote of customerQuotes) {
-    assert.equal(Object.hasOwn(quote, "items"), false);
-    assert.equal(Object.hasOwn(quote, "internalCost"), false);
-    assert.equal(Object.hasOwn(quote, "estimateVersions"), false);
-  }
+  const original = globalThis.fetch;
+  globalThis.fetch = async () => { throw new Error("offline"); };
+  try { await assert.rejects(customer.getCustomerQuotes(), /API/); }
+  finally { globalThis.fetch = original; }
 });

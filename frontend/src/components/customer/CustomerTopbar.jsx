@@ -4,10 +4,13 @@ import {
 } from "react";
 
 import {
+  Link,
   NavLink,
   useLocation,
   useNavigate,
 } from "react-router-dom";
+import { useCustomerData } from "../../hooks/useCustomerData";
+import { getCustomerQuotes } from "../../services/customer/customerService";
 
 /* ============================================================
  * ROTAS
@@ -92,6 +95,10 @@ export function CustomerTopbar({
     setMobileMenuOpen,
   ] = useState(false);
 
+  // Pendências reais: propostas publicadas aguardando resposta do cliente.
+  const quotesState = useCustomerData(getCustomerQuotes);
+  const pendingProposals = (quotesState.data || []).filter(quote => quote.canRespond).length;
+
   const information =
     useMemo(
       () =>
@@ -174,7 +181,7 @@ export function CustomerTopbar({
 
         <div className="flex min-w-0 items-center gap-4">
           <div className="shrink-0">
-            <p className="text-[9px] font-semibold uppercase tracking-[0.14em] text-[#5f8297]">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#5f8297]">
               {
                 information.eyebrow
               }
@@ -225,9 +232,10 @@ export function CustomerTopbar({
         =================================================== */}
 
         <div className="flex items-center gap-2.5">
-          <button
-            type="button"
-            aria-label="Notificações"
+          <Link
+            to="/cliente/orcamentos"
+            aria-label={pendingProposals ? `${pendingProposals} proposta(s) aguardando sua resposta` : "Nenhuma proposta aguardando resposta"}
+            title={pendingProposals ? `${pendingProposals} proposta(s) aguardando sua resposta` : "Nenhuma pendência"}
             className="
               relative
               flex
@@ -247,9 +255,8 @@ export function CustomerTopbar({
             "
           >
             <BellIcon />
-
-            <span className="absolute right-[9px] top-[8px] h-1.5 w-1.5 rounded-full bg-[#0057b8]" />
-          </button>
+            {pendingProposals > 0 && <span className="absolute -right-1 -top-1 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-[#d9822b] px-1 text-[11px] font-bold text-white">{pendingProposals}</span>}
+          </Link>
 
           <button
             type="button"
@@ -272,19 +279,19 @@ export function CustomerTopbar({
               hover:bg-white/70
             "
           >
-            <span className="flex h-7 w-7 items-center justify-center rounded-[9px] bg-[#12364e] text-[9px] font-semibold text-white">
+            <span className="flex h-7 w-7 items-center justify-center rounded-[9px] bg-[#12364e] text-[11px] font-semibold text-white">
               {getInitials(
                 customer?.user?.name,
               )}
             </span>
 
             <span className="hidden text-left xl:block">
-              <span className="block text-[10px] font-semibold text-[#31566d]">
+              <span className="block text-[11px] font-semibold text-[#31566d]">
                 {customer?.user?.name ??
                   "Cliente"}
               </span>
 
-              <span className="mt-0.5 block text-[8px] text-[#8a9aa3]">
+              <span className="mt-0.5 block text-[11px] text-[#8a9aa3]">
                 Minha conta
               </span>
             </span>
@@ -414,25 +421,25 @@ function MobileTopbar({
           "
         >
           <div>
-            <p className="text-[8px] font-semibold uppercase tracking-[0.13em] text-[#356f9f]">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.13em] text-[#356f9f]">
               {
                 information.eyebrow
               }
             </p>
 
-            <p className="mt-1 text-[11px] font-semibold text-[#12364e]">
+            <p className="mt-1 text-[12px] font-semibold text-[#12364e]">
               {
                 customer?.user?.name ??
                 "Cliente"
               }
             </p>
 
-            <p className="mt-0.5 text-[8px] text-[#7c929e]">
+            <p className="mt-0.5 text-[11px] text-[#7c929e]">
               Minha conta
             </p>
           </div>
 
-          <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#12364e] text-[10px] font-semibold text-white">
+          <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#12364e] text-[11px] font-semibold text-white">
             {getInitials(
               customer?.user?.name,
             )}
@@ -464,7 +471,7 @@ function MobileTopbar({
                     justify-between
                     rounded-[12px]
                     px-3
-                    text-[11px]
+                    text-[12px]
                     font-medium
                     transition
 

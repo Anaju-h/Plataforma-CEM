@@ -7,6 +7,7 @@ import {
   ArrowUpRightIcon,
 } from "../components/ui/ArrowIcons";
 import { ScrollReveal } from "../components/ui/ScrollReveal";
+import { EQUIPMENT_SPECS_NOTE, getEquipmentSpecs } from "../data/equipmentSpecs";
 
 const equipment = [
   {
@@ -28,7 +29,7 @@ const equipment = [
     services: [
       {
         label: "Medição dimensional",
-        href: "/servicos#medicao-dimensional",
+        href: "/servicos#metrologia-inspecao",
       },
     ],
     image: "/images/equipment/prismo-foto-2.jpeg",
@@ -53,7 +54,7 @@ const equipment = [
     services: [
       {
         label: "Medição dimensional",
-        href: "/servicos#medicao-dimensional",
+        href: "/servicos#metrologia-inspecao",
       },
       {
         label: "Inspeção óptica",
@@ -82,7 +83,7 @@ const equipment = [
     services: [
       {
         label: "Medição dimensional",
-        href: "/servicos#medicao-dimensional",
+        href: "/servicos#metrologia-inspecao",
       },
     ],
     image: "/images/equipment/duramax.jpeg",
@@ -111,7 +112,7 @@ const equipment = [
       },
       {
         label: "Engenharia reversa",
-        href: "/servicos#engenharia-reversa",
+        href: "/servicos#engenharia-desenvolvimento",
       },
     ],
     image: "/images/equipment/t-scan.jpeg",
@@ -140,7 +141,7 @@ const equipment = [
       },
       {
         label: "Engenharia reversa",
-        href: "/servicos#engenharia-reversa",
+        href: "/servicos#engenharia-desenvolvimento",
       },
     ],
     image: "/images/equipment/atos-q-2.jpeg",
@@ -165,7 +166,7 @@ const equipment = [
     services: [
       {
         label: "Inspeção interna",
-        href: "/servicos#inspecao-interna",
+        href: "/servicos#tomografia-industrial",
       },
     ],
     image: "/images/equipment/bosello-max.jpeg",
@@ -265,7 +266,7 @@ function EquipmentHero() {
           >
             <div className="max-w-[610px]">
               <div className="flex items-center gap-4">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#356f9f]">
+                <p className="text-[13px] font-semibold uppercase tracking-[0.14em] text-[#356f9f]">
                   Portfólio tecnológico
                 </p>
 
@@ -283,7 +284,7 @@ function EquipmentHero() {
                 </span>
               </h1>
 
-              <p className="mt-6 max-w-[550px] text-[14px] leading-7 text-[#607583] sm:text-[15px]">
+              <p className="mt-6 max-w-[550px] text-[16px] leading-7 text-[#607583] sm:text-[16px]">
                 O Centro reúne tecnologias para medição dimensional,
                 digitalização tridimensional e inspeção interna,
                 permitindo selecionar a solução adequada às
@@ -320,18 +321,18 @@ function EquipmentHero() {
                   className="pointer-events-none absolute left-[7%] right-[7%] top-0 h-px bg-gradient-to-r from-transparent via-white/65 to-transparent"
                 />
 
-                <div className="absolute left-6 top-6 rounded-full border border-white/25 bg-white/10 px-4 py-2 text-[9px] font-semibold uppercase tracking-[0.13em] text-white backdrop-blur-[18px]">
+                <div className="absolute left-6 top-6 rounded-full border border-white/25 bg-white/10 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.13em] text-white backdrop-blur-[18px]">
                   Tecnologia de medição
                 </div>
 
-                <div className="absolute right-6 top-6 text-[9px] font-semibold uppercase tracking-[0.13em] text-white/60">
+                <div className="absolute right-6 top-6 text-[11px] font-semibold uppercase tracking-[0.13em] text-white/60">
                   SENAI · ZEISS
                 </div>
 
                 <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-7">
                   <div className="mb-3 h-px w-11 bg-[#65b8ee]" />
 
-                  <p className="text-[9px] font-semibold uppercase tracking-[0.13em] text-[#9dd1ef]">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.13em] text-[#9dd1ef]">
                     Portfólio tecnológico
                   </p>
 
@@ -367,7 +368,7 @@ function EquipmentHero() {
 
 function HeroTag({ label }) {
   return (
-    <span className="rounded-full border border-white/75 bg-white/48 px-3.5 py-2 text-[9px] font-semibold text-[#526b79] shadow-[inset_0_1px_0_rgba(255,255,255,0.95)] backdrop-blur-[16px]">
+    <span className="rounded-full border border-white/75 bg-white/48 px-3.5 py-2 text-[11px] font-semibold text-[#526b79] shadow-[inset_0_1px_0_rgba(255,255,255,0.95)] backdrop-blur-[16px]">
       {label}
     </span>
   );
@@ -379,11 +380,11 @@ function EquipmentHeroMetric({
 }) {
   return (
     <div className="rounded-[13px] border border-white/15 bg-white/[0.08] px-3 py-3 backdrop-blur-[14px]">
-      <span className="text-[8px] font-semibold tracking-[0.13em] text-white/45">
+      <span className="text-[11px] font-semibold tracking-[0.13em] text-white/45">
         {number}
       </span>
 
-      <p className="mt-1 text-[10px] font-semibold text-white/82">
+      <p className="mt-1 text-[12px] font-semibold text-white/82">
         {label}
       </p>
     </div>
@@ -403,7 +404,7 @@ function EquipmentOverview() {
           <div className="grid gap-5 lg:grid-cols-[0.82fr_1.18fr] lg:items-end lg:gap-12">
             <div>
               <div className="flex items-center gap-4">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#356f9f]">
+                <p className="text-[13px] font-semibold uppercase tracking-[0.14em] text-[#356f9f]">
                   Equipamentos
                 </p>
 
@@ -420,7 +421,7 @@ function EquipmentOverview() {
               </h2>
             </div>
 
-            <p className="max-w-[570px] text-[13px] leading-6 text-[#607583] sm:text-[14px]">
+            <p className="max-w-[570px] text-[15px] leading-6 text-[#607583] sm:text-[16px]">
               Explore as tecnologias disponíveis no Centro e conheça
               diferentes formas de medir, digitalizar e investigar
               peças e componentes.
@@ -477,7 +478,7 @@ function EquipmentOverviewCard({
       />
 
       <div className="relative z-10 flex items-start justify-between gap-4">
-        <span className="text-[10px] font-semibold tracking-[0.14em] text-[#5687ad]">
+        <span className="text-[12px] font-semibold tracking-[0.14em] text-[#5687ad]">
           {item.number}
         </span>
 
@@ -485,7 +486,7 @@ function EquipmentOverviewCard({
       </div>
 
       <div className="relative z-10 mt-7">
-        <p className="text-[9px] font-semibold uppercase tracking-[0.12em] text-[#5687ad]">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[#5687ad]">
           {item.category}
         </p>
 
@@ -497,12 +498,23 @@ function EquipmentOverviewCard({
           {item.highlights.slice(0, 2).map((highlight) => (
             <span
               key={highlight}
-              className="rounded-full border border-[#d9e7ed]/80 bg-white/45 px-2.5 py-1 text-[9px] font-medium text-[#607583]"
+              className="rounded-full border border-[#d9e7ed]/80 bg-white/45 px-2.5 py-1 text-[11px] font-medium text-[#607583]"
             >
               {highlight}
             </span>
           ))}
         </div>
+
+        {getEquipmentSpecs(item.id)?.key && (
+          <div className="mt-4 border-t border-[#d9e7ed]/80 pt-3">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.11em] text-[#5687ad]">
+              {getEquipmentSpecs(item.id).key.label}
+            </p>
+            <p className="mt-1 text-[14px] font-semibold text-[#17394f]">
+              {getEquipmentSpecs(item.id).key.value}
+            </p>
+          </div>
+        )}
       </div>
     </motion.a>
   );
@@ -517,7 +529,7 @@ function PrismoSection({
       className="scroll-mt-24 pb-10 pt-8 sm:pb-12 sm:pt-10 lg:pb-14 lg:pt-12"
     >
       <Container>
-        <div className="grid gap-9 lg:grid-cols-[1.08fr_0.92fr] lg:items-center lg:gap-14">
+        <div className="grid gap-9 lg:grid-cols-[1.08fr_0.92fr] lg:items-start lg:gap-14">
           <ScrollReveal
             direction="right"
             distance={38}
@@ -527,6 +539,10 @@ function PrismoSection({
               eyebrow="Alta precisão dimensional"
               statement="Precisão aplicada a requisitos rigorosos."
               imagePosition="center"
+            />
+
+            <EquipmentSpecs
+              equipmentId={equipment.id}
             />
           </ScrollReveal>
 
@@ -578,7 +594,7 @@ function EquipmentHeading({
     <div>
       <div className="flex items-center gap-4">
         <span
-          className={`text-[11px] font-semibold tracking-[0.15em] ${
+          className={`text-[13px] font-semibold tracking-[0.15em] ${
             light ? "text-[#9dd1ef]" : "text-[#356f9f]"
           }`}
         >
@@ -589,7 +605,7 @@ function EquipmentHeading({
       </div>
 
       <p
-        className={`mt-4 text-[10px] font-semibold uppercase tracking-[0.13em] ${
+        className={`mt-4 text-[12px] font-semibold uppercase tracking-[0.13em] ${
           light ? "text-[#9dd1ef]" : "text-[#5687ad]"
         }`}
       >
@@ -605,7 +621,7 @@ function EquipmentHeading({
       </h2>
 
       <p
-        className={`mt-4 max-w-[580px] text-[14px] leading-7 sm:text-[15px] ${
+        className={`mt-4 max-w-[580px] text-[16px] leading-7 sm:text-[16px] ${
           light ? "text-white/65" : "text-[#607583]"
         }`}
       >
@@ -662,7 +678,7 @@ function EquipmentMedia({
           className="pointer-events-none absolute left-[7%] right-[7%] top-0 h-px bg-gradient-to-r from-transparent via-white/60 to-transparent"
         />
 
-        <div className="absolute left-6 top-6 rounded-full border border-white/22 bg-white/10 px-4 py-2 text-[9px] font-semibold uppercase tracking-[0.13em] text-white backdrop-blur-[16px]">
+        <div className="absolute left-6 top-6 rounded-full border border-white/22 bg-white/10 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.13em] text-white backdrop-blur-[16px]">
           {equipment.category}
         </div>
 
@@ -671,7 +687,7 @@ function EquipmentMedia({
             <div>
               <div className="mb-3 h-px w-11 bg-[#65b8ee]" />
 
-              <p className="text-[9px] font-semibold uppercase tracking-[0.13em] text-[#9dd1ef]">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.13em] text-[#9dd1ef]">
                 {eyebrow}
               </p>
 
@@ -680,7 +696,7 @@ function EquipmentMedia({
               </h3>
             </div>
 
-            <span className="text-[11px] font-semibold tracking-[0.14em] text-white/40">
+            <span className="text-[13px] font-semibold tracking-[0.14em] text-white/40">
               {equipment.number}
             </span>
           </div>
@@ -704,7 +720,7 @@ function EquipmentInfoCard({
       }`}
     >
       <p
-        className={`text-[9px] font-semibold uppercase tracking-[0.13em] ${
+        className={`text-[11px] font-semibold uppercase tracking-[0.13em] ${
           light ? "text-[#9dd1ef]" : "text-[#5687ad]"
         }`}
       >
@@ -712,11 +728,84 @@ function EquipmentInfoCard({
       </p>
 
       <p
-        className={`mt-3 text-[11px] leading-5 ${
+        className={`mt-3 text-[13px] leading-6 ${
           light ? "text-white/65" : "text-[#526b79]"
         }`}
       >
         {text}
+      </p>
+    </div>
+  );
+}
+
+/*
+ * Dados técnicos do fabricante (µm, volume, resolução), para o
+ * cliente comparar qual equipamento atende melhor a sua peça.
+ */
+function EquipmentSpecs({
+  equipmentId,
+  variant = "default",
+}) {
+  const data = getEquipmentSpecs(equipmentId);
+
+  if (!data) {
+    return null;
+  }
+
+  const light = variant === "light";
+  const scanning = variant === "scanning";
+
+  const labelColor = light
+    ? "text-[#9dd1ef]"
+    : scanning
+      ? "text-[#356f9f]"
+      : "text-[#5687ad]";
+
+  const cellClass = light
+    ? "border-white/15 bg-white/[0.07] shadow-[inset_0_1px_0_rgba(255,255,255,0.10)]"
+    : scanning
+      ? "border-white/42 bg-white/20"
+      : "border-white/72 bg-white/48 shadow-[inset_0_1px_0_rgba(255,255,255,0.92),0_8px_24px_rgba(7,31,45,0.03)]";
+
+  const valueColor = light
+    ? "text-white"
+    : "text-[#071f2d]";
+
+  const noteColor = light
+    ? "text-white/45"
+    : "text-[#7b8f9a]";
+
+  return (
+    <div className="mt-5">
+      <p
+        className={`text-[11px] font-semibold uppercase tracking-[0.13em] ${labelColor}`}
+      >
+        Dados técnicos
+      </p>
+
+      <dl className="mt-3 grid gap-2 sm:grid-cols-2">
+        {data.specs.map((spec) => (
+          <div
+            key={spec.label}
+            className={`rounded-[14px] border px-3.5 py-3 backdrop-blur-[18px] ${cellClass}`}
+          >
+            <dt
+              className={`text-[11px] font-semibold uppercase tracking-[0.1em] ${labelColor}`}
+            >
+              {spec.label}
+            </dt>
+
+            <dd
+              className={`mt-1.5 text-[14px] font-semibold leading-5 tracking-[-0.01em] ${valueColor}`}
+            >
+              {spec.value}
+            </dd>
+          </div>
+        ))}
+      </dl>
+
+      <p className={`mt-2 text-[11px] leading-4 ${noteColor}`}>
+        {EQUIPMENT_SPECS_NOTE}
       </p>
     </div>
   );
@@ -729,7 +818,7 @@ function EquipmentHighlights({
   return (
     <div className="mt-5">
       <p
-        className={`text-[9px] font-semibold uppercase tracking-[0.13em] ${
+        className={`text-[11px] font-semibold uppercase tracking-[0.13em] ${
           light ? "text-[#9dd1ef]" : "text-[#5687ad]"
         }`}
       >
@@ -740,7 +829,7 @@ function EquipmentHighlights({
         {items.map((item) => (
           <span
             key={item}
-            className={`rounded-full border px-3 py-1.5 text-[10px] font-medium backdrop-blur-[14px] ${
+            className={`rounded-full border px-3 py-1.5 text-[12px] font-medium backdrop-blur-[14px] ${
               light
                 ? "border-white/15 bg-white/[0.07] text-white/70"
                 : "border-white/72 bg-white/48 text-[#526b79]"
@@ -761,7 +850,7 @@ function EquipmentServices({
   return (
     <div className="mt-6">
       <p
-        className={`text-[9px] font-semibold uppercase tracking-[0.13em] ${
+        className={`text-[11px] font-semibold uppercase tracking-[0.13em] ${
           light ? "text-[#9dd1ef]" : "text-[#5687ad]"
         }`}
       >
@@ -773,7 +862,7 @@ function EquipmentServices({
           <Link
             key={service.label}
             to={service.href}
-            className={`group inline-flex min-h-[38px] items-center gap-2.5 rounded-full border px-4 py-2 text-[10px] font-semibold transition-all duration-300 ${
+            className={`group inline-flex min-h-[38px] items-center gap-2.5 rounded-full border px-4 py-2 text-[12px] font-semibold transition-all duration-300 ${
               light
                 ? "border-white/18 bg-white/[0.08] text-white/75 hover:bg-white/[0.14] hover:text-white"
                 : "border-white/72 bg-white/50 text-[#356f9f] hover:-translate-y-[1px] hover:bg-white/75 hover:text-[#071f2d]"
@@ -802,7 +891,7 @@ function DimensionalSection({
           <div className="grid gap-5 lg:grid-cols-[0.82fr_1.18fr] lg:items-end lg:gap-12">
             <div>
               <div className="flex items-center gap-4">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#356f9f]">
+                <p className="text-[13px] font-semibold uppercase tracking-[0.14em] text-[#356f9f]">
                   Medição dimensional
                 </p>
 
@@ -819,7 +908,7 @@ function DimensionalSection({
               </h2>
             </div>
 
-            <p className="max-w-[570px] text-[13px] leading-6 text-[#607583] sm:text-[14px]">
+            <p className="max-w-[570px] text-[15px] leading-6 text-[#607583] sm:text-[16px]">
               DuraMax e O-INSPECT ampliam as possibilidades de medição
               dimensional do Centro, atendendo diferentes características
               de peça, processo e método de aquisição.
@@ -827,7 +916,7 @@ function DimensionalSection({
           </div>
         </ScrollReveal>
 
-        <div className="mt-10 space-y-12 sm:mt-12 sm:space-y-14 lg:mt-14 lg:space-y-16">
+        <div className="mt-8 space-y-14 sm:mt-9 lg:mt-10 lg:space-y-16">
           <LargeEquipmentSection
             equipment={duramax}
             direction="right"
@@ -866,7 +955,7 @@ function LargeEquipmentSection({
       id={equipment.id}
       className="scroll-mt-24"
     >
-      <div className="grid gap-9 lg:grid-cols-[1.08fr_0.92fr] lg:items-center lg:gap-14">
+      <div className="grid gap-9 lg:grid-cols-[1.08fr_0.92fr] lg:items-start lg:gap-14">
         <ScrollReveal
           direction={direction}
           distance={38}
@@ -877,6 +966,10 @@ function LargeEquipmentSection({
             eyebrow={eyebrow}
             statement={statement}
             imagePosition={imagePosition}
+          />
+
+          <EquipmentSpecs
+            equipmentId={equipment.id}
           />
         </ScrollReveal>
 
@@ -940,7 +1033,7 @@ function ScanningShowcase({
           <div className="relative z-10 grid gap-5 lg:grid-cols-[0.82fr_1.18fr] lg:items-end lg:gap-12">
             <div>
               <div className="flex items-center gap-4">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#356f9f]">
+                <p className="text-[13px] font-semibold uppercase tracking-[0.14em] text-[#356f9f]">
                   Digitalização 3D
                 </p>
 
@@ -957,7 +1050,7 @@ function ScanningShowcase({
               </h2>
             </div>
 
-            <p className="max-w-[575px] text-[13px] leading-6 text-[#526b79] sm:text-[14px]">
+            <p className="max-w-[575px] text-[15px] leading-6 text-[#526b79] sm:text-[16px]">
               Tecnologias de digitalização permitem capturar superfícies
               e geometrias para análise, documentação, comparação e
               desenvolvimento digital.
@@ -1033,7 +1126,7 @@ function ScanningEquipment({
         <div className="p-5 sm:p-6">
           <div className="flex items-start justify-between gap-5">
             <div>
-              <p className="text-[9px] font-semibold uppercase tracking-[0.13em] text-[#356f9f]">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.13em] text-[#356f9f]">
                 {equipment.category}
               </p>
 
@@ -1042,12 +1135,12 @@ function ScanningEquipment({
               </h3>
             </div>
 
-            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-white/45 bg-white/20 text-[9px] font-semibold tracking-[0.1em] text-[#356f9f] backdrop-blur-[16px]">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-white/45 bg-white/20 text-[11px] font-semibold tracking-[0.1em] text-[#356f9f] backdrop-blur-[16px]">
               {equipment.number}
             </span>
           </div>
 
-          <p className="mt-4 text-[12px] leading-6 text-[#3f5968]">
+          <p className="mt-4 text-[15px] leading-7 text-[#3f5968]">
             {equipment.description}
           </p>
 
@@ -1063,8 +1156,13 @@ function ScanningEquipment({
             />
           </div>
 
+          <EquipmentSpecs
+            equipmentId={equipment.id}
+            variant="scanning"
+          />
+
           <div className="mt-5">
-            <p className="text-[9px] font-semibold uppercase tracking-[0.13em] text-[#356f9f]">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.13em] text-[#356f9f]">
               Destaques
             </p>
 
@@ -1072,7 +1170,7 @@ function ScanningEquipment({
               {equipment.highlights.map((highlight) => (
                 <span
                   key={highlight}
-                  className="rounded-full border border-white/42 bg-white/20 px-3 py-1.5 text-[9px] font-medium text-[#314f60] backdrop-blur-[14px]"
+                  className="rounded-full border border-white/42 bg-white/20 px-3 py-1.5 text-[11px] font-medium text-[#314f60] backdrop-blur-[14px]"
                 >
                   {highlight}
                 </span>
@@ -1085,7 +1183,7 @@ function ScanningEquipment({
               <Link
                 key={service.label}
                 to={service.href}
-                className="group/link inline-flex items-center gap-2 text-[10px] font-semibold text-[#214f70] transition-colors duration-300 hover:text-[#071f2d]"
+                className="group/link inline-flex items-center gap-2 text-[12px] font-semibold text-[#214f70] transition-colors duration-300 hover:text-[#071f2d]"
               >
                 {service.label}
 
@@ -1105,11 +1203,11 @@ function ScanningInfoCard({
 }) {
   return (
     <div className="rounded-[16px] border border-white/36 bg-white/[0.16] p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.45)] backdrop-blur-[16px]">
-      <p className="text-[8px] font-semibold uppercase tracking-[0.13em] text-[#356f9f]">
+      <p className="text-[11px] font-semibold uppercase tracking-[0.13em] text-[#356f9f]">
         {title}
       </p>
 
-      <p className="mt-2 text-[10px] leading-5 text-[#314f60]">
+      <p className="mt-2 text-[12px] leading-5 text-[#314f60]">
         {text}
       </p>
     </div>
@@ -1132,18 +1230,18 @@ function ScanningCapability({
       className="rounded-[18px] border border-white/20 bg-white/[0.09] p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.22)] backdrop-blur-[18px]"
     >
       <div className="flex items-center justify-between gap-4">
-        <span className="text-[9px] font-semibold tracking-[0.13em] text-[#b9ddf2]">
+        <span className="text-[11px] font-semibold tracking-[0.13em] text-[#b9ddf2]">
           {number}
         </span>
 
         <div className="h-px w-8 bg-[#65b8ee]/70" />
       </div>
 
-      <h3 className="mt-4 text-[15px] font-semibold tracking-[-0.02em] text-white">
+      <h3 className="mt-4 text-[16px] font-semibold tracking-[-0.02em] text-white">
         {title}
       </h3>
 
-      <p className="mt-2 text-[10px] leading-5 text-white/55">
+      <p className="mt-2 text-[12px] leading-5 text-white/55">
         {description}
       </p>
     </motion.div>
@@ -1203,7 +1301,7 @@ function TScanVisual({
           className="absolute bottom-[12%] left-1/2 top-[12%] w-px bg-gradient-to-b from-transparent via-white/[0.07] to-transparent"
         />
 
-        <div className="absolute left-6 top-6 rounded-full border border-white/18 bg-white/[0.08] px-4 py-2 text-[9px] font-semibold uppercase tracking-[0.13em] text-white/80 backdrop-blur-[16px]">
+        <div className="absolute left-6 top-6 rounded-full border border-white/18 bg-white/[0.08] px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.13em] text-white/80 backdrop-blur-[16px]">
           {equipment.category}
         </div>
 
@@ -1211,7 +1309,7 @@ function TScanVisual({
           <div className="text-center">
             <ScanIcon />
 
-            <p className="mt-5 text-[9px] font-semibold uppercase tracking-[0.14em] text-[#9dd1ef]">
+            <p className="mt-5 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#9dd1ef]">
               Portable 3D scanning
             </p>
 
@@ -1226,16 +1324,16 @@ function TScanVisual({
             <div>
               <div className="mb-3 h-px w-11 bg-[#65b8ee]" />
 
-              <p className="text-[9px] font-semibold uppercase tracking-[0.13em] text-[#9dd1ef]">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.13em] text-[#9dd1ef]">
                 {eyebrow}
               </p>
 
-              <p className="mt-2 max-w-[390px] text-[15px] font-semibold leading-6 text-white">
+              <p className="mt-2 max-w-[390px] text-[16px] font-semibold leading-6 text-white">
                 {statement}
               </p>
             </div>
 
-            <span className="text-[10px] font-semibold tracking-[0.14em] text-white/35">
+            <span className="text-[12px] font-semibold tracking-[0.14em] text-white/35">
               {equipment.number}
             </span>
           </div>
@@ -1302,7 +1400,7 @@ function BoselloSection({
           <div className="relative z-10 grid gap-5 lg:grid-cols-[0.82fr_1.18fr] lg:items-end lg:gap-12">
             <div>
               <div className="flex items-center gap-4">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#9dd1ef]">
+                <p className="text-[13px] font-semibold uppercase tracking-[0.14em] text-[#9dd1ef]">
                   Inspeção interna
                 </p>
 
@@ -1319,7 +1417,7 @@ function BoselloSection({
               </h2>
             </div>
 
-            <p className="max-w-[570px] text-[13px] leading-6 text-white/58 sm:text-[14px]">
+            <p className="max-w-[570px] text-[15px] leading-6 text-white/58 sm:text-[16px]">
               A inspeção por raios X permite investigar regiões internas
               de peças e componentes sem depender apenas das superfícies
               externamente acessíveis.
@@ -1327,7 +1425,7 @@ function BoselloSection({
           </div>
         </ScrollReveal>
 
-        <div className="relative z-10 mt-9 grid gap-8 lg:grid-cols-[1.12fr_0.88fr] lg:items-center lg:gap-12">
+        <div className="relative z-10 mt-9 grid gap-8 lg:grid-cols-[1.12fr_0.88fr] lg:items-start lg:gap-12">
           <ScrollReveal
             direction="right"
             distance={38}
@@ -1349,14 +1447,14 @@ function BoselloSection({
                   className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(7,31,45,0.03)_0%,rgba(7,31,45,0.12)_45%,rgba(7,31,45,0.94)_100%)]"
                 />
 
-                <div className="absolute left-6 top-6 rounded-full border border-white/18 bg-[#071f2d]/25 px-4 py-2 text-[9px] font-semibold uppercase tracking-[0.13em] text-white/85 backdrop-blur-[18px]">
+                <div className="absolute left-6 top-6 rounded-full border border-white/18 bg-[#071f2d]/25 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.13em] text-white/85 backdrop-blur-[18px]">
                   Inspeção industrial por raios X
                 </div>
 
                 <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-7">
                   <div className="mb-3 h-px w-11 bg-[#65b8ee]" />
 
-                  <p className="text-[9px] font-semibold uppercase tracking-[0.13em] text-[#9dd1ef]">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.13em] text-[#9dd1ef]">
                     Inspeção não destrutiva
                   </p>
 
@@ -1366,6 +1464,11 @@ function BoselloSection({
                 </div>
               </div>
             </div>
+
+            <EquipmentSpecs
+              equipmentId={equipment.id}
+              variant="light"
+            />
           </ScrollReveal>
 
           <ScrollReveal
@@ -1420,7 +1523,7 @@ function NeedGuideSection() {
           >
             <div>
               <div className="flex items-center gap-4">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#356f9f]">
+                <p className="text-[13px] font-semibold uppercase tracking-[0.14em] text-[#356f9f]">
                   Escolha da tecnologia
                 </p>
 
@@ -1436,7 +1539,7 @@ function NeedGuideSection() {
                 </span>
               </h2>
 
-              <p className="mt-5 max-w-[510px] text-[13px] leading-6 text-[#607583] sm:text-[14px]">
+              <p className="mt-5 max-w-[510px] text-[15px] leading-6 text-[#607583] sm:text-[16px]">
                 A escolha do equipamento depende das características da
                 peça, do objetivo da análise e do tipo de informação
                 necessária para o projeto.
@@ -1493,26 +1596,26 @@ function NeedProfileRow({
         last ? "" : "border-b border-[#dce8ed]/65"
       }`}
     >
-      <span className="text-[9px] font-semibold tracking-[0.14em] text-[#7894a4]">
+      <span className="text-[11px] font-semibold tracking-[0.14em] text-[#7894a4]">
         {profile.number}
       </span>
 
       <div>
-        <p className="text-[8px] font-semibold uppercase tracking-[0.13em] text-[#8ba0ac]">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.13em] text-[#8ba0ac]">
           Necessidade
         </p>
 
-        <h3 className="mt-1 text-[13px] font-semibold tracking-[-0.01em] text-[#071f2d]">
+        <h3 className="mt-1 text-[15px] font-semibold tracking-[-0.01em] text-[#071f2d]">
           {profile.need}
         </h3>
       </div>
 
       <div>
-        <p className="text-[8px] font-semibold uppercase tracking-[0.13em] text-[#8ba0ac]">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.13em] text-[#8ba0ac]">
           Tecnologias relacionadas
         </p>
 
-        <p className="mt-1 text-[10px] font-medium text-[#356f9f]">
+        <p className="mt-1 text-[12px] font-medium text-[#356f9f]">
           {profile.equipment}
         </p>
       </div>
@@ -1553,7 +1656,7 @@ function EquipmentGuidanceSection() {
             <div className="relative z-10 grid gap-8 lg:grid-cols-[0.82fr_1.18fr] lg:items-end lg:gap-12">
               <div>
                 <div className="flex items-center gap-4">
-                  <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[#356f9f]">
+                  <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-[#356f9f]">
                     Próximo passo
                   </p>
 
@@ -1569,7 +1672,7 @@ function EquipmentGuidanceSection() {
                   </span>
                 </h2>
 
-                <p className="mt-5 max-w-[560px] text-[12px] leading-6 text-[#607583] sm:text-[13px]">
+                <p className="mt-5 max-w-[560px] text-[14px] leading-6 text-[#607583] sm:text-[15px]">
                   Você não precisa definir a tecnologia antes de entrar
                   em contato. Descreva sua necessidade e o Centro poderá
                   direcionar a solicitação de acordo com o objetivo do
@@ -1597,11 +1700,11 @@ function EquipmentGuidanceSection() {
             </div>
 
             <div className="relative z-10 mt-7 flex flex-col gap-3 border-t border-[#dce8ed]/70 pt-5 sm:flex-row sm:items-center sm:justify-between">
-              <p className="text-[9px] font-semibold uppercase tracking-[0.13em] text-[#7894a4]">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.13em] text-[#7894a4]">
                 Medir · Digitalizar · Inspecionar
               </p>
 
-              <p className="text-[10px] text-[#7894a4]">
+              <p className="text-[12px] text-[#7894a4]">
                 Centro de Excelência
               </p>
             </div>
@@ -1630,7 +1733,7 @@ function EquipmentFinalAction({
       />
 
       <div className="relative z-10 flex items-center justify-between gap-4">
-        <span className="text-[9px] font-semibold tracking-[0.14em] text-[#5687ad]">
+        <span className="text-[11px] font-semibold tracking-[0.14em] text-[#5687ad]">
           {number}
         </span>
 
@@ -1640,7 +1743,7 @@ function EquipmentFinalAction({
       </div>
 
       <div className="relative z-10 mt-6">
-        <p className="text-[8px] font-semibold uppercase tracking-[0.13em] text-[#7894a4]">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.13em] text-[#7894a4]">
           {eyebrow}
         </p>
 
@@ -1648,7 +1751,7 @@ function EquipmentFinalAction({
           {title}
         </h3>
 
-        <p className="mt-3 max-w-[350px] text-[10px] leading-5 text-[#607583]">
+        <p className="mt-3 max-w-[350px] text-[12px] leading-5 text-[#607583]">
           {description}
         </p>
       </div>

@@ -16,7 +16,7 @@ export function RequestNeedSelector({
           Necessidade principal
         </h3>
 
-        <p className="mt-1 text-xs leading-5 text-[#788993]">
+        <p className="mt-1 text-[13px] leading-5 text-[#788993]">
           Selecione primeiro o objetivo do atendimento. Assim, o formulário
           solicita apenas as informações realmente necessárias.
         </p>
@@ -40,7 +40,7 @@ export function RequestNeedSelector({
         {selectedNeed && (
           <div className="mt-4 rounded-[14px] border border-[#c8dce6] bg-[#f2f8fb] px-4 py-4">
             <div className="flex items-start gap-3">
-              <span className="mt-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-[#aac8d8] bg-white text-[10px] font-semibold text-[#477b98]">
+              <span className="mt-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-[#aac8d8] bg-white text-[11px] font-semibold text-[#477b98]">
                 {selectedNeed.number}
               </span>
 
@@ -49,11 +49,11 @@ export function RequestNeedSelector({
                   {selectedNeed.title}
                 </p>
 
-                <p className="mt-1.5 text-xs leading-5 text-[#708894]">
+                <p className="mt-1.5 text-[13px] leading-5 text-[#708894]">
                   {selectedNeed.description}
                 </p>
 
-                <p className="mt-2 text-[10px] font-semibold uppercase tracking-[0.1em] text-[#58839a]">
+                <p className="mt-2 text-[11px] font-semibold uppercase tracking-[0.1em] text-[#58839a]">
                   {selectedNeed.tag}
                 </p>
               </div>

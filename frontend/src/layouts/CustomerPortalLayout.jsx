@@ -1,4 +1,8 @@
+import { getCurrentCustomer } from "../services/customer/customerService";
+import { useCustomerData } from "../hooks/useCustomerData";
+import { CustomerApiState } from "../components/customer/CustomerApiState";
 import {
+  Navigate,
   Outlet,
 } from "react-router-dom";
 
@@ -11,32 +15,24 @@ import {
 } from "../components/customer/CustomerTopbar";
 
 /* ============================================================
- * DADOS MOCK
+ * CONTEXTO TEMPORÁRIO DEV
  * ============================================================ */
 
-const mockCustomer = {
-  company: {
-    name: "Empresa cliente",
-    city: "Goiânia",
-    state: "GO",
-  },
 
-  user: {
-    name: "Cliente",
-    email: "cliente@empresa.com",
-  },
-};
 
 /* ============================================================
  * LAYOUT
  * ============================================================ */
 
 export function CustomerPortalLayout() {
-  const customer =
-    mockCustomer;
+  const state = useCustomerData(getCurrentCustomer);
+  const customer = state.data;
+  if (state.status === 401) return <Navigate to="/cliente" replace />;
+  if (!customer) return <CustomerApiState {...state} />;
 
   const outletContext = {
     customer,
+    updateCustomer: state.update,
   };
 
   return (

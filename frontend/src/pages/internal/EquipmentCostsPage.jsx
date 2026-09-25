@@ -632,7 +632,7 @@ function CommercialReferenceTab({
               <ReferenceInfo
                 label="Última atualização"
                 value={
-                  reference.updatedAt ?? "Sem alteração nesta sessão"
+                  reference.updatedAt ?? "Sem alterações registradas"
                 }
               />
 

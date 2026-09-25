@@ -16,7 +16,6 @@ import java.util.*;
 
 @ApplicationScoped
 public class QuoteService {
-  static final String ACTOR="Administrador";
   static final Set<String> EDITABLE=Set.of("Rascunho","Em elaboração");
   static final Set<String> DIRECT=Set.of("failure-analysis","asset-structure","digital-library","maintenance","training");
   static final Map<String,String> SERVICES=Map.of("dimensional","Inspeção dimensional","scan","Digitalização 3D","reverse-engineering","Engenharia reversa","internal","Tomografia industrial","failure-analysis","Análise de falhas","asset-structure","Estruturação de ativos","digital-library","Biblioteca digital","maintenance","Manutenção","training","Treinamento");
@@ -25,6 +24,9 @@ public class QuoteService {
   @Inject QuoteMapper mapper;
   @Inject ProjectRepository projects;
   @Inject ObjectMapper json;
+  @Inject br.org.senai.lab.security.CurrentUser current;
+  /** Usuário interno que executa a ação (histórico). */
+  String actor(){return current.name();}
 
   @Transactional public List<Map<String,Object>> list() { return repository.list().stream().map(this::response).toList(); }
   @Transactional public Map<String,Object> get(String id) { return response(required(id,false)); }
@@ -64,7 +66,7 @@ public class QuoteService {
     repository.persist(q);
     repository.flush();q.items.addAll(composition);
     r.linkedQuoteId=q.quoteCode;r.status="Convertida em orçamento";r.updatedAt=now();
-    HistoryEntity h=new HistoryEntity();h.id=UUID.randomUUID();h.request=r;h.occurredAt=now();h.actor=ACTOR;h.action="Convertida em orçamento";h.description="Orçamento vinculado: "+q.quoteCode;r.history.add(h);
+    HistoryEntity h=new HistoryEntity();h.id=UUID.randomUUID();h.request=r;h.occurredAt=now();h.actor=actor();h.action="Convertida em orçamento";h.description="Orçamento vinculado: "+q.quoteCode;r.history.add(h);
     repository.flush();return response(q);
   }
   private void addItem(QuoteEntity q,QuotePieceEntity piece,String service,BigDecimal rate,Create dto) {
@@ -134,7 +136,8 @@ public class QuoteService {
   QuoteEntity required(String id,boolean lock) {QuoteEntity q=repository.find(id,lock);if(q==null)throw new ApiException(404,"Orçamento não encontrado.");return q;}
   void revision(QuoteEntity q,Long revision) {if(revision==null||q.revision!=revision)throw conflict("O orçamento foi alterado. Atualize a página antes de salvar.");}
   void touch(QuoteEntity q) {q.updatedAt=now();q.revision++;}
-  void event(QuoteEntity q,String action,String description) {QuoteHistoryEntity h=new QuoteHistoryEntity();h.id=UUID.randomUUID();h.quote=q;h.occurredAt=now();h.actor=ACTOR;h.action=action;h.description=description;q.history.add(h);}
+  void event(QuoteEntity q,String action,String description) {eventAs(q,action,description,actor());}
+  void eventAs(QuoteEntity q,String action,String description,String who) {QuoteHistoryEntity h=new QuoteHistoryEntity();h.id=UUID.randomUUID();h.quote=q;h.occurredAt=now();h.actor=who;h.action=action;h.description=description;q.history.add(h);}
   static LocalDateTime now(){return LocalDateTime.now(ZoneOffset.UTC);}
   static boolean blank(String value){return value==null||value.isBlank();}
   static ApiException bad(String m){return new ApiException(400,m);}
@@ -159,6 +162,6 @@ public class QuoteService {
     var pieces=q.pieces.stream().map(p->map("id",p.clientId,"name",p.name,"quantity",p.quantity,"material",p.material,"dimensions",p.dimensions,"location",p.location,"type",p.type,"services",List.copyOf(p.services),"requirements",read(p.requirementsJson),"recommendation",read(p.recommendationJson))).toList();
     DateTimeFormatter date=DateTimeFormatter.ofPattern("dd/MM/yyyy"),time=DateTimeFormatter.ofPattern("HH:mm");
     var history=q.history.stream().map(h->map("id",h.id.toString(),"date",h.occurredAt.format(date),"time",h.occurredAt.format(time),"action",h.action,"actor",h.actor,"description",h.description)).toList();
-    return map("projectId",linkedProject==null?null:linkedProject.projectCode,"convertedToProject",linkedProject!=null,"id",q.quoteCode,"technicalId",q.id.toString(),"requestId",q.request.requestCode,"requestTechnicalId",q.request.id.toString(),"source","real","visibility","internal","company",q.company,"contact",q.contact,"email",q.email,"phone",q.phone,"requestNeedId",q.requestNeedId,"requestOrigin",q.requestOrigin,"requestChannel",q.requestChannel,"status",q.status,"priority",q.priority,"responsible",q.responsible,"serviceId",q.serviceId,"service",SERVICES.getOrDefault(q.serviceId,q.serviceId),"services",List.copyOf(q.services),"scope",q.scope,"machineId",q.machineId,"objective",q.objective,"comments",q.comments,"internalNotes",q.internalNotes,"technicalSummary",q.technicalSummary,"complexity",q.complexity,"estimateJustification",q.estimateJustification,"commercialNotes",q.commercialNotes,"deadlineDays",q.deadlineDays,"validityDays",q.validityDays,"internalCost",q.internalCost,"items",items,"requestPieces",pieces,"technicalHours",technical,"totalTechnicalHours",technical,"billableHours",hours,"totalQuotedHours",hours,"hourlyRate",average,"proposedValue",total,"createdAt",q.createdAt.format(date),"updatedAt",q.updatedAt.format(date),"modifiedAt",q.updatedAt+"Z","revision",q.revision,"history",history,"proposal",q.proposal==null?null:ProposalService.response(q.proposal,this));
+    return map("projectId",linkedProject==null?null:linkedProject.projectCode,"convertedToProject",linkedProject!=null,"id",q.quoteCode,"technicalId",q.id.toString(),"requestId",q.request.requestCode,"requestTechnicalId",q.request.id.toString(),"source",Objects.toString(q.request.source,"real"),"demo","demo".equals(q.request.source),"visibility","internal","company",q.company,"contact",q.contact,"email",q.email,"phone",q.phone,"requestNeedId",q.requestNeedId,"requestOrigin",q.requestOrigin,"requestChannel",q.requestChannel,"status",q.status,"priority",q.priority,"responsible",q.responsible,"serviceId",q.serviceId,"service",SERVICES.getOrDefault(q.serviceId,q.serviceId),"services",List.copyOf(q.services),"scope",q.scope,"machineId",q.machineId,"objective",q.objective,"comments",q.comments,"internalNotes",q.internalNotes,"technicalSummary",q.technicalSummary,"complexity",q.complexity,"estimateJustification",q.estimateJustification,"commercialNotes",q.commercialNotes,"deadlineDays",q.deadlineDays,"validityDays",q.validityDays,"internalCost",q.internalCost,"items",items,"requestPieces",pieces,"technicalHours",technical,"totalTechnicalHours",technical,"billableHours",hours,"totalQuotedHours",hours,"hourlyRate",average,"proposedValue",total,"createdAt",q.createdAt.format(date),"updatedAt",q.updatedAt.format(date),"modifiedAt",q.updatedAt+"Z","revision",q.revision,"history",history,"proposal",q.proposal==null?null:ProposalService.response(q.proposal,this));
   }
 }

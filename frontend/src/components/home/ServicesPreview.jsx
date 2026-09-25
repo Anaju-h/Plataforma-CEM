@@ -156,7 +156,7 @@ const services = [
     title: "Inspeção dimensional",
     description:
       "Medição e análise dimensional para avaliação de peças, geometrias e requisitos técnicos.",
-    href: "/servicos#inspecao-dimensional",
+    href: "/servicos#metrologia-inspecao",
   },
   {
     number: "02",
@@ -172,7 +172,7 @@ const services = [
     title: "Engenharia reversa",
     description:
       "Transformação de componentes físicos em informações digitais para reconstrução e desenvolvimento CAD.",
-    href: "/servicos#engenharia-reversa",
+    href: "/servicos#engenharia-desenvolvimento",
   },
   {
     number: "04",
@@ -180,7 +180,7 @@ const services = [
     title: "Análise interna",
     description:
       "Tecnologias de inspeção para investigação de características internas e estruturas não acessíveis externamente.",
-    href: "/servicos#analise-interna",
+    href: "/servicos#tomografia-industrial",
   },
 ];
 
@@ -366,7 +366,7 @@ export function ServicesPreview() {
 
                 <p
                   className="
-                    text-[10px]
+                    text-[11px]
                     font-bold
                     uppercase
                     tracking-[0.21em]
@@ -424,11 +424,11 @@ export function ServicesPreview() {
             >
               <p
                 className="
-                  text-[13px]
+                  text-[14px]
                   font-medium
                   leading-[1.75]
                   text-[#345365]
-                  sm:text-[14px]
+                  sm:text-[15px]
                 "
               >
                 Aplicamos tecnologias de metrologia, digitalização e engenharia
@@ -561,7 +561,7 @@ export function ServicesPreview() {
             <p
               className="
                 hidden
-                text-[9px]
+                text-[11px]
                 font-semibold
                 uppercase
                 tracking-[0.16em]
@@ -580,7 +580,7 @@ export function ServicesPreview() {
                 inline-flex
                 items-center
                 gap-3
-                text-[10px]
+                text-[11px]
                 font-semibold
                 text-[#12364e]
                 transition-colors
@@ -619,7 +619,7 @@ export function ServicesPreview() {
           <p
             className="
               mt-4
-              text-[9px]
+              text-[11px]
               font-semibold
               uppercase
               tracking-[0.14em]
@@ -742,7 +742,7 @@ function ServiceCard({ service }) {
       <div className="flex items-center justify-between">
         <span
           className="
-            text-[9px]
+            text-[11px]
             font-bold
             tracking-[0.18em]
             text-[#9fd0ef]
@@ -806,7 +806,7 @@ function ServiceCard({ service }) {
         <p
           className="
             mt-2.5
-            text-[12px]
+            text-[13px]
             leading-[1.65]
             text-[#d0dde4]
           "
@@ -834,7 +834,7 @@ function ServiceCard({ service }) {
             inline-flex
             items-center
             gap-2.5
-            text-[9px]
+            text-[11px]
             font-bold
             uppercase
             tracking-[0.12em]

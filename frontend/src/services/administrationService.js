@@ -3,24 +3,18 @@ import {
   initialGeneralSettings,
   integrationCatalog,
 } from "../data/internal/administration";
+import { getAuditTrail, persistSetting, postAuditEvent } from "./settingsApi";
+import { getCurrentUser } from "./currentUserService";
 
 /*
  * ============================================================
- * SERVIÇO TEMPORÁRIO DE ADMINISTRAÇÃO
+ * SERVIÇO DE ADMINISTRAÇÃO
  * ============================================================
  *
- * Nesta fase as alterações permanecem apenas durante
- * a sessão atual.
- *
- * Futuramente:
- *
- * Frontend
- *      ↓
- * API
- *      ↓
- * Banco de dados
- *
- * será responsável pela persistência definitiva.
+ * Estado local sincronizado com o backend:
+ * - carregado na entrada do portal (hydrateAdministration);
+ * - cada alteração é gravada em /api/admin/settings;
+ * - a auditoria fica em /api/admin/audit.
  * ============================================================
  */
 
@@ -36,6 +30,21 @@ let attentionRules =
   );
 
 let auditEvents = [];
+
+/** Aplica as configurações salvas no banco (chamado na entrada do portal). */
+export function hydrateAdministration({ general, rules } = {}) {
+  if (general && typeof general === "object") generalSettings = { ...initialGeneralSettings, ...general };
+  if (Array.isArray(rules) && rules.length) {
+    const saved = new Map(rules.map(rule => [rule.id, rule]));
+    attentionRules = initialAttentionRules.map(rule => ({ ...rule, ...(saved.get(rule.id) || {}) }));
+  }
+}
+
+/** Recarrega a trilha de auditoria do banco. */
+export async function loadAuditEvents() {
+  try { auditEvents = await getAuditTrail(); } catch (error) { console.error("[auditoria]", error.message); }
+  return getAuditEvents();
+}
 
 /*
  * ============================================================
@@ -83,6 +92,7 @@ export function updateGeneralSettings(
     changedFields.length >
     0
   ) {
+    persistSetting("general", generalSettings);
     registerAuditEvent({
       action:
         "Configurações operacionais atualizadas",
@@ -136,6 +146,7 @@ export function updateAttentionRule(
     );
 
   if (updatedRule) {
+    persistSetting("attention-rules", attentionRules);
     registerAuditEvent({
       action:
         "Regra de atenção atualizada",
@@ -187,7 +198,7 @@ export function registerAuditEvent({
   action,
   area,
   description,
-  actor = "Administrador",
+  actor = getCurrentUser()?.name || "Administrador",
 }) {
   const event = {
     id:
@@ -211,6 +222,7 @@ export function registerAuditEvent({
     event,
     ...auditEvents,
   ];
+  postAuditEvent({ area, action, description: event.description }).catch(error => console.error("[auditoria]", error.message));
 
   return {
     ...event,
@@ -238,7 +250,7 @@ function createAuditId() {
 
 function formatCurrentDate() {
   return new Intl.DateTimeFormat(
-    "pt-BR",
+    "pt-BR", { dateStyle: "short", timeStyle: "short" },
   ).format(
     new Date(),
   );

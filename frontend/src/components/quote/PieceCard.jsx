@@ -47,7 +47,7 @@ export function PieceCard({
     <article className="overflow-hidden rounded-[22px] border border-[#dce5ea] bg-white">
       <div className="flex flex-col gap-4 border-b border-[#e1e8ec] bg-[#f5f8fa] px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-6">
         <div>
-          <p className="text-[10px] font-medium uppercase tracking-[0.12em] text-[#5687ad]">
+          <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-[#5687ad]">
             Item do projeto
           </p>
 
@@ -67,7 +67,7 @@ export function PieceCard({
               border border-[#e2d7d7]
               bg-white
               px-3 py-2
-              text-xs font-medium text-[#8a4545]
+              text-[13px] font-medium text-[#8a4545]
               transition-all duration-200
               hover:border-[#cdaaaa]
               hover:bg-[#fffafa]
@@ -134,7 +134,7 @@ export function PieceCard({
           </div>
 
           <div className="mt-5">
-            <p className="mb-2.5 text-xs font-medium uppercase tracking-[0.08em] text-[#415b6c]">
+            <p className="mb-2.5 text-[13px] font-medium uppercase tracking-[0.08em] text-[#415b6c]">
               Dimensões aproximadas
             </p>
 
@@ -170,7 +170,7 @@ export function PieceCard({
               />
 
               <label>
-                <span className="mb-2 block text-[10px] uppercase tracking-[0.07em] text-[#71838e]">
+                <span className="mb-2 block text-[11px] uppercase tracking-[0.07em] text-[#71838e]">
                   Unidade
                 </span>
 
@@ -240,7 +240,7 @@ export function PieceCard({
                         {service.label}
                       </p>
 
-                      <p className="mt-1 text-xs leading-5 text-[#71838f]">
+                      <p className="mt-1 text-[13px] leading-5 text-[#71838f]">
                         {service.description}
                       </p>
                     </div>
@@ -391,7 +391,7 @@ export function PieceCard({
 
           {piece.transportStatus === "no" && (
             <div className="mt-5 rounded-[18px] border border-[#cfe0e9] bg-[#f1f7fa] p-5">
-              <p className="text-xs font-medium uppercase tracking-[0.1em] text-[#356f9f]">
+              <p className="text-[13px] font-medium uppercase tracking-[0.1em] text-[#356f9f]">
                 Atendimento in loco
               </p>
 
@@ -507,7 +507,7 @@ export function PieceCard({
               + Adicionar arquivos
             </p>
 
-            <p className="mt-2 text-xs text-[#7b8c97]">
+            <p className="mt-2 text-[13px] text-[#7b8c97]">
               Imagens, PDF, STL, STEP, IGES ou DWG
             </p>
           </button>
@@ -529,7 +529,7 @@ function FormSection({
           {title}
         </h4>
 
-        <p className="mt-1 text-xs leading-5 text-[#788993]">
+        <p className="mt-1 text-[13px] leading-5 text-[#788993]">
           {description}
         </p>
       </div>
@@ -545,7 +545,7 @@ function OptionPanel({
 }) {
   return (
     <div className="rounded-[18px] border border-[#d8e4ea] bg-[#f6f9fb] p-5">
-      <p className="text-xs font-semibold uppercase tracking-[0.08em] text-[#356f9f]">
+      <p className="text-[13px] font-semibold uppercase tracking-[0.08em] text-[#356f9f]">
         {title}
       </p>
 
@@ -641,7 +641,7 @@ function DimensionInput({
 }) {
   return (
     <label>
-      <span className="mb-2 block text-[10px] uppercase tracking-[0.07em] text-[#71838e]">
+      <span className="mb-2 block text-[11px] uppercase tracking-[0.07em] text-[#71838e]">
         {label}
       </span>
 
@@ -662,7 +662,7 @@ function Field({
 }) {
   return (
     <label className="block">
-      <span className="mb-2.5 block text-xs font-medium uppercase tracking-[0.08em] text-[#415b6c]">
+      <span className="mb-2.5 block text-[13px] font-medium uppercase tracking-[0.08em] text-[#415b6c]">
         {label}
       </span>
 

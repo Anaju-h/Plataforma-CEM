@@ -5,7 +5,7 @@ import { Container } from "./Container";
 const serviceLinks = [
   {
     label: "Inspeção dimensional",
-    href: "/servicos#inspecao-dimensional",
+    href: "/servicos#metrologia-inspecao",
   },
   {
     label: "Digitalização 3D",
@@ -13,11 +13,11 @@ const serviceLinks = [
   },
   {
     label: "Engenharia reversa",
-    href: "/servicos#engenharia-reversa",
+    href: "/servicos#engenharia-desenvolvimento",
   },
   {
     label: "Análise interna",
-    href: "/servicos#analise-interna",
+    href: "/servicos#tomografia-industrial",
   },
 ];
 
@@ -149,7 +149,7 @@ export function Footer() {
               <p
                 className="
                   mb-3
-                  text-[9px]
+                  text-[11px]
                   font-semibold
                   uppercase
                   tracking-[0.18em]
@@ -254,7 +254,7 @@ export function Footer() {
           >
             <p
               className="
-                text-[10px]
+                text-[11px]
                 leading-4
                 text-[#304e61]
               "
@@ -269,7 +269,7 @@ export function Footer() {
                 items-center
                 gap-x-4
                 gap-y-2
-                text-[10px]
+                text-[11px]
                 font-medium
                 text-[#17384d]
               "
@@ -315,7 +315,7 @@ function FooterColumn({ title, links }) {
     <div className="min-w-0">
       <p
         className="
-          text-[11px]
+          text-[12px]
           font-bold
           uppercase
           tracking-[0.15em]
@@ -352,7 +352,7 @@ function FooterColumn({ title, links }) {
               flex
               w-fit
               items-center
-              text-[13px]
+              text-[14px]
               font-medium
               leading-5
               text-[#203f52]
@@ -375,7 +375,7 @@ function FooterContact() {
     <div className="min-w-0">
       <p
         className="
-          text-[11px]
+          text-[12px]
           font-bold
           uppercase
           tracking-[0.15em]
@@ -398,7 +398,7 @@ function FooterContact() {
       <div className="mt-4">
         <p
           className="
-            text-[10px]
+            text-[11px]
             font-semibold
             uppercase
             tracking-[0.12em]
@@ -414,7 +414,7 @@ function FooterContact() {
             mt-1
             block
             break-words
-            text-[13px]
+            text-[14px]
             font-medium
             leading-5
             text-[#203f52]
@@ -430,7 +430,33 @@ function FooterContact() {
       <div className="mt-5">
         <p
           className="
-            text-[10px]
+            text-[11px]
+            font-semibold
+            uppercase
+            tracking-[0.12em]
+            text-[#536d7c]
+          "
+        >
+          Horário de funcionamento
+        </p>
+
+        <p
+          className="
+            mt-1
+            text-[14px]
+            font-medium
+            leading-5
+            text-[#203f52]
+          "
+        >
+          08:00 às 18:00
+        </p>
+      </div>
+
+      <div className="mt-5">
+        <p
+          className="
+            text-[11px]
             font-semibold
             uppercase
             tracking-[0.12em]
@@ -444,7 +470,7 @@ function FooterContact() {
           className="
             mt-1
             max-w-[260px]
-            text-[13px]
+            text-[14px]
             font-medium
             leading-[1.6]
             text-[#203f52]
@@ -465,7 +491,7 @@ function FooterContact() {
             mt-3
             inline-flex
             items-center
-            text-[11px]
+            text-[12px]
             font-bold
             uppercase
             tracking-[0.1em]

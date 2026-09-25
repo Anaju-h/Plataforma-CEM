@@ -14,6 +14,11 @@ import {
   getMachineProfile,
 } from "./data/machineProfiles";
 
+import {
+  EQUIPMENT_SPECS_NOTE,
+  getEquipmentSpecs,
+} from "../../data/equipmentSpecs";
+
 /* ============================================================
  * MÁQUINAS
  * ============================================================ */
@@ -381,6 +386,10 @@ function ExplorationStage({
         />
       </PremiumViewport>
 
+      <MachineSpecsPanel
+        machineId={machine.id}
+      />
+
       <OrientationPanel
         label="Orientação em construção"
         title="Explorando tecnologias"
@@ -651,6 +660,10 @@ function EvaluationStage({
         />
       </PremiumViewport>
 
+      <MachineSpecsPanel
+        machineId={machine.id}
+      />
+
       <DefinitionPanel
         score={
           recommendation.definitionScore ??
@@ -765,7 +778,7 @@ function SolutionStage({
           </StageCategory>
         </div>
 
-        <span className="shrink-0 rounded-full border border-[#65b8ee]/45 bg-[#071f2d] px-3 py-1.5 text-[9px] font-semibold uppercase tracking-[0.1em] text-white shadow-[0_8px_20px_rgba(7,31,45,0.12)]">
+        <span className="shrink-0 rounded-full border border-[#65b8ee]/45 bg-[#071f2d] px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.1em] text-white shadow-[0_8px_20px_rgba(7,31,45,0.12)]">
           Orientação inicial
         </span>
       </div>
@@ -822,6 +835,10 @@ function SolutionStage({
         />
       </PremiumViewport>
 
+      <MachineSpecsPanel
+        machineId={machine.id}
+      />
+
       <DefinitionPanel
         score={
           recommendation.definitionScore ??
@@ -834,7 +851,7 @@ function SolutionStage({
       {primaryMachines.length >
         1 && (
         <div className="mt-3 rounded-[16px] border border-[#b5ccd8]/70 bg-white/34 px-4 py-3">
-          <p className="text-[9px] font-semibold uppercase tracking-[0.12em] text-[#688595]">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[#688595]">
             Tecnologias complementares
           </p>
 
@@ -861,7 +878,7 @@ function SolutionStage({
                       key={
                         machineId
                       }
-                      className="rounded-full border border-[#a9c5d3]/70 bg-[#e4eff4] px-3 py-1.5 text-[10px] font-semibold text-[#456f86]"
+                      className="rounded-full border border-[#a9c5d3]/70 bg-[#e4eff4] px-3 py-1.5 text-[11px] font-semibold text-[#456f86]"
                     >
                       {
                         profile.name
@@ -1195,7 +1212,7 @@ function MachineSpotlightLabel({
       >
         <span className="h-1.5 w-1.5 rounded-full bg-[#65B8EE] shadow-[0_0_10px_rgba(101,184,238,0.55)]" />
 
-        <p className="text-[9px] font-semibold uppercase tracking-[0.1em]">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.1em]">
           {label}
         </p>
       </div>
@@ -1286,12 +1303,12 @@ function StageHeader({
           className="h-2 w-2 rounded-full bg-[#0057B8]"
         />
 
-        <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[#4c7892]">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#4c7892]">
           {eyebrow}
         </p>
       </div>
 
-      <span className="rounded-full border border-[#b3cad6]/62 bg-white/42 px-3 py-1.5 text-[9px] font-semibold uppercase tracking-[0.09em] text-[#688390] backdrop-blur-[12px]">
+      <span className="rounded-full border border-[#b3cad6]/62 bg-white/42 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.09em] text-[#688390] backdrop-blur-[12px]">
         {counter}
       </span>
     </div>
@@ -1312,7 +1329,7 @@ function StageCategory({
   children,
 }) {
   return (
-    <p className="mt-1.5 text-[10px] font-semibold uppercase tracking-[0.13em] text-[#527f98]">
+    <p className="mt-1.5 text-[11px] font-semibold uppercase tracking-[0.13em] text-[#527f98]">
       {children}
     </p>
   );
@@ -1322,7 +1339,7 @@ function StageDescription({
   children,
 }) {
   return (
-    <p className="mt-2.5 max-w-[560px] text-[12px] leading-6 text-[#69818e]">
+    <p className="mt-2.5 max-w-[560px] text-[13px] leading-6 text-[#69818e]">
       {children}
     </p>
   );
@@ -1346,7 +1363,7 @@ function CarouselControls({
         onClick={
           onPrevious
         }
-        className="flex h-9 w-9 items-center justify-center rounded-full border border-white/55 bg-[#071F2D]/78 text-[14px] text-white shadow-[0_8px_18px_rgba(7,31,45,0.14)] backdrop-blur-[14px] transition-all duration-300 hover:-translate-x-0.5 hover:bg-[#12364E]"
+        className="flex h-9 w-9 items-center justify-center rounded-full border border-white/55 bg-[#071F2D]/78 text-[15px] text-white shadow-[0_8px_18px_rgba(7,31,45,0.14)] backdrop-blur-[14px] transition-all duration-300 hover:-translate-x-0.5 hover:bg-[#12364E]"
         aria-label="Tecnologia anterior"
       >
         ←
@@ -1392,7 +1409,7 @@ function CarouselControls({
         onClick={
           onNext
         }
-        className="flex h-9 w-9 items-center justify-center rounded-full border border-white/55 bg-[#071F2D]/78 text-[14px] text-white shadow-[0_8px_18px_rgba(7,31,45,0.14)] backdrop-blur-[14px] transition-all duration-300 hover:translate-x-0.5 hover:bg-[#12364E]"
+        className="flex h-9 w-9 items-center justify-center rounded-full border border-white/55 bg-[#071F2D]/78 text-[15px] text-white shadow-[0_8px_18px_rgba(7,31,45,0.14)] backdrop-blur-[14px] transition-all duration-300 hover:translate-x-0.5 hover:bg-[#12364E]"
         aria-label="Próxima tecnologia"
       >
         →
@@ -1443,7 +1460,7 @@ function DefinitionPanel({
         <div>
           <p
             className={`
-              text-[9px]
+              text-[11px]
               font-semibold
               uppercase
               tracking-[0.12em]
@@ -1461,7 +1478,7 @@ function DefinitionPanel({
           <p
             className={`
               mt-1
-              text-[11px]
+              text-[12px]
               font-semibold
 
               ${
@@ -1559,6 +1576,68 @@ function DefinitionPanel({
  * ORIENTAÇÃO
  * ============================================================ */
 
+/* ============================================================
+ * DADOS TÉCNICOS DA MÁQUINA EM DESTAQUE
+ * ============================================================ */
+
+function MachineSpecsPanel({
+  machineId,
+}) {
+  const data =
+    getEquipmentSpecs(
+      machineId,
+    );
+
+  if (!data) {
+    return null;
+  }
+
+  return (
+    <div className="mt-3 rounded-[16px] border border-[#adc6d3]/60 bg-white/35 px-4 py-3.5 backdrop-blur-[14px]">
+      <div className="flex items-center gap-2">
+        <span className="h-1.5 w-1.5 rounded-full bg-[#0057B8]" />
+
+        <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[#688798]">
+          Dados técnicos
+        </p>
+      </div>
+
+      <dl className="mt-2.5 grid grid-cols-2 gap-x-4 gap-y-2.5">
+        {data.specs.map(
+          (
+            spec,
+          ) => (
+            <div
+              key={
+                spec.label
+              }
+              className="min-w-0"
+            >
+              <dt className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#7a93a1]">
+                {
+                  spec.label
+                }
+              </dt>
+
+              <dd className="mt-0.5 text-[13px] font-semibold leading-4 text-[#214d65]">
+                {
+                  spec.value
+                }
+              </dd>
+            </div>
+          ),
+        )}
+      </dl>
+
+      <p className="mt-2.5 text-[11px] leading-4 text-[#8a9da7]">
+        {
+          EQUIPMENT_SPECS_NOTE
+        }
+      </p>
+    </div>
+  );
+}
+
 function OrientationPanel({
   label,
   title,
@@ -1569,16 +1648,16 @@ function OrientationPanel({
       <div className="flex items-center gap-2">
         <span className="h-1.5 w-1.5 rounded-full bg-[#0057B8]" />
 
-        <p className="text-[9px] font-semibold uppercase tracking-[0.12em] text-[#688798]">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[#688798]">
           {label}
         </p>
       </div>
 
-      <p className="mt-2 text-[12px] font-semibold text-[#214d65]">
+      <p className="mt-2 text-[13px] font-semibold text-[#214d65]">
         {title}
       </p>
 
-      <p className="mt-1.5 text-[11px] leading-5 text-[#748995]">
+      <p className="mt-1.5 text-[12px] leading-5 text-[#748995]">
         {text}
       </p>
     </div>
@@ -1594,7 +1673,7 @@ function MatchBadge({
 }) {
   return (
     <div className="absolute bottom-5 left-1/2 z-30 -translate-x-1/2">
-      <span className="inline-flex whitespace-nowrap rounded-full border border-[#65B8EE]/40 bg-[#071F2D]/84 px-3 py-1.5 text-[9px] font-semibold uppercase tracking-[0.1em] text-white shadow-[0_8px_20px_rgba(7,31,45,0.14)] backdrop-blur-[14px]">
+      <span className="inline-flex whitespace-nowrap rounded-full border border-[#65B8EE]/40 bg-[#071F2D]/84 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.1em] text-white shadow-[0_8px_20px_rgba(7,31,45,0.14)] backdrop-blur-[14px]">
         {
           getMatchLabel(
             level,
@@ -1643,7 +1722,7 @@ function ReasonPanel({
 
   return (
     <div className="mt-3 rounded-[16px] border border-[#b8ccd7]/60 bg-white/30 px-4 py-3.5">
-      <p className="text-[9px] font-semibold uppercase tracking-[0.12em] text-[#688697]">
+      <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[#688697]">
         Leitura técnica
       </p>
 
@@ -1694,7 +1773,7 @@ function MachineAlternatives({
 }) {
   return (
     <div className="mt-3">
-      <p className="text-[9px] font-semibold uppercase tracking-[0.12em] text-[#718997]">
+      <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[#718997]">
         Tecnologias em avaliação
       </p>
 
@@ -1752,7 +1831,7 @@ function MachineAlternatives({
                   <p
                     className={`
                       truncate
-                      text-[10px]
+                      text-[11px]
                       font-semibold
 
                       ${
@@ -1770,7 +1849,7 @@ function MachineAlternatives({
                   <p
                     className={`
                       mt-1
-                      text-[9px]
+                      text-[11px]
                       uppercase
                       tracking-[0.07em]
 
@@ -1822,7 +1901,7 @@ function TechnicalPoint({
         `}
       />
 
-      <p className="text-[11px] leading-5 text-[#6d8390]">
+      <p className="text-[12px] leading-5 text-[#6d8390]">
         {text}
       </p>
     </div>

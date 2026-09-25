@@ -1,3 +1,4 @@
+import { getCurrentUser } from "../../services/currentUserService";
 import {
   useEffect,
   useRef,
@@ -15,8 +16,6 @@ import {
   markNotificationAsRead,
 } from "../../services/notificationService";
 
-const currentUser =
-  "Administrador";
 
 export function NotificationBell() {
   const navigate =
@@ -132,7 +131,7 @@ export function NotificationBell() {
 
   async function refreshNotifications() {
     try {
-      setNotifications(await getNotifications(currentUser));
+      setNotifications(await getNotifications(getCurrentUser().name));
     } catch {
       setNotifications([]);
     }
@@ -167,7 +166,7 @@ export function NotificationBell() {
 
   async function handleMarkAllRead() {
     await markAllNotificationsAsRead(
-      currentUser,
+      getCurrentUser().name,
     );
 
     refreshNotifications();
@@ -239,7 +238,7 @@ export function NotificationBell() {
               border-2
               border-[#edf2f5]
               px-1
-              text-[9px]
+              text-[11px]
               font-bold
               leading-none
               text-white
@@ -309,7 +308,7 @@ export function NotificationBell() {
             <div className="flex items-start justify-between gap-4">
               <div>
                 <div className="flex items-center gap-2">
-                  <p className="text-[14px] font-semibold text-[#17394f]">
+                  <p className="text-[15px] font-semibold text-[#17394f]">
                     Notificações
                   </p>
 
@@ -323,7 +322,7 @@ export function NotificationBell() {
                         bg-[#eaf4f9]
                         px-2
                         py-0.5
-                        text-[9px]
+                        text-[11px]
                         font-semibold
                         text-[#397392]
                       "
@@ -340,7 +339,7 @@ export function NotificationBell() {
                   )}
                 </div>
 
-                <p className="mt-1 text-[11px] leading-4 text-[#607988]">
+                <p className="mt-1 text-[12px] leading-4 text-[#607988]">
                   Situações que merecem sua atenção.
                 </p>
               </div>
@@ -354,7 +353,7 @@ export function NotificationBell() {
                   }
                   className="
                     shrink-0
-                    text-[10px]
+                    text-[11px]
                     font-semibold
                     uppercase
                     tracking-[0.06em]
@@ -450,7 +449,7 @@ export function NotificationBell() {
               <div>
                 <p
                   className="
-                    text-[10px]
+                    text-[11px]
                     font-semibold
                     uppercase
                     tracking-[0.07em]
@@ -460,12 +459,12 @@ export function NotificationBell() {
                   Ver tudo em Meu trabalho
                 </p>
 
-                <p className="mt-0.5 text-[10px] text-[#607988]">
+                <p className="mt-0.5 text-[11px] text-[#607988]">
                   Abra a visão completa de prioridades.
                 </p>
               </div>
 
-              <span className="text-[14px] text-[#6d92a7]">
+              <span className="text-[15px] text-[#6d92a7]">
                 →
               </span>
             </button>
@@ -561,7 +560,7 @@ function NotificationItem({
               border
               px-2
               py-0.5
-              text-[9px]
+              text-[11px]
               font-semibold
               uppercase
               tracking-[0.05em]
@@ -580,7 +579,7 @@ function NotificationItem({
 
           <span
             className="
-              text-[9px]
+              text-[11px]
               font-semibold
               uppercase
               tracking-[0.05em]
@@ -592,11 +591,11 @@ function NotificationItem({
             }
           </span>
 
-          <span className="text-[9px] text-[#81949f]">
+          <span className="text-[11px] text-[#81949f]">
             ·
           </span>
 
-          <span className="text-[9px] text-[#647f8e]">
+          <span className="text-[11px] text-[#647f8e]">
             {type.label}
           </span>
         </div>
@@ -604,7 +603,7 @@ function NotificationItem({
         <p
           className={`
             mt-1.5
-            text-[12px]
+            text-[13px]
             leading-[18px]
             transition
             group-hover:text-[#096ab2]
@@ -621,7 +620,7 @@ function NotificationItem({
           }
         </p>
 
-        <p className="mt-0.5 text-[10px] font-medium text-[#5f7988]">
+        <p className="mt-0.5 text-[11px] font-medium text-[#5f7988]">
           {
             notification.company
           }
@@ -631,7 +630,7 @@ function NotificationItem({
           className="
             mt-1
             line-clamp-2
-            text-[10px]
+            text-[11px]
             leading-[16px]
             text-[#6d8491]
           "
@@ -646,7 +645,7 @@ function NotificationItem({
         className="
           mt-2
           shrink-0
-          text-[12px]
+          text-[13px]
           text-[#8ba0ab]
           transition
           group-hover:translate-x-0.5
@@ -686,7 +685,7 @@ function NotificationIcon({
         justify-center
         rounded-[10px]
         border
-        text-[9px]
+        text-[11px]
         font-bold
         tracking-[-0.02em]
 
@@ -727,7 +726,7 @@ function EmptyNotifications() {
         <BellIcon />
       </span>
 
-      <p className="mt-3 text-[12px] font-semibold text-[#536f80]">
+      <p className="mt-3 text-[13px] font-semibold text-[#536f80]">
         Nenhuma notificação agora.
       </p>
 
@@ -736,7 +735,7 @@ function EmptyNotifications() {
           mx-auto
           mt-1.5
           max-w-[250px]
-          text-[10px]
+          text-[11px]
           leading-4
           text-[#687f8c]
         "

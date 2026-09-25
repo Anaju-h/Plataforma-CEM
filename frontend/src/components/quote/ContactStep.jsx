@@ -125,7 +125,7 @@ export function ContactStep({
 
       <div className="border-b border-[#e0e7ec] pb-7">
         <div className="flex items-center gap-3">
-          <span className="text-xs font-medium tracking-[0.12em] text-[#356f9f]">
+          <span className="text-[13px] font-medium tracking-[0.12em] text-[#356f9f]">
             01
           </span>
 
@@ -263,7 +263,7 @@ export function ContactStep({
 
           {showEmailSuggestions && (
             <div className="mt-2.5">
-              <p className="text-[10px] font-medium text-[#718895]">
+              <p className="text-[11px] font-medium text-[#718895]">
                 Completar domínio:
               </p>
 
@@ -294,7 +294,7 @@ export function ContactStep({
                         bg-[#f1f7fa]
                         px-3
                         py-1.5
-                        text-[10px]
+                        text-[11px]
                         font-semibold
                         text-[#477187]
                         transition
@@ -361,7 +361,7 @@ export function ContactStep({
       ===================================================== */}
 
       <div className="mt-8 rounded-[18px] border border-[#d9e6ed] bg-[#f3f8fb] px-5 py-4">
-        <p className="text-xs leading-5 text-[#607786]">
+        <p className="text-[13px] leading-5 text-[#607786]">
           <span className="font-semibold text-[#356f9f]">
             Sobre os próximos passos:
           </span>{" "}
@@ -385,7 +385,7 @@ function Field({
 }) {
   return (
     <label className="block">
-      <span className="mb-2.5 block text-xs font-medium uppercase tracking-[0.08em] text-[#415b6c]">
+      <span className="mb-2.5 block text-[13px] font-medium uppercase tracking-[0.08em] text-[#415b6c]">
         {label}
 
         {required && (
@@ -398,7 +398,7 @@ function Field({
       {children}
 
       {error && (
-        <span className="mt-2 block text-[11px] font-medium leading-4 text-[#a25443]">
+        <span className="mt-2 block text-[12px] font-medium leading-4 text-[#a25443]">
           {error}
         </span>
       )}

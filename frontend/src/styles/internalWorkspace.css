@@ -15,11 +15,11 @@
   border-radius: 8px;
   background: #f5f9fb;
   padding: 6px 12px;
-  font-size: 12px;
+  font-size: 13px;
   color: #31566d;
 }
 .internal-section-eyebrow {
-  font-size: 12px;
+  font-size: 12.5px;
   font-weight: 600;
   line-height: 1.5;
   letter-spacing: 0.08em;
@@ -41,7 +41,7 @@
 .internal-input[aria-invalid="true"] { border-color: #9a5947; }
 .internal-primary-button, .internal-secondary-button {
   border-radius: 11px;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
   letter-spacing: 0.07em;
   text-transform: uppercase;
@@ -103,7 +103,7 @@
   min-width: 0;
 }
 .internal-workspace .internal-info-item > p:first-child {
-  font-size: 0.75rem;
+  font-size: 0.8125rem;
   line-height: 1.5;
 }
 .internal-workspace .internal-info-item > p:last-child {

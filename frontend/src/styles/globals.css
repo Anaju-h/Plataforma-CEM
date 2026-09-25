@@ -16,7 +16,7 @@
 
   .internal-eyebrow,
   .internal-field-label {
-    font-size: 12px;
+    font-size: 12.5px;
     line-height: 1.5;
     font-weight: 600;
     letter-spacing: 0.08em;
@@ -32,7 +32,7 @@
 
   .internal-section-description,
   .internal-body {
-    font-size: 14px;
+    font-size: 15px;
     line-height: 1.5;
   }
 
@@ -48,13 +48,13 @@
   }
 
   .internal-card-title {
-    font-size: 14px;
+    font-size: 15px;
     line-height: 1.5;
   }
 
   .internal-card-description,
   .internal-help-text {
-    font-size: 13px;
+    font-size: 14px;
     line-height: 1.5;
   }
 }

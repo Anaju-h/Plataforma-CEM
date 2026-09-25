@@ -225,7 +225,7 @@ export function SolutionsPreview() {
 
                 <p
                   className="
-                    text-[10px]
+                    text-[11px]
                     font-bold
                     uppercase
                     tracking-[0.21em]
@@ -264,7 +264,7 @@ export function SolutionsPreview() {
                 className="
                   mt-7
                   max-w-[455px]
-                  text-[14px]
+                  text-[15px]
                   font-bold
                   leading-[1.8]
                   text-white
@@ -307,7 +307,7 @@ export function SolutionsPreview() {
 
                 <p
                   className="
-                    text-[10px]
+                    text-[11px]
                     font-bold
                     uppercase
                     tracking-[0.19em]
@@ -381,7 +381,7 @@ export function SolutionsPreview() {
                 flex
                 items-center
                 gap-4
-                text-[9px]
+                text-[11px]
                 font-semibold
                 uppercase
                 tracking-[0.15em]
@@ -526,7 +526,7 @@ function SolutionCard({ item }) {
             border
             border-[#356f9f]/14
             bg-white/64
-            text-[10px]
+            text-[11px]
             font-semibold
             tracking-[0.08em]
             text-[#356f9f]
@@ -552,12 +552,12 @@ function SolutionCard({ item }) {
         >
           <p
             className="
-              text-[9px]
+              text-[11px]
               font-semibold
               uppercase
               tracking-[0.14em]
               text-[#5687ad]
-              sm:text-[10px]
+              sm:text-[11px]
             "
           >
             {item.label}
@@ -582,7 +582,7 @@ function SolutionCard({ item }) {
               mt-1.5
               hidden
               max-w-[540px]
-              text-[12px]
+              text-[13px]
               leading-5
               text-[#667887]
               sm:block

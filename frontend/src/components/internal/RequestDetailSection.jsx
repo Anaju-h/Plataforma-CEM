@@ -34,7 +34,7 @@ export function RequestDetailSection({
           {eyebrow && (
             <p
               className="
-                text-[10px]
+                text-[11px]
                 font-semibold
                 uppercase
                 tracking-[0.13em]
@@ -62,7 +62,7 @@ export function RequestDetailSection({
               className="
                 mt-1.5
                 max-w-3xl
-                text-[12px]
+                text-[13px]
                 leading-5
                 text-[#5b7584]
               "
@@ -95,7 +95,7 @@ export function RequestInfoItem({
     <div className="internal-info-item min-w-0">
       <p
         className="
-          text-[10px]
+          text-[11px]
           font-semibold
           uppercase
           tracking-[0.09em]
@@ -109,7 +109,7 @@ export function RequestInfoItem({
         className={`
           mt-1.5
           whitespace-pre-line
-          text-[13px]
+          text-[14px]
           font-medium
           leading-6
 

@@ -53,7 +53,7 @@ export function InternalNewRequestPage() {
         }
         className="
           mb-5
-          text-[11px]
+          text-[12px]
           font-semibold
           uppercase
           tracking-[0.08em]

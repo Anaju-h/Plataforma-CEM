@@ -1,3 +1,5 @@
+import { getCurrentUser } from "../../services/currentUserService";
+import { DemoBadge } from "../../components/internal/DemoBadge";
 import { getQuoteEquipmentRequirement, requiresQuoteEquipment } from "../../data/serviceCatalog";
 import { canCreateProject, createProjectFromQuote } from "../../services/projectService";
 import { getQuotePieces } from "../../services/quotePieceService";
@@ -12,6 +14,7 @@ import {
 } from "react";
 
 import {
+  Link,
   useNavigate,
   useParams,
 } from "react-router-dom";
@@ -55,8 +58,6 @@ import {
   getAllMachineCostKnowledge,
 } from "../../data/internal/pricingKnowledge";
 
-const currentUser =
-  "Administrador";
 const labelClasses = "internal-field-label font-semibold text-[#607989]";
 
 export function QuoteDetailPage() {
@@ -209,7 +210,7 @@ function QuoteEditor({ initialQuote }) {
               "/portal/orcamentos",
             )
           }
-          className="text-xs font-semibold text-[#356f9f]"
+          className="text-[13px] font-semibold text-[#356f9f]"
         >
           ← Voltar para orçamentos
         </button>
@@ -324,7 +325,7 @@ function QuoteEditor({ initialQuote }) {
       const updatedQuote =
         await sendQuoteToReview(
           saved,
-          currentUser,
+          getCurrentUser().name,
         );
 
       setQuote(
@@ -352,7 +353,7 @@ function QuoteEditor({ initialQuote }) {
       const updatedQuote =
         await approveQuoteInternally(
           quote,
-          currentUser,
+          getCurrentUser().name,
         );
 
       setQuote(
@@ -380,7 +381,7 @@ function QuoteEditor({ initialQuote }) {
       const updatedQuote =
         await returnQuoteToEditing(
           quote,
-          currentUser,
+          getCurrentUser().name,
         );
 
       setQuote(
@@ -412,7 +413,7 @@ function QuoteEditor({ initialQuote }) {
       const updatedQuote =
         await cancelQuote(
           quote,
-          currentUser,
+          getCurrentUser().name,
           confirmationReason,
         );
 
@@ -499,13 +500,21 @@ function QuoteEditor({ initialQuote }) {
           }
           description={quote.service || "Orçamento vinculado à solicitação."}
           action={
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">{quote.demo && <DemoBadge />}
 
               <QuoteStatusBadge
                 status={
                   quote.status
                 }
               />
+
+              {/* Aplicar: o Assistente de Orçamento consulta casos parecidos e registra o bloco A vinculado a este ORC. */}
+              <Link
+                to={`/portal/conhecimento/assistente?orc=${encodeURIComponent(quote.id)}`}
+                className="rounded-[12px] border border-[#b9cfdc] bg-white px-4 py-3 internal-field-label font-semibold uppercase tracking-[0.1em] text-[#12364e] transition hover:border-[#7fa6bd]"
+              >
+                Assistente de orçamento
+              </Link>
 
               {isEditable && (
                 <button
@@ -934,7 +943,7 @@ function QuoteHistoryItem({
 
       <div className="pt-0.5">
         <div className="flex flex-wrap items-center gap-2">
-          <p className="text-xs font-semibold text-[#31566d]">
+          <p className="text-[13px] font-semibold text-[#31566d]">
             {
               item.action
             }
@@ -957,7 +966,7 @@ function QuoteHistoryItem({
         )}
 
         {item.description && (
-          <p className="mt-2 text-xs leading-5 text-[#768b97]">
+          <p className="mt-2 text-[13px] leading-5 text-[#768b97]">
             {
               item.description
             }
@@ -995,7 +1004,7 @@ function PricingInsight({
       </span>
 
       <div>
-        <p className="text-xs font-semibold text-[#315d76]">
+        <p className="text-[13px] font-semibold text-[#315d76]">
           {
             insight.title
           }
@@ -1083,7 +1092,7 @@ function ControlInfo({
         {label}
       </p>
 
-      <p className="mt-1 text-xs font-semibold text-[#476579]">
+      <p className="mt-1 text-[13px] font-semibold text-[#476579]">
         {value}
       </p>
     </div>
@@ -1095,7 +1104,7 @@ function EmptyBlock({
 }) {
   return (
     <div className="rounded-[15px] border border-dashed border-[#cad9e1] bg-[#f8fafb] px-5 py-8 text-center">
-      <p className="text-xs leading-5 text-[#7c909b]">
+      <p className="text-[13px] leading-5 text-[#7c909b]">
         {text}
       </p>
     </div>

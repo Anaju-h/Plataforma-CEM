@@ -1,4 +1,5 @@
 import { useCurrentUser } from "../../hooks/useCurrentUser";
+import { hasRole, logoutInternal } from "../../services/authApi";
 import {
   NavLink,
   useNavigate,
@@ -21,11 +22,13 @@ const navigation = [
     items: [
       {
         label: "Solicitações",
+        role: "ADMIN",
         to: "/portal/solicitacoes",
         icon: RequestsIcon,
       },
       {
         label: "Orçamentos",
+        role: "ADMIN",
         to: "/portal/orcamentos",
         icon: QuoteIcon,
       },
@@ -36,6 +39,7 @@ const navigation = [
       },
       {
         label: "Histórico",
+        role: "ADMIN",
         to: "/portal/historico",
         icon: RequestsIcon,
       },
@@ -46,12 +50,13 @@ const navigation = [
     group: "Conhecimento",
     items: [
       {
-        label: "Base de conhecimento",
+        label: "Gestão do Conhecimento",
         to: "/portal/conhecimento",
         icon: KnowledgeIcon,
       },
       {
         label: "Equipamentos e custos",
+        role: "ADMIN",
         to: "/portal/equipamentos-custos",
         icon: EquipmentIcon,
       },
@@ -62,12 +67,20 @@ const navigation = [
     group: "Gestão",
     items: [
       {
+        label: "Quadro de tarefas",
+        role: "ADMIN",
+        to: "/portal/tarefas",
+        icon: BoardIcon,
+      },
+      {
         label: "Equipe",
+        role: "ADMIN",
         to: "/portal/equipe",
         icon: TeamIcon,
       },
       {
         label: "Administração",
+        role: "ADMIN",
         to: "/portal/administracao",
         icon: SettingsIcon,
       },
@@ -130,6 +143,10 @@ function SidebarContent({
   const user = useCurrentUser();
   const navigate =
     useNavigate();
+  // Cada perfil vê só o que pode usar: Técnico/Validador/Consulta ficam com Meu trabalho, Projetos delegados e Conhecimento.
+  const visibleNavigation = navigation
+    .map(section => ({ ...section, items: section.items.filter(item => !item.role || hasRole(user, item.role)) }))
+    .filter(section => section.items.length > 0);
 
   function handleNavigate() {
     if (
@@ -148,13 +165,9 @@ function SidebarContent({
     handleNavigate();
   }
 
-  function handleLogout() {
-    /*
-     * BACKEND FUTURO:
-     *
-     * Aqui entra a invalidação real da sessão interna.
-     * Não usar JWT em localStorage/sessionStorage.
-     */
+  async function handleLogout() {
+    // Invalida o cookie HttpOnly no backend; nenhum token fica no navegador.
+    await logoutInternal().catch(() => null);
 
     navigate(
       "/portal/login",
@@ -232,11 +245,11 @@ function SidebarContent({
             </div>
 
             <div>
-              <p className="text-[12px] font-semibold uppercase tracking-[0.15em] text-[#afd1e1]">
+              <p className="text-[13px] font-semibold uppercase tracking-[0.15em] text-[#afd1e1]">
                 Plataforma
               </p>
 
-              <p className="mt-0.5 text-[14px] font-semibold text-white">
+              <p className="mt-0.5 text-[15px] font-semibold text-white">
                 Portal Interno
               </p>
             </div>
@@ -247,7 +260,7 @@ function SidebarContent({
       {/* NAVEGAÇÃO */}
 
       <nav className="no-scrollbar relative z-10 mt-5 min-h-0 flex-1 overflow-y-auto px-4">
-        {navigation.map(
+        {visibleNavigation.map(
           (
             section,
             index,
@@ -258,13 +271,13 @@ function SidebarContent({
               }
               className={
                 index ===
-                navigation.length -
+                visibleNavigation.length -
                   1
                   ? "pb-2"
                   : "mb-4"
               }
             >
-              <p className="px-2 pb-2 text-[12px] font-semibold uppercase tracking-[0.14em] text-[#527286]">
+              <p className="px-2 pb-2 text-[13px] font-semibold uppercase tracking-[0.14em] text-[#527286]">
                 {
                   section.group
                 }
@@ -344,7 +357,7 @@ function SidebarContent({
                             <Icon />
                           </span>
 
-                          <span className="text-[12px] font-semibold">
+                          <span className="text-[13px] font-semibold">
                             {
                               label
                             }
@@ -392,15 +405,15 @@ function SidebarContent({
                 items-center justify-center
                 rounded-[10px]
                 bg-[linear-gradient(135deg,#1d5370_0%,#103e58_100%)]
-                text-[11px]
+                text-[12px]
                 font-semibold text-white
               "
             >{user.initials}</div>
 
             <div className="min-w-0 flex-1">
-              <p className="truncate text-[12px] font-semibold text-[#17384d]">{user.name}</p>
+              <p className="truncate text-[13px] font-semibold text-[#17384d]">{user.name}</p>
 
-              <p className="mt-0.5 text-[12px] font-medium text-[#5d7888]">
+              <p className="mt-0.5 text-[13px] font-medium text-[#5d7888]">
                 {user.accessProfile}
               </p>
             </div>
@@ -418,7 +431,7 @@ function SidebarContent({
               items-center gap-3
               rounded-[11px]
               px-3
-              text-[12px] font-medium
+              text-[13px] font-medium
               text-[#4f6c7d]
               transition
               hover:bg-white/22
@@ -629,6 +642,25 @@ function ArrowIcon() {
       className="text-[#5d7888]"
     >
       <path d="m9 18 6-6-6-6" />
+    </svg>
+  );
+}
+
+function BoardIcon() {
+  return (
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <rect x="3" y="4" width="5" height="16" rx="1.5" />
+      <rect x="10" y="4" width="5" height="11" rx="1.5" />
+      <rect x="17" y="4" width="4" height="7" rx="1.5" />
     </svg>
   );
 }

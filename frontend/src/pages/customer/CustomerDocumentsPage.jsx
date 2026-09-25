@@ -36,7 +36,7 @@ export function CustomerDocumentsPage() {
   return (
     <div className="mx-auto max-w-[1180px] px-5 py-8 sm:px-7 lg:px-8 lg:py-10">
       <div>
-        <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#0057b8]">
+        <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-[#0057b8]">
           {customer.company.name}
         </p>
 
@@ -44,33 +44,38 @@ export function CustomerDocumentsPage() {
           Documentos
         </h1>
 
-        <p className="mt-2 text-[13px] text-[#6e7981]">
+        <p className="mt-2 text-[14px] text-[#6e7981]">
           Acesse os documentos disponibilizados pelo laboratório para sua empresa.
         </p>
       </div>
 
       <section className="mt-8 overflow-hidden rounded-[14px] border border-[#dfe6ea] bg-white">
         <div className="grid grid-cols-[1.5fr_1fr_0.7fr_0.7fr] border-b border-[#e5eaed] bg-[#f8fafb] px-6 py-3 max-md:hidden">
-          <span className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[#8b969e]">
+          <span className="text-[11px] font-semibold uppercase tracking-[0.1em] text-[#8b969e]">
             Documento
           </span>
 
-          <span className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[#8b969e]">
+          <span className="text-[11px] font-semibold uppercase tracking-[0.1em] text-[#8b969e]">
             Projeto
           </span>
 
-          <span className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[#8b969e]">
+          <span className="text-[11px] font-semibold uppercase tracking-[0.1em] text-[#8b969e]">
             Publicado
           </span>
 
-          <span className="text-right text-[10px] font-semibold uppercase tracking-[0.1em] text-[#8b969e]">
+          <span className="text-right text-[11px] font-semibold uppercase tracking-[0.1em] text-[#8b969e]">
             Arquivo
           </span>
         </div>
 
         {loading ? (
-          <div className="px-6 py-10 text-center text-[13px] text-[#7b868e]">
+          <div className="px-6 py-10 text-center text-[14px] text-[#7b868e]">
             Carregando documentos...
+          </div>
+        ) : documents.length === 0 ? (
+          <div className="px-6 py-14 text-center">
+            <p className="text-[16px] font-semibold text-[#17394f]">Nenhum documento disponível ainda.</p>
+            <p className="mx-auto mt-2 max-w-[520px] text-[14px] leading-6 text-[#6e7981]">Relatórios, modelos e certificados aparecem aqui quando o laboratório concluir um serviço. As propostas ficam em Orçamentos.</p>
           </div>
         ) : (
           documents.map((document, index) => (
@@ -112,28 +117,28 @@ export function CustomerDocumentsPage() {
                 </div>
 
                 <div>
-                  <p className="text-[13px] font-semibold text-[#071f2d]">
+                  <p className="text-[14px] font-semibold text-[#071f2d]">
                     {document.name}
                   </p>
 
-                  <p className="mt-1 text-[11px] text-[#929ca3]">
+                  <p className="mt-1 text-[12px] text-[#929ca3]">
                     {document.type} · {document.size}
                   </p>
                 </div>
               </div>
 
-              <p className="text-[12px] font-medium text-[#45525b]">
+              <p className="text-[13px] font-medium text-[#45525b]">
                 {document.projectId}
               </p>
 
-              <p className="text-[11px] text-[#7d888f]">
+              <p className="text-[12px] text-[#7d888f]">
                 {document.publishedAt}
               </p>
 
               <div className="md:text-right">
                 <button
                   type="button"
-                  className="text-[12px] font-semibold text-[#0057b8] hover:text-[#003f82]"
+                  className="text-[13px] font-semibold text-[#0057b8] hover:text-[#003f82]"
                 >
                   Visualizar
                 </button>

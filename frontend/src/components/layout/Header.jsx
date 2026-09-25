@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 
 import { Container } from "./Container";
+import { LANGUAGES, setLanguage } from "../../i18n/languageStore";
+import { useLanguage } from "../../i18n/useLanguage";
 
 const navigation = [
   { label: "Início", href: "/" },
@@ -11,11 +13,8 @@ const navigation = [
   { label: "Soluções", href: "/#solucoes" },
 ];
 
-const languages = [
-  { code: "PT", label: "Português", flag: "🇧🇷" },
-  { code: "EN", label: "English", flag: "🇺🇸" },
-  { code: "DE", label: "Deutsch", flag: "🇩🇪" },
-];
+// Idiomas reais da área pública (ver src/i18n).
+const languages = LANGUAGES;
 
 function isActive(pathname, href) {
   if (href === "/") {
@@ -35,7 +34,7 @@ export function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [languageOpen, setLanguageOpen] = useState(false);
-  const [language, setLanguage] = useState("PT");
+  const language = useLanguage();
 
   const languageRef = useRef(null);
 
@@ -296,7 +295,7 @@ export function Header() {
                           relative
                           px-3
                           py-3
-                          text-[12px]
+                          text-[13px]
                           font-medium
                           transition-colors
                           duration-200
@@ -353,7 +352,7 @@ export function Header() {
                       border-white/55
                       bg-white/24
                       px-3.5
-                      text-[11px]
+                      text-[12px]
                       font-semibold
                       text-[#12364e]
                       shadow-[inset_0_1px_0_rgba(255,255,255,0.72),0_5px_16px_rgba(7,31,45,0.05)]
@@ -435,16 +434,16 @@ export function Header() {
                             {item.flag}
                           </span>
 
-                          <span className="flex-1 text-[12px] font-medium text-[#173044]">
+                          <span className="flex-1 text-[13px] font-medium text-[#173044]">
                             {item.label}
                           </span>
 
-                          <span className="text-[10px] font-semibold text-[#7890a0]">
+                          <span className="text-[11px] font-semibold text-[#7890a0]">
                             {item.code}
                           </span>
 
                           {language === item.code && (
-                            <span className="text-[13px] font-bold text-[#17384d]">
+                            <span className="text-[14px] font-bold text-[#17384d]">
                               ✓
                             </span>
                           )}
@@ -467,7 +466,7 @@ export function Header() {
                     border-white/32
                     bg-[linear-gradient(135deg,rgba(29,83,112,0.68)_0%,rgba(16,62,88,0.74)_100%)]
                     px-[18px]
-                    text-[11px]
+                    text-[12px]
                     font-semibold
                     text-white
                     shadow-[inset_0_1px_0_rgba(255,255,255,0.22),0_8px_22px_rgba(7,31,45,0.13)]
@@ -537,7 +536,7 @@ export function Header() {
                     border-white/55
                     bg-white/24
                     px-2.5
-                    text-[10px]
+                    text-[11px]
                     font-semibold
                     text-[#12364e]
                     shadow-[inset_0_1px_0_rgba(255,255,255,0.70)]
@@ -692,7 +691,7 @@ export function Header() {
                 rounded-[10px]
                 px-4
                 py-3
-                text-[13px]
+                text-[14px]
                 font-medium
                 text-[#203b4d]
                 transition-colors
@@ -721,7 +720,7 @@ export function Header() {
                 rounded-[9px]
                 border
                 py-2.5
-                text-[10px]
+                text-[11px]
                 font-semibold
                 ${
                   language === item.code
@@ -748,7 +747,7 @@ export function Header() {
             border
             border-white/32
             bg-[linear-gradient(135deg,rgba(29,83,112,0.68)_0%,rgba(16,62,88,0.74)_100%)]
-            text-[12px]
+            text-[13px]
             font-semibold
             text-white
             shadow-[inset_0_1px_0_rgba(255,255,255,0.22),0_8px_22px_rgba(7,31,45,0.13)]

@@ -112,7 +112,7 @@ export function PiecesStep({
     <div>
       <div className="border-b border-[#e0e7ec] pb-7">
         <div className="flex items-center gap-3">
-          <span className="text-xs font-medium tracking-[0.12em] text-[#356f9f]">
+          <span className="text-[13px] font-medium tracking-[0.12em] text-[#356f9f]">
             {stepNumber}
           </span>
 
@@ -144,7 +144,7 @@ export function PiecesStep({
             Selecione a necessidade principal para continuar.
           </p>
 
-          <p className="mt-2 text-xs leading-5 text-[#718895]">
+          <p className="mt-2 text-[13px] leading-5 text-[#718895]">
             O cadastro de peças será exibido somente quando fizer sentido para
             o tipo de atendimento escolhido.
           </p>
@@ -158,7 +158,7 @@ export function PiecesStep({
               Esta solicitação pode seguir sem uma peça cadastrada.
             </p>
 
-            <p className="mt-2 text-xs leading-5 text-[#708894]">
+            <p className="mt-2 text-[13px] leading-5 text-[#708894]">
               Na próxima etapa, informe o objetivo, o contexto, o prazo e os
               arquivos gerais. Se uma peça ajudar a explicar a demanda, você
               pode adicioná-la de forma opcional.
@@ -171,7 +171,7 @@ export function PiecesStep({
                   true,
                 )
               }
-              className="mt-4 cursor-pointer rounded-[11px] border border-[#9ebccc] bg-white px-4 py-2.5 text-xs font-semibold text-[#356f9f] transition hover:border-[#6f9fbe] hover:bg-[#eef6fa]"
+              className="mt-4 cursor-pointer rounded-[11px] border border-[#9ebccc] bg-white px-4 py-2.5 text-[13px] font-semibold text-[#356f9f] transition hover:border-[#6f9fbe] hover:bg-[#eef6fa]"
             >
               + Adicionar peça opcional
             </button>
@@ -187,7 +187,7 @@ export function PiecesStep({
                   Peças relacionadas — opcional
                 </p>
 
-                <p className="mt-1 text-xs text-[#718895]">
+                <p className="mt-1 text-[13px] text-[#718895]">
                   Estes dados complementam a demanda, mas não são obrigatórios.
                 </p>
               </div>
@@ -199,7 +199,7 @@ export function PiecesStep({
                     false,
                   )
                 }
-                className="cursor-pointer text-xs font-semibold text-[#6b7f8b] underline"
+                className="cursor-pointer text-[13px] font-semibold text-[#6b7f8b] underline"
               >
                 Seguir sem peças
               </button>
@@ -263,7 +263,7 @@ export function PiecesStep({
             </span>
           </button>
 
-          <p className="mt-3 text-center text-[11px] leading-5 text-[#83939d]">
+          <p className="mt-3 text-center text-[12px] leading-5 text-[#83939d]">
             Cada nova peça será cadastrada com campos independentes.
           </p>
         </>

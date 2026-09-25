@@ -1,3 +1,4 @@
+import { logoutCustomer } from "../../services/authApi";
 import {
   NavLink,
   useNavigate,
@@ -81,20 +82,9 @@ export function CustomerSidebar({
     );
   }
 
-  function handleConfirmLogout() {
-    /*
-     * BACKEND FUTURO:
-     *
-     * Aqui será executado o logout real.
-     *
-     * Exemplo:
-     * await authService.logout();
-     *
-     * Depois:
-     * navigate("/cliente", { replace: true });
-     *
-     * Nesta fase ainda não existe uma sessão real.
-     */
+  async function handleConfirmLogout() {
+    // Invalida o cookie HttpOnly da sessão do cliente no backend.
+    await logoutCustomer().catch(() => null);
 
     setLogoutModalOpen(
       false,
@@ -310,7 +300,7 @@ export function CustomerSidebar({
                 <div className="min-w-0">
                   <p
                     className="
-                      text-[8px]
+                      text-[11px]
                       font-semibold
                       uppercase
                       tracking-[0.17em]
@@ -323,7 +313,7 @@ export function CustomerSidebar({
                   <p
                     className="
                       mt-0.5
-                      text-[13px]
+                      text-[14px]
                       font-semibold
                       tracking-[-0.015em]
                       text-white
@@ -345,7 +335,7 @@ export function CustomerSidebar({
               className="
                 px-2
                 pb-2
-                text-[9px]
+                text-[11px]
                 font-semibold
                 uppercase
                 tracking-[0.16em]
@@ -459,7 +449,7 @@ export function CustomerSidebar({
                           <Icon />
                         </span>
 
-                        <span className="text-[12px] font-medium">
+                        <span className="text-[13px] font-medium">
                           {
                             label
                           }
@@ -525,7 +515,7 @@ export function CustomerSidebar({
                     justify-center
                     rounded-[10px]
                     bg-[linear-gradient(135deg,rgba(29,83,112,0.86)_0%,rgba(16,62,88,0.92)_100%)]
-                    text-[10px]
+                    text-[11px]
                     font-semibold
                     text-white
                     shadow-[inset_0_1px_0_rgba(255,255,255,0.18),0_7px_18px_rgba(7,31,45,0.12)]
@@ -540,7 +530,7 @@ export function CustomerSidebar({
                   <p
                     className="
                       truncate
-                      text-[11px]
+                      text-[12px]
                       font-semibold
                       text-[#17384d]
                     "
@@ -550,7 +540,7 @@ export function CustomerSidebar({
                     }
                   </p>
 
-                  <p className="mt-0.5 text-[9px] text-[#718997]">
+                  <p className="mt-0.5 text-[11px] text-[#718997]">
                     Minha conta
                   </p>
                 </div>
@@ -584,7 +574,7 @@ export function CustomerSidebar({
                   gap-3
                   rounded-[11px]
                   px-3
-                  text-[11px]
+                  text-[12px]
                   font-medium
                   text-[#587585]
                   transition-all
@@ -690,7 +680,7 @@ export function CustomerSidebar({
                 <LogoutIcon />
               </div>
 
-              <p className="mt-5 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#64869a]">
+              <p className="mt-5 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#64869a]">
                 Sessão
               </p>
 
@@ -698,7 +688,7 @@ export function CustomerSidebar({
                 Deseja sair da sua conta?
               </h2>
 
-              <p className="mt-3 text-[11px] leading-5 text-[#687f8c]">
+              <p className="mt-3 text-[12px] leading-5 text-[#687f8c]">
                 Você será direcionado para a tela de acesso da Área do Cliente.
               </p>
 
@@ -724,7 +714,7 @@ export function CustomerSidebar({
                       justify-center
                       rounded-[10px]
                       bg-[#12364e]
-                      text-[10px]
+                      text-[11px]
                       font-semibold
                       text-white
                     "
@@ -735,13 +725,13 @@ export function CustomerSidebar({
                   </div>
 
                   <div className="min-w-0">
-                    <p className="truncate text-[12px] font-semibold text-[#29495d]">
+                    <p className="truncate text-[13px] font-semibold text-[#29495d]">
                       {
                         userName
                       }
                     </p>
 
-                    <p className="mt-0.5 text-[10px] text-[#7b909b]">
+                    <p className="mt-0.5 text-[11px] text-[#7b909b]">
                       Área do Cliente
                     </p>
                   </div>
@@ -761,7 +751,7 @@ export function CustomerSidebar({
                     bg-white
                     px-4
                     py-2.5
-                    text-[12px]
+                    text-[13px]
                     font-semibold
                     text-[#607785]
                     transition-all
@@ -781,7 +771,7 @@ export function CustomerSidebar({
                     bg-[#12364e]
                     px-4
                     py-2.5
-                    text-[12px]
+                    text-[13px]
                     font-semibold
                     text-white
                     transition-all

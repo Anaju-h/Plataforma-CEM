@@ -84,7 +84,7 @@ export function ProjectStep({
     <div>
       <div className="border-b border-[#e0e7ec] pb-7">
         <div className="flex items-center gap-3">
-          <span className="text-xs font-medium tracking-[0.12em] text-[#356f9f]">
+          <span className="text-[13px] font-medium tracking-[0.12em] text-[#356f9f]">
             03
           </span>
 
@@ -180,7 +180,7 @@ export function ProjectStep({
                         {option.title}
                       </p>
 
-                      <p className="mt-1 text-xs leading-5 text-[#71838f]">
+                      <p className="mt-1 text-[13px] leading-5 text-[#71838f]">
                         {option.description}
                       </p>
                     </div>
@@ -249,7 +249,7 @@ export function ProjectStep({
                         {option.title}
                       </p>
 
-                      <p className="mt-1 text-xs leading-5 text-[#71838f]">
+                      <p className="mt-1 text-[13px] leading-5 text-[#71838f]">
                         {option.description}
                       </p>
                     </div>
@@ -335,7 +335,7 @@ export function ProjectStep({
             + Adicionar arquivos gerais
           </p>
 
-          <p className="mt-2 text-xs text-[#7b8c97]">
+          <p className="mt-2 text-[13px] text-[#7b8c97]">
             Imagens, PDF, STL, STEP, IGES ou DWG
           </p>
         </label>
@@ -360,7 +360,7 @@ export function ProjectStep({
                       {file.name}
                     </p>
 
-                    <p className="mt-0.5 text-[10px] uppercase tracking-[0.06em] text-[#84949e]">
+                    <p className="mt-0.5 text-[11px] uppercase tracking-[0.06em] text-[#84949e]">
                       {formatFileSize(
                         file.size,
                       )}
@@ -374,7 +374,7 @@ export function ProjectStep({
                         index,
                       )
                     }
-                    className="cursor-pointer text-xs font-medium text-[#8a5555] transition-colors hover:text-[#6d3030]"
+                    className="cursor-pointer text-[13px] font-medium text-[#8a5555] transition-colors hover:text-[#6d3030]"
                   >
                     Remover
                   </button>
@@ -400,7 +400,7 @@ function FormSection({
           {title}
         </h3>
 
-        <p className="mt-1 text-xs leading-5 text-[#788993]">
+        <p className="mt-1 text-[13px] leading-5 text-[#788993]">
           {description}
         </p>
       </div>
@@ -416,7 +416,7 @@ function Field({
 }) {
   return (
     <label className="block">
-      <span className="mb-2.5 block text-xs font-medium uppercase tracking-[0.08em] text-[#415b6c]">
+      <span className="mb-2.5 block text-[13px] font-medium uppercase tracking-[0.08em] text-[#415b6c]">
         {label}
       </span>
 

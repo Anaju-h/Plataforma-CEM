@@ -294,7 +294,7 @@ function IdentitySection({
       />
 
       <div className="mt-6">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[#6d8795]">
+        <p className="text-[12px] font-semibold uppercase tracking-[0.12em] text-[#6d8795]">
           Identificação da peça
         </p>
 
@@ -302,7 +302,7 @@ function IdentitySection({
           Conte um pouco sobre o que será analisado.
         </h2>
 
-        <p className="mt-3 max-w-[680px] text-[13px] leading-6 text-[#6f8592]">
+        <p className="mt-3 max-w-[680px] text-[14px] leading-6 text-[#6f8592]">
           Nesta etapa precisamos apenas das informações gerais da peça.
           Dimensões e condições de atendimento entram em seguida.
         </p>
@@ -329,7 +329,7 @@ function IdentitySection({
               })
             }
             placeholder="Ex.: Carcaça, suporte, conjunto..."
-            className="h-11 w-full rounded-[12px] border border-white/80 bg-white/44 px-3.5 text-[13px] font-medium text-[#31566d] outline-none transition-all placeholder:text-[#a0afb7] focus:border-[#93b8ca] focus:bg-white/70 focus:ring-2 focus:ring-[#65b8ee]/10"
+            className="h-11 w-full rounded-[12px] border border-white/80 bg-white/44 px-3.5 text-[14px] font-medium text-[#31566d] outline-none transition-all placeholder:text-[#a0afb7] focus:border-[#93b8ca] focus:bg-white/70 focus:ring-2 focus:ring-[#65b8ee]/10"
           />
         </QuestionBlock>
 
@@ -423,7 +423,7 @@ function IdentitySection({
                 })
               }
               placeholder="1"
-              className="h-11 w-full rounded-[12px] border border-white/80 bg-white/44 px-3 text-[13px] font-semibold text-[#31566d] outline-none transition-all placeholder:text-[#a0afb7] focus:border-[#93b8ca] focus:bg-white/70 focus:ring-2 focus:ring-[#65b8ee]/10"
+              className="h-11 w-full rounded-[12px] border border-white/80 bg-white/44 px-3 text-[14px] font-semibold text-[#31566d] outline-none transition-all placeholder:text-[#a0afb7] focus:border-[#93b8ca] focus:bg-white/70 focus:ring-2 focus:ring-[#65b8ee]/10"
             />
           </QuestionBlock>
         </div>
@@ -585,7 +585,7 @@ function ConditionSection({
       )}
 
       <div className={pieces.length > 1 ? "mt-6" : ""}>
-        <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[#6d8795]">
+        <p className="text-[12px] font-semibold uppercase tracking-[0.12em] text-[#6d8795]">
           Condição da peça
         </p>
 
@@ -593,7 +593,7 @@ function ConditionSection({
           Agora precisamos entender porte e mobilidade.
         </h2>
 
-        <p className="mt-3 max-w-[680px] text-[13px] leading-6 text-[#6f8592]">
+        <p className="mt-3 max-w-[680px] text-[14px] leading-6 text-[#6f8592]">
           Você pode informar as dimensões aproximadas ou simplesmente
           selecionar uma referência de tamanho.
         </p>
@@ -657,7 +657,7 @@ function ConditionSection({
         <div className="flex items-center gap-3 px-1">
           <div className="h-px flex-1 bg-[#cad9e0]/72" />
 
-          <span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[#8b9ca5]">
+          <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[#8b9ca5]">
             ou
           </span>
 
@@ -801,7 +801,7 @@ function PieceNavigation({
                   }
                 `}
               >
-                <p className="text-[10px] font-semibold uppercase tracking-[0.08em] text-[#81949e]">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#81949e]">
                   Peça{" "}
                   {String(
                     index + 1,
@@ -811,7 +811,7 @@ function PieceNavigation({
                   )}
                 </p>
 
-                <p className="mt-1 truncate text-[12px] font-semibold text-[#31566d]">
+                <p className="mt-1 truncate text-[13px] font-semibold text-[#31566d]">
                   {piece.name ||
                     "Sem nome"}
                 </p>
@@ -851,7 +851,7 @@ function PieceActions({
 }) {
   return (
     <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-[16px] border border-white/70 bg-white/24 px-4 py-3">
-      <p className="max-w-[430px] text-[11px] leading-5 text-[#8799a2]">
+      <p className="max-w-[430px] text-[12px] leading-5 text-[#8799a2]">
         Configure cada tipo de peça separadamente quando o projeto envolver
         itens diferentes.
       </p>
@@ -932,7 +932,7 @@ function QuestionBlock({
             justify-center
             rounded-full
             border
-            text-[10px]
+            text-[11px]
             font-semibold
 
             ${
@@ -946,12 +946,12 @@ function QuestionBlock({
         </span>
 
         <div>
-          <p className="text-[14px] font-semibold leading-5 text-[#31566d]">
+          <p className="text-[15px] font-semibold leading-5 text-[#31566d]">
             {title}
           </p>
 
           {help && (
-            <p className="mt-1 text-[11px] leading-5 text-[#82949e]">
+            <p className="mt-1 text-[12px] leading-5 text-[#82949e]">
               {help}
             </p>
           )}
@@ -1017,12 +1017,12 @@ function ChoiceCard({
 
       <div className="flex items-start justify-between gap-3">
         <div>
-          <p className="text-[13px] font-semibold leading-5 text-[#31566d]">
+          <p className="text-[14px] font-semibold leading-5 text-[#31566d]">
             {title}
           </p>
 
           {description && (
-            <p className="mt-1 text-[11px] leading-5 text-[#7c909b]">
+            <p className="mt-1 text-[12px] leading-5 text-[#7c909b]">
               {description}
             </p>
           )}
@@ -1039,7 +1039,7 @@ function ChoiceCard({
             justify-center
             rounded-full
             border
-            text-[10px]
+            text-[11px]
             font-semibold
 
             ${
@@ -1073,7 +1073,7 @@ function CompactChoice({
         border
         px-2.5
         py-2
-        text-[11px]
+        text-[12px]
         font-semibold
         transition-all
 
@@ -1121,13 +1121,13 @@ function ServiceChoice({
       `}
     >
       <div>
-        <p className="text-[13px] font-semibold text-[#31566d]">
+        <p className="text-[14px] font-semibold text-[#31566d]">
           {service.shortName ??
             service.name}
         </p>
 
         {service.description && (
-          <p className="mt-1 line-clamp-2 text-[10px] leading-4 text-[#84969f]">
+          <p className="mt-1 line-clamp-2 text-[11px] leading-4 text-[#84969f]">
             {service.description}
           </p>
         )}
@@ -1143,7 +1143,7 @@ function ServiceChoice({
           justify-center
           rounded-full
           border
-          text-[10px]
+          text-[11px]
           font-semibold
 
           ${
@@ -1166,7 +1166,7 @@ function DimensionInput({
 }) {
   return (
     <label>
-      <span className="mb-1.5 block text-[10px] font-semibold uppercase tracking-[0.07em] text-[#81949e]">
+      <span className="mb-1.5 block text-[11px] font-semibold uppercase tracking-[0.07em] text-[#81949e]">
         {label}
       </span>
 
@@ -1187,10 +1187,10 @@ function DimensionInput({
             )
           }
           placeholder="0"
-          className="h-11 w-full rounded-[11px] border border-white/80 bg-white/44 px-3 pr-10 text-[12px] font-semibold text-[#31566d] outline-none transition-all placeholder:text-[#a0afb7] focus:border-[#93b8ca] focus:bg-white/70 focus:ring-2 focus:ring-[#65b8ee]/10"
+          className="h-11 w-full rounded-[11px] border border-white/80 bg-white/44 px-3 pr-10 text-[13px] font-semibold text-[#31566d] outline-none transition-all placeholder:text-[#a0afb7] focus:border-[#93b8ca] focus:bg-white/70 focus:ring-2 focus:ring-[#65b8ee]/10"
         />
 
-        <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-semibold text-[#8a9ba4]">
+        <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[11px] font-semibold text-[#8a9ba4]">
           mm
         </span>
       </div>
@@ -1215,7 +1215,7 @@ function SmallAction({
         border
         px-3.5
         py-2
-        text-[10px]
+        text-[11px]
         font-semibold
         transition-all
 

@@ -322,7 +322,7 @@ function DimensionalCoreSection({
                 className="overflow-hidden"
               >
                 <div className="mt-3 rounded-[14px] border border-[#bed4df]/62 bg-[#e5f0f5]/52 p-4">
-                  <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[#648294]">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-[#648294]">
                     Menor tolerância relevante
                   </p>
 
@@ -345,10 +345,10 @@ function DimensionalCoreSection({
                         })
                       }
                       placeholder="0,010"
-                      className="h-11 w-full rounded-[12px] border border-white/82 bg-white/48 px-3 pr-11 text-[13px] font-semibold text-[#294f65] outline-none transition-all placeholder:font-normal placeholder:text-[#a3b0b7] focus:border-[#91b6c8] focus:bg-white/74 focus:ring-2 focus:ring-[#65b8ee]/10"
+                      className="h-11 w-full rounded-[12px] border border-white/82 bg-white/48 px-3 pr-11 text-[14px] font-semibold text-[#294f65] outline-none transition-all placeholder:font-normal placeholder:text-[#a3b0b7] focus:border-[#91b6c8] focus:bg-white/74 focus:ring-2 focus:ring-[#65b8ee]/10"
                     />
 
-                    <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-semibold uppercase tracking-[0.07em] text-[#879aa4]">
+                    <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[11px] font-semibold uppercase tracking-[0.07em] text-[#879aa4]">
                       mm
                     </span>
                   </div>
@@ -503,11 +503,11 @@ function IntroBox({
         <span className="mt-[7px] h-2 w-2 shrink-0 rounded-full bg-[#65b8ee]" />
 
         <div>
-          <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[#5d8094]">
+          <p className="text-[12px] font-semibold uppercase tracking-[0.12em] text-[#5d8094]">
             {title}
           </p>
 
-          <p className="mt-2 text-[12px] leading-5 text-[#6f8592]">
+          <p className="mt-2 text-[13px] leading-5 text-[#6f8592]">
             {text}
           </p>
         </div>
@@ -550,7 +550,7 @@ function QuestionBlock({
             justify-center
             rounded-full
             border
-            text-[10px]
+            text-[11px]
             font-semibold
 
             ${
@@ -564,12 +564,12 @@ function QuestionBlock({
         </span>
 
         <div>
-          <p className="text-[14px] font-semibold leading-5 text-[#31566d]">
+          <p className="text-[15px] font-semibold leading-5 text-[#31566d]">
             {title}
           </p>
 
           {help && (
-            <p className="mt-1 text-[11px] leading-5 text-[#82949e]">
+            <p className="mt-1 text-[12px] leading-5 text-[#82949e]">
               {help}
             </p>
           )}
@@ -633,12 +633,12 @@ function ChoiceCard({
 
       <div className="flex items-start justify-between gap-3">
         <div>
-          <p className="text-[13px] font-semibold leading-5 text-[#31566d]">
+          <p className="text-[14px] font-semibold leading-5 text-[#31566d]">
             {title}
           </p>
 
           {description && (
-            <p className="mt-1 text-[11px] leading-5 text-[#7c909b]">
+            <p className="mt-1 text-[12px] leading-5 text-[#7c909b]">
               {description}
             </p>
           )}
@@ -655,7 +655,7 @@ function ChoiceCard({
             justify-center
             rounded-full
             border
-            text-[10px]
+            text-[11px]
             font-semibold
 
             ${
@@ -711,11 +711,11 @@ function ReferenceChoice({
 }) {
   return (
     <div className="rounded-[14px] border border-white/76 bg-white/34 p-4">
-      <p className="text-[13px] font-semibold text-[#31566d]">
+      <p className="text-[14px] font-semibold text-[#31566d]">
         {title}
       </p>
 
-      <p className="mt-1.5 min-h-[40px] text-[11px] leading-5 text-[#81949e]">
+      <p className="mt-1.5 min-h-[40px] text-[12px] leading-5 text-[#81949e]">
         {description}
       </p>
 
@@ -765,7 +765,7 @@ function CompactChoice({
         px-2.5
         py-2
         text-center
-        text-[11px]
+        text-[12px]
         font-semibold
         transition-all
         duration-300

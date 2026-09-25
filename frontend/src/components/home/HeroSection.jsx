@@ -153,12 +153,12 @@ export function HeroSection() {
 
                 <p
                   className="
-                    text-[9px]
+                    text-[11px]
                     font-semibold
                     uppercase
                     tracking-[0.2em]
                     text-[#315b75]
-                    sm:text-[10px]
+                    sm:text-[11px]
                   "
                 >
                   Centro de Excelência em Metrologia
@@ -204,10 +204,10 @@ export function HeroSection() {
                 className="
                   mt-4
                   max-w-[490px]
-                  text-[13px]
+                  text-[14px]
                   leading-6
                   text-[#526d7f]
-                  sm:text-[14px]
+                  sm:text-[15px]
                 "
               >
                 Tecnologia, metrologia e engenharia aplicadas às necessidades da
@@ -427,7 +427,7 @@ function HeroButton({ to, label }) {
         border-white/75
         bg-[linear-gradient(110deg,rgba(190,213,226,0.68)_0%,rgba(155,194,216,0.58)_48%,rgba(127,174,201,0.62)_100%)]
         px-5
-        text-[10px]
+        text-[11px]
         font-semibold
         text-[#12364e]
         shadow-[inset_0_1px_0_rgba(255,255,255,0.70),0_10px_24px_rgba(7,31,45,0.10)]
@@ -509,7 +509,7 @@ function HeroCapability({
     <div>
       <p
         className="
-          text-[8px]
+          text-[11px]
           font-bold
           tracking-[0.14em]
           text-[#76909f]
@@ -521,7 +521,7 @@ function HeroCapability({
       <p
         className="
           mt-1
-          text-[9px]
+          text-[11px]
           font-medium
           leading-4
           text-[#345365]

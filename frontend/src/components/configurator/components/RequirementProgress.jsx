@@ -12,16 +12,16 @@ export function RequirementProgress({
     <div className="rounded-[18px] border border-[#c9d9e2] bg-[#e8f1f6] p-4">
       <div className="flex items-center justify-between gap-4">
         <div>
-          <p className="text-[9px] font-semibold uppercase tracking-[0.14em] text-[#66869a]">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#66869a]">
             Requisitos do projeto
           </p>
 
-          <p className="mt-1 text-xs text-[#6c8290]">
+          <p className="mt-1 text-[13px] text-[#6c8290]">
             Responda somente aos blocos relacionados aos serviços desta peça.
           </p>
         </div>
 
-        <span className="shrink-0 rounded-full border border-[#bad0dd] bg-white/70 px-3 py-1 text-[10px] font-semibold text-[#3d708f]">
+        <span className="shrink-0 rounded-full border border-[#bad0dd] bg-white/70 px-3 py-1 text-[11px] font-semibold text-[#3d708f]">
           {completedServices.length} / {services.length}
         </span>
       </div>
@@ -52,7 +52,7 @@ export function RequirementProgress({
                   rounded-full
                   border
                   px-3.5 py-2
-                  text-[10px]
+                  text-[11px]
                   font-semibold
                   transition-all
 

@@ -121,7 +121,7 @@ export function ConfiguratorProgress({
                         justify-center
                         rounded-full
                         border
-                        text-[11px]
+                        text-[12px]
                         font-semibold
                         transition-all
                         duration-300
@@ -138,7 +138,7 @@ export function ConfiguratorProgress({
                       `}
                     >
                       {completed ? (
-                        <span className="text-[13px]">
+                        <span className="text-[14px]">
                           ✓
                         </span>
                       ) : (
@@ -164,7 +164,7 @@ export function ConfiguratorProgress({
 
       <div className="lg:hidden">
         <div className="flex items-center justify-between gap-4">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-[#688594]">
+          <p className="text-[12px] font-semibold uppercase tracking-[0.1em] text-[#688594]">
             Etapa{" "}
             {String(
               currentStep,
@@ -181,7 +181,7 @@ export function ConfiguratorProgress({
             )}
           </p>
 
-          <span className="text-[11px] font-semibold text-[#82959f]">
+          <span className="text-[12px] font-semibold text-[#82959f]">
             {Math.round(
               progress,
             )}
@@ -262,7 +262,7 @@ export function ConfiguratorProgress({
                     justify-center
                     rounded-full
                     border
-                    text-[10px]
+                    text-[11px]
                     font-semibold
                     transition-all
 

@@ -1,3 +1,7 @@
+import { useCurrentUser } from "../../hooks/useCurrentUser";
+import { hasRole } from "../../services/authApi";
+import { DemoBadge } from "../../components/internal/DemoBadge";
+import { formatHours } from "../../components/internal/tasks/taskUtils";
 import { ApiState } from "../../components/internal/ApiState";
 import {
   useEffect,
@@ -29,6 +33,7 @@ import {
 export function ProjectsPage() {
   const navigate =
     useNavigate();
+  const isAdmin = hasRole(useCurrentUser(), "ADMIN");
 
   const [
     search,
@@ -102,7 +107,7 @@ export function ProjectsPage() {
       <InternalPageHeader
         eyebrow="Operação"
         title="Projetos"
-        description="Acompanhe os serviços que avançaram para execução após a aprovação comercial."
+        description={isAdmin ? "Acompanhe os serviços que avançaram para execução após a aprovação comercial." : "Projetos em que você tem tarefas delegadas."}
       />
 
       <div className="mt-7 rounded-[20px] border border-[#d1dde4] bg-white p-4">
@@ -247,11 +252,7 @@ function ProjectCard({
           </p>
         </div>
 
-        <ProjectStatusBadge
-          status={
-            project.status
-          }
-        />
+        <div className="flex flex-wrap items-center gap-2">{project.demo && <DemoBadge />}<ProjectStatusBadge status={project.status} /></div>
       </div>
 
       <h2 className="internal-section-title mt-5 font-semibold text-[#17394f]">
@@ -277,25 +278,15 @@ function ProjectCard({
           }
         />
 
-        <Info
-          label="Responsável"
-          value={
-            project.responsible
-          }
-        />
+        <Info label="Equipe" value={[...new Set(project.tasks.map(task => task.assigneeName).filter(Boolean))].join(", ") || "Sem tarefas delegadas"} />
 
-        <Info
-          label="Prioridade"
-          value={
-            project.priority
-          }
-        />
+        <Info label="Horas gastas / orçadas" value={`${formatHours(project.spentHours)} / ${formatHours(project.budgetHours)}`} />
       </div>
 
       <div className="mt-5 border-t border-[#e4eaee] pt-4">
         <div className="flex items-center justify-between gap-3">
           <p className="internal-eyebrow font-semibold uppercase text-[#526d7c]">
-            Andamento operacional
+            Tarefas concluídas
           </p>
 
           <p className="internal-card-title font-semibold text-[#5681a0]">

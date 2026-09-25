@@ -7,8 +7,13 @@ import java.util.*;
 @Entity @Table(name="lab_request")
 public class RequestEntity {
   @Id public UUID id;
+  @Column(name="customer_company_id") public UUID customerCompanyId;
+  @Column(name="customer_user_id") public UUID customerUserId;
+  @Column(name="claim_token_hash",length=100) public String claimTokenHash;
   @Column(name="request_code",nullable=false,unique=true) public String requestCode;
   public String source, origin, channel, company, contact, email, phone;
+  /** Snapshot completo do Configurador on-line (peças, requisitos, recomendação de tecnologia). */
+  @Column(name="configuration_json",columnDefinition="nvarchar(max)") public String configurationJson;
   @Column(name="request_need_id") public String requestNeedId;
   public String service;
   @Column(name="created_at") public LocalDateTime createdAt;

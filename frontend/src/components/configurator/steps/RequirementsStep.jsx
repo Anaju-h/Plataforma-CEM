@@ -389,7 +389,7 @@ function StepIntroduction({
   ) {
     return (
       <div>
-        <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[#6d8795]">
+        <p className="text-[12px] font-semibold uppercase tracking-[0.12em] text-[#6d8795]">
           Critérios técnicos
         </p>
 
@@ -397,7 +397,7 @@ function StepIntroduction({
           Vamos definir o que mais influencia a tecnologia.
         </h2>
 
-        <p className="mt-2.5 max-w-[680px] text-[13px] leading-6 text-[#6f8592]">
+        <p className="mt-2.5 max-w-[680px] text-[14px] leading-6 text-[#6f8592]">
           Nesta etapa mostramos apenas o critério técnico de maior impacto para
           cada frente selecionada.
         </p>
@@ -413,7 +413,7 @@ function StepIntroduction({
   ) {
     return (
       <div>
-        <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[#6d8795]">
+        <p className="text-[12px] font-semibold uppercase tracking-[0.12em] text-[#6d8795]">
           Condições complementares
         </p>
 
@@ -421,7 +421,7 @@ function StepIntroduction({
           Agora completamos o contexto da análise.
         </h2>
 
-        <p className="mt-2.5 max-w-[680px] text-[13px] leading-6 text-[#6f8592]">
+        <p className="mt-2.5 max-w-[680px] text-[14px] leading-6 text-[#6f8592]">
           Aqui entram características adicionais que ajudam a refinar a
           orientação sem concentrar perguntas demais em uma única tela.
         </p>
@@ -431,7 +431,7 @@ function StepIntroduction({
 
   return (
     <div>
-      <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[#6d8795]">
+      <p className="text-[12px] font-semibold uppercase tracking-[0.12em] text-[#6d8795]">
         Requisitos técnicos
       </p>
 
@@ -439,7 +439,7 @@ function StepIntroduction({
         O que realmente importa nesta análise?
       </h2>
 
-      <p className="mt-2.5 max-w-[680px] text-[13px] leading-6 text-[#6f8592]">
+      <p className="mt-2.5 max-w-[680px] text-[14px] leading-6 text-[#6f8592]">
         Primeiro definimos o objetivo principal de cada frente. Os critérios
         técnicos serão aprofundados nas próximas etapas.
       </p>
@@ -459,11 +459,11 @@ function ServiceSelector({
   return (
     <div className="mt-5">
       <div className="flex items-center justify-between gap-4">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-[#718a98]">
+        <p className="text-[12px] font-semibold uppercase tracking-[0.1em] text-[#718a98]">
           Frente em análise
         </p>
 
-        <p className="text-[11px] text-[#8799a2]">
+        <p className="text-[12px] text-[#8799a2]">
           {services.length}{" "}
           {services.length ===
           1
@@ -533,7 +533,7 @@ function ServiceSelector({
                     justify-center
                     rounded-full
                     border
-                    text-[10px]
+                    text-[11px]
                     font-semibold
 
                     ${
@@ -552,7 +552,7 @@ function ServiceSelector({
                 </span>
 
                 <div className="min-w-0">
-                  <p className="truncate text-[12px] font-semibold text-[#31566d]">
+                  <p className="truncate text-[13px] font-semibold text-[#31566d]">
                     {service.shortName ??
                       service.name}
                   </p>
@@ -560,7 +560,7 @@ function ServiceSelector({
                   <p
                     className={`
                       mt-0.5
-                      text-[10px]
+                      text-[11px]
                       font-semibold
                       uppercase
                       tracking-[0.07em]
@@ -599,17 +599,17 @@ function SingleServiceHeader({
         <span className="h-2 w-2 rounded-full bg-[#65b8ee]" />
 
         <div>
-          <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[#72909f]">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-[#72909f]">
             Frente em análise
           </p>
 
-          <p className="mt-0.5 text-[13px] font-semibold text-[#31566d]">
+          <p className="mt-0.5 text-[14px] font-semibold text-[#31566d]">
             {service.name}
           </p>
         </div>
       </div>
 
-      <span className="rounded-full border border-white/76 bg-white/42 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.07em] text-[#648294]">
+      <span className="rounded-full border border-white/76 bg-white/42 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.07em] text-[#648294]">
         Selecionada
       </span>
     </div>
@@ -664,7 +664,7 @@ function PieceSelector({
                   }
                 `}
               >
-                <p className="text-[10px] font-semibold uppercase tracking-[0.08em] text-[#83969f]">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#83969f]">
                   Peça{" "}
                   {String(
                     index + 1,
@@ -674,7 +674,7 @@ function PieceSelector({
                   )}
                 </p>
 
-                <p className="mt-0.5 truncate text-[12px] font-semibold text-[#31566d]">
+                <p className="mt-0.5 truncate text-[13px] font-semibold text-[#31566d]">
                   {piece.name ||
                     "Sem nome"}
                 </p>
@@ -703,11 +703,11 @@ function ServiceProgress({
     <div className="mt-4 rounded-[14px] border border-white/72 bg-white/27 px-4 py-3">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[#80939e]">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-[#80939e]">
             Outras frentes desta peça
           </p>
 
-          <p className="mt-1 text-[11px] leading-5 text-[#91a0a8]">
+          <p className="mt-1 text-[12px] leading-5 text-[#91a0a8]">
             Revise cada frente antes de continuar.
           </p>
         </div>
@@ -757,7 +757,7 @@ function ServiceProgress({
                     border
                     px-3
                     py-2
-                    text-[10px]
+                    text-[11px]
                     font-semibold
                     transition-all
 
@@ -1032,11 +1032,11 @@ function EmptyRequirements() {
           +
         </div>
 
-        <p className="mt-3 text-[13px] font-semibold text-[#45697d]">
+        <p className="mt-3 text-[14px] font-semibold text-[#45697d]">
           Nenhuma frente selecionada
         </p>
 
-        <p className="mx-auto mt-1.5 max-w-[360px] text-[11px] leading-5 text-[#8799a2]">
+        <p className="mx-auto mt-1.5 max-w-[360px] text-[12px] leading-5 text-[#8799a2]">
           Volte às etapas anteriores e selecione pelo menos uma frente de
           análise para esta peça.
         </p>

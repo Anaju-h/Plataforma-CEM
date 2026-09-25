@@ -869,7 +869,7 @@ export function QuoteForm({
 
           {submitError && (
             <div className="mt-6 rounded-[13px] border border-[#e3c5bc] bg-[#faf0ed] px-4 py-3">
-              <p className="text-[12px] font-medium text-[#8f5544]">
+              <p className="text-[13px] font-medium text-[#8f5544]">
                 {
                   submitError
                 }
@@ -900,7 +900,7 @@ export function QuoteForm({
                   bg-white/40
                   px-5
                   py-3
-                  text-[12px]
+                  text-[13px]
                   font-medium
                   text-[#415b6c]
                   transition-all
@@ -934,7 +934,7 @@ export function QuoteForm({
                   bg-[#12364e]
                   px-6
                   py-3
-                  text-[12px]
+                  text-[13px]
                   font-medium
                   text-white
                   transition-all
@@ -965,7 +965,7 @@ export function QuoteForm({
                   bg-[#356f9f]
                   px-6
                   py-3
-                  text-[12px]
+                  text-[13px]
                   font-medium
                   text-white
                   transition-all
@@ -991,7 +991,7 @@ export function QuoteForm({
         =================================================== */}
 
         <aside className="h-fit rounded-[24px] border border-[#bdd1dc]/66 bg-[#e9f2f6]/62 p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.72)] backdrop-blur-[18px] lg:sticky lg:top-[110px]">
-          <p className="text-[10px] font-medium uppercase tracking-[0.12em] text-[#5687ad]">
+          <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-[#5687ad]">
             Solicitação
           </p>
 
@@ -1085,7 +1085,7 @@ export function QuoteForm({
           {currentStep >= pieceStep &&
             effectivePieces.length > 0 && (
             <div className="mt-7 border-t border-[#c9dbe3]/74 pt-5">
-              <p className="text-[10px] font-medium uppercase tracking-[0.1em] text-[#718895]">
+              <p className="text-[11px] font-medium uppercase tracking-[0.1em] text-[#718895]">
                 Itens
               </p>
 
@@ -1101,12 +1101,12 @@ export function QuoteForm({
                       }
                       className="rounded-[12px] border border-white/68 bg-white/46 px-3 py-3"
                     >
-                      <p className="text-[12px] font-semibold text-[#0b2340]">
+                      <p className="text-[13px] font-semibold text-[#0b2340]">
                         {piece.name ||
                           `Peça ${index + 1}`}
                       </p>
 
-                      <p className="mt-1 text-[11px] text-[#728691]">
+                      <p className="mt-1 text-[12px] text-[#728691]">
                         {
                           piece.quantity
                         }{" "}
@@ -1123,7 +1123,7 @@ export function QuoteForm({
           )}
 
           <div className="mt-7 border-t border-[#c9dbe3]/74 pt-5">
-            <p className="text-[11px] leading-5 text-[#657b89]">
+            <p className="text-[12px] leading-5 text-[#657b89]">
               {isInternalMode
                 ? "A solicitação será registrada no fluxo operacional interno e seguirá para análise técnica."
                 : "O resumo é atualizado conforme as informações do projeto são preenchidas."}
@@ -1188,21 +1188,21 @@ function InternalIdentity() {
       />
 
       <div className="relative z-10 flex items-center gap-4">
-        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[13px] bg-[#12364e] text-[14px] font-semibold text-white">
+        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[13px] bg-[#12364e] text-[15px] font-semibold text-white">
           +
         </div>
 
         <div>
           <div className="flex flex-wrap items-center gap-2">
-            <p className="text-[13px] font-semibold text-[#173f57]">
+            <p className="text-[14px] font-semibold text-[#173f57]">
               Registro interno
             </p>
-                        <span className="rounded-full border border-[#9fc5d7]/60 bg-white/60 px-2.5 py-1 text-[9px] font-semibold uppercase tracking-[0.09em] text-[#4c7890]">
+                        <span className="rounded-full border border-[#9fc5d7]/60 bg-white/60 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.09em] text-[#4c7890]">
               Equipe do laboratório
             </span>
           </div>
 
-          <p className="mt-1 text-[11px] leading-5 text-[#667f8d]">
+          <p className="mt-1 text-[12px] leading-5 text-[#667f8d]">
             Utilize este fluxo para registrar demandas recebidas fora dos canais
             digitais da plataforma.
           </p>
@@ -1222,7 +1222,7 @@ function InternalRequestFields({
 }) {
   return (
     <div className="mb-8 rounded-[18px] border border-[#c8dce6] bg-[#edf6fa] p-5">
-      <p className="text-[10px] font-semibold uppercase tracking-[0.11em] text-[#47758e]">
+      <p className="text-[11px] font-semibold uppercase tracking-[0.11em] text-[#47758e]">
         Origem da demanda
       </p>
 
@@ -1230,14 +1230,14 @@ function InternalRequestFields({
         Como esta solicitação chegou ao laboratório?
       </h2>
 
-      <p className="mt-1.5 text-[12px] leading-5 text-[#5b7584]">
+      <p className="mt-1.5 text-[13px] leading-5 text-[#5b7584]">
         Essa informação mantém a rastreabilidade dos canais de entrada sem
         alterar o fluxo técnico da solicitação.
       </p>
 
       <div className="mt-5 grid gap-4 sm:grid-cols-2">
         <label>
-          <span className="mb-2 block text-[10px] font-semibold uppercase tracking-[0.08em] text-[#557585]">
+          <span className="mb-2 block text-[11px] font-semibold uppercase tracking-[0.08em] text-[#557585]">
             Canal de entrada
           </span>
 
@@ -1259,7 +1259,7 @@ function InternalRequestFields({
               border-[#c4d7e0]
               bg-white
               px-3.5
-              text-[13px]
+              text-[14px]
               text-[#294e64]
               outline-none
               transition
@@ -1293,7 +1293,7 @@ function InternalRequestFields({
         </label>
 
         <label>
-          <span className="mb-2 block text-[10px] font-semibold uppercase tracking-[0.08em] text-[#557585]">
+          <span className="mb-2 block text-[11px] font-semibold uppercase tracking-[0.08em] text-[#557585]">
             Departamento do contato
           </span>
 
@@ -1317,7 +1317,7 @@ function InternalRequestFields({
               border-[#c4d7e0]
               bg-white
               px-3.5
-              text-[13px]
+              text-[14px]
               text-[#294e64]
               outline-none
               transition
@@ -1329,7 +1329,7 @@ function InternalRequestFields({
       </div>
 
       <label className="mt-4 block">
-        <span className="mb-2 block text-[10px] font-semibold uppercase tracking-[0.08em] text-[#557585]">
+        <span className="mb-2 block text-[11px] font-semibold uppercase tracking-[0.08em] text-[#557585]">
           Observação sobre o contato
         </span>
 
@@ -1354,7 +1354,7 @@ function InternalRequestFields({
             bg-white
             px-3.5
             py-3
-            text-[13px]
+            text-[14px]
             leading-6
             text-[#294e64]
             outline-none
@@ -1377,7 +1377,7 @@ function InternalReviewSummary({
 }) {
   return (
     <div className="mb-5 rounded-[16px] border border-[#c8dce6] bg-[#edf6fa] p-5">
-      <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[#47758e]">
+      <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-[#47758e]">
         Registro interno
       </p>
 
@@ -1444,7 +1444,7 @@ function CustomerIdentity({
 
       <div className="relative z-10 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3.5">
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[13px] bg-[#12364e] text-[11px] font-semibold text-white shadow-[0_8px_20px_rgba(18,54,78,0.13)]">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[13px] bg-[#12364e] text-[12px] font-semibold text-white shadow-[0_8px_20px_rgba(18,54,78,0.13)]">
             {getInitials(
               contactData.name,
             )}
@@ -1452,17 +1452,17 @@ function CustomerIdentity({
 
           <div>
             <div className="flex flex-wrap items-center gap-2">
-              <p className="text-[12px] font-semibold text-[#173f57]">
+              <p className="text-[13px] font-semibold text-[#173f57]">
                 {contactData.company ||
                   "Empresa cadastrada"}
               </p>
 
-              <span className="rounded-full border border-[#9fc5d7]/52 bg-[#e1eff5]/72 px-2.5 py-1 text-[8px] font-semibold uppercase tracking-[0.1em] text-[#4c7890]">
+              <span className="rounded-full border border-[#9fc5d7]/52 bg-[#e1eff5]/72 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.1em] text-[#4c7890]">
                 Conta identificada
               </span>
             </div>
 
-            <p className="mt-1 text-[10px] leading-5 text-[#708690]">
+            <p className="mt-1 text-[11px] leading-5 text-[#708690]">
               {contactData.name ||
                 "Cliente"}
 
@@ -1474,11 +1474,11 @@ function CustomerIdentity({
         </div>
 
         <div className="sm:text-right">
-          <p className="text-[9px] font-semibold uppercase tracking-[0.12em] text-[#7b929e]">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[#7b929e]">
             Dados cadastrais
           </p>
 
-          <p className="mt-1 text-[10px] text-[#718792]">
+          <p className="mt-1 text-[11px] text-[#718792]">
             Utilizados automaticamente nesta solicitação.
           </p>
         </div>
@@ -1583,7 +1583,7 @@ function CustomerQuoteProgress({
                       justify-center
                       rounded-full
                       border
-                      text-[11px]
+                      text-[12px]
                       font-semibold
 
                       ${
@@ -1608,14 +1608,14 @@ function CustomerQuoteProgress({
                   </div>
 
                   <div>
-                    <p className="text-[9px] font-medium uppercase tracking-[0.11em] text-[#7a8e9b]">
+                    <p className="text-[11px] font-medium uppercase tracking-[0.11em] text-[#7a8e9b]">
                       Etapa
                     </p>
 
                     <p
                       className={`
                         mt-0.5
-                        text-[13px]
+                        text-[14px]
                         font-semibold
 
                         ${
@@ -1641,12 +1641,12 @@ function CustomerQuoteProgress({
 
       <div className="md:hidden">
         <div className="flex items-center justify-between">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[#6e8794]">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[#6e8794]">
             Etapa{" "}
             {currentStep} de 3
           </p>
 
-          <p className="text-[11px] font-semibold text-[#315f79]">
+          <p className="text-[12px] font-semibold text-[#315f79]">
             {
               customerSteps[
                 currentStep -
@@ -1693,11 +1693,11 @@ function SummaryItem({
 }) {
   return (
     <div>
-      <p className="text-[10px] font-medium uppercase tracking-[0.1em] text-[#718895]">
+      <p className="text-[11px] font-medium uppercase tracking-[0.1em] text-[#718895]">
         {label}
       </p>
 
-      <p className="mt-1.5 break-words text-[13px] font-medium leading-5 text-[#0b2340]">
+      <p className="mt-1.5 break-words text-[14px] font-medium leading-5 text-[#0b2340]">
         {value}
       </p>
     </div>

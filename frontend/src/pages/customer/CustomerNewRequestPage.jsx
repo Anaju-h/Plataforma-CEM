@@ -1,3 +1,5 @@
+import { useNavigate } from "react-router-dom";
+import { createCustomerRequest } from "../../services/customer/customerService";
 import {
   useOutletContext,
 } from "react-router-dom";
@@ -7,6 +9,7 @@ import {
 } from "../../components/quote/QuoteForm";
 
 export function CustomerNewRequestPage() {
+  const navigate = useNavigate();
   const {
     customer,
   } =
@@ -22,7 +25,7 @@ export function CustomerNewRequestPage() {
         <div className="flex items-center gap-3">
           <span className="h-px w-7 bg-[#65b8ee]" />
 
-          <p className="text-[9px] font-semibold uppercase tracking-[0.15em] text-[#56809a]">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.15em] text-[#56809a]">
             Novo atendimento
           </p>
         </div>
@@ -33,7 +36,7 @@ export function CustomerNewRequestPage() {
               Nova solicitação
             </h1>
 
-            <p className="mt-2 max-w-[680px] text-[12px] leading-6 text-[#6a808d]">
+            <p className="mt-2 max-w-[680px] text-[13px] leading-6 text-[#6a808d]">
               Os dados da sua conta já estão associados à solicitação. Informe
               somente as características da nova necessidade.
             </p>
@@ -42,8 +45,8 @@ export function CustomerNewRequestPage() {
           <div className="flex items-center gap-2 rounded-full border border-[#a9c6d5]/54 bg-[#e2eef4]/62 px-3 py-2">
             <span className="h-2 w-2 rounded-full bg-[#65b8ee]" />
 
-            <p className="text-[9px] font-semibold uppercase tracking-[0.1em] text-[#52778a]">
-              Cliente identificado
+            <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-[#52778a]">
+              Conta autenticada
             </p>
           </div>
         </div>
@@ -55,6 +58,7 @@ export function CustomerNewRequestPage() {
 
       <QuoteForm
         mode="customer"
+        onSubmit={async form => { const request = await createCustomerRequest(form); navigate("/cliente/solicitacoes/" + request.id, { state: { created: true } }); }}
         customer={
           customer
         }

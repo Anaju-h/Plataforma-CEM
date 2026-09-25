@@ -1,3 +1,4 @@
+import { DemoBadge } from "../../components/internal/DemoBadge";
 import {
   useMemo,
   useState,
@@ -32,6 +33,7 @@ import {
 
 const CANONICAL_ORIGINS = [
   "Público",
+  "Configurador",
   "Cliente",
   "Interno",
 ];
@@ -513,11 +515,7 @@ export function RequestsPage() {
                     </td>
 
                     <td className="px-5 py-4 align-middle">
-                      <StatusBadge
-                        status={
-                          request.status
-                        }
-                      />
+                      <span className="inline-flex flex-wrap items-center gap-2">{request.source === "demo" && <DemoBadge />}<StatusBadge status={request.status} /></span>
                     </td>
 
                     <td className="px-5 py-4 text-right align-middle">
@@ -616,11 +614,7 @@ export function RequestsPage() {
                     </p>
                   </div>
 
-                  <StatusBadge
-                    status={
-                      request.status
-                    }
-                  />
+                  <span className="inline-flex flex-wrap items-center gap-2">{request.source === "demo" && <DemoBadge />}<StatusBadge status={request.status} /></span>
                 </div>
 
                 <div className="mt-4 grid grid-cols-2 gap-4 rounded-[14px] bg-[#f3f7f9] p-4">
@@ -800,6 +794,11 @@ function OriginBadge({
   ) {
     classes =
       "border-[#b8d3e4] bg-[#edf5fa] text-[#356f9f]";
+  } else if (
+    origin === "Configurador"
+  ) {
+    classes =
+      "border-[#cdbfe6] bg-[#f3effb] text-[#5b4a8b]";
   } else if (
     isCustomer
   ) {

@@ -1,9 +1,11 @@
+import { getCurrentUser } from "../../services/currentUserService";
 import {
   useState,
   useEffect,
 } from "react";
 
 import {
+  Link,
   useNavigate,
   useParams,
 } from "react-router-dom";
@@ -33,11 +35,14 @@ import {
   sendProjectToReview,
   startProjectExecution,
   startProjectPreparation,
-  updateProjectTask,
 } from "../../services/projectService";
 
-const currentUser =
-  "Administrador";
+import { ProjectTasksSection } from "../../components/internal/tasks/ProjectTasksSection";
+import { DemoBadge } from "../../components/internal/DemoBadge";
+import { useCurrentUser } from "../../hooks/useCurrentUser";
+import { hasRole } from "../../services/authApi";
+import { listInternalUsers } from "../../services/taskApi";
+
 
 export function ProjectDetailPage() {
   const navigate =
@@ -72,6 +77,16 @@ export function ProjectDetailPage() {
     setConfirmationAction,
   ] = useState(null);
 
+  const user = useCurrentUser();
+  const isAdmin = hasRole(user, "ADMIN");
+  const [members, setMembers] = useState([]);
+  useEffect(() => {
+    if (!isAdmin) return undefined;
+    let active = true;
+    listInternalUsers().then(list => { if (active) setMembers(list.filter(member => member.active)); }).catch(() => {});
+    return () => { active = false; };
+  }, [isAdmin]);
+
   if (loading || error) return <ApiState title={projectId} loading="Carregando projeto..." error={error} onRetry={() => { setLoading(true); setError(""); setRetry(value => value + 1); }} />;
 
   if (!project) {
@@ -84,7 +99,7 @@ export function ProjectDetailPage() {
               "/portal/projetos",
             )
           }
-          className="text-xs font-semibold text-[#356f9f]"
+          className="text-[13px] font-semibold text-[#356f9f]"
         >
           ← Voltar para projetos
         </button>
@@ -117,41 +132,6 @@ export function ProjectDetailPage() {
 
   const isCompleted = isArchivedProject(project);
 
-  async function toggleTask(
-    taskId,
-  ) {
-    if (busy) return;
-    setBusy(true);
-    try {
-      const task =
-        project.tasks.find(
-          (item) =>
-            item.id ===
-            taskId,
-        );
-
-      if (!task) {
-        return;
-      }
-
-      const updatedProject =
-        await updateProjectTask(
-          project,
-          taskId,
-          !task.completed,
-          currentUser,
-        );
-
-      setProject(
-        updatedProject,
-      );
-    } catch (error) {
-      showFeedback(
-        error.message,
-      );
-    } finally { setBusy(false); }
-  }
-
   async function handleSaveNotes() {
     if (busy) return;
     setBusy(true);
@@ -160,7 +140,7 @@ export function ProjectDetailPage() {
         await saveProjectInternalNotes(
           project,
           internalNotes,
-          currentUser,
+          getCurrentUser().name,
         );
 
       setProject(
@@ -190,7 +170,7 @@ export function ProjectDetailPage() {
       const updatedProject =
         await startProjectPreparation(
           project,
-          currentUser,
+          getCurrentUser().name,
         );
 
       setProject(
@@ -214,7 +194,7 @@ export function ProjectDetailPage() {
       const updatedProject =
         await startProjectExecution(
           project,
-          currentUser,
+          getCurrentUser().name,
         );
 
       setProject(
@@ -238,7 +218,7 @@ export function ProjectDetailPage() {
       const updatedProject =
         await sendProjectToReview(
           project,
-          currentUser,
+          getCurrentUser().name,
         );
 
       setProject(
@@ -262,7 +242,7 @@ export function ProjectDetailPage() {
       const updatedProject =
         await returnProjectToExecution(
           project,
-          currentUser,
+          getCurrentUser().name,
         );
 
       setProject(
@@ -286,7 +266,7 @@ export function ProjectDetailPage() {
       const updatedProject =
         await completeRuntimeProject(
           project,
-          currentUser,
+          getCurrentUser().name,
         );
 
       setProject(
@@ -318,7 +298,7 @@ export function ProjectDetailPage() {
       const updatedProject =
         await reopenRuntimeProject(
           project,
-          currentUser,
+          getCurrentUser().name,
         );
 
       setProject(
@@ -369,7 +349,7 @@ export function ProjectDetailPage() {
               "/portal/projetos",
             )
           }
-          className="mb-5 text-[10px] font-semibold uppercase tracking-[0.1em] text-[#5681a0] transition hover:text-[#0b2340]"
+          className="mb-5 text-[11px] font-semibold uppercase tracking-[0.1em] text-[#5681a0] transition hover:text-[#0b2340]"
         >
           ← Voltar para projetos
         </button>
@@ -383,21 +363,31 @@ export function ProjectDetailPage() {
             project.description
           }
           action={
-            <ProjectStatusBadge
-              status={
-                project.status
-              }
-            />
+            <div className="flex flex-wrap items-center gap-2">
+              {project.demo && <DemoBadge />}
+              <ProjectStatusBadge
+                status={
+                  project.status
+                }
+              />
+              {/* Regra do conhecimento: o PRJ só conclui com o Registro de Serviço fechado (blocos B e C). */}
+              <Link
+                to={project.recordCode ? `/portal/conhecimento/registros/${project.recordCode}` : `/portal/conhecimento/registros?orc=${encodeURIComponent(project.quoteId)}`}
+                className="rounded-[12px] border border-[#b9cfdc] bg-white px-4 py-2.5 text-[12px] font-semibold uppercase tracking-[0.1em] text-[#12364e] transition hover:border-[#7fa6bd]"
+              >
+                {project.recordCode ? `Registro ${project.recordCode}` : "Registro de serviço"}
+              </Link>
+            </div>
           }
         />
 
         {feedback && (
           <div className="mt-5 flex items-center gap-3 rounded-[14px] border border-[#bcd8c7] bg-[#ebf5ee] px-4 py-3">
-            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white text-[10px] font-semibold text-[#3d7453]">
+            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white text-[11px] font-semibold text-[#3d7453]">
               ✓
             </span>
 
-            <p className="text-xs font-semibold text-[#3d7453]">
+            <p className="text-[13px] font-semibold text-[#3d7453]">
               {feedback}
             </p>
           </div>
@@ -405,7 +395,7 @@ export function ProjectDetailPage() {
 
         {isCompleted && (
           <div className="mt-5 rounded-[14px] border border-[#bad7c5] bg-[#eef7f1] px-4 py-3">
-            <p className="text-xs leading-5 text-[#557767]">
+            <p className="text-[13px] leading-5 text-[#557767]">
               Este projeto está encerrado. O checklist e as observações internas estão bloqueados. O registro permanece disponível no Histórico.
             </p>
           </div>
@@ -463,121 +453,15 @@ export function ProjectDetailPage() {
               </div>
             </RequestDetailSection>
 
-            <RequestDetailSection
-              eyebrow="02"
-              title="Acompanhamento operacional"
-              description="Checklist simples para acompanhar o andamento do serviço."
-            >
-              <div className="flex items-end justify-between gap-4">
-                <div>
-                  <p className="text-[9px] font-semibold uppercase tracking-[0.1em] text-[#718895]">
-                    Progresso
-                  </p>
-
-                  <p className="mt-1 text-sm font-semibold text-[#31566d]">
-                    {completedCount} de{" "}
-                    {project.tasks.length} etapas concluídas
-                  </p>
-                </div>
-
-                <p className="text-2xl font-semibold text-[#096ab2]">
-                  {progress}%
-                </p>
-              </div>
-
-              <div className="mt-4 h-2 overflow-hidden rounded-full bg-[#e2e9ed]">
-                <div
-                  className="h-full rounded-full bg-[#1684c5] transition-all duration-300"
-                  style={{
-                    width: `${progress}%`,
-                  }}
-                />
-              </div>
-
-              <div className="mt-6 space-y-2">
-                {project.tasks.map(
-                  (task) => (
-                    <button
-                      key={
-                        task.id
-                      }
-                      type="button"
-                      disabled={
-                        isCompleted
-                      }
-                      onClick={() =>
-                        toggleTask(
-                          task.id,
-                        )
-                      }
-                      className={`
-                        flex w-full
-                        items-center gap-3
-                        rounded-[14px]
-                        border
-                        px-4 py-3.5
-                        text-left
-                        transition
-
-                        ${
-                          isCompleted
-                            ? "cursor-not-allowed border-[#d7e0e5] bg-[#f2f5f6] opacity-75"
-                            : task.completed
-                              ? "border-[#bad7c5] bg-[#eef7f1]"
-                              : "border-[#d9e3e8] bg-[#f8fafb] hover:border-[#aec8d5]"
-                        }
-                      `}
-                    >
-                      <span
-                        className={`
-                          flex h-7 w-7
-                          shrink-0
-                          items-center
-                          justify-center
-                          rounded-full
-                          border
-                          text-[10px]
-                          font-semibold
-
-                          ${
-                            task.completed
-                              ? "border-[#8fc2a1] bg-white text-[#397250]"
-                              : "border-[#c4d5de] bg-white text-[#82949e]"
-                          }
-                        `}
-                      >
-                        {task.completed
-                          ? "✓"
-                          : ""}
-                      </span>
-
-                      <span
-                        className={`
-                          text-xs
-                          font-semibold
-
-                          ${
-                            task.completed
-                              ? "text-[#557767] line-through"
-                              : "text-[#31566d]"
-                          }
-                        `}
-                      >
-                        {
-                          task.title
-                        }
-                      </span>
-                    </button>
-                  ),
-                )}
-              </div>
-
-              <div className="mt-5 rounded-[14px] border border-[#cbdde6] bg-[#edf6fa] p-4">
-                <p className="text-[10px] leading-5 text-[#6d8390]">
-                  O checklist registra o andamento básico do serviço. A conclusão de todas as etapas não encerra o projeto automaticamente: a finalização continua dependendo de uma ação explícita após a revisão.
-                </p>
-              </div>
-            </RequestDetailSection>
+            <ProjectTasksSection
+              project={project}
+              isAdmin={isAdmin}
+              userId={user.sessionId}
+              locked={isCompleted}
+              members={members}
+              onChange={setProject}
+              onFeedback={showFeedback}
+            />
 
             <RequestDetailSection
               eyebrow="03"
@@ -589,7 +473,7 @@ export function ProjectDetailPage() {
                   internalNotes
                 }
                 disabled={
-                  isCompleted
+                  isCompleted || !isAdmin
                 }
                 onChange={(event) =>
                   setInternalNotes(
@@ -609,21 +493,21 @@ export function ProjectDetailPage() {
                   transition
 
                   ${
-                    isCompleted
+                    isCompleted || !isAdmin
                       ? "cursor-not-allowed resize-none bg-[#eef2f4] text-[#748995]"
                       : "resize-y bg-[#f8fafb] text-[#294e64] focus:border-[#78a9c4] focus:bg-white"
                   }
                 `}
               />
 
-              {!isCompleted && (
+              {!isCompleted && isAdmin && (
                 <div className="mt-4 flex justify-end">
                   <button
                     type="button"
                     onClick={
                       handleSaveNotes
                     }
-                    className="rounded-[11px] bg-[#096ab2] px-5 py-3 text-[9px] font-semibold uppercase tracking-[0.09em] text-white transition hover:bg-[#075b99]"
+                    className="rounded-[11px] bg-[#096ab2] px-5 py-3 text-[11px] font-semibold uppercase tracking-[0.09em] text-white transition hover:bg-[#075b99]"
                   >
                     Salvar observações
                   </button>
@@ -670,7 +554,7 @@ export function ProjectDetailPage() {
 
           <aside className="space-y-5">
             <section className="rounded-[22px] border border-[#c7d9e3] bg-[#e6f0f5] p-5">
-              <p className="text-[9px] font-semibold uppercase tracking-[0.14em] text-[#5681a0]">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#5681a0]">
                 Execução
               </p>
 
@@ -705,6 +589,7 @@ export function ProjectDetailPage() {
               </div>
 
               <div className="mt-6 border-t border-[#c9dbe4] pt-5">
+                {isAdmin ? (
                 <ProjectWorkflowActions
                   project={
                     project
@@ -735,13 +620,16 @@ export function ProjectDetailPage() {
                     )
                   }
                 />
+                ) : (
+                  <p className="rounded-[14px] bg-white/70 px-4 py-3 text-[12.5px] leading-5 text-[#607989]">As etapas do projeto são conduzidas pelo Administrador. Atualize suas tarefas e horas nesta página.</p>
+                )}
               </div>
             </section>
 
             {project.status ===
               "Aguardando revisão" && (
               <section className="rounded-[22px] border border-[#e0d5ba] bg-[#f8f2e5] p-5">
-                <p className="text-[9px] font-semibold uppercase tracking-[0.14em] text-[#8b733b]">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#8b733b]">
                   Revisão
                 </p>
 
@@ -749,7 +637,7 @@ export function ProjectDetailPage() {
                   Aguardando validação
                 </p>
 
-                <p className="mt-2 text-xs leading-5 text-[#8a7854]">
+                <p className="mt-2 text-[13px] leading-5 text-[#8a7854]">
                   Revise os resultados antes de concluir o projeto. Se forem necessários ajustes, retorne para execução.
                 </p>
               </section>
@@ -758,7 +646,7 @@ export function ProjectDetailPage() {
             {project.status ===
               "Concluído" && (
               <section className="rounded-[22px] border border-[#bad7c5] bg-[#eef7f1] p-5">
-                <p className="text-[9px] font-semibold uppercase tracking-[0.14em] text-[#4b795c]">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#4b795c]">
                   Situação
                 </p>
 
@@ -766,14 +654,15 @@ export function ProjectDetailPage() {
                   Projeto concluído
                 </p>
 
-                <p className="mt-2 text-xs leading-5 text-[#708778]">
+                <p className="mt-2 text-[13px] leading-5 text-[#708778]">
                   A execução foi finalizada e o projeto está encerrado. Ele pode ser reaberto caso sejam necessários novos ajustes.
                 </p>
               </section>
             )}
 
+            {project.commercialVisible && (
             <section className="rounded-[22px] border border-[#d1dde4] bg-white p-5">
-              <p className="text-[9px] font-semibold uppercase tracking-[0.14em] text-[#718895]">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#718895]">
                 Origem comercial
               </p>
 
@@ -823,26 +712,27 @@ export function ProjectDetailPage() {
                         `/portal/orcamentos/${project.quoteId}`,
                       )
                     }
-                    className="mt-5 w-full rounded-[11px] bg-[#096ab2] px-4 py-3 text-[9px] font-semibold uppercase tracking-[0.09em] text-white transition hover:bg-[#075b99]"
+                    className="mt-5 w-full rounded-[11px] bg-[#096ab2] px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.09em] text-white transition hover:bg-[#075b99]"
                   >
                     Abrir orçamento
                   </button>
                 </>
               ) : (
                 <div className="mt-4 rounded-[12px] border border-[#e0d5ba] bg-[#f8f2e5] p-3">
-                  <p className="text-[10px] leading-5 text-[#80672f]">
+                  <p className="text-[11px] leading-5 text-[#80672f]">
                     O orçamento de origem não está disponível nesta sessão.
                   </p>
                 </div>
               )}
             </section>
+            )}
 
             <section className="rounded-[22px] border border-[#d1dde4] bg-white p-5">
-              <p className="text-[9px] font-semibold uppercase tracking-[0.14em] text-[#718895]">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#718895]">
                 Rastreabilidade
               </p>
 
-              <div className="mt-4 flex flex-wrap items-center gap-2 text-[10px] font-semibold text-[#607989]">
+              <div className="mt-4 flex flex-wrap items-center gap-2 text-[11px] font-semibold text-[#607989]">
                 <span className="rounded-full border border-[#d4e1e7] bg-[#f5f9fb] px-3 py-1.5">
                   {quote?.requestId ??
                     "Solicitação"}
@@ -865,13 +755,13 @@ export function ProjectDetailPage() {
                 </span>
               </div>
 
-              <p className="mt-3 text-[10px] leading-5 text-[#82949e]">
+              <p className="mt-3 text-[11px] leading-5 text-[#82949e]">
                 A solicitação e o orçamento permanecem preservados para rastreabilidade, enquanto a execução é conduzida neste projeto.
               </p>
             </section>
 
             <section className="rounded-[22px] border border-[#d1dde4] bg-white p-5">
-              <p className="text-[9px] font-semibold uppercase tracking-[0.14em] text-[#718895]">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#718895]">
                 Controle
               </p>
 
@@ -1040,7 +930,7 @@ function ProjectWorkflowActions({
         </SecondaryButton>
 
         {progress < 100 && (
-          <p className="mt-3 text-[10px] leading-5 text-[#7e7254]">
+          <p className="mt-3 text-[11px] leading-5 text-[#7e7254]">
             Existem etapas pendentes no checklist. A conclusão será bloqueada até o progresso chegar a 100%.
           </p>
         )}
@@ -1069,7 +959,7 @@ function ProjectWorkflowActions({
 
   return (
     <div className="rounded-[12px] border border-[#d2dee4] bg-white/70 px-4 py-3">
-      <p className="text-center text-[9px] font-semibold uppercase tracking-[0.08em] text-[#718895]">
+      <p className="text-center text-[11px] font-semibold uppercase tracking-[0.08em] text-[#718895]">
         Nenhuma ação disponível
       </p>
     </div>
@@ -1080,7 +970,7 @@ function WorkflowLabel({
   text,
 }) {
   return (
-    <p className="mb-3 text-[9px] font-semibold uppercase tracking-[0.1em] text-[#5681a0]">
+    <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.1em] text-[#5681a0]">
       {text}
     </p>
   );
@@ -1096,7 +986,7 @@ function PrimaryButton({
       onClick={
         onClick
       }
-      className="w-full rounded-[12px] bg-[#096ab2] px-4 py-3 text-[10px] font-semibold uppercase tracking-[0.09em] text-white transition hover:bg-[#075b99]"
+      className="w-full rounded-[12px] bg-[#096ab2] px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.09em] text-white transition hover:bg-[#075b99]"
     >
       {children}
     </button>
@@ -1113,7 +1003,7 @@ function SecondaryButton({
       onClick={
         onClick
       }
-      className="mt-2 w-full rounded-[12px] border border-[#aac6d5] bg-white px-4 py-3 text-[9px] font-semibold uppercase tracking-[0.09em] text-[#356f9f] transition hover:bg-[#f8fbfc]"
+      className="mt-2 w-full rounded-[12px] border border-[#aac6d5] bg-white px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.09em] text-[#356f9f] transition hover:bg-[#f8fbfc]"
     >
       {children}
     </button>
@@ -1131,7 +1021,7 @@ function ConfirmationModal({
   return (
     <div className="fixed inset-0 z-[120] flex items-center justify-center bg-[#071a2b]/50 px-4 backdrop-blur-[3px]">
       <div className="w-full max-w-[500px] rounded-[24px] border border-white/30 bg-white p-6 shadow-[0_35px_100px_rgba(7,26,43,0.25)] sm:p-7">
-        <p className="text-[9px] font-semibold uppercase tracking-[0.14em] text-[#5681a0]">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#5681a0]">
           {eyebrow}
         </p>
 
@@ -1149,7 +1039,7 @@ function ConfirmationModal({
             onClick={
               onCancel
             }
-            className="rounded-[11px] border border-[#d0dce3] bg-white px-5 py-3 text-[10px] font-semibold uppercase tracking-[0.08em] text-[#607989]"
+            className="rounded-[11px] border border-[#d0dce3] bg-white px-5 py-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-[#607989]"
           >
             Voltar
           </button>
@@ -1159,7 +1049,7 @@ function ConfirmationModal({
             onClick={
               onConfirm
             }
-            className="rounded-[11px] bg-[#096ab2] px-5 py-3 text-[10px] font-semibold uppercase tracking-[0.08em] text-white"
+            className="rounded-[11px] bg-[#096ab2] px-5 py-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-white"
           >
             {confirmLabel}
           </button>
@@ -1179,19 +1069,19 @@ function ProjectHistoryItem({
         <div className="absolute left-[15px] top-8 h-[calc(100%-20px)] w-px bg-[#d5e2e8]" />
       )}
 
-      <div className="relative z-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[#bfd5e1] bg-[#edf6fa] text-[9px] text-[#5681a0]">
+      <div className="relative z-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[#bfd5e1] bg-[#edf6fa] text-[11px] text-[#5681a0]">
         ✓
       </div>
 
       <div className="pt-0.5">
         <div className="flex flex-wrap items-center gap-2">
-          <p className="text-xs font-semibold text-[#31566d]">
+          <p className="text-[13px] font-semibold text-[#31566d]">
             {
               item.action
             }
           </p>
 
-          <span className="text-[9px] text-[#8c9ba4]">
+          <span className="text-[11px] text-[#8c9ba4]">
             {item.date}
 
             {item.time
@@ -1201,7 +1091,7 @@ function ProjectHistoryItem({
         </div>
 
         {item.actor && (
-          <p className="mt-1 text-[10px] font-medium text-[#708795]">
+          <p className="mt-1 text-[11px] font-medium text-[#708795]">
             por {
               item.actor
             }
@@ -1209,7 +1099,7 @@ function ProjectHistoryItem({
         )}
 
         {item.description && (
-          <p className="mt-2 text-xs leading-5 text-[#768b97]">
+          <p className="mt-2 text-[13px] leading-5 text-[#768b97]">
             {
               item.description
             }
@@ -1225,7 +1115,7 @@ function EmptyBlock({
 }) {
   return (
     <div className="rounded-[15px] border border-dashed border-[#cad9e1] bg-[#f8fafb] px-5 py-8 text-center">
-      <p className="text-xs leading-5 text-[#7c909b]">
+      <p className="text-[13px] leading-5 text-[#7c909b]">
         {text}
       </p>
     </div>
@@ -1238,7 +1128,7 @@ function SideInfo({
 }) {
   return (
     <div>
-      <p className="text-[9px] font-semibold uppercase tracking-[0.1em] text-[#718895]">
+      <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-[#718895]">
         {label}
       </p>
 

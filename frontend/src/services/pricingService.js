@@ -2,6 +2,7 @@ import {
   getMachineCostKnowledge,
   initialCommercialReference,
 } from "../data/internal/pricingKnowledge";
+import { persistSetting } from "./settingsApi";
 
 /*
  * ============================================================
@@ -34,13 +35,19 @@ import {
  * ============================================================
  */
 
-// Estado demo em memória, com a mesma duração dos ORCs demo.
-// Datas ISO marcam a vigência [início, fim) nesta sessão, não um passado inventado.
+// Histórico de referências: carregado do banco na entrada do portal e gravado a cada alteração.
 const sessionStartedAt = new Date().toISOString();
 let commercialReferences = [{
   ...initialCommercialReference,
   effectiveFrom: sessionStartedAt,
 }];
+
+/** Aplica o histórico de referências salvo no banco (chamado na entrada do portal). */
+export function hydrateCommercialReferences(saved) {
+  if (Array.isArray(saved) && saved.length && saved.every(item => Number(item.hourlyRate) > 0 && item.effectiveFrom)) {
+    commercialReferences = saved.map(item => ({ ...item }));
+  }
+}
 
 export function getCommercialReference() {
   const now = new Date().toISOString();
@@ -76,7 +83,7 @@ export function updateCommercialReference({ hourlyRate, reason, changedBy = null
     newRate: nextRate,
     effectiveFrom: now,
     effectiveTo: null,
-    source: "Alteração administrativa na sessão demo",
+    source: "Alteração administrativa",
     changedAt: now,
     updatedAt: now,
     changedBy,
@@ -84,6 +91,7 @@ export function updateCommercialReference({ hourlyRate, reason, changedBy = null
   };
   commercialReferences = [next, ...commercialReferences.map(item =>
     item.id === current.id ? { ...item, effectiveTo: now, status: "inactive" } : item)];
+  persistSetting("commercial-rate", commercialReferences);
   return { reference: { ...next }, historyItem: { ...next } };
 }
 /*

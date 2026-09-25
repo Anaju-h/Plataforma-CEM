@@ -1,6 +1,9 @@
 import {
   getCurrentUserWork,
 } from "./workService";
+import { hasRole } from "./authApi";
+import { getCurrentUser } from "./currentUserService";
+import { getMyWork, getTaskBoard } from "./taskApi";
 
 /*
  * ============================================================
@@ -31,8 +34,46 @@ let readNotificationIds =
  * ============================================================
  */
 
+/*
+ * Perfis operacionais (Técnico, Validador, Consulta) recebem avisos das próprias
+ * tarefas: novas, com prazo próximo ou atrasadas. O Administrador recebe o motor
+ * de atenção completo e as tarefas atrasadas da equipe.
+ */
+function taskNotifications(work, team) {
+  return (work?.tasks || [])
+    .filter((row) => !row.project.closed && row.task.status !== "DONE" && (row.overdue || row.dueSoon || (!team && row.task.status === "TODO")))
+    .map((row) => {
+      const kind = row.overdue ? "late" : row.dueSoon ? "soon" : "new";
+      const id = `notification-task-${row.task.id}-${kind}`;
+      return {
+        id,
+        sourceId: row.task.id,
+        type: "project",
+        referenceId: row.project.id,
+        company: row.project.company,
+        title: kind === "late" ? "Tarefa atrasada" : kind === "soon" ? "Prazo da tarefa próximo" : "Nova tarefa delegada",
+        description: `${row.task.title}${team && row.task.assigneeName ? ` · ${row.task.assigneeName}` : ""}`,
+        route: `/portal/projetos/${row.project.id}`,
+        level: kind === "late" ? "urgent" : "attention",
+        label: kind === "late" ? "Atrasada" : kind === "soon" ? "Prazo próximo" : "Nova",
+        priority: kind === "late" ? 90 : kind === "soon" ? 60 : 40,
+        read: readNotificationIds.has(id),
+      };
+    });
+}
+
 export async function getNotifications(
   currentUser = "Administrador",
+) {
+  if (!hasRole(getCurrentUser(), "ADMIN")) {
+    return taskNotifications(await getMyWork(), false).sort((a, b) => b.priority - a.priority);
+  }
+  const team = await getTaskBoard().then((board) => taskNotifications(board, true).filter((item) => item.level === "urgent")).catch(() => []);
+  return [...await attentionNotifications(currentUser), ...team].sort((a, b) => b.priority - a.priority);
+}
+
+async function attentionNotifications(
+  currentUser,
 ) {
   const work =
     await getCurrentUserWork(

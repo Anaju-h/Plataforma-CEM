@@ -7,6 +7,7 @@ import {
   ArrowUpRightIcon,
 } from "../components/ui/ArrowIcons";
 import { ScrollReveal } from "../components/ui/ScrollReveal";
+import { getKeySpecByName } from "../data/equipmentSpecs";
 
 const services = [
   {
@@ -201,7 +202,7 @@ function ServicesHero() {
             className="relative z-10"
           >
             <div className="flex items-center gap-4">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#356f9f]">
+              <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-[#356f9f]">
                 Centro de Excelência
               </p>
 
@@ -218,7 +219,7 @@ function ServicesHero() {
               </span>
             </h1>
 
-            <p className="mt-6 max-w-[585px] text-[14px] leading-7 text-[#607583] sm:text-[15px]">
+            <p className="mt-6 max-w-[585px] text-[15px] leading-7 text-[#607583] sm:text-[15px]">
               Estrutura tecnológica e equipe especializada para apoiar
               metrologia, digitalização, engenharia, confiabilidade,
               manutenção e capacitação técnica.
@@ -255,18 +256,18 @@ function ServicesHero() {
                 className="pointer-events-none absolute left-[7%] right-[7%] top-0 h-px bg-gradient-to-r from-transparent via-white/65 to-transparent"
               />
 
-              <div className="absolute left-6 top-6 rounded-full border border-white/25 bg-white/12 px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.13em] text-white backdrop-blur-[18px]">
+              <div className="absolute left-6 top-6 rounded-full border border-white/25 bg-white/12 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.13em] text-white backdrop-blur-[18px]">
                 Metrologia aplicada
               </div>
 
-              <div className="absolute right-6 top-6 text-[10px] font-semibold uppercase tracking-[0.13em] text-white/60">
+              <div className="absolute right-6 top-6 text-[11px] font-semibold uppercase tracking-[0.13em] text-white/60">
                 SENAI · ZEISS
               </div>
 
               <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-7">
                 <div className="mb-3 h-px w-11 bg-[#65b8ee]" />
 
-                <p className="text-[10px] font-semibold uppercase tracking-[0.13em] text-[#9dd1ef]">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.13em] text-[#9dd1ef]">
                   Do físico ao digital
                 </p>
 
@@ -274,7 +275,7 @@ function ServicesHero() {
                   Tecnologia aplicada a desafios reais.
                 </h3>
 
-                <p className="mt-3 text-[11px] text-white/55">
+                <p className="mt-3 text-[12px] text-white/55">
                   Centro de Excelência
                 </p>
 
@@ -309,11 +310,11 @@ function HeroVideoMetric({
 }) {
   return (
     <div className="rounded-[13px] border border-white/15 bg-white/[0.08] px-3 py-3 backdrop-blur-[14px]">
-      <span className="text-[8px] font-semibold tracking-[0.13em] text-white/45">
+      <span className="text-[11px] font-semibold tracking-[0.13em] text-white/45">
         {number}
       </span>
 
-      <p className="mt-1 text-[10px] font-semibold text-white/82">
+      <p className="mt-1 text-[11px] font-semibold text-white/82">
         {label}
       </p>
     </div>
@@ -331,7 +332,7 @@ function ServicesOverview() {
           distance={30}
         >
           <div className="flex items-center gap-4">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#356f9f]">
+            <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-[#356f9f]">
               Serviços
             </p>
 
@@ -397,7 +398,7 @@ function ServiceOverviewCard({
       />
 
       <div className="relative z-10 flex items-start justify-between gap-4">
-        <span className="text-[10px] font-semibold tracking-[0.14em] text-[#5687ad]">
+        <span className="text-[11px] font-semibold tracking-[0.14em] text-[#5687ad]">
           {service.number}
         </span>
 
@@ -405,7 +406,7 @@ function ServiceOverviewCard({
       </div>
 
       <div className="relative z-10 mt-8">
-        <p className="text-[9px] font-semibold uppercase tracking-[0.12em] text-[#5687ad]">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[#5687ad]">
           {service.eyebrow}
         </p>
 
@@ -413,7 +414,7 @@ function ServiceOverviewCard({
           {service.title}
         </h3>
 
-        <p className="mt-3 text-[12px] leading-6 text-[#607583]">
+        <p className="mt-3 text-[13px] leading-6 text-[#607583]">
           {service.description}
         </p>
       </div>
@@ -559,7 +560,7 @@ function ScanningSection() {
             />
 
             <div className="mt-5">
-              <p className="text-[10px] font-semibold uppercase tracking-[0.13em] text-[#5687ad]">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.13em] text-[#5687ad]">
                 Fluxo
               </p>
 
@@ -603,14 +604,14 @@ function ServiceHeading({
   return (
     <div>
       <div className="flex items-center gap-4">
-        <span className="text-[11px] font-semibold tracking-[0.15em] text-[#356f9f]">
+        <span className="text-[12px] font-semibold tracking-[0.15em] text-[#356f9f]">
           {number}
         </span>
 
         <div className="h-px w-10 bg-[#65b8ee]" />
       </div>
 
-      <p className="mt-4 text-[10px] font-semibold uppercase tracking-[0.13em] text-[#5687ad]">
+      <p className="mt-4 text-[11px] font-semibold uppercase tracking-[0.13em] text-[#5687ad]">
         {eyebrow}
       </p>
 
@@ -631,7 +632,7 @@ function ServiceHeading({
         {title}
       </h2>
 
-      <p className="mt-4 max-w-[580px] text-[14px] leading-7 text-[#607583] sm:text-[15px]">
+      <p className="mt-4 max-w-[580px] text-[15px] leading-7 text-[#607583] sm:text-[15px]">
         {description}
       </p>
     </div>
@@ -644,7 +645,7 @@ function InfoCard({
 }) {
   return (
     <div className="rounded-[18px] border border-white/72 bg-white/48 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.92),0_8px_24px_rgba(7,31,45,0.03)] backdrop-blur-[18px]">
-      <p className="text-[9px] font-semibold uppercase tracking-[0.13em] text-[#5687ad]">
+      <p className="text-[11px] font-semibold uppercase tracking-[0.13em] text-[#5687ad]">
         {title}
       </p>
 
@@ -656,9 +657,17 @@ function InfoCard({
           >
             <span className="mt-[7px] h-1 w-1 shrink-0 rounded-full bg-[#65b8ee]" />
 
-            <p className="text-[11px] leading-5 text-[#526b79]">
-              {item}
-            </p>
+            <div>
+              <p className="text-[12px] leading-5 text-[#526b79]">
+                {item}
+              </p>
+
+              {getKeySpecByName(item) && (
+                <p className="text-[11px] font-semibold leading-4 text-[#356f9f]">
+                  {getKeySpecByName(item).label}: {getKeySpecByName(item).value}
+                </p>
+              )}
+            </div>
           </div>
         ))}
       </div>
@@ -672,7 +681,7 @@ function CompactApplicationsCard({
 }) {
   return (
     <div className="rounded-[18px] border border-white/72 bg-white/48 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.92),0_8px_24px_rgba(7,31,45,0.03)] backdrop-blur-[18px]">
-      <p className="text-[9px] font-semibold uppercase tracking-[0.13em] text-[#5687ad]">
+      <p className="text-[11px] font-semibold uppercase tracking-[0.13em] text-[#5687ad]">
         {title}
       </p>
 
@@ -684,7 +693,7 @@ function CompactApplicationsCard({
           >
             <span className="mt-[7px] h-1 w-1 shrink-0 rounded-full bg-[#65b8ee]" />
 
-            <p className="text-[11px] leading-5 text-[#526b79]">
+            <p className="text-[12px] leading-5 text-[#526b79]">
               {item}
             </p>
           </div>
@@ -708,11 +717,11 @@ function ProcessStep({
       }}
       className="rounded-[15px] border border-white/72 bg-white/45 px-3 py-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] backdrop-blur-[16px]"
     >
-      <span className="text-[8px] font-semibold tracking-[0.13em] text-[#5687ad]">
+      <span className="text-[11px] font-semibold tracking-[0.13em] text-[#5687ad]">
         {number}
       </span>
 
-      <p className="mt-1.5 text-[10px] font-semibold text-[#12364e]">
+      <p className="mt-1.5 text-[11px] font-semibold text-[#12364e]">
         {label}
       </p>
     </motion.div>
@@ -757,7 +766,7 @@ function ServiceMedia({
             <div>
               <div className="mb-3 h-px w-11 bg-[#65b8ee]" />
 
-              <p className="text-[10px] font-semibold uppercase tracking-[0.13em] text-[#9dd1ef]">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.13em] text-[#9dd1ef]">
                 {eyebrow}
               </p>
 
@@ -766,7 +775,7 @@ function ServiceMedia({
               </p>
             </div>
 
-            <span className="text-[11px] font-semibold tracking-[0.14em] text-white/45">
+            <span className="text-[12px] font-semibold tracking-[0.14em] text-white/45">
               {number}
             </span>
           </div>
@@ -824,14 +833,14 @@ function ReverseEngineeringSection() {
           >
             <div>
               <div className="flex items-center gap-4">
-                <span className="text-[11px] font-semibold tracking-[0.15em] text-[#356f9f]">
+                <span className="text-[12px] font-semibold tracking-[0.15em] text-[#356f9f]">
                   03
                 </span>
 
                 <div className="h-px w-10 bg-[#65b8ee]" />
               </div>
 
-              <p className="mt-4 text-[10px] font-semibold uppercase tracking-[0.13em] text-[#5687ad]">
+              <p className="mt-4 text-[11px] font-semibold uppercase tracking-[0.13em] text-[#5687ad]">
                 Engenharia e desenvolvimento
               </p>
 
@@ -843,7 +852,7 @@ function ReverseEngineeringSection() {
                 </span>
               </h2>
 
-              <p className="mt-4 max-w-[580px] text-[14px] leading-7 text-[#455f6f] sm:text-[15px]">
+              <p className="mt-4 max-w-[580px] text-[15px] leading-7 text-[#455f6f] sm:text-[15px]">
                 Transformação das informações obtidas de uma peça física em
                 modelos e dados digitais para reconstrução CAD, documentação,
                 nacionalização e desenvolvimento de componentes.
@@ -920,7 +929,7 @@ function ReverseEngineeringSection() {
                     <div>
                       <div className="mb-3 h-px w-11 bg-[#65b8ee]" />
 
-                      <p className="text-[10px] font-semibold uppercase tracking-[0.13em] text-[#9dd1ef]">
+                      <p className="text-[11px] font-semibold uppercase tracking-[0.13em] text-[#9dd1ef]">
                         Processo digital
                       </p>
 
@@ -929,7 +938,7 @@ function ReverseEngineeringSection() {
                       </p>
                     </div>
 
-                    <span className="text-[11px] font-semibold tracking-[0.14em] text-white/45">
+                    <span className="text-[12px] font-semibold tracking-[0.14em] text-white/45">
                       03
                     </span>
                   </div>
@@ -949,7 +958,7 @@ function ReverseInfoCard({
 }) {
   return (
     <div className="rounded-[18px] border border-white/42 bg-white/26 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.72),0_10px_28px_rgba(7,31,45,0.035)] backdrop-blur-[20px]">
-      <p className="text-[9px] font-semibold uppercase tracking-[0.13em] text-[#356f9f]">
+      <p className="text-[11px] font-semibold uppercase tracking-[0.13em] text-[#356f9f]">
         {title}
       </p>
 
@@ -961,7 +970,7 @@ function ReverseInfoCard({
           >
             <span className="mt-[7px] h-1 w-1 shrink-0 rounded-full bg-[#65b8ee]" />
 
-            <p className="text-[11px] leading-5 text-[#314f60]">
+            <p className="text-[12px] leading-5 text-[#314f60]">
               {item}
             </p>
           </div>
@@ -985,11 +994,11 @@ function ReverseProcessStep({
       }}
       className="rounded-[15px] border border-white/35 bg-white/20 px-3 py-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.58)] backdrop-blur-[18px]"
     >
-      <span className="text-[8px] font-semibold tracking-[0.13em] text-[#356f9f]">
+      <span className="text-[11px] font-semibold tracking-[0.13em] text-[#356f9f]">
         {number}
       </span>
 
-      <p className="mt-1.5 text-[10px] font-semibold text-[#12364e]">
+      <p className="mt-1.5 text-[11px] font-semibold text-[#12364e]">
         {label}
       </p>
     </motion.div>
@@ -1019,14 +1028,14 @@ function InternalInspectionSection() {
           >
             <div>
               <div className="flex items-center gap-4">
-                <span className="text-[11px] font-semibold tracking-[0.15em] text-[#9dd1ef]">
+                <span className="text-[12px] font-semibold tracking-[0.15em] text-[#9dd1ef]">
                   04
                 </span>
 
                 <div className="h-px w-10 bg-[#65b8ee]" />
               </div>
 
-              <p className="mt-4 text-[10px] font-semibold uppercase tracking-[0.13em] text-[#9dd1ef]">
+              <p className="mt-4 text-[11px] font-semibold uppercase tracking-[0.13em] text-[#9dd1ef]">
                 Inspeção não destrutiva
               </p>
 
@@ -1034,7 +1043,7 @@ function InternalInspectionSection() {
                 Tomografia industrial
               </h2>
 
-              <p className="mt-4 max-w-[580px] text-[14px] leading-7 text-white/62 sm:text-[15px]">
+              <p className="mt-4 max-w-[580px] text-[15px] leading-7 text-white/62 sm:text-[15px]">
                 Inspeção interna não destrutiva por raios X para investigar
                 estruturas, montagens, falhas, quebras e anomalias que não
                 podem ser avaliadas somente pela superfície da peça.
@@ -1083,7 +1092,7 @@ function DarkInfoCard({
 }) {
   return (
     <div className="rounded-[18px] border border-white/16 bg-white/[0.07] p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_10px_28px_rgba(0,0,0,0.08)] backdrop-blur-[20px]">
-      <p className="text-[9px] font-semibold uppercase tracking-[0.13em] text-[#9dd1ef]">
+      <p className="text-[11px] font-semibold uppercase tracking-[0.13em] text-[#9dd1ef]">
         {title}
       </p>
 
@@ -1095,9 +1104,17 @@ function DarkInfoCard({
           >
             <span className="mt-[7px] h-1 w-1 shrink-0 rounded-full bg-[#65b8ee]" />
 
-            <p className="text-[11px] leading-5 text-white/64">
-              {item}
-            </p>
+            <div>
+              <p className="text-[12px] leading-5 text-white/64">
+                {item}
+              </p>
+
+              {getKeySpecByName(item) && (
+                <p className="text-[11px] font-semibold leading-4 text-[#9dd1ef]">
+                  {getKeySpecByName(item).label}: {getKeySpecByName(item).value}
+                </p>
+              )}
+            </div>
           </div>
         ))}
       </div>
@@ -1118,7 +1135,7 @@ function ReliabilitySection() {
             distance={32}
           >
             <div className="flex items-center gap-4">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#356f9f]">
+              <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-[#356f9f]">
                 Confiabilidade e gestão técnica
               </p>
 
@@ -1134,7 +1151,7 @@ function ReliabilitySection() {
               </span>
             </h2>
 
-            <p className="mt-5 max-w-[555px] text-[14px] leading-7 text-[#607583] sm:text-[15px]">
+            <p className="mt-5 max-w-[555px] text-[15px] leading-7 text-[#607583] sm:text-[15px]">
               Os dados obtidos em inspeções, digitalizações e análises podem
               apoiar decisões de confiabilidade, organização de ativos,
               identificação de peças críticas e planejamento de manutenção.
@@ -1190,24 +1207,24 @@ function IntegratedRow({
       />
 
       <div className="relative z-10 flex gap-4">
-        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-white/70 bg-white/50 text-[9px] font-semibold tracking-[0.1em] text-[#356f9f] shadow-[inset_0_1px_0_rgba(255,255,255,0.9)]">
+        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-white/70 bg-white/50 text-[11px] font-semibold tracking-[0.1em] text-[#356f9f] shadow-[inset_0_1px_0_rgba(255,255,255,0.9)]">
           {solution.number}
         </div>
 
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-            <span className="text-[12px] font-semibold text-[#12364e]">
+            <span className="text-[13px] font-semibold text-[#12364e]">
               {solution.from}
             </span>
 
             <ArrowRightIcon className="h-3.5 w-3.5 text-[#65b8ee]" />
 
-            <span className="text-[12px] font-semibold text-[#356f9f]">
+            <span className="text-[13px] font-semibold text-[#356f9f]">
               {solution.to}
             </span>
           </div>
 
-          <p className="mt-2 text-[11px] leading-5 text-[#607583]">
+          <p className="mt-2 text-[12px] leading-5 text-[#607583]">
             {solution.description}
           </p>
         </div>
@@ -1230,7 +1247,7 @@ function TrainingSection() {
             <div className="grid gap-7 lg:grid-cols-[0.88fr_1.12fr] lg:items-center lg:gap-12">
               <div>
                 <div className="flex items-center gap-4">
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#356f9f]">
+                  <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-[#356f9f]">
                     Capacitação
                   </p>
 
@@ -1246,7 +1263,7 @@ function TrainingSection() {
                   </span>
                 </h2>
 
-                <p className="mt-5 max-w-[560px] text-[14px] leading-7 text-[#607583] sm:text-[15px]">
+                <p className="mt-5 max-w-[560px] text-[15px] leading-7 text-[#607583] sm:text-[15px]">
                   Capacitações voltadas ao desenvolvimento técnico de equipes
                   em temas relacionados à manutenção, metrologia, engenharia
                   reversa, lubrificação e análise de falhas.
@@ -1276,11 +1293,11 @@ function TrainingSection() {
                     }}
                     className="flex items-center gap-3 rounded-[16px] border border-white/75 bg-white/52 px-4 py-4"
                   >
-                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#12364e]/[0.07] text-[9px] font-semibold text-[#356f9f]">
+                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#12364e]/[0.07] text-[11px] font-semibold text-[#356f9f]">
                       {String(index + 1).padStart(2, "0")}
                     </span>
 
-                    <p className="text-[12px] font-semibold text-[#315d75]">
+                    <p className="text-[13px] font-semibold text-[#315d75]">
                       {area}
                     </p>
                   </motion.div>
@@ -1315,7 +1332,7 @@ function GuidanceSection() {
         >
           <div>
             <div className="flex items-center gap-4">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#356f9f]">
+              <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-[#356f9f]">
                 Próximo passo
               </p>
 
@@ -1331,7 +1348,7 @@ function GuidanceSection() {
               </span>
             </h2>
 
-            <p className="mt-5 max-w-[560px] text-[14px] leading-7 text-[#566f7e] sm:text-[15px]">
+            <p className="mt-5 max-w-[560px] text-[15px] leading-7 text-[#566f7e] sm:text-[15px]">
               Você pode enviar diretamente uma solicitação ou utilizar
               o configurador para organizar as principais informações
               da sua necessidade e direcionar melhor o atendimento.
@@ -1355,7 +1372,7 @@ function GuidanceSection() {
             />
 
             <div className="relative z-10">
-              <p className="text-[10px] font-semibold uppercase tracking-[0.13em] text-[#5687ad]">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.13em] text-[#5687ad]">
                 Escolha o caminho
               </p>
 
@@ -1363,7 +1380,7 @@ function GuidanceSection() {
                 Como deseja continuar?
               </h3>
 
-              <p className="mt-3 max-w-[480px] text-[12px] leading-6 text-[#607583]">
+              <p className="mt-3 max-w-[480px] text-[13px] leading-6 text-[#607583]">
                 Escolha a opção que melhor representa o momento da sua
                 necessidade. As informações serão direcionadas para
                 análise do Centro.
@@ -1395,7 +1412,7 @@ function GuidanceActionButton({
   return (
     <Link
       to={href}
-      className="group flex h-16 w-full items-center justify-between rounded-[17px] border border-white/72 bg-white/48 px-5 text-[12px] font-semibold text-[#12364e] shadow-[inset_0_1px_0_rgba(255,255,255,0.92),0_8px_24px_rgba(7,31,45,0.04)] backdrop-blur-[18px] transition-all duration-300 hover:-translate-y-[2px] hover:bg-white/68 hover:shadow-[inset_0_1px_0_rgba(255,255,255,1),0_12px_30px_rgba(7,31,45,0.07)]"
+      className="group flex h-16 w-full items-center justify-between rounded-[17px] border border-white/72 bg-white/48 px-5 text-[13px] font-semibold text-[#12364e] shadow-[inset_0_1px_0_rgba(255,255,255,0.92),0_8px_24px_rgba(7,31,45,0.04)] backdrop-blur-[18px] transition-all duration-300 hover:-translate-y-[2px] hover:bg-white/68 hover:shadow-[inset_0_1px_0_rgba(255,255,255,1),0_12px_30px_rgba(7,31,45,0.07)]"
     >
       <span>{label}</span>
 

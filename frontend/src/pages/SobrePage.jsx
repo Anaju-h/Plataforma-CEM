@@ -273,7 +273,7 @@ function AboutHero() {
 
               <p
                 className="
-                  text-[10px]
+                  text-[11px]
                   font-bold
                   uppercase
                   tracking-[0.22em]
@@ -337,7 +337,7 @@ function AboutHero() {
               className="
                 mt-6
                 max-w-[535px]
-                text-[14px]
+                text-[15px]
                 font-medium
                 leading-[1.85]
                 text-[#527083]
@@ -384,7 +384,7 @@ function AboutHero() {
                   border-[#12364e]/12
                   bg-[#12364e]
                   px-5
-                  text-[11px]
+                  text-[12px]
                   font-semibold
                   text-white
                   shadow-[0_10px_26px_rgba(7,31,45,0.15)]
@@ -420,7 +420,7 @@ function AboutHero() {
                   border-white/80
                   bg-white/52
                   px-5
-                  text-[11px]
+                  text-[12px]
                   font-semibold
                   text-[#12364e]
                   shadow-[inset_0_1px_0_rgba(255,255,255,0.94),0_8px_22px_rgba(7,31,45,0.05)]
@@ -558,7 +558,7 @@ function AboutHero() {
                 <span
                   className="
                     hidden
-                    text-[9px]
+                    text-[11px]
                     font-semibold
                     uppercase
                     tracking-[0.18em]
@@ -622,7 +622,7 @@ function PurposeSection() {
           >
             <p
               className="
-                text-[10px]
+                text-[11px]
                 font-bold
                 uppercase
                 tracking-[0.21em]
@@ -737,7 +737,7 @@ function PurposeItem({ number, label }) {
     >
       <span
         className="
-          text-[9px]
+          text-[11px]
           font-semibold
           tracking-[0.15em]
           text-[#7190a2]
@@ -749,7 +749,7 @@ function PurposeItem({ number, label }) {
       <p
         className="
           mt-5
-          text-[13px]
+          text-[14px]
           font-semibold
           text-[#12364e]
         "
@@ -1006,7 +1006,7 @@ function LegacySection() {
             <div>
               <p
                 className="
-                  text-[10px]
+                  text-[11px]
                   font-bold
                   uppercase
                   tracking-[0.21em]
@@ -1100,7 +1100,7 @@ function LegacySection() {
               <p
                 className="
                   mt-4
-                  text-[10px]
+                  text-[11px]
                   font-bold
                   uppercase
                   tracking-[0.17em]
@@ -1163,7 +1163,7 @@ function ContinuitySection() {
           >
             <p
               className="
-                text-[10px]
+                text-[11px]
                 font-bold
                 uppercase
                 tracking-[0.21em]
@@ -1196,7 +1196,7 @@ function ContinuitySection() {
               className="
                 mt-6
                 max-w-[650px]
-                text-[14px]
+                text-[15px]
                 leading-[1.88]
                 text-[#5a7586]
               "
@@ -1211,7 +1211,7 @@ function ContinuitySection() {
               className="
                 mt-4
                 max-w-[650px]
-                text-[14px]
+                text-[15px]
                 leading-[1.88]
                 text-[#5a7586]
               "
@@ -1314,7 +1314,7 @@ function ContinuityItem({
           border
           border-[#315b75]/12
           bg-[#eef4f7]/86
-          text-[9px]
+          text-[11px]
           font-semibold
           text-[#315b75]
         "
@@ -1337,7 +1337,7 @@ function ContinuityItem({
           className="
             mt-1.5
             max-w-[420px]
-            text-[12.5px]
+            text-[14px]
             leading-[1.7]
             text-[#647d8c]
           "
@@ -1519,7 +1519,7 @@ function LocationSection() {
 
               <p
                 className="
-                  text-[10px]
+                  text-[11px]
                   font-bold
                   uppercase
                   tracking-[0.21em]
@@ -1554,7 +1554,7 @@ function LocationSection() {
               className="
                 mt-6
                 max-w-[560px]
-                text-[14px]
+                text-[15px]
                 font-medium
                 leading-[1.88]
                 text-[#557284]
@@ -1578,7 +1578,7 @@ function LocationSection() {
             >
               <p
                 className="
-                  text-[10px]
+                  text-[11px]
                   font-bold
                   uppercase
                   tracking-[0.14em]
@@ -1592,7 +1592,7 @@ function LocationSection() {
                 className="
                   mt-2
                   max-w-[470px]
-                  text-[14px]
+                  text-[15px]
                   font-semibold
                   leading-[1.7]
                   text-[#12364e]
@@ -1610,7 +1610,7 @@ function LocationSection() {
               className="
                 mt-5
                 max-w-[500px]
-                text-[11.5px]
+                text-[13px]
                 leading-[1.7]
                 text-[#78909d]
               "
@@ -1667,7 +1667,7 @@ function CapabilitiesSection() {
           <div>
             <p
               className="
-                text-[10px]
+                text-[11px]
                 font-bold
                 uppercase
                 tracking-[0.21em]
@@ -1704,7 +1704,7 @@ function CapabilitiesSection() {
               inline-flex
               items-center
               gap-3
-              text-[11px]
+              text-[12px]
               font-semibold
               text-[#12364e]
             "
@@ -1802,7 +1802,7 @@ function CapabilitiesSection() {
 
               <span
                 className="
-                  text-[9px]
+                  text-[11px]
                   font-semibold
                   tracking-[0.16em]
                   text-[#6d8797]
@@ -1826,7 +1826,7 @@ function CapabilitiesSection() {
               <p
                 className="
                   mt-3
-                  text-[12.5px]
+                  text-[14px]
                   leading-[1.75]
                   text-[#667f8e]
                 "
@@ -1945,7 +1945,7 @@ function WorkflowSection() {
         >
           <p
             className="
-              text-[10px]
+              text-[11px]
               font-bold
               uppercase
               tracking-[0.21em]
@@ -2045,7 +2045,7 @@ function WorkflowSection() {
                   border
                   border-white
                   bg-[#12364e]
-                  text-[9px]
+                  text-[11px]
                   font-semibold
                   tracking-[0.12em]
                   text-white
@@ -2069,7 +2069,7 @@ function WorkflowSection() {
               <p
                 className="
                   mt-2
-                  text-[11.5px]
+                  text-[13px]
                   leading-[1.7]
                   text-[#667f8e]
                 "
@@ -2179,7 +2179,7 @@ function FinalCta() {
           <div className="max-w-[670px]">
             <p
               className="
-                text-[10px]
+                text-[11px]
                 font-bold
                 uppercase
                 tracking-[0.21em]
@@ -2212,7 +2212,7 @@ function FinalCta() {
               className="
                 mt-5
                 max-w-[610px]
-                text-[14px]
+                text-[15px]
                 leading-[1.8]
                 text-white/62
               "
@@ -2245,7 +2245,7 @@ function FinalCta() {
                 border-white/28
                 bg-white/[0.09]
                 px-6
-                text-[13px]
+                text-[14px]
                 font-semibold
                 text-white
                 shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_12px_30px_rgba(0,0,0,0.08)]
@@ -2306,7 +2306,7 @@ function FinalCta() {
                 border-white/28
                 bg-white/[0.09]
                 px-6
-                text-[13px]
+                text-[14px]
                 font-semibold
                 text-white
                 shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_12px_30px_rgba(0,0,0,0.08)]

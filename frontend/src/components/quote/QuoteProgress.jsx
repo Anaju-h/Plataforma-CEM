@@ -66,7 +66,7 @@ export function QuoteProgress({
                       flex h-9 w-9 shrink-0
                       items-center justify-center
                       rounded-full border
-                      text-[11px] font-semibold
+                      text-[12px] font-semibold
                       transition-all duration-200
                       ${
                         active
@@ -85,7 +85,7 @@ export function QuoteProgress({
                   <div>
                     <p
                       className={`
-                        text-[9px] font-medium
+                        text-[11px] font-medium
                         uppercase tracking-[0.11em]
                         ${
                           active
@@ -138,7 +138,7 @@ export function QuoteProgress({
       <div className="md:hidden">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-[10px] font-medium uppercase tracking-[0.12em] text-[#5687ad]">
+            <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-[#5687ad]">
               Etapa {String(currentStep).padStart(2, "0")} de 04
             </p>
 
@@ -147,7 +147,7 @@ export function QuoteProgress({
             </p>
           </div>
 
-          <span className="text-xs font-medium text-[#5687ad]">
+          <span className="text-[13px] font-medium text-[#5687ad]">
             {currentStep}/4
           </span>
         </div>
@@ -175,7 +175,7 @@ export function QuoteProgress({
                     rounded-full
                     border
                     px-3 py-1.5
-                    text-[10px] font-medium
+                    text-[11px] font-medium
                     uppercase tracking-[0.08em]
                     transition-all duration-200
                     ${

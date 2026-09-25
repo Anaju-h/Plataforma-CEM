@@ -1,3 +1,5 @@
+import { CustomerAccessPage } from "../pages/customer/CustomerAccessPage";
+import { CustomerRequestDetailPage } from "../pages/customer/CustomerRequestDetailPage";
 import { InternalAccountPage } from "../pages/internal/InternalAccountPage";
 import { ProposalBuilderPage } from "../pages/internal/ProposalBuilderPage";
 import {
@@ -55,9 +57,7 @@ import {
   SobrePage,
 } from "../pages/SobrePage";
 
-import {
-  CustomerAccessPage,
-} from "../pages/customer/CustomerAccessPage";
+
 
 import {
   CustomerAccountPage,
@@ -103,13 +103,17 @@ import {
   InternalNewRequestPage,
 } from "../pages/internal/InternalNewRequestPage";
 
-import {
-  KnowledgeDetailPage,
-} from "../pages/internal/KnowledgeDetailPage";
 
-import {
-  KnowledgePage,
-} from "../pages/internal/KnowledgePage";
+import { KnowledgeLayout } from "../pages/internal/knowledge/KnowledgeLayout";
+import { AssistantPage } from "../pages/internal/knowledge/AssistantPage";
+import { RecordsPage } from "../pages/internal/knowledge/RecordsPage";
+import { RecordDetailPage } from "../pages/internal/knowledge/RecordDetailPage";
+import { LessonsPage } from "../pages/internal/knowledge/LessonsPage";
+import { IndicatorsPage } from "../pages/internal/knowledge/IndicatorsPage";
+import { NoticesPage } from "../pages/internal/knowledge/NoticesPage";
+import { VocabularyPage } from "../pages/internal/knowledge/VocabularyPage";
+import { RoleRoute } from "../components/internal/RoleRoute";
+import { TaskBoardPage } from "../pages/internal/TaskBoardPage";
 
 import {
   LoginPage,
@@ -205,6 +209,7 @@ export function AppRoutes() {
         ========================== */}
 
         <Route element={<CustomerPortalLayout />}>
+          <Route path="/cliente/solicitacoes/:requestId" element={<CustomerRequestDetailPage />} />
           <Route
             path="/cliente/dashboard"
             element={<CustomerDashboardPage />}
@@ -253,8 +258,6 @@ export function AppRoutes() {
         <Route element={<ProtectedRoute />}>
           <Route element={<InternalLayout />}>
             <Route path="/portal/conta" element={<InternalAccountPage />} />
-            <Route path="/portal/orcamentos/:quoteId/proposta" element={<ProposalBuilderPage />} />
-            <Route path="/portal/historico" element={<OperationalHistoryPage />} />
             <Route
               path="/portal"
               element={<DashboardPage />}
@@ -275,6 +278,40 @@ export function AppRoutes() {
               element={<MyWorkPage />}
             />
 
+            {/* =====================
+                PROJETOS
+            ====================== */}
+
+            <Route
+              path="/portal/projetos"
+              element={<ProjectsPage />}
+            />
+
+            <Route
+              path="/portal/projetos/:projectId"
+              element={<ProjectDetailPage />}
+            />
+
+            {/* =====================
+                CONHECIMENTO
+            ====================== */}
+
+            <Route path="/portal/conhecimento" element={<KnowledgeLayout />}>
+              <Route index element={<Navigate to="assistente" replace />} />
+              <Route path="assistente" element={<AssistantPage />} />
+              <Route path="registros" element={<RecordsPage />} />
+              <Route path="registros/:code" element={<RecordDetailPage />} />
+              <Route path="licoes" element={<LessonsPage />} />
+              <Route path="indicadores" element={<IndicatorsPage />} />
+              <Route path="avisos" element={<NoticesPage />} />
+              <Route path="vocabulario" element={<VocabularyPage />} />
+              <Route path="administracao" element={<Navigate to="/portal/equipe" replace />} />
+            </Route>
+
+            {/* Somente Administrador: operação comercial, histórico, custos, equipe, tarefas e administração. */}
+            <Route element={<RoleRoute role="ADMIN" />}>
+            <Route path="/portal/orcamentos/:quoteId/proposta" element={<ProposalBuilderPage />} />
+            <Route path="/portal/historico" element={<OperationalHistoryPage />} />
             {/* =====================
                 SOLICITAÇÕES
             ====================== */}
@@ -309,34 +346,6 @@ export function AppRoutes() {
             />
 
             {/* =====================
-                PROJETOS
-            ====================== */}
-
-            <Route
-              path="/portal/projetos"
-              element={<ProjectsPage />}
-            />
-
-            <Route
-              path="/portal/projetos/:projectId"
-              element={<ProjectDetailPage />}
-            />
-
-            {/* =====================
-                CONHECIMENTO
-            ====================== */}
-
-            <Route
-              path="/portal/conhecimento"
-              element={<KnowledgePage />}
-            />
-
-            <Route
-              path="/portal/conhecimento/:knowledgeId"
-              element={<KnowledgeDetailPage />}
-            />
-
-            {/* =====================
                 GESTÃO
             ====================== */}
 
@@ -354,6 +363,8 @@ export function AppRoutes() {
               path="/portal/administracao"
               element={<AdministrationPage />}
             />
+            <Route path="/portal/tarefas" element={<TaskBoardPage />} />
+            </Route>
           </Route>
         </Route>
       </Routes>

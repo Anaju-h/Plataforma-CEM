@@ -35,7 +35,7 @@ export function KnowledgeDetailPage() {
               "/portal/conhecimento",
             )
           }
-          className="text-xs font-semibold text-[#356f9f]"
+          className="text-[13px] font-semibold text-[#356f9f]"
         >
           ← Voltar para conhecimento
         </button>
@@ -171,12 +171,12 @@ export function KnowledgeDetailPage() {
                       }
                       className="flex items-center gap-4 rounded-[15px] border border-[#d9e3e8] bg-[#f8fafb] p-4 text-left"
                     >
-                      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] border border-[#ccdde6] bg-white text-xs text-[#5681a0]">
+                      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] border border-[#ccdde6] bg-white text-[13px] text-[#5681a0]">
                         XLS
                       </span>
 
                       <div className="min-w-0">
-                        <p className="truncate text-xs font-semibold text-[#31566d]">
+                        <p className="truncate text-[13px] font-semibold text-[#31566d]">
                           {
                             attachment.name
                           }
@@ -283,7 +283,7 @@ function InfoItem({
         {label}
       </p>
 
-      <p className="mt-1.5 text-xs font-semibold leading-5 text-[#31566d]">
+      <p className="mt-1.5 text-[13px] font-semibold leading-5 text-[#31566d]">
         {value ||
           "Não informado"}
       </p>

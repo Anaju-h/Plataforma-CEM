@@ -20,7 +20,7 @@ export function ReviewStep({
     <div>
       <div className="border-b border-[#e0e7ec] pb-7">
         <div className="flex items-center gap-3">
-          <span className="text-xs font-medium tracking-[0.12em] text-[#356f9f]">
+          <span className="text-[13px] font-medium tracking-[0.12em] text-[#356f9f]">
             04
           </span>
 
@@ -140,7 +140,7 @@ export function ReviewStep({
         </div>
 
         <div className="mt-6">
-          <p className="text-[10px] font-medium uppercase tracking-[0.1em] text-[#718895]">
+          <p className="text-[11px] font-medium uppercase tracking-[0.1em] text-[#718895]">
             Arquivos gerais
           </p>
 
@@ -155,7 +155,7 @@ export function ReviewStep({
                     {file.name}
                   </p>
 
-                  <p className="mt-1 text-[10px] uppercase tracking-[0.06em] text-[#84949e]">
+                  <p className="mt-1 text-[11px] uppercase tracking-[0.06em] text-[#84949e]">
                     {formatFileSize(file.size)}
                   </p>
                 </div>
@@ -170,7 +170,7 @@ export function ReviewStep({
       </ReviewSection>
 
       <div className="mt-7 rounded-[18px] border border-[#cfe0e9] bg-[#f1f7fa] px-5 py-5">
-        <p className="text-xs font-medium uppercase tracking-[0.1em] text-[#356f9f]">
+        <p className="text-[13px] font-medium uppercase tracking-[0.1em] text-[#356f9f]">
           Antes do envio
         </p>
 
@@ -199,7 +199,7 @@ function PieceReviewCard({
     <div className="rounded-[20px] border border-[#dce5ea] bg-[#f8fafb] p-5 sm:p-6">
       <div className="flex flex-col gap-3 border-b border-[#e0e7ec] pb-5 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <p className="text-[10px] font-medium uppercase tracking-[0.12em] text-[#5687ad]">
+          <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-[#5687ad]">
             Peça {String(index + 1).padStart(2, "0")}
           </p>
 
@@ -208,7 +208,7 @@ function PieceReviewCard({
           </h4>
         </div>
 
-        <div className="rounded-full border border-[#d4e2e9] bg-white px-3 py-1.5 text-xs font-medium text-[#356f9f]">
+        <div className="rounded-full border border-[#d4e2e9] bg-white px-3 py-1.5 text-[13px] font-medium text-[#356f9f]">
           {piece.quantity}{" "}
           {piece.quantity === 1 ? "unidade" : "unidades"}
         </div>
@@ -232,7 +232,7 @@ function PieceReviewCard({
       </div>
 
       <div className="mt-6">
-        <p className="text-[10px] font-medium uppercase tracking-[0.1em] text-[#718895]">
+        <p className="text-[11px] font-medium uppercase tracking-[0.1em] text-[#718895]">
           Serviços
         </p>
 
@@ -241,7 +241,7 @@ function PieceReviewCard({
             {piece.services.map((service) => (
               <span
                 key={service}
-                className="rounded-full border border-[#d0e1ea] bg-white px-3 py-2 text-xs font-medium text-[#356f9f]"
+                className="rounded-full border border-[#d0e1ea] bg-white px-3 py-2 text-[13px] font-medium text-[#356f9f]"
               >
                 {getServiceLabel(service)}
               </span>
@@ -256,7 +256,7 @@ function PieceReviewCard({
 
       {piece.externalService && (
         <div className="mt-6 rounded-[16px] border border-[#cfe0e9] bg-[#eef6fa] p-4">
-          <p className="text-[10px] font-medium uppercase tracking-[0.1em] text-[#356f9f]">
+          <p className="text-[11px] font-medium uppercase tracking-[0.1em] text-[#356f9f]">
             Atendimento in loco
           </p>
 
@@ -304,7 +304,7 @@ function ReviewSection({
     <section className="border-b border-[#e3e9ed] py-8 last:border-0">
       <div className="mb-6 flex items-center justify-between gap-4">
         <div>
-          <p className="text-[10px] font-medium uppercase tracking-[0.12em] text-[#5687ad]">
+          <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-[#5687ad]">
             {number}
           </p>
 
@@ -316,7 +316,7 @@ function ReviewSection({
         <button
           type="button"
           onClick={onEdit}
-          className="cursor-pointer rounded-[10px] border border-[#d4e0e6] bg-white px-4 py-2 text-xs font-medium text-[#356f9f] transition-all hover:border-[#9bb9ca] hover:bg-[#f8fafb]"
+          className="cursor-pointer rounded-[10px] border border-[#d4e0e6] bg-white px-4 py-2 text-[13px] font-medium text-[#356f9f] transition-all hover:border-[#9bb9ca] hover:bg-[#f8fafb]"
         >
           Editar
         </button>
@@ -333,7 +333,7 @@ function ReviewItem({
 }) {
   return (
     <div>
-      <p className="text-[10px] font-medium uppercase tracking-[0.1em] text-[#718895]">
+      <p className="text-[11px] font-medium uppercase tracking-[0.1em] text-[#718895]">
         {label}
       </p>
 
@@ -350,7 +350,7 @@ function SummaryCard({
 }) {
   return (
     <div className="rounded-[18px] border border-[#d9e5ec] bg-[#f2f7fa] p-5">
-      <p className="text-[10px] font-medium uppercase tracking-[0.1em] text-[#5687ad]">
+      <p className="text-[11px] font-medium uppercase tracking-[0.1em] text-[#5687ad]">
         {label}
       </p>
 

@@ -158,7 +158,7 @@ export function EquipmentPreview() {
               <div className="flex items-center gap-4">
                 <p
                   className="
-                    text-[11px]
+                    text-[12px]
                     font-semibold
                     uppercase
                     tracking-[0.15em]
@@ -194,7 +194,7 @@ export function EquipmentPreview() {
                 className="
                   mt-5
                   max-w-lg
-                  text-[14px]
+                  text-[15px]
                   font-medium
                   leading-[1.8]
                   text-[#526d7f]
@@ -214,7 +214,7 @@ export function EquipmentPreview() {
                   inline-flex
                   items-center
                   gap-3
-                  text-[11px]
+                  text-[12px]
                   font-semibold
                   text-[#356f9f]
                   transition-colors
@@ -407,11 +407,11 @@ function EquipmentCard({ item }) {
       <div className="relative z-20 flex items-center justify-between">
         <span
           className="
-            text-[11px]
+            text-[12px]
             font-medium
             tracking-[0.14em]
             text-[#356f9f]
-            sm:text-xs
+            sm:text-[13px]
           "
         >
           {item.number}
@@ -520,7 +520,7 @@ function EquipmentCard({ item }) {
 
         <h3
           className="
-            text-[13px]
+            text-[14px]
             font-semibold
             leading-[1.2]
             tracking-[-0.02em]
@@ -534,13 +534,13 @@ function EquipmentCard({ item }) {
         <p
           className="
             mt-1
-            text-[8px]
+            text-[11px]
             font-medium
             uppercase
             leading-4
             tracking-[0.06em]
             text-[#356f9f]
-            sm:text-[10px]
+            sm:text-[11px]
             sm:tracking-[0.08em]
           "
         >
@@ -591,7 +591,7 @@ function EquipmentCard({ item }) {
         <p
           className="
             mt-1.5
-            text-[10px]
+            text-[11px]
             font-medium
             uppercase
             leading-4

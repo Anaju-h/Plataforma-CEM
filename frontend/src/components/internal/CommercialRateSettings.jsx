@@ -51,7 +51,7 @@ export function CommercialRateSettings({ onSaved } = {}) {
       </form>
       <p role="status" className="internal-help-text mt-3 text-[#31566d]">{feedback}</p>
       <details className="internal-help-text mt-4 text-[#607989]">
-        <summary>Histórico de vigências desta sessão</summary>
+        <summary>Histórico de vigências</summary>
         <ul className="mt-3 space-y-2">
           {history.map(item => <li key={item.id}>
             {currency(item.hourlyRate)}/h · {date(item.effectiveFrom)} até {date(item.effectiveTo)}
