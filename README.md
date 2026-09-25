@@ -60,6 +60,10 @@ Pré-requisitos: Java 21, Maven 3.9+, Node LTS + Yarn, SQL Server (ou Docker).
 
 As contas internas são identificadas apenas pelo cargo (Consulta, Técnico, Validador, Administrador). Em produção, troque as senhas iniciais ou use o login corporativo (OIDC). As chaves JWT em `backend/src/main/resources/jwt` servem só para DEV: em produção, informe `LAB_JWT_PUBLIC_KEY`, `LAB_JWT_PRIVATE_KEY` e `LAB_COOKIE_SECURE=true`.
 
+## Comparador de equipamentos
+
+Em `/equipamentos`, o visitante compara 2 ou 3 máquinas lado a lado. As linhas comparáveis (`src/data/equipmentComparison.js`) respondem às mesmas perguntas para todas as máquinas, e a ficha do fabricante (`equipmentSpecs.js`) aparece abaixo. O guia por necessidade tem o botão "Comparar", e a seleção fica no endereço (`/equipamentos?comparar=prismo,atos-q#comparador`) para ser compartilhada.
+
 ## Configurador on-line
 
 O envio do Configurador cria a SOL com origem **Configurador** (rota pública `/api/public/configurator`, com oferta de conta; cliente logado envia pela própria conta). A área interna mostra o selo e o filtro de origem e a seção **Configuração técnica** (peças, requisitos por serviço e tecnologia recomendada); a tecnologia mais aderente já chega como sugestão na análise e segue para o ORC.

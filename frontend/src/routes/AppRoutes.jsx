@@ -7,6 +7,8 @@ import {
   Route,
   Routes,
 } from "react-router-dom";
+import { NotFoundPage } from "../pages/NotFoundPage";
+import { DocumentTitle } from "./DocumentTitle";
 import { OperationalHistoryPage } from "../pages/internal/OperationalHistoryPage";
 
 import {
@@ -155,6 +157,7 @@ export function AppRoutes() {
   return (
     <>
       <ScrollToTop />
+      <DocumentTitle />
 
       <Routes>
         {/* =========================
@@ -191,6 +194,8 @@ export function AppRoutes() {
             path="/configurador"
             element={<ConfiguradorPage />}
           />
+
+          <Route path="*" element={<NotFoundPage />} />
         </Route>
 
         {/* =========================

@@ -9,6 +9,11 @@ import {
 import { ScrollReveal } from "../components/ui/ScrollReveal";
 import { getKeySpecByName } from "../data/equipmentSpecs";
 
+// Acessibilidade: com "reduzir movimento" ativo no sistema, os vídeos não tocam sozinhos e ganham controles.
+const REDUCE_MOTION =
+  typeof window !== "undefined" &&
+  window.matchMedia?.("(prefers-reduced-motion: reduce)").matches === true;
+
 const services = [
   {
     number: "01",
@@ -233,7 +238,8 @@ function ServicesHero() {
           >
             <div className="group absolute inset-[4%] overflow-hidden rounded-[30px] border border-white/60 bg-[#071f2d] shadow-[0_26px_65px_rgba(7,31,45,0.14)]">
               <video
-                autoPlay
+                autoPlay={!REDUCE_MOTION}
+                controls={REDUCE_MOTION}
                 muted
                 loop
                 playsInline
@@ -738,7 +744,8 @@ function ServiceMedia({
     <div className="group relative overflow-hidden rounded-[28px] border border-white/60 bg-[#071f2d] shadow-[0_22px_58px_rgba(7,31,45,0.12)]">
       <div className="relative aspect-[4/3] overflow-hidden sm:aspect-[16/10]">
         <video
-          autoPlay
+          autoPlay={!REDUCE_MOTION}
+          controls={REDUCE_MOTION}
           muted
           loop
           playsInline
@@ -901,7 +908,8 @@ function ReverseEngineeringSection() {
             <div className="group relative overflow-hidden rounded-[30px] border border-white/35 bg-[#071f2d] shadow-[0_24px_62px_rgba(7,31,45,0.14)]">
               <div className="relative aspect-[4/3] overflow-hidden sm:aspect-[16/10]">
                 <video
-                  autoPlay
+                  autoPlay={!REDUCE_MOTION}
+                  controls={REDUCE_MOTION}
                   muted
                   loop
                   playsInline

@@ -18,28 +18,28 @@ export const EQUIPMENT_SPECS_NOTE =
 
 export const equipmentSpecs = {
   prismo: {
-    key: { label: "Erro de comprimento (MPE_E0)", value: "a partir de 0,9 + L/350 µm" },
+    key: { label: "Precisão de comprimento (MPE_E0)", value: "a partir de 0,9 + L/350 µm" },
     specs: [
-      { label: "Erro de comprimento (MPE_E0)", value: "a partir de 0,9 + L/350 µm" },
-      { label: "Erro de scanning (MPE_THP)", value: "a partir de 1,3 µm" },
+      { label: "Precisão de comprimento (MPE_E0)", value: "a partir de 0,9 + L/350 µm" },
+      { label: "Precisão de scanning (MPE_THP)", value: "a partir de 1,3 µm" },
       { label: "Volume de medição", value: "a partir de 700 × 900 × 500 mm" },
       { label: "Velocidade vetorial", value: "até 520 mm/s" },
     ],
   },
   "o-inspect": {
-    key: { label: "Erro de comprimento (E0)", value: "a partir de 1,6 µm" },
+    key: { label: "Precisão de comprimento (E0)", value: "a partir de 1,6 µm" },
     specs: [
-      { label: "Erro de comprimento (E0)", value: "a partir de 1,6 µm" },
+      { label: "Precisão de comprimento (E0)", value: "a partir de 1,6 µm" },
       { label: "Volume de medição", value: "300 × 200 × 200 mm a 500 × 400 × 300 mm" },
       { label: "Sensores", value: "Óptico (câmera) e tátil" },
       { label: "Indicado para", value: "Peças pequenas e detalhes finos" },
     ],
   },
   duramax: {
-    key: { label: "Erro de comprimento (MPE_E)", value: "2,4 + L/300 µm" },
+    key: { label: "Precisão de comprimento (MPE_E)", value: "2,4 + L/300 µm" },
     specs: [
-      { label: "Erro de comprimento (MPE_E)", value: "2,4 + L/300 µm (18–22 °C)" },
-      { label: "Erro de apalpação (MPE_P)", value: "2,4 µm" },
+      { label: "Precisão de comprimento (MPE_E)", value: "2,4 + L/300 µm (18–22 °C)" },
+      { label: "Precisão de apalpação (MPE_P)", value: "2,4 µm" },
       { label: "Volume de medição", value: "500 × 500 × 500 mm" },
       { label: "Scanning", value: "até 500 pontos/s" },
     ],

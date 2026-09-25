@@ -8,6 +8,8 @@ import {
 } from "../components/ui/ArrowIcons";
 import { ScrollReveal } from "../components/ui/ScrollReveal";
 import { EQUIPMENT_SPECS_NOTE, getEquipmentSpecs } from "../data/equipmentSpecs";
+import { EquipmentComparator } from "../components/equipment/EquipmentComparator";
+import { compareAndScroll, useComparisonSelection } from "../components/equipment/comparisonSelection";
 
 const equipment = [
   {
@@ -178,26 +180,31 @@ const needProfiles = [
   {
     number: "01",
     need: "Alta precisão",
+    compare: ["prismo", "o-inspect"],
     equipment: "PRISMO · O-INSPECT",
   },
   {
     number: "02",
     need: "Peças menores",
+    compare: ["duramax", "o-inspect"],
     equipment: "DuraMax · O-INSPECT",
   },
   {
     number: "03",
     need: "Digitalização detalhada",
+    compare: ["atos-q", "t-scan"],
     equipment: "ATOS Q",
   },
   {
     number: "04",
     need: "Mobilidade",
+    compare: ["t-scan", "atos-q"],
     equipment: "T-SCAN",
   },
   {
     number: "05",
     need: "Inspeção interna",
+    compare: ["bosello-max", "prismo"],
     equipment: "BOSELLO MAX",
   },
 ];
@@ -239,6 +246,7 @@ export function EquipamentosPage() {
 
       <div className="relative bg-[linear-gradient(180deg,#ffffff_0%,#f4f8fa_35%,#e8f2f5_72%,#ffffff_100%)]">
         <NeedGuideSection />
+        <EquipmentComparator equipment={equipment} />
         <EquipmentGuidanceSection />
       </div>
     </main>
@@ -1513,6 +1521,8 @@ function BoselloSection({
   );
 }
 function NeedGuideSection() {
+  const [, setCompared] = useComparisonSelection();
+
   return (
     <section className="pb-5 pt-8 sm:pb-6 sm:pt-10 lg:pb-7 lg:pt-12">
       <Container>
@@ -1558,6 +1568,7 @@ function NeedGuideSection() {
                   profile={profile}
                   index={index}
                   last={index === needProfiles.length - 1}
+                  onCompare={() => compareAndScroll(setCompared, profile.compare)}
                 />
               ))}
             </div>
@@ -1572,6 +1583,7 @@ function NeedProfileRow({
   profile,
   index,
   last,
+  onCompare,
 }) {
   return (
     <motion.div
@@ -1592,7 +1604,7 @@ function NeedProfileRow({
         delay: index * 0.05,
         ease: [0.22, 1, 0.36, 1],
       }}
-      className={`grid gap-3 px-5 py-4 sm:grid-cols-[48px_1fr_1fr] sm:items-center sm:gap-5 sm:px-6 ${
+      className={`grid gap-3 px-5 py-4 sm:grid-cols-[48px_1fr_1fr_auto] sm:items-center sm:gap-5 sm:px-6 ${
         last ? "" : "border-b border-[#dce8ed]/65"
       }`}
     >
@@ -1619,6 +1631,14 @@ function NeedProfileRow({
           {profile.equipment}
         </p>
       </div>
+      <button
+        type="button"
+        onClick={onCompare}
+        className="internal-ctl inline-flex h-9 w-fit items-center gap-2 rounded-full bg-white/60 px-4 text-[12px] font-semibold text-[#356f9f] ring-1 ring-inset ring-[#c9dae3] transition-all duration-300 hover:bg-[#12364e] hover:text-white hover:ring-[#12364e]"
+      >
+        Comparar
+        <ArrowRightIcon className="h-3 w-3" />
+      </button>
     </motion.div>
   );
 }

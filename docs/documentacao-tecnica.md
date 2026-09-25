@@ -26,6 +26,7 @@ Dar ao Centro de Excelência em Metrologia (Faculdade SENAI Ítalo Bologna, Goi�
 | Site institucional (`/`, `/sobre`, `/servicos`, `/equipamentos`) | Visitante | Quem somos, missão, visão, trajetória, parceiros, infraestrutura, catálogo de serviços, equipamentos com dados técnicos, localização e contato (rodapé). |
 | Solicitação de orçamento (`/orcamento`) | Visitante / cliente | Formulário guiado (empresa, responsável, e-mail, telefone, serviço, necessidade, peças, anexos). |
 | **Configurador on-line** (`/configurador`) | Visitante / cliente | Diferencial: o cliente descreve peça e requisitos e recebe a tecnologia recomendada com a aderência de cada equipamento. Gera a SOL já com a "configuração técnica". |
+| **Comparador de equipamentos** (`/equipamentos#comparador`) | Visitante | Diferencial: 2 ou 3 máquinas lado a lado. As linhas comparáveis fazem as mesmas perguntas a todas (princípio, contato, interior, onde acontece, tamanho, detalhe, entrega, indicação, serviços), e a ficha do fabricante aparece abaixo. A seleção fica no endereço (`?comparar=prismo,atos-q`) e pode ser compartilhada. Sem notas ou pontuações inventadas. |
 | **Área do cliente** (`/cliente`) | Cliente | Diferencial: acompanhamento das solicitações, propostas (PDF, aceite ou recusa), projetos, documentos e dados da conta. |
 | Área interna (`/portal`) | Equipe | SOL → ORC → Proposal Builder → PRJ, tarefas delegadas com apontamento de horas, quadro da equipe, custos de equipamentos, configurações e auditoria. |
 | **Gestão do Conhecimento** (`/portal/conhecimento`) | Equipe | Registro de Serviço (blocos A/B/C), vocabulário controlado, indicadores, Assistente de Orçamento, validação de lições e avisos por assinatura. |
@@ -181,6 +182,10 @@ lab-platform/
 11. **Limite de tentativas de login.** 5 falhas por conta ou 20 por IP em 15 minutos resultam em bloqueio temporário (HTTP 429). O login bem-sucedido zera o contador da conta (`LoginAttemptGuard`).
 12. **Tradução sem tocar nos componentes.** O português é a fonte. Um tradutor de DOM aplica o dicionário (PT → EN/DE/ES/FR/IT) aos textos renderizados, e o dicionário é carregado sob demanda.
 13. **Auditoria.** Ações administrativas (configurações, perfis, dados de demonstração) e o histórico de SOL/ORC/PRJ registram quem fez e quando.
+14. **Acabamento e acessibilidade.**
+    - Cada página define o título da aba (`routes/DocumentTitle.jsx`), traduzido na área pública.
+    - Endereços inexistentes caem numa página 404 com caminhos de volta.
+    - Quem ativa "reduzir movimento" no sistema operacional não recebe animações de deslocamento (`MotionConfig reducedMotion="user"`), rolagem suave nem vídeos em reprodução automática.
 
 ## 7. Testes
 

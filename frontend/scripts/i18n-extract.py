@@ -6,7 +6,8 @@ files=[]
 for pat in ['pages/HomePage.jsx','pages/SobrePage.jsx','pages/ServicosPage.jsx','pages/EquipamentosPage.jsx','pages/OrcamentoPage.jsx','pages/ConfiguradorPage.jsx',
             'components/home/*.jsx','components/layout/*.jsx','components/quote/*.jsx','components/configurator/**/*.js*',
             'data/serviceCatalog.js','data/requestNeeds.js','data/equipmentSpecs.js','utils/contactValidation.js',
-            'pages/customer/CustomerAccessPage.jsx','components/customer/CustomerAuthCard.jsx']:
+            'pages/customer/CustomerAccessPage.jsx','components/customer/CustomerAuthCard.jsx',
+            'pages/NotFoundPage.jsx','components/about/*.jsx','components/equipment/*.js*','data/equipmentComparison.js','utils/fileLimits.js']:
     files+=glob.glob(os.path.join(root,pat),recursive=True)
 LETTER=re.compile(r'[A-Za-zÀ-ÿ]')
 ACC=re.compile(r'[À-ÿ]')
