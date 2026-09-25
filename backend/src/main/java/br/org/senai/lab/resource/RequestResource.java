@@ -13,6 +13,13 @@ public class RequestResource {
   @POST @Path("/{id}/quote") @Consumes(MediaType.APPLICATION_JSON)
   public java.util.Map<String,Object> quote(@PathParam("id") String id,@Valid br.org.senai.lab.dto.QuoteDtos.Create dto){return quotes.create(id,dto);}
   @GET public List<Response> list(){return service.list();}
+  @GET @Path("/{id}/attachments/{attachmentId}") @Produces(MediaType.WILDCARD)
+  public jakarta.ws.rs.core.Response attachment(@PathParam("id") String id,@PathParam("attachmentId") String attachmentId){
+    var file=service.attachment(id,attachmentId);
+    return jakarta.ws.rs.core.Response.ok(file.content(),file.contentType())
+      .header("Content-Disposition","inline; filename*=UTF-8''"+java.net.URLEncoder.encode(file.name(),java.nio.charset.StandardCharsets.UTF_8).replace("+","%20"))
+      .header("X-Content-Type-Options","nosniff").build();
+  }
   @GET @Path("/{id}") public Response get(@PathParam("id") String id){return service.get(id);}
   @POST @Consumes(MediaType.APPLICATION_JSON) public jakarta.ws.rs.core.Response create(@Valid Create dto){Response r=service.create(dto);return jakarta.ws.rs.core.Response.status(201).entity(r).build();}
   @POST @Path("/{id}/analysis/start") public Response start(@PathParam("id") String id){return service.start(id);}

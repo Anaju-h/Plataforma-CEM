@@ -1,28 +1,21 @@
 import { useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { getCurrentCustomer } from "../../services/customer/customerService";
+import { logoutCustomer } from "../../services/authApi";
 import { CustomerAuthCard } from "../../components/customer/CustomerAuthCard";
 
 export function CustomerAccessPage() {
-  const navigate = useNavigate();
-  const location = useLocation();
-  // Sessão já ativa (cookie HttpOnly) segue direto ao painel, exceto quando há uma SOL a vincular.
-  useEffect(() => {
-    if (location.state?.claim) return undefined;
-    let active = true;
-    getCurrentCustomer().then(() => { if (active) navigate("/cliente/dashboard", { replace: true }); }).catch(() => null);
-    return () => { active = false; };
-  }, [location.state, navigate]);
+  // A tela de acesso sempre exige login: uma sessão anterior de cliente é encerrada ao chegar aqui.
+  useEffect(() => { logoutCustomer().catch(() => null); }, []);
 
   return (
-    <section className="relative min-h-[calc(100vh-92px)] overflow-hidden bg-[#e5eef3]">
+    <section className="relative min-h-[calc(100vh-92px)]">
       {/* =====================================================
           FUNDO
       ===================================================== */}
 
+      {/* Fundo fixo na tela inteira (inclusive atrás da Header), sem faixa de outra cor. */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 overflow-hidden"
+        className="pointer-events-none fixed inset-0 overflow-hidden"
       >
         <div className="absolute inset-0 bg-[linear-gradient(135deg,#f3f8fb_0%,#e5eef3_42%,#d6e5ee_72%,#c9dce8_100%)]" />
 

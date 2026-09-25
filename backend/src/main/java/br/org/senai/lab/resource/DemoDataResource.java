@@ -40,6 +40,7 @@ public class DemoDataResource {
       "DELETE FROM quote_service WHERE quote_id IN ("+DEMO_QUOTE+")",
       "DELETE FROM lab_quote WHERE id IN ("+DEMO_QUOTE+")",
       "DELETE FROM piece_service WHERE piece_id IN (SELECT id FROM request_piece WHERE request_id IN ("+DEMO_REQ+"))",
+      "DELETE FROM request_attachment WHERE request_id IN ("+DEMO_REQ+")",
       "DELETE FROM request_history WHERE request_id IN ("+DEMO_REQ+")",
       "DELETE FROM request_analysis WHERE request_id IN ("+DEMO_REQ+")",
       "DELETE FROM request_piece WHERE request_id IN ("+DEMO_REQ+")",

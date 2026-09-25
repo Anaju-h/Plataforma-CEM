@@ -2,14 +2,23 @@
 
 Plataforma web do Centro de Excelência em Metrologia: site institucional, solicitação de atendimento, **área do cliente**, **área interna de gestão** (SOL → ORC → proposta → PRJ) e o **Módulo de Gestão do Conhecimento em Orçamentação**.
 
+## Documentação
+
+| Documento | Conteúdo |
+| --- | --- |
+| [`docs/documentacao-tecnica.md`](docs/documentacao-tecnica.md) | Objetivo, arquitetura, tecnologias e justificativas, aderência ao DS-059, organização, decisões técnicas, testes, segurança, desafios e melhorias futuras |
+| [`docs/knowledge-module.md`](docs/knowledge-module.md) | Módulo de Gestão do Conhecimento: mapeamento das telas no ciclo, regras, vocabulário controlado e roteiro de demonstração |
+| [`docs/semente-real.md`](docs/semente-real.md) | Registro da semente real: pessoas consultadas e serviços recuperados |
+| `docs/*-integration.md`, `docs/*-regressions.md` | Registros das integrações e regressões feitas durante o desenvolvimento |
+
 ## Stack (alinhada ao padrão DS-059)
 
 | Camada | Tecnologias |
 | --- | --- |
 | Frontend | React 19, JavaScript (sem TypeScript), Vite, Tailwind CSS, React Router, Yarn |
-| Backend | Java 21, Quarkus, Hibernate ORM, MapStruct, Flyway, SmallRye JWT, Maven |
+| Backend | Java 21 (o Quarkus 3 exige Java 17+), Quarkus, Hibernate ORM, MapStruct, Flyway, SmallRye JWT, Maven |
 | Banco | SQL Server 2019+ (Docker Compose incluído para DEV) |
-| Segurança | JWT assinado (RS256) somente em cookie HttpOnly/SameSite=Strict; senhas PBKDF2-SHA256; autorização por perfil no backend |
+| Segurança | JWT assinado (RS256) somente em cookie HttpOnly/SameSite=Strict; senhas PBKDF2-SHA256; autorização por perfil no backend; limite de tentativas de login |
 
 ## Estrutura
 
@@ -23,7 +32,7 @@ backend/           Quarkus
     service/       regras de SOL, ORC, proposta, PRJ, cliente, autenticação
     knowledge/     módulo de conhecimento (vocabulário, registros, lições, Assistente, indicadores)
     security/      JWT em cookie, hash de senha, usuário atual
-  src/main/resources/db/migration/   V1–V10 (Flyway)
+  src/main/resources/db/migration/   V1–V11 (Flyway)
 docs/              decisões e integrações por missão; docs/knowledge-module.md (módulo + roteiro)
 ```
 
@@ -32,10 +41,15 @@ docs/              decisões e integrações por missão; docs/knowledge-module.
 Pré-requisitos: Java 21, Maven 3.9+, Node LTS + Yarn, SQL Server (ou Docker).
 
 1. **Banco**: crie `.env` na raiz com `MSSQL_SA_PASSWORD` e `DB_PASSWORD` e rode `docker compose up -d`. Crie o banco `lab_platform` e o usuário da aplicação.
-2. **Backend** (`backend/`): configure `JDBC_DATABASE_URL`, `DB_USER` e `DB_PASSWORD` (veja `backend/.env.example`) e rode `mvn quarkus:dev`. O Flyway aplica as migrations V1–V10 na subida. API em `http://localhost:8080`.
+2. **Backend** (`backend/`): configure `JDBC_DATABASE_URL`, `DB_USER` e `DB_PASSWORD` (veja `backend/.env.example`) e rode `mvn quarkus:dev`. O Flyway aplica as migrations V1–V11 na subida. API em `http://localhost:8080`.
 3. **Frontend** (`frontend/`): `yarn install` e `yarn dev`. O Vite encaminha `/api` ao backend. Acesse `http://localhost:5173`.
 
-Testes: `mvn test` (usa o banco isolado `lab_platform_test`) e `yarn test`.
+### Testes
+
+- **Backend**: `mvn test` (usa o banco isolado `lab_platform_test`, criado por `backend/scripts/create-test-database.sql`).
+  - Módulo de conhecimento sem banco: `mvn test -Dtest=StatsTest,KnowledgeRulesTest,LoginAttemptGuardTest`.
+  - Roteiro completo do complemento (seção 7) sobre a API: `mvn test -Dtest=KnowledgeCycleTest`.
+- **Frontend**: `yarn test`.
 
 ## Acessos
 
@@ -80,9 +94,18 @@ Administração → *Dados de demonstração* carrega projetos fictícios (etiqu
 
 Detalhes do módulo, vocabulário e roteiro de apresentação: [`docs/knowledge-module.md`](docs/knowledge-module.md).
 
-## Idiomas (PT · EN · DE)
+## Idiomas (PT · EN · DE · ES · FR · IT)
 
-A área pública (site, orçamento, configurador e acesso do cliente) troca de idioma pelo seletor do cabeçalho. O português é a fonte. `src/i18n/translations.js` tem o dicionário PT → EN/DE, carregado sob demanda, e `AutoTranslate` aplica o idioma aos textos renderizados sem alterar os componentes. Ao criar ou alterar textos, rode `python scripts/i18n-extract.py` na pasta `frontend` para listar o que ainda falta traduzir. As áreas do cliente e interna permanecem em português.
+A área pública (site, orçamento, configurador e acesso do cliente) troca de idioma pelo seletor do cabeçalho. O português é a fonte. `src/i18n/translations.js` tem o dicionário PT → EN/DE/ES/FR/IT, carregado sob demanda, e `AutoTranslate` aplica o idioma aos textos renderizados sem alterar os componentes. Ao criar ou alterar textos, rode `python scripts/i18n-extract.py` na pasta `frontend` para listar o que ainda falta traduzir. As áreas do cliente e interna permanecem em português.
+
+## Limites de uso
+
+| O quê | Limite | Onde |
+| --- | --- | --- |
+| Tentativas de login | 5 falhas por conta ou 20 por IP em 15 min → bloqueio temporário (HTTP 429) | `LoginAttemptGuard` (`lab.auth.*` em `application.properties`) |
+| Anexos da solicitação (fotos, CAD, PDF) | 10 arquivos, 10 MB cada, 25 MB no total, extensões permitidas | `AttachmentService` e `utils/fileLimits.js` (aviso antes do envio) |
+| Versões de proposta | 10 versões por proposta; PDF de até 8 MB por versão | `ProposalService` |
+| Corpo da requisição | 40 MB | `quarkus.http.limits.max-body-size` |
 
 ## Dados técnicos dos equipamentos
 

@@ -1151,7 +1151,7 @@ function ReliabilitySection() {
               </span>
             </h2>
 
-            <p className="mt-5 max-w-[555px] text-[15px] leading-7 text-[#607583] sm:text-[15px]">
+            <p className="mt-5 max-w-[555px] text-[16px] leading-7 text-[#607583] sm:text-[17px] sm:leading-8">
               Os dados obtidos em inspeções, digitalizações e análises podem
               apoiar decisões de confiabilidade, organização de ativos,
               identificação de peças críticas e planejamento de manutenção.
@@ -1207,24 +1207,24 @@ function IntegratedRow({
       />
 
       <div className="relative z-10 flex gap-4">
-        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-white/70 bg-white/50 text-[11px] font-semibold tracking-[0.1em] text-[#356f9f] shadow-[inset_0_1px_0_rgba(255,255,255,0.9)]">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/70 bg-white/50 text-[12.5px] font-semibold tracking-[0.1em] text-[#356f9f] shadow-[inset_0_1px_0_rgba(255,255,255,0.9)]">
           {solution.number}
         </div>
 
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-            <span className="text-[13px] font-semibold text-[#12364e]">
+            <span className="text-[16px] font-semibold text-[#12364e]">
               {solution.from}
             </span>
 
-            <ArrowRightIcon className="h-3.5 w-3.5 text-[#65b8ee]" />
+            <ArrowRightIcon className="h-4 w-4 text-[#65b8ee]" />
 
-            <span className="text-[13px] font-semibold text-[#356f9f]">
+            <span className="text-[16px] font-semibold text-[#356f9f]">
               {solution.to}
             </span>
           </div>
 
-          <p className="mt-2 text-[12px] leading-5 text-[#607583]">
+          <p className="mt-2 text-[14.5px] leading-6 text-[#607583]">
             {solution.description}
           </p>
         </div>

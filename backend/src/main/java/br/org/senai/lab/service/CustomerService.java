@@ -124,6 +124,12 @@ public class CustomerService {
 
   // ---------------- requests ----------------
   public List<Map<String,Object>> requests(){return scoped(RequestEntity.class,"e.","order by e.createdAt desc",Map.of()).stream().map(this::requestView).toList();}
+  @Inject AttachmentService attachmentFiles;
+  /** Arquivo de uma SOL da própria empresa/usuário. */
+  public AttachmentService.FileContent attachment(String id,String attachmentId){
+    RequestEntity r=one(RequestEntity.class,"e.","requestCode",id);
+    try{return attachmentFiles.load(r.id,UUID.fromString(attachmentId));}catch(IllegalArgumentException e){throw new ApiException(404,"Arquivo não encontrado.");}
+  }
   public Map<String,Object> request(String id){return requestView(one(RequestEntity.class,"e.","requestCode",id));}
   public Map<String,Object> create(RequestDtos.Create input){var result=requests.createForCustomer(input,context.current());return request(result.id());}
   private Map<String,Object> requestView(RequestEntity r){

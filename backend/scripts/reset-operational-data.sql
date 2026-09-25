@@ -32,6 +32,7 @@ DELETE FROM quote_service;
 DELETE FROM lab_quote;
 -- Solicitações (SOL)
 DELETE FROM piece_service;
+DELETE FROM request_attachment;
 DELETE FROM request_history;
 DELETE FROM request_analysis;
 DELETE FROM request_piece;

@@ -149,7 +149,7 @@ export function Footer() {
               <p
                 className="
                   mb-3
-                  text-[11px]
+                  text-[9px]
                   font-semibold
                   uppercase
                   tracking-[0.18em]
@@ -231,7 +231,7 @@ export function Footer() {
             />
 
             <FooterColumn
-              title="Soluções"
+              title="Orçamento"
               links={solutionLinks}
             />
 

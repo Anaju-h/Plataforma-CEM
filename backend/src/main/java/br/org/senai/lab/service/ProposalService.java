@@ -13,6 +13,9 @@ public class ProposalService {
   @Inject QuoteService quotes;
   @Inject br.org.senai.lab.repository.QuoteRepository repository;
   @Inject com.fasterxml.jackson.databind.ObjectMapper json;
+  /** Cada versão emitida guarda snapshot e PDF; o limite evita crescimento sem fim do banco. */
+  public static final int MAX_VERSIONS=10;
+  static final int MAX_PDF_CHARS=8*1024*1024;
   static final List<String> SECTIONS=List.of("scope","items","photos","technology","deadline","validity","terms","notes","files");
   // Commercial labels only; no equipment costs or pricing knowledge enter the document.
   static final Map<String,String> MACHINE_NAMES=Map.of("duramax","ZEISS DuraMax","o-inspect","ZEISS O-INSPECT","prismo","ZEISS PRISMO","bosello-max","ZEISS BOSELLO MAX","atos-q","ZEISS ATOS Q","contura","ZEISS CONTURA","t-scan","ZEISS T-SCAN");
@@ -38,12 +41,14 @@ public class ProposalService {
   }
   @Transactional public Map<String,Object> next(String id,Map<String,Long> dto) {
     var q=quotes.required(id,true);editable(q);var p=required(q);revision(p,dto.get("revision"));
+    if(!p.hasDraft&&p.versions.size()>=MAX_VERSIONS)throw conflict("Limite de "+MAX_VERSIONS+" versões por proposta atingido. Registre o resultado da última versão ou abra um novo orçamento.");
     if(!p.hasDraft) {p.hasDraft=true;p.scope=q.scope;p.technology=EquipmentPolicy.label(q.serviceId,q.machineId);p.notes=q.commercialNotes;p.deadline=q.deadlineDays+" dias";p.validity=q.validityDays+" dias";p.updatedAt=now();p.revision++;}
     return response(p,quotes);
   }
   @Transactional public Map<String,Object> generate(String id,Generate dto) {
     var q=quotes.required(id,true);editable(q);quotes.revision(q,dto.sourceQuoteRevision());var p=required(q);revision(p,dto.revision());
     if(!p.hasDraft)throw conflict("Não há rascunho para emitir.");
+    if(p.versions.size()>=MAX_VERSIONS)throw conflict("Limite de "+MAX_VERSIONS+" versões por proposta atingido. Registre o resultado da última versão ou abra um novo orçamento.");
     // O documento é um snapshot comercial variável. A allowlist exclui custos, margens e notas internas.
     Map<String,Object> snapshot=snapshot(q,p);
     com.fasterxml.jackson.databind.JsonNode expected=json.valueToTree(snapshot), received=json.valueToTree(dto.snapshot());
@@ -51,6 +56,7 @@ public class ProposalService {
     var v=new QuoteProposalVersionEntity();v.id=UUID.randomUUID();v.proposal=p;v.number=p.versions.size()+1;v.status="generated";v.createdAt=now();v.createdBy=quotes.actor();v.sourceQuoteRevision=q.revision;
     v.snapshotJson=quotes.write(snapshot);v.sectionsJson=p.sectionsJson;v.selectedMediaJson=p.selectedMediaJson;v.investmentDisplay=p.investmentDisplay;
     v.pdfFileName=q.quoteCode.replace("ORC-","PROP-")+"_V"+v.number+".pdf";v.pdfJson=quotes.write(dto.pdf());
+    if(v.pdfJson!=null&&v.pdfJson.length()>MAX_PDF_CHARS)throw bad("O PDF da proposta excede 8 MB. Reduza o conteúdo antes de emitir.");
     p.versions.forEach(old->{if("generated".equals(old.status))old.status="superseded";});p.versions.add(v);p.hasDraft=false;p.updatedAt=now();p.revision++;
     quotes.event(q,"Proposta emitida","Versão V"+v.number+" preservada.");return response(p,quotes);
   }

@@ -10,7 +10,7 @@ const navigation = [
   { label: "Sobre", href: "/sobre" },
   { label: "Serviços", href: "/servicos" },
   { label: "Equipamentos", href: "/equipamentos" },
-  { label: "Soluções", href: "/#solucoes" },
+  { label: "Orçamento", href: "/#solucoes" },
 ];
 
 // Idiomas reais da área pública (ver src/i18n).

@@ -3,7 +3,7 @@
  * IDIOMA DA ÁREA PÚBLICA
  * ============================================================
  *
- * Português é a fonte. Inglês e alemão usam o dicionário
+ * Português é a fonte. Inglês, alemão, espanhol, francês e italiano usam o dicionário
  * `translations.js`, carregado sob demanda (fora do bundle inicial).
  * A preferência fica só no navegador do visitante (não é dado sensível).
  * ============================================================
@@ -13,7 +13,13 @@ export const LANGUAGES = [
   { code: "PT", label: "Português", flag: "🇧🇷", html: "pt-BR" },
   { code: "EN", label: "English", flag: "🇺🇸", html: "en" },
   { code: "DE", label: "Deutsch", flag: "🇩🇪", html: "de" },
+  { code: "ES", label: "Español", flag: "🇪🇸", html: "es" },
+  { code: "FR", label: "Français", flag: "🇫🇷", html: "fr" },
+  { code: "IT", label: "Italiano", flag: "🇮🇹", html: "it" },
 ];
+
+// Posição de cada idioma no dicionário: "pt": [EN, DE, ES, FR, IT].
+const DICTIONARY_INDEX = { EN: 0, DE: 1, ES: 2, FR: 3, IT: 4 };
 
 const STORAGE_KEY = "lab-language";
 const listeners = new Set();
@@ -80,7 +86,7 @@ export function normalize(text) {
 /** Tradução síncrona (retorna o texto original quando não há tradução ou o dicionário ainda não carregou). */
 export function translateText(text, code = language) {
   if (code === "PT" || !dictionary) return text;
-  const index = code === "EN" ? 0 : 1;
+  const index = DICTIONARY_INDEX[code] ?? 0;
   const key = normalize(text);
   const values = dictionary.get(key);
   if (!values || !values[index]) return text;

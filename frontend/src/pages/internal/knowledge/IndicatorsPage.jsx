@@ -22,25 +22,21 @@ function FactorLine({ points }) {
   );
 }
 
-export function IndicatorsPage() {
-  const state = useLoad(() => knowledgeApi.indicators(), []);
-  const data = state.data;
+function IndicatorsSummary({ summary, demo = false }) {
   return (
     <div className="space-y-5">
-      <Loading state={state}>
-        {data && <>
           <div className="grid gap-3 md:grid-cols-4">
-            <Stat label="Serviços fechados" value={data.total} hint="Registros com blocos A e B." />
-            <Stat label="Índice de assertividade" value={data.assertiveness === null ? "—" : `${Number(data.assertiveness).toLocaleString("pt-BR")}%`} hint={`Dentro de ±${Math.round(data.tolerance * 100)}% do esforço orçado (tolerância configurável).`} tone="accent" />
-            <Stat label="Com retrabalho" value={data.reworkShare === null ? "—" : `${Number(data.reworkShare).toLocaleString("pt-BR")}%`} />
-            <Stat label="Com mudança de escopo" value={data.scopeChangeShare === null ? "—" : `${Number(data.scopeChangeShare).toLocaleString("pt-BR")}%`} />
+            <Stat label="Serviços fechados" value={summary.total} hint="Registros com blocos A e B." />
+            <Stat label="Índice de assertividade" value={summary.assertiveness === null ? "—" : `${Number(summary.assertiveness).toLocaleString("pt-BR")}%`} hint={`Dentro de ±${Math.round(summary.tolerance * 100)}% do esforço orçado (tolerância configurável).`} tone="accent" />
+            <Stat label="Com retrabalho" value={summary.reworkShare === null ? "—" : `${Number(summary.reworkShare).toLocaleString("pt-BR")}%`} />
+            <Stat label="Com mudança de escopo" value={summary.scopeChangeShare === null ? "—" : `${Number(summary.scopeChangeShare).toLocaleString("pt-BR")}%`} />
           </div>
 
           <Card title="Por tipo de serviço" subtitle="Faixa = quartis das horas realizadas (mediana no centro). Fator = mediana de realizado ÷ orçado. Margens: mediana por tipo.">
-            {!data.types.length ? <p className="py-6 text-center text-[14px] text-[#526d7c]">Nenhum serviço fechado ainda. O histórico cresce a cada serviço concluído com o bloco B preenchido.</p> :
+            {!summary.types.length ? <p className="py-6 text-center text-[14px] text-[#526d7c]">{demo ? "Sem registros de demonstração fechados." : "Nenhum serviço real fechado ainda. O histórico cresce a cada serviço concluído com o bloco B preenchido."}</p> :
             <div className="overflow-x-auto"><table className="w-full min-w-[980px] text-left text-[14px]">
               <thead className="text-[12px] uppercase tracking-[0.06em] text-[#5f7c8c]"><tr><th className="py-2 pr-3">Tipo de serviço</th><th className="pr-3">Casos</th><th className="pr-3">Assertividade</th><th className="pr-3">Faixa de esforço</th><th className="pr-3">Fator</th><th className="pr-3">Evolução do fator</th><th className="pr-3">Margem orçada → realizada</th><th>Causas mais frequentes</th></tr></thead>
-              <tbody className="divide-y divide-[#edf1f3]">{data.types.map(type => <tr key={type.serviceTypeId} className="align-top">
+              <tbody className="divide-y divide-[#edf1f3]">{summary.types.map(type => <tr key={type.serviceTypeId} className="align-top">
                 <td className="py-3 pr-3 font-semibold text-[#071f2d]">{type.serviceType}</td>
                 <td className="pr-3">{type.n}</td>
                 <td className="pr-3">{Number(type.assertiveness).toLocaleString("pt-BR")}%</td>
@@ -53,10 +49,10 @@ export function IndicatorsPage() {
             </table></div>}
           </Card>
 
-          {data.records.length > 0 && <Card title="Por registro" subtitle="Desvios = (realizado − orçado) ÷ orçado. Margem = (valor − custo) ÷ valor.">
+          {summary.records.length > 0 && <Card title="Por registro" subtitle="Desvios = (realizado − orçado) ÷ orçado. Margem = (valor − custo) ÷ valor.">
             <div className="overflow-x-auto"><table className="w-full min-w-[900px] text-left text-[14px]">
               <thead className="text-[12px] uppercase tracking-[0.06em] text-[#5f7c8c]"><tr><th className="py-2 pr-3">Registro</th><th className="pr-3">Tipo</th><th className="pr-3">Esforço</th><th className="pr-3">Custo</th><th className="pr-3">Prazo</th><th className="pr-3">Margem orçada</th><th className="pr-3">Margem realizada</th><th>Fechado</th></tr></thead>
-              <tbody className="divide-y divide-[#edf1f3]">{data.records.map(row => <tr key={row.code}>
+              <tbody className="divide-y divide-[#edf1f3]">{summary.records.map(row => <tr key={row.code}>
                 <td className="py-2 pr-3"><Link className="font-semibold text-[#0b5ea8] hover:underline" to={`../registros/${row.code}`}>{row.code}</Link> {row.demo && <DemoBadge className="ml-1" />}</td>
                 <td className="pr-3">{row.serviceType}</td>
                 <td className="pr-3">{fmt.signedPct(row.effortDeviation)}</td>
@@ -68,6 +64,30 @@ export function IndicatorsPage() {
               </tr>)}</tbody>
             </table></div>
           </Card>}
+            </div>
+  );
+}
+
+export function IndicatorsPage() {
+  const state = useLoad(() => knowledgeApi.indicators(), []);
+  const data = state.data;
+  return (
+    <div className="space-y-5">
+      <Loading state={state}>
+        {data && <>
+          <div>
+            <h2 className="text-[17px] font-semibold text-[#071f2d]">Histórico real do laboratório</h2>
+            <p className="mt-1 text-[13px] text-[#5f7c8c]">Somente serviços reais. Registros de demonstração nunca entram nestes números.</p>
+          </div>
+          <IndicatorsSummary summary={data} />
+          {data.demo && <section className="space-y-4 rounded-[18px] border border-dashed border-[#d9cdf2] bg-[#faf8fe] p-4 sm:p-5">
+            <div className="flex flex-wrap items-center gap-2">
+              <DemoBadge />
+              <h2 className="text-[17px] font-semibold text-[#3d2a70]">Demonstração (separada do histórico real)</h2>
+            </div>
+            <p className="text-[13px] text-[#5b4a85]">Dados fictícios usados para mostrar o mecanismo funcionando. Ficam fora dos indicadores reais e somem ao apagar a demonstração em Administração.</p>
+            <IndicatorsSummary summary={data.demo} demo />
+          </section>}
         </>}
       </Loading>
     </div>

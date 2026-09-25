@@ -50,7 +50,7 @@ Sempre é possível abrir a lista dos casos que geraram o número (sem caixa-pre
 
 Por registro: desvio de esforço, custo e prazo = (realizado − orçado) ÷ orçado; margem orçada e realizada = (valor − custo) ÷ valor.
 Por tipo de serviço: índice de assertividade (dentro de ±tolerância, padrão 15%, configurável), faixa (mediana e quartis), fator de correção, evolução do fator a cada caso e causas mais frequentes.
-Os indicadores usam somente o histórico real do laboratório.
+Os indicadores usam somente o histórico real do laboratório. Registros de demonstração aparecem num bloco separado, com a etiqueta DEMO, e nunca entram nesses números (coberto por `KnowledgeRulesTest` e `KnowledgeCycleTest`).
 
 ## Vocabulário controlado (versão inicial)
 
@@ -83,3 +83,10 @@ A lista deve ser revisada e ampliada com o laboratório pela própria tela (perf
 4. **Entrar como Validador** (`validador@lab.local`) → *Lições e validação* → **Formalizar**. Quem assina o assunto recebe o aviso.
 5. **Assistente de novo**: o caso formalizado entra na recomendação; *Indicadores* mostram desvio e assertividade.
 6. **Projetos**: o PRJ correspondente agora pode ser concluído (a regra exige o registro fechado).
+
+## Testes automatizados
+
+- `StatsTest` e `KnowledgeRulesTest` (sem banco): mediana e quartis, escada de confiança, tolerância, indicadores por tipo e separação da demonstração.
+- `KnowledgeCycleTest` (API + banco de teste): executa o roteiro acima de ponta a ponta. Cobre o Assistente sem histórico, os blocos A → B + C, a formalização só pelo Validador, o aviso a quem assina, a recomendação que muda, a faixa com justificativa obrigatória, a demonstração apagada sem afetar o real e os valores comerciais ocultos.
+
+A semente real (pessoas consultadas e serviços recuperados) está em [`semente-real.md`](semente-real.md).

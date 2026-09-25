@@ -1,3 +1,7 @@
+import { useState } from "react";
+
+import { acceptFiles, FILE_LIMITS_HINT } from "../../utils/fileLimits";
+
 const urgencyOptions = [
   {
     value: "normal",
@@ -50,24 +54,34 @@ export function ProjectStep({
   data,
   onChange,
 }) {
+  const [fileError, setFileError] = useState(null);
+
   function handleFiles(event) {
     const files = Array.from(
       event.target.files ?? [],
     );
 
+    event.target.value = "";
+
     if (files.length === 0) {
+      return;
+    }
+
+    const { accepted, message } = acceptFiles(data.generalFiles ?? [], files);
+    setFileError(message);
+
+    if (!accepted.length) {
       return;
     }
 
     onChange("generalFiles", [
       ...(data.generalFiles ?? []),
-      ...files,
+      ...accepted,
     ]);
-
-    event.target.value = "";
   }
 
   function removeFile(index) {
+    setFileError(null);
     onChange(
       "generalFiles",
       (
@@ -336,9 +350,15 @@ export function ProjectStep({
           </p>
 
           <p className="mt-2 text-[13px] text-[#7b8c97]">
-            Imagens, PDF, STL, STEP, IGES ou DWG
+            Imagens, PDF, STL, STEP, IGES ou DWG. {FILE_LIMITS_HINT}
           </p>
         </label>
+
+        {fileError && (
+          <p role="alert" className="mt-2 text-[12.5px] leading-5 text-[#a4452f]">
+            {fileError}
+          </p>
+        )}
 
         {(data.generalFiles ?? [])
           .length > 0 && (

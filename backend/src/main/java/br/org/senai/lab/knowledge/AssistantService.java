@@ -21,6 +21,9 @@ import static br.org.senai.lab.knowledge.Km.*;
 @ApplicationScoped
 public class AssistantService {
   public static final int MEDIUM=5, HIGH=15;
+
+  /** Escada de confiança: NONE (0) → LOW (1–4) → MEDIUM (5–14) → HIGH (15+). */
+  public static String tier(int n){return n<=0?"NONE":n<MEDIUM?"LOW":n<HIGH?"MEDIUM":"HIGH";}
   @Inject EntityManager em;
   @Inject VocabularyService vocabulary;
   @Inject CurrentUser user;
@@ -48,7 +51,7 @@ public class AssistantService {
       else awaiting++;
     }
     int n=cases.size();
-    String tier=n==0?"NONE":n<MEDIUM?"LOW":n<HIGH?"MEDIUM":"HIGH";
+    String tier=tier(n);
     Map<String,Object> confidence=switch(tier){
       case "NONE"->map("level","NONE","label","Sem histórico","message","Nenhum caso parecido formalizado. O Assistente não inventa faixa: siga o roteiro de estimativa abaixo e registre suas premissas.");
       case "LOW"->map("level","LOW","label","Confiança baixa","message","Poucos casos ("+n+"). Sem faixa e sem fator: compare-os um a um antes de estimar.");
@@ -77,7 +80,7 @@ public class AssistantService {
         "corrected",q.estimateHours()==null?null:Stats.round(q.estimateHours()*f,1));
     }
     double tolerance=vocabulary.tolerance();
-    Double assertiveness=n==0?null:Stats.round(100.0*cases.stream().filter(r->Math.abs(Stats.deviation(r.estimatedHours,r.actualHours))<=tolerance).count()/n,1);
+    Double assertiveness=n==0?null:Stats.round(100.0*cases.stream().filter(r->IndicatorService.withinTolerance(r,tolerance)).count()/n,1);
 
     Map<UUID,Long> causeCount=cases.stream().flatMap(r->r.causes.stream()).collect(Collectors.groupingBy(c->c,Collectors.counting()));
     var causes=causeCount.entrySet().stream().sorted(Map.Entry.<UUID,Long>comparingByValue().reversed())

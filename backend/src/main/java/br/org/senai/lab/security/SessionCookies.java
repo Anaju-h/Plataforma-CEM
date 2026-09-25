@@ -22,7 +22,8 @@ public class SessionCookies {
   public NewCookie issue(String cookieName,String subject,String email,String group,Map<String,Object> claims){
     var builder=Jwt.issuer(ISSUER).subject(subject).upn(email).groups(Set.of(group)).expiresIn(Duration.ofHours(hours));
     claims.forEach(builder::claim);
-    return cookie(cookieName,builder.sign(),(int)Duration.ofHours(hours).toSeconds());
+    // Cookie de sessão do navegador (sem Max-Age): fechar o navegador encerra o acesso. O JWT expira em "hours" de qualquer forma.
+    return cookie(cookieName,builder.sign(),NewCookie.DEFAULT_MAX_AGE);
   }
 
   public NewCookie clear(String cookieName){return cookie(cookieName,"",0);}

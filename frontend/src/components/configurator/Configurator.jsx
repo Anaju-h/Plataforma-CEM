@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { PublicRequestCreated } from "../quote/PublicRequestCreated";
-import { submitConfiguratorRequest } from "../../services/requestApi";
+import { attachFileData, submitConfiguratorRequest } from "../../services/requestApi";
 import { buildConfiguratorRequest } from "./configuratorSubmission";
 import {
   useEffect,
@@ -526,9 +526,12 @@ export function Configurator() {
     try {
       const result =
         await submitConfiguratorRequest(
-          buildConfiguratorRequest(
-            state,
-            recommendation,
+          await attachFileData(
+            buildConfiguratorRequest(
+              state,
+              recommendation,
+            ),
+            state.attachments.map((attachment) => attachment.file),
           ),
         );
 

@@ -34,16 +34,29 @@ public class IndicatorService {
       "realizedMargin",Stats.round(Stats.margin(r.billedValue,r.actualCost),3));
   }
 
+  /**
+   * Indicadores do histórico REAL. Registros de demonstração nunca entram nesses números (regra 3 do
+   * complemento): são resumidos à parte, em "demo", só para a apresentação, e somem quando a demonstração é apagada.
+   */
   @Transactional public Map<String,Object> indicators(){
     var records=em.createQuery("from KmRecordEntity r where r.status='CLOSED'"+(user.atLeast("VALIDADOR")?"":" and r.confidentiality='PUBLIC'")+" order by r.closedAt",KmRecordEntity.class).getResultList();
     var terms=vocabulary.terms();double tolerance=vocabulary.tolerance();
+    var real=records.stream().filter(r->!r.demo).toList();
+    var demo=records.stream().filter(r->r.demo).toList();
+    var result=summarize(real,terms,tolerance);
+    result.put("demo",demo.isEmpty()?null:summarize(demo,terms,tolerance));
+    if(!user.atLeast("ADMIN"))hideCommercial(result);
+    return result;
+  }
+
+  static Map<String,Object> summarize(List<KmRecordEntity> records,Map<UUID,KmTermEntity> terms,double tolerance){
     Map<UUID,List<KmRecordEntity>> byType=records.stream().collect(Collectors.groupingBy(r->r.serviceTypeId,LinkedHashMap::new,Collectors.toList()));
     List<Map<String,Object>> types=new ArrayList<>();
     for(var entry:byType.entrySet()){
       var list=entry.getValue();var t=terms.get(entry.getKey());
       List<Double> actual=list.stream().map(r->r.actualHours.doubleValue()).toList();
       List<Double> ratios=list.stream().map(r->r.actualHours.doubleValue()/r.estimatedHours.doubleValue()).toList();
-      long within=list.stream().filter(r->Math.abs(Stats.deviation(r.estimatedHours,r.actualHours))<=tolerance).count();
+      long within=list.stream().filter(r->withinTolerance(r,tolerance)).count();
       Map<UUID,Long> causes=list.stream().flatMap(r->r.causes.stream()).collect(Collectors.groupingBy(c->c,Collectors.counting()));
       List<Map<String,Object>> evolution=new ArrayList<>();
       for(int i=1;i<=list.size();i++){
@@ -61,17 +74,21 @@ public class IndicatorService {
         "evolution",evolution));
     }
     types.sort(Comparator.comparing((Map<String,Object> m)->(Integer)m.get("n")).reversed());
-    long within=records.stream().filter(r->Math.abs(Stats.deviation(r.estimatedHours,r.actualHours))<=tolerance).count();
+    long within=records.stream().filter(r->withinTolerance(r,tolerance)).count();
     var recordRows=records.stream().sorted(Comparator.comparing((KmRecordEntity r)->r.closedAt).reversed()).limit(100).map(r->{
       var row=map("code",r.code,"demo",r.demo,"serviceType",terms.containsKey(r.serviceTypeId)?terms.get(r.serviceTypeId).label:"?","estimatedHours",r.estimatedHours,"actualHours",r.actualHours,"closedAt",r.closedAt);
       row.putAll(recordIndicators(r));return row;}).toList();
-    var result=map("tolerance",tolerance,"total",records.size(),
+    return map("tolerance",tolerance,"total",records.size(),
       "assertiveness",records.isEmpty()?null:Stats.round(100.0*within/records.size(),1),
       "reworkShare",records.isEmpty()?null:Stats.round(100.0*records.stream().filter(r->Boolean.TRUE.equals(r.rework)).count()/records.size(),1),
       "scopeChangeShare",records.isEmpty()?null:Stats.round(100.0*records.stream().filter(r->Boolean.TRUE.equals(r.scopeChange)).count()/records.size(),1),
       "types",types,"records",recordRows);
-    if(!user.atLeast("ADMIN"))hideCommercial(result);
-    return result;
+  }
+
+  /** |desvio de esforço| dentro da tolerância; registros sem horas comparáveis contam como fora. */
+  static boolean withinTolerance(KmRecordEntity r,double tolerance){
+    Double deviation=Stats.deviation(r.estimatedHours,r.actualHours);
+    return deviation!=null&&Math.abs(deviation)<=tolerance;
   }
 
   private static Double medianOf(List<Double> values){

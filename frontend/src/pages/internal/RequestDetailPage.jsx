@@ -853,6 +853,9 @@ function RequestDetail({ requestId }) {
                         file={
                           file
                         }
+                        requestId={
+                          request.id
+                        }
                       />
                     ),
                   )}
@@ -2281,45 +2284,28 @@ function RecommendationCard({
 
 function FileCard({
   file,
+  requestId,
 }) {
-  return (
-    <button
-      type="button"
-      className="
-        flex
-        w-full
-        items-center
-        gap-4
-        rounded-[14px]
-        border border-[#d6e2e8]
-        bg-[#f8fafb]
-        px-4
-        py-4
-        text-left
-        transition
-        hover:border-[#a8c5d4]
-        hover:bg-white
-      "
-    >
+  const size = Number(file.size) > 0 ? (Number(file.size) >= 1048576 ? `${(Number(file.size) / 1048576).toFixed(1).replace(".", ",")} MB` : `${Math.max(1, Math.round(Number(file.size) / 1024))} KB`) : "";
+  const content = (
+    <>
       <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] border border-[#ccdde6] bg-white text-[14px] text-[#5681a0]">
-        ↓
+        {file.stored ? "↗" : "—"}
       </span>
-
       <div className="min-w-0">
-        <p className="truncate text-[13px] font-semibold text-[#31566d]">
-          {file.name}
-        </p>
-
+        <p className="truncate text-[13px] font-semibold text-[#31566d]">{file.name}</p>
         <p className="mt-1 text-[11px] uppercase tracking-[0.05em] text-[#617987]">
-          {file.type ||
-            "Arquivo"}
-
-          {file.size
-            ? ` · ${file.size}`
-            : ""}
+          {file.type || "Arquivo"}{size ? ` · ${size}` : ""}{file.stored ? " · abrir" : " · arquivo não enviado"}
         </p>
       </div>
-    </button>
+    </>
+  );
+  const className = "flex w-full items-center gap-4 rounded-[14px] border border-[#d6e2e8] bg-[#f8fafb] px-4 py-4 text-left transition hover:border-[#a8c5d4] hover:bg-white";
+  if (!file.stored) return <div className={`${className} cursor-default opacity-80`} title="Registrado antes do envio de arquivos: só o nome foi guardado.">{content}</div>;
+  return (
+    <a href={`/api/requests/${encodeURIComponent(requestId)}/attachments/${encodeURIComponent(file.id)}`} target="_blank" rel="noreferrer" className={className} title="Abrir em uma nova aba">
+      {content}
+    </a>
   );
 }
 

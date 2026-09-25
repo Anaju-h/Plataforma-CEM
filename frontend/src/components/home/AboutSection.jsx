@@ -403,7 +403,7 @@ export function AboutSection() {
                     inline-flex
                     items-center
                     gap-3
-                    text-[12px]
+                    text-[15px]
                     font-semibold
                     text-[#12364e]
                     transition-colors
@@ -454,7 +454,7 @@ function Capability({ label }) {
         border-white/64
         bg-white/42
         px-4
-        py-3
+        py-3.5
         shadow-[inset_0_1px_0_rgba(255,255,255,0.86),0_7px_18px_rgba(7,31,45,0.04)]
         backdrop-blur-[18px]
       "
@@ -471,9 +471,9 @@ function Capability({ label }) {
 
       <p
         className="
-          text-[11px]
+          text-[14px]
           font-semibold
-          leading-4
+          leading-5
           text-[#345365]
         "
       >

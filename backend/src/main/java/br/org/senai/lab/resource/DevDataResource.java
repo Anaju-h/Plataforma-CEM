@@ -23,7 +23,7 @@ public class DevDataResource {
       "DELETE FROM quote_proposal_version", "DELETE FROM quote_proposal", "DELETE FROM quote_history",
       "DELETE FROM quote_item", "DELETE FROM quote_piece_service", "DELETE FROM quote_piece",
       "DELETE FROM quote_service", "DELETE FROM lab_quote",
-      "DELETE FROM piece_service", "DELETE FROM request_history", "DELETE FROM request_analysis",
+      "DELETE FROM piece_service", "DELETE FROM request_attachment", "DELETE FROM request_history", "DELETE FROM request_analysis",
       "DELETE FROM request_piece", "DELETE FROM request_service", "DELETE FROM lab_request",
       "DELETE FROM customer_user WHERE email <> N'cliente@example.test'",
       "DELETE c FROM customer_company c WHERE NOT EXISTS (SELECT 1 FROM customer_user u WHERE u.company_id = c.id)",
@@ -53,7 +53,7 @@ public class DevDataResource {
     current.requireAtLeast("ADMIN");
     Object id=em.createNativeQuery("SELECT id FROM lab_request WHERE request_code=?1 AND NOT EXISTS (SELECT 1 FROM lab_quote q WHERE q.request_id=lab_request.id)").setParameter(1,code).getResultStream().findFirst().orElse(null);
     if(id==null)throw new WebApplicationException("SOL inexistente ou já convertida em orçamento.",409);
-    for(String sql:List.of("DELETE FROM piece_service WHERE piece_id IN (SELECT id FROM request_piece WHERE request_id=?1)","DELETE FROM request_history WHERE request_id=?1",
+    for(String sql:List.of("DELETE FROM piece_service WHERE piece_id IN (SELECT id FROM request_piece WHERE request_id=?1)","DELETE FROM request_attachment WHERE request_id=?1","DELETE FROM request_history WHERE request_id=?1",
         "DELETE FROM request_analysis WHERE request_id=?1","DELETE FROM request_piece WHERE request_id=?1","DELETE FROM request_service WHERE request_id=?1","DELETE FROM lab_request WHERE id=?1"))
       em.createNativeQuery(sql).setParameter(1,id).executeUpdate();
     return Map.of("removed",code);

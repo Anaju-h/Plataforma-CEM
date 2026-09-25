@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { loginInternal } from "../../services/authApi";
+import { loginInternal, logoutInternal } from "../../services/authApi";
 
 // Login da área interna no padrão visual oficial (mesma linguagem da área do cliente e do portal interno).
 // A sessão é um JWT em cookie HttpOnly emitido pelo backend: nada é gravado no navegador.
@@ -14,6 +14,8 @@ const ROLE_ACCOUNTS = [
 
 export function LoginPage() {
   const navigate = useNavigate();
+  // A tela de login sempre exige credenciais: uma sessão interna anterior é encerrada ao chegar aqui.
+  useEffect(() => { logoutInternal().catch(() => null); }, []);
   const location = useLocation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -58,11 +60,11 @@ export function LoginPage() {
             LADO ESQUERDO (mesma altura do cartão)
         =================================================== */}
 
-        <div className="flex max-w-[700px] flex-col gap-10 lg:self-stretch lg:justify-between lg:gap-8 lg:py-2">
+        <div className="flex max-w-[700px] flex-col gap-9 lg:self-stretch lg:justify-start lg:gap-10">
           <div className="flex items-center gap-5">
-            <BrandLogo src="/brand/centro-de-excelencia-senai.png" alt="Centro de Excelência em Metrologia · SENAI · ZEISS" width={210} box={[1536, 1024, 55, 365, 1416, 578]} />
-            <span aria-hidden="true" className="h-8 w-px bg-[#9fb9c8]/60" />
-            <BrandLogo src="/brand/logo-senai.png" alt="SENAI" width={92} box={[676, 369, 1, 67, 673, 238]} />
+            <BrandLogo src="/brand/centro-de-excelencia-senai.png" alt="Centro de Excelência em Metrologia · SENAI · ZEISS" width={255} box={[1536, 1024, 55, 365, 1416, 578]} />
+            <span aria-hidden="true" className="h-10 w-px bg-[#9fb9c8]/60" />
+            <BrandLogo src="/brand/logo-senai.png" alt="SENAI" width={112} box={[676, 369, 1, 67, 673, 238]} />
           </div>
 
           <div>
@@ -71,7 +73,7 @@ export function LoginPage() {
               <p className="text-[10px] font-semibold uppercase tracking-[0.17em] text-[#0057b8]">Portal Interno</p>
             </div>
 
-            <h1 className="mt-5 text-[38px] font-semibold leading-[1.03] tracking-[-0.045em] text-[#071f2d] sm:text-[44px] lg:text-[50px] xl:text-[54px]">
+            <h1 className="mt-4 text-[38px] font-semibold leading-[1.03] tracking-[-0.045em] text-[#071f2d] sm:text-[44px] lg:text-[50px] xl:text-[54px]">
               Gestão integrada do laboratório.
             </h1>
 

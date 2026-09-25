@@ -56,13 +56,35 @@ export function requestPayload(form, origin = "Interno") {
   };
 }
 
-export function createPersistedRequest(form, origin = "Interno") { return request("", { method: "POST", body: JSON.stringify(requestPayload(form, origin)) }); }
+const MAX_FILE_BYTES = 10 * 1024 * 1024;
+
+/** Lê os arquivos escolhidos (File) e os envia junto com a SOL em base64; o backend grava o conteúdo. */
+export async function attachFileData(payload, files) {
+  const list = (files || []).filter(file => typeof Blob !== "undefined" && file instanceof Blob);
+  if (!list.length) return payload;
+  const tooBig = list.find(file => file.size > MAX_FILE_BYTES);
+  if (tooBig) throw new Error(`O arquivo ${tooBig.name} passa de 10 MB.`);
+  const current = payload.project?.generalFiles || [];
+  const encoded = await Promise.all(list.map((file, index) => new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve({ id: `att-${index + 1}`, name: file.name, type: current[index]?.type || file.type || "Arquivo", size: file.size, contentType: file.type || "application/octet-stream", dataBase64: String(reader.result) });
+    reader.onerror = () => reject(new Error(`Não foi possível ler o arquivo ${file.name}.`));
+    reader.readAsDataURL(file);
+  })));
+  return { ...payload, project: { ...payload.project, generalFiles: encoded } };
+}
+
+export async function createPersistedRequest(form, origin = "Interno") {
+  const payload = await attachFileData(requestPayload(form, origin), form.project?.generalFiles);
+  return request("", { method: "POST", body: JSON.stringify(payload) });
+}
 
 // Formulário público do site: rota anônima que devolve apenas o código da SOL e um token único para vincular a uma conta.
 export async function createPublicRequest(form) {
   let response;
   try {
-    response = await fetch(`${baseUrl}/public/requests`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(requestPayload(form, "Público")) });
+    const payload = await attachFileData(requestPayload(form, "Público"), form.project?.generalFiles);
+    response = await fetch(`${baseUrl}/public/requests`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
   } catch {
     throw new Error("Não foi possível conectar ao servidor. Tente novamente.");
   }

@@ -23,6 +23,8 @@ public class RequestService {
   @Inject RequestMapper mapper;
   @Inject ObjectMapper json;
   @Inject br.org.senai.lab.security.CurrentUser current;
+  @Inject AttachmentService attachments;
+  @Inject jakarta.persistence.EntityManager em;
   /** Quem executa a ação: o usuário interno logado; sem sessão interna (site, cliente), "Sistema". */
   private String actor(){return current.name();}
 
@@ -61,8 +63,10 @@ public class RequestService {
     r.status="Nova"; r.priority="urgent".equals(dto.project().urgency())?"Alta":"Normal"; r.responsible="Não atribuído";
     r.internalNotes=dto.internal()==null?"":clean(dto.internal().channelDetails(),"");
     r.customerJson=write(Map.of("department",dto.internal()==null?"":clean(dto.internal().department(),""),"company",r.company,"contact",r.contact,"email",clean(r.email,""),"phone",clean(r.phone,"")));
-    r.projectJson=write(dto.project());
-    r.configurationJson=dto.configuration()==null||dto.configuration().isEmpty()?null:write(dto.configuration()); r.attachmentsJson=write(dto.project().generalFiles()==null?List.of():dto.project().generalFiles());
+    var files=attachments.prepare(dto.project().generalFiles());
+    var p0=dto.project();
+    r.projectJson=write(new Project(p0.requestNeedId(),p0.objective(),p0.observations(),p0.urgency(),p0.deadlineType(),p0.specificDate(),files.metadata()));
+    r.configurationJson=dto.configuration()==null||dto.configuration().isEmpty()?null:write(dto.configuration()); r.attachmentsJson=write(files.metadata());
     for(Piece item:pieces) {
       PieceEntity p=new PieceEntity(); p.id=UUID.randomUUID(); p.request=r; p.clientId=item.id(); p.name=item.name().trim(); p.quantity=item.quantity();
       p.material=item.material(); p.dimensions=item.dimensions(); p.location=item.location(); p.type=item.type();
@@ -75,7 +79,14 @@ public class RequestService {
     if(dto.configuration()!=null&&dto.configuration().get("recommendedMachines") instanceof List<?> machines&&!machines.isEmpty()&&machines.get(0) instanceof Map<?,?> best&&best.get("name")!=null)
       r.analysis.recommendedEquipment=String.valueOf(best.get("name"));
     eventAs(r,"Solicitação criada","Solicitação registrada pelo canal "+r.channel+".",user!=null?user.name+" (cliente)":claimHash!=null?r.channel:actor());
-    repository.persist(r); return response(r);
+    repository.persist(r);
+    if(!files.pending().isEmpty()){em.flush();attachments.save(r.id,files.pending());}
+    return response(r);
+  }
+  /** Arquivo anexado à SOL (área interna). */
+  @Transactional public AttachmentService.FileContent attachment(String id,String attachmentId){
+    RequestEntity r=required(id,false);
+    try{return attachments.load(r.id,UUID.fromString(attachmentId));}catch(IllegalArgumentException e){throw new ApiException(404,"Arquivo não encontrado.");}
   }
   @Transactional public List<Response> list() { return repository.list().stream().map(this::response).toList(); }
   @Transactional public Response get(String id) { return response(required(id,false)); }

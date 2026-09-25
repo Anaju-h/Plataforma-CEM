@@ -5,12 +5,27 @@ import {
 } from "react";
 
 import {
+  acceptFiles,
+  FILE_LIMITS_HINT,
+} from "../../../utils/fileLimits";
+
+import {
   getMachineProfile,
 } from "../data/machineProfiles";
 
 import {
   getService,
 } from "../data/serviceCatalog";
+
+import {
+  applyEmailSuffix,
+  canSuggestEmailSuffix,
+  EMAIL_SUFFIXES,
+  formatPhone,
+  isValidEmail,
+  isValidPhone,
+  sanitizeEmail,
+} from "../../../utils/contactValidation";
 
 /* ============================================================
  * COMPONENTE PRINCIPAL
@@ -42,12 +57,17 @@ export function RequestStep({
       [state],
     );
 
+  const [touched, setTouched] = useState({});
+  const [fileError, setFileError] = useState(null);
+  const emailError = state.customer.email.trim() && !isValidEmail(state.customer.email) ? "Informe um e-mail válido (ex.: nome@empresa.com.br)." : "";
+  const phoneError = state.customer.phone.trim() && !isValidPhone(state.customer.phone) ? "Informe DDD + número (10 ou 11 dígitos)." : "";
+
   const canSubmit =
     Boolean(
       state.customer.name.trim() &&
         state.customer.company.trim() &&
-        state.customer.email.trim() &&
-        state.customer.phone.trim(),
+        isValidEmail(state.customer.email) &&
+        isValidPhone(state.customer.phone),
     );
 
   function updateCustomer(
@@ -71,8 +91,18 @@ export function RequestStep({
       return;
     }
 
+    const { accepted, message } = acceptFiles(
+      state.attachments.map((attachment) => attachment.file),
+      files,
+    );
+    setFileError(message);
+
+    if (!accepted.length) {
+      return;
+    }
+
     const attachments =
-      files.map(
+      accepted.map(
         (file) => ({
           id:
             createAttachmentId(),
@@ -97,6 +127,7 @@ export function RequestStep({
   }
 
   function removeFile(id) {
+    setFileError(null);
     onStateChange({
       ...state,
 
@@ -292,6 +323,7 @@ export function RequestStep({
             label="E-mail"
             required
             type="email"
+            inputMode="email"
             value={
               state.customer.email
             }
@@ -300,15 +332,29 @@ export function RequestStep({
             ) =>
               updateCustomer(
                 "email",
-                value,
+                sanitizeEmail(value),
               )
             }
-            placeholder="nome@empresa.com"
-          />
+            onBlur={() => setTouched(current => ({ ...current, email: true }))}
+            error={touched.email ? emailError : ""}
+            placeholder="nome@empresa.com.br"
+          >
+            {canSuggestEmailSuffix(state.customer.email) && (
+              <span className="mt-2 flex flex-wrap items-center gap-1.5 text-[12px] text-[#6a808d]">
+                Completar com:
+                {EMAIL_SUFFIXES.map(suffix => (
+                  <button key={suffix} type="button" onClick={() => updateCustomer("email", applyEmailSuffix(state.customer.email, suffix))}
+                    className="rounded-full bg-white/80 px-2.5 py-1 text-[12px] font-semibold text-[#0057b8] ring-1 ring-inset ring-[#c9d9e2] hover:ring-[#0057b8]/50">{suffix}</button>
+                ))}
+              </span>
+            )}
+          </InputField>
 
           <InputField
             label="Telefone / WhatsApp"
             required
+            type="tel"
+            inputMode="tel"
             value={
               state.customer.phone
             }
@@ -317,10 +363,12 @@ export function RequestStep({
             ) =>
               updateCustomer(
                 "phone",
-                value,
+                formatPhone(value),
               )
             }
-            placeholder="(00) 00000-0000"
+            onBlur={() => setTouched(current => ({ ...current, phone: true }))}
+            error={touched.phone ? phoneError : ""}
+            placeholder="(62) 90000-0000"
           />
 
           <div
@@ -424,8 +472,14 @@ export function RequestStep({
 
           <p className="mt-1.5 text-[13px] leading-5 text-[#7d919c]">
             Fotos, desenhos, CADs e documentos podem ajudar na avaliação
-            técnica.
+            técnica. {FILE_LIMITS_HINT}
           </p>
+
+          {fileError && (
+            <p role="alert" className="mt-2 text-[12.5px] leading-5 text-[#a4452f]">
+              {fileError}
+            </p>
+          )}
 
           <input
             ref={
@@ -649,7 +703,7 @@ export function RequestStep({
         {!canSubmit && (
           <div className="border-t border-white/58 px-4.5 py-2.5">
             <p className="text-[12px] leading-5 text-[#82949e]">
-              Preencha nome, empresa, e-mail e telefone para liberar o envio.
+              Preencha nome, empresa, e-mail válido e telefone com DDD para liberar o envio.
             </p>
           </div>
         )}
@@ -809,6 +863,10 @@ function InputField({
   placeholder,
   required = false,
   type = "text",
+  inputMode,
+  onBlur,
+  error = "",
+  children,
 }) {
   return (
     <label className="block">
@@ -839,8 +897,13 @@ function InputField({
         placeholder={
           placeholder
         }
-        className="mt-2 h-[46px] w-full rounded-[11px] border border-white/82 bg-white/46 px-3.5 text-[14px] text-[#31566d] outline-none transition-all placeholder:text-[#9eafb7] focus:border-[#8eb5c8] focus:bg-white/74 focus:ring-2 focus:ring-[#65b8ee]/10"
+        inputMode={inputMode}
+        onBlur={onBlur}
+        aria-invalid={Boolean(error)}
+        className={`mt-2 h-[46px] w-full rounded-[11px] border bg-white/46 px-3.5 text-[14px] text-[#31566d] outline-none transition-all placeholder:text-[#9eafb7] focus:bg-white/74 focus:ring-2 focus:ring-[#65b8ee]/10 ${error ? "border-[#d9a495] focus:border-[#c98574]" : "border-white/82 focus:border-[#8eb5c8]"}`}
       />
+      {error && <span role="alert" className="mt-1.5 block text-[12px] text-[#9a5947]">{error}</span>}
+      {children}
     </label>
   );
 }

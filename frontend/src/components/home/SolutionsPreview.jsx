@@ -232,7 +232,7 @@ export function SolutionsPreview() {
                     text-[#356f9f]
                   "
                 >
-                  Soluções
+                  Orçamento
                 </p>
 
                 <div className="h-px w-10 bg-[#356f9f]/35" />

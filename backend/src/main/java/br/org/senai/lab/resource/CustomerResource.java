@@ -15,6 +15,13 @@ public class CustomerResource {
   @POST @Path("/password") public Map<String,Object> password(CustomerService.PasswordInput input){return service.changePassword(input);}
   @POST @Path("/closure-request") public Map<String,Object> closure(CustomerService.ClosureInput input){return service.requestClosure(input);}
   @GET @Path("/requests") public List<Map<String,Object>> requests(){return service.requests();}
+  @GET @Path("/requests/{id}/attachments/{attachmentId}") @Produces(MediaType.WILDCARD)
+  public jakarta.ws.rs.core.Response attachment(@PathParam("id") String id,@PathParam("attachmentId") String attachmentId){
+    var file=service.attachment(id,attachmentId);
+    return jakarta.ws.rs.core.Response.ok(file.content(),file.contentType())
+      .header("Content-Disposition","inline; filename*=UTF-8''"+java.net.URLEncoder.encode(file.name(),java.nio.charset.StandardCharsets.UTF_8).replace("+","%20"))
+      .header("X-Content-Type-Options","nosniff").build();
+  }
   @GET @Path("/requests/{id}") public Map<String,Object> request(@PathParam("id") String id){return service.request(id);}
   @POST @Path("/requests") public Map<String,Object> create(@Valid RequestDtos.Create input){return service.create(input);}
   @GET @Path("/quotes") public List<Map<String,Object>> quotes(){return service.quotes();}

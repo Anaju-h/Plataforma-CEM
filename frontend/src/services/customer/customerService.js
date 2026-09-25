@@ -1,4 +1,4 @@
-import { requestPayload } from "../requestApi";
+import { attachFileData, requestPayload } from "../requestApi";
 const baseUrl = (import.meta.env.VITE_API_URL || "/api").replace(/\/$/, "");
 async function customerRequest(path, options = {}) {
   let response;
@@ -14,7 +14,8 @@ export const getCustomerRequests = () => customerRequest("/requests");
 export const getCustomerRequest = id => customerRequest("/requests/" + encodeURIComponent(id));
 export const getCustomerQuotes = () => customerRequest("/quotes");
 export const getCustomerProjects = () => customerRequest("/projects");
-export const createCustomerRequest = form => customerRequest("/requests", { method: "POST", body: JSON.stringify(requestPayload(form, "Cliente")) });
+export const createCustomerRequest = async form => customerRequest("/requests", { method: "POST", body: JSON.stringify(await attachFileData(requestPayload(form, "Cliente"), form.project?.generalFiles)) });
+export const customerAttachmentUrl = (requestId, attachmentId) => `${baseUrl}/customer/requests/${encodeURIComponent(requestId)}/attachments/${encodeURIComponent(attachmentId)}`;
 export const respondToCustomerProposal = (quote, document, type, note) => customerRequest(
   "/quotes/" + encodeURIComponent(quote.id) + "/proposal/versions/" + document.version + "/result",
   { method: "POST", body: JSON.stringify({ revision: quote.revision, type, note, date: new Date().toISOString().slice(0, 10) }) }); // date is required by the DTO; the server records São Paulo's calendar date
