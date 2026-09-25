@@ -20,6 +20,7 @@ import {
 import {
   NeedStep,
 } from "./steps/NeedStep";
+import { OtherSolutionsSection } from "./steps/OtherSolutionsSection";
 
 import {
   PieceStep,
@@ -950,6 +951,8 @@ export function Configurator() {
               </div>
             </div>
           </div>
+
+          {state.currentStep === 1 && <OtherSolutionsSection />}
         </div>
       </div>
     </section>

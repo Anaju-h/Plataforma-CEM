@@ -2,12 +2,8 @@ import {
   motion,
 } from "motion/react";
 
-import {
-  Link,
-} from "react-router-dom";
 
 import {
-  directRequestNeeds,
   technicalRequestNeeds,
 } from "../../../data/requestNeeds";
 
@@ -297,146 +293,6 @@ export function NeedStep({
               );
             },
           )}
-        </div>
-      </div>
-
-      {/* =====================================================
-          NECESSIDADES QUE VÃO DIRETO PARA SOLICITAÇÃO
-      ===================================================== */}
-
-      <div className="mt-6">
-        <div className="flex items-center gap-3">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[#628397]">
-            Outras soluções do Centro
-          </p>
-
-          <div className="h-px flex-1 bg-[#bfd2dc]/72" />
-        </div>
-
-        <p className="mt-2 max-w-[640px] text-[12px] leading-5 text-[#80929c]">
-          Estas necessidades dependem de uma avaliação mais ampla e seguem
-          diretamente para atendimento da equipe do Centro.
-        </p>
-
-        <div className="mt-4 grid gap-3 sm:grid-cols-2">
-          {directRequestNeeds.map(
-            (
-              solution,
-              index,
-            ) => (
-              <motion.div
-                key={
-                  solution.id
-                }
-                initial={{
-                  opacity: 0,
-                  y: 8,
-                }}
-                animate={{
-                  opacity: 1,
-                  y: 0,
-                }}
-                transition={{
-                  delay:
-                    (index +
-                      technicalRequestNeeds.length) *
-                    0.025,
-
-                  duration:
-                    0.25,
-                }}
-              >
-                <Link
-                  to={`/orcamento?origem=configurador&necessidade=${solution.id}`}
-                  state={{
-                    configuratorNeed: {
-                      id:
-                        solution.id,
-
-                      name:
-                        solution.name,
-
-                      title:
-                        solution.title,
-
-                      tag:
-                        solution.tag,
-                    },
-                  }}
-                  className="group relative flex h-full min-h-[132px] overflow-hidden rounded-[16px] border border-white/78 bg-white/30 p-4 text-left transition-all duration-300 hover:-translate-y-[2px] hover:border-[#a7c5d4] hover:bg-white/56 hover:shadow-[0_10px_26px_rgba(31,68,92,0.055)]"
-                >
-                  <span
-                    aria-hidden="true"
-                    className="absolute bottom-0 left-0 top-0 w-[3px] bg-[#65b8ee]/55 transition-colors duration-300 group-hover:bg-[#65b8ee]"
-                  />
-
-                  <div className="flex min-w-0 flex-1 flex-col">
-                    <div className="flex items-start justify-between gap-3">
-                      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[#bfd2dc] bg-white/46 text-[11px] font-semibold text-[#6d8794] transition-colors group-hover:border-[#91b5c7] group-hover:text-[#477b98]">
-                        {
-                          solution.number
-                        }
-                      </span>
-
-                      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[#c5d8e1] bg-white/34 text-[15px] text-[#64889d] transition-all duration-300 group-hover:border-[#12364e] group-hover:bg-[#12364e] group-hover:text-white">
-                        ↗
-                      </span>
-                    </div>
-
-                    <p className="mt-3 text-[14px] font-semibold leading-5 text-[#264e66]">
-                      {
-                        solution.title
-                      }
-                    </p>
-
-                    <p className="mt-1.5 text-[12px] leading-5 text-[#7b909c]">
-                      {
-                        solution.description
-                      }
-                    </p>
-
-                    <p className="mt-auto pt-3 text-[11px] font-semibold uppercase tracking-[0.1em] text-[#668da3]">
-                      {
-                        solution.tag
-                      }
-                    </p>
-                  </div>
-                </Link>
-              </motion.div>
-            ),
-          )}
-        </div>
-      </div>
-
-      {/* =====================================================
-          SOLICITAÇÃO LIVRE
-      ===================================================== */}
-
-      <div className="mt-4 rounded-[16px] border border-[#a9c9d9]/76 bg-[#deedf4]/52 px-4 py-3.5">
-        <div className="flex items-start gap-3">
-          <span className="mt-[7px] h-2 w-2 shrink-0 rounded-full bg-[#65b8ee]" />
-
-          <div>
-            <p className="text-[13px] font-semibold text-[#315d75]">
-              Ainda não encontrou exatamente o que precisa?
-            </p>
-
-            <p className="mt-1.5 text-[12px] leading-5 text-[#708894]">
-              Você também pode enviar uma solicitação diretamente para a equipe
-              e descrever livremente o seu desafio.
-            </p>
-
-            <Link
-              to="/orcamento"
-              className="mt-3 inline-flex items-center gap-2 text-[12px] font-semibold text-[#356f9f] transition-colors hover:text-[#12364e]"
-            >
-              Solicitar atendimento
-
-              <span>
-                →
-              </span>
-            </Link>
-          </div>
         </div>
       </div>
 
